@@ -34,6 +34,7 @@ Full policy: [contract-first-testing.md](contract-first-testing.md)
 | `@print3d/cep` | `packages/cep/tests/` | — | — |
 | `apps/api` | `apps/api/tests/unit/` | `apps/api/tests/integration/` | — |
 | `apps/web` | `apps/web/tests/` (i18n parity, layout tokens) | — | `e2e/` (Playwright) |
+| `@print3d/shared-types` | `packages/shared-types/tests/` (admin contract types) | — | — |
 | Infra / CI | `scripts/infra-contract.test.mjs` | — | — |
 
 ## Vitest — `apps/api/vitest.config.ts`

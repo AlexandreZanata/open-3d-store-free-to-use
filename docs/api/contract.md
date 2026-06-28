@@ -15,7 +15,7 @@ All routes prefixed `/api/v1`. Version in path — never omit.
 
 **None** for public catalog and order capture. Anonymous browsing and order intent only.
 
-Future admin endpoints (out of scope v1) will require separate auth — document in ADR before adding.
+Admin endpoints live under `/api/v1/admin/*` with session auth — see [admin-contract.md](admin-contract.md) and [../adr/001-admin-authentication.md](../adr/001-admin-authentication.md).
 
 ## Internationalization
 
@@ -210,6 +210,7 @@ Phase 7: `.local/phases/07-frontend-integration.md`
 
 ## Related documents
 
+- [admin-contract.md](admin-contract.md) — authenticated admin API
 - [../architecture/domain-model.md](../architecture/domain-model.md)
 - [../features/whatsapp-flow.md](../features/whatsapp-flow.md)
 - [../operations/performance-caching.md](../operations/performance-caching.md)

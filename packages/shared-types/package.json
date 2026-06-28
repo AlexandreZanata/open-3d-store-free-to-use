@@ -11,10 +11,11 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "echo \"@print3d/shared-types: types only — no runtime tests\"",
+    "test": "vitest run",
     "lint": "tsc --noEmit"
   },
   "devDependencies": {
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   }
 }

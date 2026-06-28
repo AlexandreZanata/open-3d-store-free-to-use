@@ -65,6 +65,65 @@ Not a full aggregate. Persisted for analytics; no payment or fulfillment state.
 
 Target types: `packages/shared-types/src/order.types.ts` (Phase 1)
 
+### AdminUser (root — admin bounded context)
+
+Separate from storefront. See [../adr/001-admin-authentication.md](../adr/001-admin-authentication.md).
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | `uuid` | `DEFAULT uuidv7()` |
+| `email` | string | Unique, normalized lowercase |
+| `passwordHash` | string | argon2id — never exposed via API |
+| `role` | `"admin"` | MVP single role; server-assigned only |
+| `lastLoginAt` | timestamp \| null | Updated on successful login |
+| `createdAt` | timestamp | Server-owned |
+| `updatedAt` | timestamp | Server-owned |
+
+Target types: `packages/shared-types/src/admin/auth.types.ts` (Phase 9)
+
+### AuditLog (entity — append-only)
+
+Security and compliance trail. Not a REST resource in MVP.
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | `uuid` | `DEFAULT uuidv7()` |
+| `actorId` | uuid \| null | `admin_users.id`; null for failed login with unknown email |
+| `action` | string | e.g. `admin.product.created`, `admin.login.failure` |
+| `resourceType` | string | `product`, `category`, `upload`, `session` |
+| `resourceId` | uuid \| null | Target entity when applicable |
+| `payloadHash` | string | SHA-256 of redacted payload — not full body |
+| `clientIp` | string | From `X-Forwarded-For` / socket |
+| `occurredAt` | timestamp | Immutable |
+
+Harness: `agent-rules/03-security/audit-logging.md`
+
+## Admin write invariants
+
+### Product writes (admin)
+
+| Rule | Detail |
+|------|--------|
+| Slug uniqueness | Global unique across `products.slug` |
+| Price | `basePrice` integer ≥ 0 (BRL cents) |
+| Translations | Both `en` and `pt-BR` required on create; keys `name`, `description`, `shortDescription` |
+| Delete | Hard delete only if no `order_captures` reference product; else use `status: discontinued` |
+| Non-writable | `id`, `createdAt`, `updatedAt`, `role`, search vectors |
+
+Maps to columns in `apps/api/src/infrastructure/db/schema.ts` (`products` table + `translations` JSONB).
+
+### Category writes (admin)
+
+| Rule | Detail |
+|------|--------|
+| Slug uniqueness | Global unique across `categories.slug` |
+| Soft delete | `DELETE` sets `isActive: false`; public catalog hides inactive |
+| Parent depth | One level nesting max (`parentId` → root or direct child) |
+| Translations | Both locales required on create; `name` required, `description` nullable |
+| Delete guard | Cannot soft-delete if active products reference category |
+
+Contract: [../api/admin-contract.md](../api/admin-contract.md)
+
 ## Value objects
 
 ### Price
@@ -135,5 +194,7 @@ Target: `apps/api/src/domain/events/DomainEvent.ts`
 
 - [backend-architecture.md](backend-architecture.md)
 - [../api/contract.md](../api/contract.md)
+- [../api/admin-contract.md](../api/admin-contract.md)
+- [../adr/001-admin-authentication.md](../adr/001-admin-authentication.md)
 - [../features/i18n.md](../features/i18n.md)
 - [../features/whatsapp-flow.md](../features/whatsapp-flow.md)

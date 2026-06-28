@@ -23,6 +23,23 @@
 | `MODEL_FILES_BASE_PATH` | `/var/www/print3d/models` | path |
 | `MODEL_FILES_BASE_URL` | `https://yourdomain.com/models` | URL |
 
+## Admin variables (Phase 9+)
+
+| Variable | Example | Validation | Notes |
+|----------|---------|------------|-------|
+| `ADMIN_SESSION_SECRET` | random 32+ bytes | min 32 chars | Signs session cookie |
+| `ADMIN_SESSION_TTL` | `28800` | integer seconds | Default 8 h (ADR 001) |
+| `ADMIN_SESSION_IDLE_TTL` | `1800` | integer seconds | Default 30 min idle |
+| `ADMIN_ORIGIN` | `http://localhost:5174` | URL | Admin panel CORS origin |
+| `ADMIN_BOOTSTRAP_EMAIL` | `admin@localhost` | email | **Development only** |
+| `ADMIN_BOOTSTRAP_PASSWORD` | `change-me` | min 8 chars | **Development only** |
+| `UPLOAD_MAX_BYTES` | `5242880` | integer | Global cap; per-kind limits in admin contract |
+| `UPLOAD_DIR` | `/var/www/print3d/models` | path | Same tree as `MODEL_FILES_BASE_PATH` |
+
+Added to `apps/api/.env.example` as placeholders. Production MUST set `ADMIN_SESSION_SECRET` and MUST NOT set bootstrap vars.
+
+Admin contract: [../api/admin-contract.md](../api/admin-contract.md)
+
 ## Startup validation
 
 **File:** `apps/api/src/config.ts`

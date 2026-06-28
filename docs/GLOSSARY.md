@@ -16,6 +16,8 @@
 | **Difficulty**       | Print complexity: Beginner, Intermediate, Advanced             |
 | **Locale**           | User language: `en` (English) or `pt-BR` (Brazilian Portuguese) — [i18n.md](features/i18n.md) |
 | **SupportedLocale**  | Union type `en` \| `pt-BR` — the only product languages          |
+| **AdminUser**        | Authenticated operator for `/api/v1/admin/*` (single `admin` role MVP) |
+| **AuditLog**         | Append-only security event record (login, CRUD, uploads)         |
 
 ## File formats
 

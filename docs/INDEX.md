@@ -13,6 +13,7 @@
 | **Human developer** | [architecture/system-overview.md](architecture/system-overview.md) → [stack/technology-decisions.md](stack/technology-decisions.md) |
 | **AI agent** | [../AGENTS.md](../AGENTS.md) → active phase in `.local/phases/` → docs referenced by that phase |
 | **API consumer** | [api/contract.md](api/contract.md) |
+| **Admin API** | [api/admin-contract.md](api/admin-contract.md) → [adr/001-admin-authentication.md](adr/001-admin-authentication.md) |
 | **DevOps** | [infrastructure/deployment.md](infrastructure/deployment.md) → [operations/ci-cd.md](operations/ci-cd.md) |
 
 ---
@@ -40,7 +41,10 @@
 
 | Document | Contents |
 |----------|----------|
-| [api/contract.md](api/contract.md) | REST API v1 — endpoints, errors, caching |
+| [api/contract.md](api/contract.md) | REST API v1 — public catalog, errors, caching |
+| [api/admin-contract.md](api/admin-contract.md) | Admin REST API v1 — auth, CRUD, uploads |
+| [adr/001-admin-authentication.md](adr/001-admin-authentication.md) | Session cookie auth decision |
+| [adr/002-admin-api-namespace.md](adr/002-admin-api-namespace.md) | `/admin` prefix, CORS, Swagger |
 | [features/3d-viewer.md](features/3d-viewer.md) | `@google/model-viewer` integration |
 | [features/whatsapp-flow.md](features/whatsapp-flow.md) | Order capture and deep-link generation |
 | [features/cep-lookup.md](features/cep-lookup.md) | CEP validate + IBGE offline lookup |
@@ -83,8 +87,8 @@
 | Area | Current (this repo) | Target (spec) |
 |------|---------------------|---------------|
 | Frontend | `apps/web/` — TanStack Start + React 19 | Same (Phase 0 complete) |
-| Backend | `@print3d/api` — Drizzle schema + migrations (Phase 2) | Fastify + use cases |
-| Packages | `@print3d/shared-types`, `@print3d/whatsapp`, `@print3d/cep` | Used by API and web |
+| Backend | `@print3d/api` — public catalog API complete | Admin handlers Phase 10–12 |
+| Packages | `@print3d/shared-types` incl. admin DTOs (Phase 9) | Used by API and web |
 | Infra | `infra/` — Nginx, PM2, deploy/migrate scripts, CI deploy | Docker dev compose |
 | i18n | Spec in `docs/features/i18n.md` | Full `en` + `pt-BR` — Phases 1–7 |
 

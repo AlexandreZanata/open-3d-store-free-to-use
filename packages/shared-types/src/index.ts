@@ -21,6 +21,8 @@ export type {
   AdminProductListItem,
   AdminUploadResponse,
   AdminUploadResult,
+  AdminUploadKind,
+  AdminUploadMimeType,
   AdminUserSummary,
   CreateCategoryPayload,
   CreateProductPayload,

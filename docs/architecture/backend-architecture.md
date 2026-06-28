@@ -25,10 +25,10 @@ src/
 │   ├── resolve-locale.ts  Accept-Language / ?locale= → SupportedLocale
 │   └── messages/          en.json, pt-BR.json (RFC 7807 titles)
 ├── domain/
-│   ├── entities/          Product.ts, Category.ts
+│   ├── entities/          Product.ts, Category.ts, AdminUser.ts
 │   ├── value-objects/     Price.ts, Slug.ts, Locale.ts
 │   ├── errors/            DomainError.ts
-│   ├── repositories/      IProductRepository.ts, ICategoryRepository.ts, IOrderCaptureRepository.ts
+│   ├── repositories/      IProductRepository.ts, ICategoryRepository.ts, IOrderCaptureRepository.ts, IAdminUserRepository.ts, IAdminSessionRepository.ts, IAuditLogRepository.ts
 │   └── events/            DomainEvent.ts
 ├── application/
 │   ├── use-cases/         GetProductBySlug, ListProducts, SearchProducts, GetCategories, CaptureOrder
@@ -38,9 +38,9 @@ src/
 │   └── errors/            ApplicationErrors.ts
 ├── infrastructure/
 │   ├── db/                schema.ts, client.ts, migrations/
-│   ├── repositories/      Drizzle*Repository.ts, mappers/
+│   ├── repositories/      Drizzle*Repository.ts, mappers/, product*Persistence.ts
 │   ├── cache/             CacheService.ts, redis.ts (implements application ports)
-│   └── storage/           LocalFileStorage.ts
+│   └── storage/           LocalFileStorage.ts (catalog reads + admin uploads)
 └── http/
     ├── server.ts          Fastify factory + error handler
     ├── errors/            problemDetails.ts (RFC 7807)
@@ -71,6 +71,11 @@ Integration tests: `apps/api/tests/integration/routes/` (`app.inject()` — no r
 | `products` | Product aggregate + locale-specific `search_vector_en` / `search_vector_pt` |
 | `order_captures` | Analytics persistence |
 | `domain_events` | Event log |
+| `admin_users` | Admin credentials (argon2id hash) |
+| `admin_sessions` | Server-side session store |
+| `audit_logs` | Admin mutation audit trail |
+
+Admin write repositories (Phase 10): `DrizzleAdminUserRepository`, `DrizzleAdminSessionRepository`, `DrizzleAuditLogRepository`; catalog admin CRUD on existing product/category repos. Contract: [../api/admin-contract.md](../api/admin-contract.md).
 
 Full Drizzle schema: see spec in phase 2 — `apps/api/src/infrastructure/db/schema.ts`
 

@@ -21,6 +21,12 @@ export async function truncateCatalogTables(pool: pg.Pool): Promise<void> {
   );
 }
 
+export async function truncateAdminTables(pool: pg.Pool): Promise<void> {
+  await pool.query(
+    "TRUNCATE TABLE audit_logs, admin_sessions, admin_users RESTART IDENTITY CASCADE",
+  );
+}
+
 export async function withTestDb<T>(
   fn: (db: Database, pool: pg.Pool) => Promise<T>,
 ): Promise<T> {

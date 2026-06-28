@@ -9,6 +9,9 @@ const requiredTables = [
   "products",
   "order_captures",
   "domain_events",
+  "admin_users",
+  "admin_sessions",
+  "audit_logs",
 ];
 
 describe("database schema (integration)", () => {

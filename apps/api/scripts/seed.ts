@@ -1,4 +1,5 @@
 import { seedCatalog } from "./seedCatalog.js";
+import { seedAdminUser } from "./seedAdmin.js";
 
 const connectionString =
   process.env.DATABASE_URL ?? process.env.TEST_DATABASE_URL ?? "";
@@ -9,4 +10,5 @@ if (connectionString.length === 0) {
 }
 
 await seedCatalog(connectionString);
+await seedAdminUser(connectionString);
 console.log("Seed completed successfully.");

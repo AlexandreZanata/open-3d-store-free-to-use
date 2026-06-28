@@ -10,10 +10,38 @@
       "breakpoints": true
     },
     {
+      "idx": 1,
+      "version": "7",
+      "when": 1782650300000,
+      "tag": "0002_add_search_vector",
+      "breakpoints": true
+    },
+    {
       "idx": 2,
       "version": "7",
       "when": 1782650400000,
       "tag": "0003_i18n_translations",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1782681000000,
+      "tag": "0004_admin_users",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1782681001000,
+      "tag": "0005_admin_sessions",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1782681002000,
+      "tag": "0006_audit_logs",
       "breakpoints": true
     }
   ]

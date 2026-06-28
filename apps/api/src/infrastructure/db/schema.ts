@@ -139,3 +139,12 @@ export const productsRelations = relations(products, ({ one }) => ({
     references: [categories.id],
   }),
 }));
+
+export {
+  adminRoleEnum,
+  adminUsers,
+  adminSessions,
+  auditLogs,
+  adminUsersRelations,
+  adminSessionsRelations,
+} from "./schema.admin.js";

@@ -1,4 +1,10 @@
-import type { MaterialType, PrintStatus, Product } from "@print3d/shared-types";
+import type {
+  AdminProductListItem,
+  CreateProductPayload,
+  Product,
+  UpdateProductPayload,
+} from "@print3d/shared-types";
+import type { MaterialType, PrintStatus } from "@print3d/shared-types";
 
 import type { SupportedLocale } from "../value-objects/Locale.js";
 
@@ -25,6 +31,17 @@ export type ProductFilters = {
   maxPrice?: number | undefined;
 };
 
+export type AdminProductFilters = {
+  status?: PrintStatus | undefined;
+  category?: string | undefined;
+  q?: string | undefined;
+};
+
+export type OrderDateRange = {
+  from?: Date | undefined;
+  to?: Date | undefined;
+};
+
 export interface IProductRepository {
   findBySlug(slug: string, locale: SupportedLocale): Promise<Product | null>;
   findById(id: string, locale: SupportedLocale): Promise<Product | null>;
@@ -39,4 +56,14 @@ export interface IProductRepository {
     locale: SupportedLocale,
   ): Promise<PaginatedResult<Product>>;
   findByIds(ids: string[], locale: SupportedLocale): Promise<Product[]>;
+  create(input: CreateProductPayload): Promise<AdminProductListItem>;
+  update(id: string, input: UpdateProductPayload): Promise<AdminProductListItem>;
+  delete(id: string): Promise<void>;
+  findManyAdmin(
+    filters: AdminProductFilters,
+    pagination: PaginationParams,
+  ): Promise<PaginatedResult<AdminProductListItem>>;
+  findByIdAdmin(id: string): Promise<AdminProductListItem | null>;
+  existsBySlug(slug: string, excludeId?: string): Promise<boolean>;
+  countOrderReferences(productId: string): Promise<number>;
 }

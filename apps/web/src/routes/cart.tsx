@@ -14,6 +14,7 @@ import {
   updateCartQuantity,
   writeCart,
 } from "@/lib/cart";
+import { pagePadding } from "@/lib/layout";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({
@@ -66,11 +67,12 @@ function CartPage() {
 
   return (
     <AppShell showSearch={false} title={t("cart.title")} showBack>
+      <div className="lg:max-w-3xl lg:mx-auto">
       {items.length === 0 ? (
         <Empty />
       ) : (
         <>
-          <ul className="px-4 pt-4 space-y-3">
+          <ul className={`${pagePadding} pt-4 space-y-3 lg:px-0`}>
             {items.map((item) => (
               <li
                 key={item.productId}
@@ -134,7 +136,7 @@ function CartPage() {
             ))}
           </ul>
 
-          <div className="px-4 mt-6 space-y-4">
+          <div className={`${pagePadding} mt-6 space-y-4 lg:px-0`}>
             <input
               value={customerName}
               onChange={(e) => setCustomerName(e.target.value)}
@@ -166,6 +168,7 @@ function CartPage() {
           </div>
         </>
       )}
+      </div>
     </AppShell>
   );
 }

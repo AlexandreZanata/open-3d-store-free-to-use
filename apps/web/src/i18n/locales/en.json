@@ -14,7 +14,8 @@
     "cart": "Cart",
     "back": "Back",
     "backHome": "Back to home",
-    "searchPlaceholder": "Search products"
+    "searchPlaceholder": "Search products",
+    "main": "Main navigation"
   },
   "language": {
     "label": "Language",

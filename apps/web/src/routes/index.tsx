@@ -10,6 +10,7 @@ import { categoriesQueryKey, useCategories } from "@/hooks/useCategories";
 import { productsQueryKey, useProducts } from "@/hooks/useProducts";
 import { fetchCategories } from "@/lib/api/categories";
 import { fetchProducts } from "@/lib/api/products";
+import { categoryPillsTrack, pagePadding } from "@/lib/layout";
 import { getActiveLocale } from "@/lib/locale";
 
 export const Route = createFileRoute("/")({
@@ -40,16 +41,16 @@ function HomePage() {
 
   return (
     <AppShell>
-      <section className="px-4 pt-4 pb-6">
+      <section className={`${pagePadding} pt-4 pb-6`}>
         <Link
           to="/search"
-          className="relative block overflow-hidden rounded-2xl bg-foreground text-background shadow-card lift"
+          className="relative block overflow-hidden rounded-2xl bg-foreground text-background shadow-card lift lg:rounded-3xl"
         >
-          <div className="relative p-6 min-h-[180px] flex flex-col justify-end">
+          <div className="relative p-6 min-h-[180px] lg:min-h-[220px] flex flex-col justify-end lg:justify-center lg:max-w-3xl">
             <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-background/60">
               {t("home.featuredLabel")}
             </span>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-balance max-w-[18ch]">
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-balance max-w-[18ch] lg:text-3xl lg:max-w-xl">
               {t("home.featuredTitle")}
             </h2>
             <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium">
@@ -71,7 +72,7 @@ function HomePage() {
               {t("home.viewAll")}
             </Link>
           </div>
-          <div className="flex gap-2 overflow-x-auto px-4 pb-2 no-scrollbar">
+          <div className={`${categoryPillsTrack}`}>
             {categories.map((category) => (
               <Link
                 key={category.slug}

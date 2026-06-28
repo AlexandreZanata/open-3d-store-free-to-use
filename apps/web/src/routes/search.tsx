@@ -8,10 +8,12 @@ import type { ProductListItem } from "@print3d/shared-types";
 import { AppShell } from "@/components/AppShell";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductGridSkeleton } from "@/components/LoadingSkeletons";
+import { SearchFiltersPanel } from "@/components/SearchFiltersPanel";
 import { productsQueryKey } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
 import { useProducts } from "@/hooks/useProducts";
 import { fetchProducts } from "@/lib/api/products";
+import { desktopOnly, mobileOnly, pagePadding, productGridCols, stickyBelowHeader } from "@/lib/layout";
 import { getActiveLocale } from "@/lib/locale";
 import type { ProductQueryParams } from "@/lib/api/types";
 
@@ -39,6 +41,8 @@ export const Route = createFileRoute("/search")({
 
 type MaterialFilter = ProductQueryParams["material"] | undefined;
 
+const MATERIALS = ["PLA", "PETG", "ABS", "TPU", "RESIN"] as const;
+
 function SearchPage() {
   const { t } = useTranslation();
   const { q: initialQ, category: initialCategory } = Route.useSearch();
@@ -62,123 +66,87 @@ function SearchPage() {
   const categoriesQuery = useCategories();
   const results: ProductListItem[] = productsQuery.data?.data ?? [];
   const categories = categoriesQuery.data ?? [];
-  const materials = ["PLA", "PETG", "ABS", "TPU", "RESIN"] as const;
+
+  const filterProps = {
+    category,
+    material,
+    categories,
+    materials: MATERIALS,
+    onCategoryChange: setCategory,
+    onMaterialChange: setMaterial,
+    t,
+  };
 
   return (
     <AppShell showSearch={false} title={t("search.title")}>
-      <div className="sticky top-14 z-30 bg-background/95 backdrop-blur-md border-b border-hairline">
-        <div className="px-4 py-3 flex items-center gap-2">
-          <div className="flex-1 flex items-center gap-2 bg-muted rounded-full h-10 px-3.5">
-            <SearchIcon className="size-4 text-muted-foreground" />
-            <input
-              autoFocus
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={t("search.placeholder")}
-              className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted-foreground"
-            />
-            {query && (
+      <div className="lg:grid lg:grid-cols-[minmax(0,280px)_1fr] lg:gap-8 lg:px-8">
+        <aside className={`${desktopOnly} pt-6 pr-2`} aria-label={t("search.filters")}>
+          <h2 className="text-sm font-semibold tracking-tight mb-4">{t("search.filters")}</h2>
+          <SearchFiltersPanel {...filterProps} />
+        </aside>
+
+        <div>
+          <div
+            className={`sticky ${stickyBelowHeader} z-30 bg-background/95 backdrop-blur-md border-b border-hairline`}
+          >
+            <div className={`${pagePadding} py-3 flex items-center gap-2`}>
+              <div className="flex-1 flex items-center gap-2 bg-muted rounded-full h-10 px-3.5 lg:max-w-2xl">
+                <SearchIcon className="size-4 text-muted-foreground" />
+                <input
+                  autoFocus
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={t("search.placeholder")}
+                  className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted-foreground"
+                />
+                {query && (
+                  <button
+                    onClick={() => setQuery("")}
+                    aria-label={t("search.clear")}
+                    className="text-muted-foreground"
+                  >
+                    <X className="size-4" />
+                  </button>
+                )}
+              </div>
               <button
-                onClick={() => setQuery("")}
-                aria-label={t("search.clear")}
-                className="text-muted-foreground"
+                onClick={() => setOpenFilters((v) => !v)}
+                className={`${mobileOnly} size-10 grid place-items-center rounded-full ring-1 ring-hairline press ${
+                  openFilters ? "bg-foreground text-background" : "bg-surface"
+                }`}
+                aria-label={t("search.filters")}
               >
-                <X className="size-4" />
+                <SlidersHorizontal className="size-4" />
               </button>
+            </div>
+
+            {openFilters && (
+              <div
+                className={`${mobileOnly} ${pagePadding} pb-4 space-y-4 animate-in fade-in slide-in-from-top-2 duration-200`}
+              >
+                <SearchFiltersPanel {...filterProps} />
+              </div>
             )}
           </div>
-          <button
-            onClick={() => setOpenFilters((v) => !v)}
-            className={`size-10 grid place-items-center rounded-full ring-1 ring-hairline press ${
-              openFilters ? "bg-foreground text-background" : "bg-surface"
-            }`}
-            aria-label={t("search.filters")}
-          >
-            <SlidersHorizontal className="size-4" />
-          </button>
-        </div>
 
-        {openFilters && (
-          <div className="px-4 pb-4 space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
-            <FilterGroup label={t("search.filterCategory")}>
-              <Chip active={category === null} onClick={() => setCategory(null)}>
-                {t("search.filterAll")}
-              </Chip>
-              {categories.map((item) => (
-                <Chip
-                  key={item.slug}
-                  active={category === item.slug}
-                  onClick={() => setCategory(item.slug)}
-                >
-                  {item.name}
-                </Chip>
-              ))}
-            </FilterGroup>
-
-            <FilterGroup label={t("search.filterMaterial")}>
-              <Chip active={!material} onClick={() => setMaterial(undefined)}>
-                {t("search.filterAll")}
-              </Chip>
-              {materials.map((item) => (
-                <Chip key={item} active={material === item} onClick={() => setMaterial(item)}>
-                  {t(`material.${item}`)}
-                </Chip>
-              ))}
-            </FilterGroup>
+          <div className={`${pagePadding} py-4 text-xs text-muted-foreground uppercase tracking-wider`}>
+            {t("search.results", { count: results.length })}
           </div>
-        )}
-      </div>
 
-      <div className="px-4 py-4 text-xs text-muted-foreground uppercase tracking-wider">
-        {t("search.results", { count: results.length })}
-      </div>
-
-      {productsQuery.isLoading ? (
-        <ProductGridSkeleton count={6} />
-      ) : results.length === 0 ? (
-        <EmptyResults />
-      ) : (
-        <div className="px-4 grid grid-cols-2 gap-3">
-          {results.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+          {productsQuery.isLoading ? (
+            <ProductGridSkeleton count={8} />
+          ) : results.length === 0 ? (
+            <EmptyResults />
+          ) : (
+            <div className={`${pagePadding} ${productGridCols}`}>
+              {results.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
         </div>
-      )}
-    </AppShell>
-  );
-}
-
-function Chip({
-  active,
-  onClick,
-  children,
-}: {
-  active?: boolean;
-  onClick?: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`shrink-0 h-9 px-3.5 rounded-full text-xs font-medium press ring-1 ${
-        active
-          ? "bg-foreground text-background ring-foreground"
-          : "bg-surface text-muted-foreground ring-hairline hover:text-foreground"
-      }`}
-    >
-      {children}
-    </button>
-  );
-}
-
-function FilterGroup({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-2">
-        {label}
       </div>
-      <div className="flex flex-wrap gap-2">{children}</div>
-    </div>
+    </AppShell>
   );
 }
 

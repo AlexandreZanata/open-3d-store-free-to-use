@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import type { ProductListItem } from "@print3d/shared-types";
 
 import { resolveAssetUrl } from "@/lib/assets";
+import { productCardWideWidth } from "@/lib/layout";
 
 export function ProductCard({
   product,
@@ -15,7 +16,7 @@ export function ProductCard({
 }) {
   const { t } = useTranslation();
   const [fav, setFav] = useState(false);
-  const width = variant === "wide" ? "w-[78vw] max-w-[300px]" : "w-full";
+  const width = variant === "wide" ? productCardWideWidth : "w-full";
   const imageUrl = resolveAssetUrl(product.thumbnailUrl);
 
   return (

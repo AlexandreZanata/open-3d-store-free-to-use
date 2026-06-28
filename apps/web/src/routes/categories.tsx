@@ -8,6 +8,7 @@ import { useCategories } from "@/hooks/useCategories";
 import { useProducts } from "@/hooks/useProducts";
 import { fetchCategories } from "@/lib/api/categories";
 import { fetchProducts } from "@/lib/api/products";
+import { categoryGridCols, pagePadding } from "@/lib/layout";
 import { getActiveLocale } from "@/lib/locale";
 
 export const Route = createFileRoute("/categories")({
@@ -39,13 +40,13 @@ function CategoriesPage() {
   return (
     <AppShell showSearch={false} title={t("categories.title")}>
       {categoriesQuery.isLoading ? (
-        <div className="px-4 py-4 grid grid-cols-2 gap-3">
+        <div className={`${pagePadding} py-4 ${categoryGridCols}`}>
           {Array.from({ length: 4 }).map((_, index) => (
             <div key={index} className="aspect-[5/4] rounded-2xl bg-muted animate-pulse" />
           ))}
         </div>
       ) : (
-        <div className="px-4 py-4 grid grid-cols-2 gap-3">
+        <div className={`${pagePadding} py-4 ${categoryGridCols}`}>
           {categories.map((category) => {
             const count = products.filter((product) => product.categoryId === category.id).length;
             return (

@@ -13,6 +13,7 @@ import { ApiError } from "@/lib/api/client";
 import { fetchProductBySlug } from "@/lib/api/products";
 import { resolveAssetUrl } from "@/lib/assets";
 import { addToCart } from "@/lib/cart";
+import { mobileOnly, pagePadding, railTrack, shellMaxWidth } from "@/lib/layout";
 import { getActiveLocale } from "@/lib/locale";
 import type { ProductDetail } from "@print3d/shared-types";
 
@@ -112,88 +113,131 @@ function ProductPage() {
 
   return (
     <AppShell showBack showSearch={false} title={product.name}>
-      <section className="px-4 pt-4">
-        {tab === "viewer" && modelUrl ? (
-          <section aria-label={t("product.viewerLabel")}>
-            <ModelViewer modelUrl={modelUrl} posterUrl={posterUrl} productName={product.name} />
+      <div className="lg:grid lg:grid-cols-2 lg:gap-10 lg:items-start lg:px-8">
+        <section className={`${pagePadding} pt-4 lg:px-0 lg:pt-6`}>
+          {tab === "viewer" && modelUrl ? (
+            <section aria-label={t("product.viewerLabel")}>
+              <ModelViewer modelUrl={modelUrl} posterUrl={posterUrl} productName={product.name} />
+            </section>
+          ) : (
+            <div className="relative aspect-square rounded-2xl overflow-hidden bg-muted ring-1 ring-hairline">
+              {posterUrl ? (
+                <img
+                  src={posterUrl}
+                  alt={product.name}
+                  width={800}
+                  height={1000}
+                  className="absolute inset-0 size-full object-cover"
+                />
+              ) : null}
+            </div>
+          )}
+
+          <div className="mt-3 flex gap-2">
+            {modelUrl && (
+              <Tab active={tab === "viewer"} onClick={() => setTab("viewer")}>
+                <Box className="size-3.5" /> {t("product.tabModel")}
+              </Tab>
+            )}
+            {product.imageUrls.length > 0 && (
+              <Tab active={tab === "gallery"} onClick={() => setTab("gallery")}>
+                {t("product.galleryCount", { count: product.imageUrls.length })}
+              </Tab>
+            )}
+          </div>
+        </section>
+
+        <div className="lg:sticky lg:top-20">
+          <section className={`${pagePadding} mt-6 lg:mt-0 lg:px-0`}>
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h1 className="text-xl font-semibold tracking-tight text-balance lg:text-2xl">
+                  {product.name}
+                </h1>
+                <p className="mt-2 text-sm text-muted-foreground">{product.shortDescription}</p>
+              </div>
+              <div className="text-right shrink-0">
+                <div className="text-xl font-semibold lg:text-2xl">{product.basePriceDisplay}</div>
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  {t(`material.${product.material}`)}
+                </div>
+              </div>
+            </div>
+
+            <p className="mt-4 text-sm text-foreground/80 leading-relaxed lg:text-base">
+              {product.description}
+            </p>
+
+            <div className="mt-4 flex flex-wrap gap-1.5">
+              {product.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="px-2.5 h-7 inline-flex items-center rounded-full bg-muted text-[11px] text-muted-foreground"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
           </section>
-        ) : (
-          <div className="relative aspect-square rounded-2xl overflow-hidden bg-muted ring-1 ring-hairline">
-            {posterUrl ? (
-              <img
-                src={posterUrl}
-                alt={product.name}
-                width={800}
-                height={1000}
-                className="absolute inset-0 size-full object-cover"
+
+          <section className={`${pagePadding} mt-6 lg:px-0`}>
+            <div className="bg-surface ring-1 ring-hairline rounded-2xl divide-y divide-hairline shadow-soft overflow-hidden">
+              <Spec label={t("product.material")} value={t(`material.${product.material}`)} />
+              <Spec
+                label={t("product.printTime")}
+                value={t("product.printTimeHours", { hours: product.printTimeHours })}
               />
-            ) : null}
-          </div>
-        )}
+              <Spec
+                label={t("product.weight")}
+                value={t("product.weightGrams", { grams: product.weightGrams })}
+              />
+              <Spec label={t("product.status")} value={t(`status.${product.status}`)} />
+            </div>
+          </section>
 
-        <div className="mt-3 flex gap-2">
-          {modelUrl && (
-            <Tab active={tab === "viewer"} onClick={() => setTab("viewer")}>
-              <Box className="size-3.5" /> {t("product.tabModel")}
-            </Tab>
-          )}
-          {product.imageUrls.length > 0 && (
-            <Tab active={tab === "gallery"} onClick={() => setTab("gallery")}>
-              {t("product.galleryCount", { count: product.imageUrls.length })}
-            </Tab>
-          )}
-        </div>
-      </section>
-
-      <section className="px-4 mt-6">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h1 className="text-xl font-semibold tracking-tight text-balance">{product.name}</h1>
-            <p className="mt-2 text-sm text-muted-foreground">{product.shortDescription}</p>
-          </div>
-          <div className="text-right shrink-0">
-            <div className="text-xl font-semibold">{product.basePriceDisplay}</div>
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-              {t(`material.${product.material}`)}
+          <div className="fixed bottom-16 inset-x-0 z-30 border-t border-hairline bg-background/95 backdrop-blur-xl lg:static lg:mt-8 lg:border-t-0 lg:bg-transparent lg:backdrop-blur-none">
+            <div className={`${shellMaxWidth} ${pagePadding} py-3 flex items-center gap-2 lg:px-0`}>
+              <button
+                onClick={() => setFav((v) => !v)}
+                aria-label={t("product.favorite")}
+                className="size-11 grid place-items-center rounded-full ring-1 ring-hairline bg-surface press"
+              >
+                <Heart
+                  className={`size-5 transition-colors ${fav ? "fill-accent text-accent" : ""}`}
+                />
+              </button>
+              <button
+                aria-label={t("product.share")}
+                className="size-11 grid place-items-center rounded-full ring-1 ring-hairline bg-surface press"
+              >
+                <Share2 className="size-5" />
+              </button>
+              <button
+                onClick={handleAddToCart}
+                className="flex-1 h-11 rounded-full border border-hairline bg-surface inline-flex items-center justify-center gap-2 text-sm font-semibold press"
+              >
+                <ShoppingBag className="size-4" />
+                {t("product.addToCart")}
+              </button>
+              <Link
+                to="/cart"
+                className="flex-1 h-11 rounded-full bg-foreground text-background inline-flex items-center justify-center gap-2 text-sm font-semibold press hover:bg-foreground/90"
+              >
+                {t("product.orderWhatsApp")}
+              </Link>
             </div>
           </div>
         </div>
-
-        <p className="mt-4 text-sm text-foreground/80 leading-relaxed">{product.description}</p>
-
-        <div className="mt-4 flex flex-wrap gap-1.5">
-          {product.tags.map((tag) => (
-            <span
-              key={tag}
-              className="px-2.5 h-7 inline-flex items-center rounded-full bg-muted text-[11px] text-muted-foreground"
-            >
-              #{tag}
-            </span>
-          ))}
-        </div>
-      </section>
-
-      <section className="px-4 mt-6">
-        <div className="bg-surface ring-1 ring-hairline rounded-2xl divide-y divide-hairline shadow-soft overflow-hidden">
-          <Spec label={t("product.material")} value={t(`material.${product.material}`)} />
-          <Spec
-            label={t("product.printTime")}
-            value={t("product.printTimeHours", { hours: product.printTimeHours })}
-          />
-          <Spec
-            label={t("product.weight")}
-            value={t("product.weightGrams", { grams: product.weightGrams })}
-          />
-          <Spec label={t("product.status")} value={t(`status.${product.status}`)} />
-        </div>
-      </section>
+      </div>
 
       {related.length > 0 && (
-        <section className="mt-10">
-          <div className="px-4 mb-3">
-            <h2 className="text-base font-semibold tracking-tight">{t("product.related")}</h2>
+        <section className="mt-10 lg:px-8">
+          <div className={`${pagePadding} lg:px-0 mb-3`}>
+            <h2 className="text-base font-semibold tracking-tight lg:text-lg">
+              {t("product.related")}
+            </h2>
           </div>
-          <div className="flex gap-3 overflow-x-auto px-4 pb-2 no-scrollbar snap-x">
+          <div className={railTrack}>
             {relatedQuery.isLoading
               ? Array.from({ length: 2 }).map((_, index) => (
                   <div key={index} className="snap-start">
@@ -209,38 +253,9 @@ function ProductPage() {
         </section>
       )}
 
-      <div className="fixed bottom-16 inset-x-0 z-30 border-t border-hairline bg-background/95 backdrop-blur-xl">
-        <div className="mx-auto max-w-2xl px-4 py-3 flex items-center gap-2">
-          <button
-            onClick={() => setFav((v) => !v)}
-            aria-label={t("product.favorite")}
-            className="size-11 grid place-items-center rounded-full ring-1 ring-hairline bg-surface press"
-          >
-            <Heart className={`size-5 transition-colors ${fav ? "fill-accent text-accent" : ""}`} />
-          </button>
-          <button
-            aria-label={t("product.share")}
-            className="size-11 grid place-items-center rounded-full ring-1 ring-hairline bg-surface press"
-          >
-            <Share2 className="size-5" />
-          </button>
-          <button
-            onClick={handleAddToCart}
-            className="flex-1 h-11 rounded-full border border-hairline bg-surface inline-flex items-center justify-center gap-2 text-sm font-semibold press"
-          >
-            <ShoppingBag className="size-4" />
-            {t("product.addToCart")}
-          </button>
-          <Link
-            to="/cart"
-            className="flex-1 h-11 rounded-full bg-foreground text-background inline-flex items-center justify-center gap-2 text-sm font-semibold press hover:bg-foreground/90"
-          >
-            {t("product.orderWhatsApp")}
-          </Link>
-        </div>
+      <div className={mobileOnly}>
+        <div className="h-14" />
       </div>
-
-      <div className="h-14" />
     </AppShell>
   );
 }

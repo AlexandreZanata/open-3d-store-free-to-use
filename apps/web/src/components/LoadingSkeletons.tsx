@@ -1,7 +1,8 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { productCardWideWidth, productGridCols } from "@/lib/layout";
 
 export function ProductCardSkeleton({ variant = "default" }: { variant?: "default" | "wide" }) {
-  const width = variant === "wide" ? "w-[78vw] max-w-[300px]" : "w-full";
+  const width = variant === "wide" ? productCardWideWidth : "w-full";
   return (
     <div className={`${width} shrink-0`}>
       <div className="rounded-2xl overflow-hidden ring-1 ring-hairline">
@@ -17,7 +18,7 @@ export function ProductCardSkeleton({ variant = "default" }: { variant?: "defaul
 
 export function ProductGridSkeleton({ count = 4 }: { count?: number }) {
   return (
-    <div className="px-4 grid grid-cols-2 gap-3">
+    <div className={`px-4 lg:px-8 ${productGridCols}`}>
       {Array.from({ length: count }).map((_, index) => (
         <ProductCardSkeleton key={index} />
       ))}

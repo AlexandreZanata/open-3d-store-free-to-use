@@ -33,7 +33,7 @@ Full policy: [contract-first-testing.md](contract-first-testing.md)
 | `@print3d/whatsapp` | `packages/whatsapp/tests/` | — | — |
 | `@print3d/cep` | `packages/cep/tests/` | — | — |
 | `apps/api` | `apps/api/tests/unit/` | `apps/api/tests/integration/` | — |
-| `apps/web` | `apps/web/tests/` (i18n parity) | — | `e2e/` (Playwright) |
+| `apps/web` | `apps/web/tests/` (i18n parity, layout tokens) | — | `e2e/` (Playwright) |
 
 ## Vitest — `apps/api/vitest.config.ts`
 
@@ -89,6 +89,7 @@ source apps/api/.env && PLAYWRIGHT_API_PORT=3010 pnpm e2e
 | `product-detail.spec.ts` | Product page loads model container | `docs/features/3d-viewer.md` |
 | `order-whatsapp.spec.ts` | Cart → capture → `wa.me` redirect | `docs/features/whatsapp-flow.md` |
 | `i18n-locale.spec.ts` | Switch EN ↔ PT; visible copy changes | `docs/features/i18n.md` |
+| `desktop-layout.spec.ts` | Desktop header nav, search sidebar, grid layout | `docs/features/responsive-layout.md` |
 
 E2E tests use **documented** URLs, status codes, and visible text — not implementation selectors copied from components.
 

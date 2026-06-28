@@ -14,7 +14,8 @@
     "cart": "Carrinho",
     "back": "Voltar",
     "backHome": "Voltar ao início",
-    "searchPlaceholder": "Buscar produtos"
+    "searchPlaceholder": "Buscar produtos",
+    "main": "Navegação principal"
   },
   "language": {
     "label": "Idioma",

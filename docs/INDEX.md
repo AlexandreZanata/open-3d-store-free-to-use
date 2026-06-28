@@ -45,6 +45,7 @@
 | [features/whatsapp-flow.md](features/whatsapp-flow.md) | Order capture and deep-link generation |
 | [features/cep-lookup.md](features/cep-lookup.md) | CEP validate + IBGE offline lookup |
 | [features/i18n.md](features/i18n.md) | Bilingual UI/API (`en` + `pt-BR`) |
+| [features/responsive-layout.md](features/responsive-layout.md) | Mobile-first UI + desktop (`lg+`) layout |
 
 ### Infrastructure & operations
 

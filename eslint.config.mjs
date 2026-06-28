@@ -36,6 +36,7 @@ const testFiles = [
   "**/tests/**/*.ts",
   "apps/web/tests/**/*.ts",
   "apps/web/scripts/**/*.ts",
+  "apps/admin/tests/**/*.ts",
 ];
 
 const e2eFiles = ["e2e/**/*.ts", "playwright.config.ts"];
@@ -100,7 +101,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ["apps/web/src/**/*.{ts,tsx}"],
+    files: ["apps/web/src/**/*.{ts,tsx}", "apps/admin/src/**/*.{ts,tsx}"],
     languageOptions: {
       globals: globals.browser,
     },

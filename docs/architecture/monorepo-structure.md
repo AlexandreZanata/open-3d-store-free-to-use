@@ -10,6 +10,9 @@ open-3d-store-free-to-use/          # repo root (rename from print3d-shop in ori
 │   │   │   └── i18n/locales/       # en.json, pt-BR.json
 │   │   ├── public/
 │   │   └── package.json
+│   ├── admin/                      # Admin SPA (React 19, TanStack Router)
+│   │   ├── src/
+│   │   └── package.json
 │   └── api/                        # Fastify backend
 │       ├── src/
 │       │   └── i18n/messages/      # API error strings (en, pt-BR)
@@ -40,6 +43,7 @@ open-3d-store-free-to-use/          # repo root (rename from print3d-shop in ori
 
 ```
 apps/web/               # @print3d/web — TanStack Start + i18next (en, pt-BR)
+apps/admin/             # @print3d/admin — Admin SPA (TanStack Router, port 5174)
 apps/api/               # @print3d/api — Drizzle schema, migrations (Phase 2+)
 packages/shared-types/  # @print3d/shared-types — domain DTOs
 packages/whatsapp/      # @print3d/whatsapp — wa.me link builder

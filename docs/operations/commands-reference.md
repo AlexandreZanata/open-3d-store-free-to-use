@@ -5,7 +5,9 @@
 ```bash
 docker compose -f infra/docker-compose.dev.yml up -d   # Postgres 18.4 + Redis 8.8
 pnpm dev                                                 # All apps (Turborepo watch)
+pnpm dev:admin                                           # Admin panel only (port 5174)
 pnpm --filter web dev                                    # Frontend only
+pnpm --filter @print3d/admin dev                         # Admin panel (alias)
 pnpm --filter @print3d/api dev                    # API + Swagger UI at /docs
 curl http://127.0.0.1:3001/api/v1/health               # Smoke: { "status": "ok", ... }
 ```
@@ -25,6 +27,17 @@ curl -b /tmp/admin-cookie.txt http://127.0.0.1:3001/api/v1/admin/auth/me
 
 # List products (all statuses)
 curl -b /tmp/admin-cookie.txt 'http://127.0.0.1:3001/api/v1/admin/products?page=1&limit=20'
+```
+
+### Admin panel dev (Phase 13)
+
+Admin SPA runs on **port 5174** — must match `ADMIN_ORIGIN` in `apps/api/.env`.
+
+```bash
+cp apps/admin/.env.example apps/admin/.env
+pnpm dev:admin
+# Open http://localhost:5174/login
+# Credentials: ADMIN_BOOTSTRAP_EMAIL / ADMIN_BOOTSTRAP_PASSWORD (default admin@localhost)
 ```
 
 ## Database
@@ -54,8 +67,10 @@ pnpm e2e:ui                            # Playwright UI mode (local debug)
 
 ```bash
 pnpm build                         # Turborepo — all packages
+pnpm build:admin                   # Admin SPA production build
 pnpm --filter api build            # API dist only
 pnpm --filter web build            # Frontend production build
+pnpm --filter @print3d/admin build # Admin SPA dist only
 ```
 
 ## Lint & format

@@ -83,6 +83,15 @@ Target: `apps/api/src/domain/value-objects/Price.ts`
 
 Target: `apps/api/src/domain/value-objects/Slug.ts`
 
+### Locale
+
+- Supported values: `en`, `pt-BR` only
+- `parse(input)` normalizes `pt` → `pt-BR`; rejects unsupported codes (e.g. `es`)
+- Missing input defaults to `pt-BR` (API contract)
+- `getFallbackChain()` → requested locale, then `en`, then `pt-BR` (deduplicated)
+
+Target: `apps/api/src/domain/value-objects/Locale.ts`
+
 ## Domain events
 
 Stored in `domain_events` table (direct INSERT — no event bus).

@@ -20,7 +20,8 @@ Infrastructure Layer (Drizzle, Redis, file storage)
 src/
 ├── domain/
 │   ├── entities/          Product.ts, Category.ts
-│   ├── value-objects/     Price.ts, Slug.ts
+│   ├── value-objects/     Price.ts, Slug.ts, Locale.ts
+│   ├── errors/            DomainError.ts
 │   ├── repositories/      IProductRepository.ts, ICategoryRepository.ts, IOrderCaptureRepository.ts
 │   └── events/            DomainEvent.ts
 ├── application/

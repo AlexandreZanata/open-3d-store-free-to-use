@@ -10,6 +10,8 @@ const envSchema = z.object({
   CORS_ORIGIN: z.string().url(),
   MODEL_FILES_BASE_PATH: z.string().min(1),
   MODEL_FILES_BASE_URL: z.string().url(),
+  ADMIN_SESSION_TTL: z.coerce.number().int().positive().default(28_800),
+  UPLOAD_MAX_BYTES: z.coerce.number().int().positive().default(5_242_880),
 });
 
 export type AppConfig = z.infer<typeof envSchema>;

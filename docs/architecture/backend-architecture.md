@@ -20,6 +20,8 @@ Infrastructure Layer (Drizzle, Redis, file storage)
 src/
 ├── config.ts              Zod env validation (crash on invalid)
 ├── container.ts           DI wiring: repos → cache → use cases
+├── container/
+│   └── adminUseCases.ts   Admin use case factory (Phase 11)
 ├── main.ts                Entry point (listen 127.0.0.1:PORT)
 ├── i18n/
 │   ├── resolve-locale.ts  Accept-Language / ?locale= → SupportedLocale
@@ -29,17 +31,20 @@ src/
 │   ├── value-objects/     Price.ts, Slug.ts, Locale.ts
 │   ├── errors/            DomainError.ts
 │   ├── repositories/      IProductRepository.ts, ICategoryRepository.ts, IOrderCaptureRepository.ts, IAdminUserRepository.ts, IAdminSessionRepository.ts, IAuditLogRepository.ts
-│   └── events/            DomainEvent.ts
+│   └── services/          ProductStatusMachine.ts
 ├── application/
-│   ├── use-cases/         GetProductBySlug, ListProducts, SearchProducts, GetCategories, CaptureOrder
-│   ├── dtos/              ProductResponseDto, CaptureOrderDto
-│   ├── ports/             ICacheService.ts, IEventPublisher.ts
+│   ├── use-cases/         GetProductBySlug, ListProducts, SearchProducts, GetCategories, CaptureOrder, admin/*
+│   ├── dtos/              ProductResponseDto, CaptureOrderDto, Admin*Dto
+│   ├── ports/             ICacheService.ts, IEventPublisher.ts, IPasswordHasher.ts, IAssetStorage.ts
+│   ├── services/          AuditLogger.ts, CatalogCacheInvalidator.ts, sessionToken.ts
+│   ├── validation/        adminCatalogValidation.ts
 │   ├── cache/             cacheKeys.ts (TTL + locale-aware keys)
 │   └── errors/            ApplicationErrors.ts
 ├── infrastructure/
 │   ├── db/                schema.ts, client.ts, migrations/
 │   ├── repositories/      Drizzle*Repository.ts, mappers/, product*Persistence.ts
 │   ├── cache/             CacheService.ts, redis.ts (implements application ports)
+│   ├── auth/              Argon2PasswordHasher.ts
 │   └── storage/           LocalFileStorage.ts (catalog reads + admin uploads)
 └── http/
     ├── server.ts          Fastify factory + error handler
@@ -77,6 +82,8 @@ Integration tests: `apps/api/tests/integration/routes/` (`app.inject()` — no r
 
 Admin write repositories (Phase 10): `DrizzleAdminUserRepository`, `DrizzleAdminSessionRepository`, `DrizzleAuditLogRepository`; catalog admin CRUD on existing product/category repos. Contract: [../api/admin-contract.md](../api/admin-contract.md).
 
+Admin use cases (Phase 11, wired on `container.admin`): `LoginAdmin`, `LogoutAdmin`, `GetCurrentAdmin`, product/category CRUD, `ListOrderCaptures`, `GetOrderCapture`, `UploadAsset`. Mutations call `AuditLogger`; catalog writes invalidate Redis via `CatalogCacheInvalidator` (`deleteByPrefix` on product/search keys + category key per locale). HTTP routes in Phase 12.
+
 Full Drizzle schema: see spec in phase 2 — `apps/api/src/infrastructure/db/schema.ts`
 
 ## Full-text search
@@ -105,6 +112,7 @@ Migration: `apps/api/src/infrastructure/db/migrations/0003_i18n_search_vectors.s
 | `SearchProducts` | 60s | Phase 5 |
 | `GetCategories` | 300s | Phase 5 |
 | `CaptureOrder` | none (write) | [../features/whatsapp-flow.md](../features/whatsapp-flow.md) |
+| Admin catalog/auth | invalidate on write | Phase 11 — [../api/admin-contract.md](../api/admin-contract.md) |
 
 ## Repository interfaces
 
@@ -114,7 +122,7 @@ Migration: `apps/api/src/infrastructure/db/migrations/0003_i18n_search_vectors.s
 
 `IOrderCaptureRepository`: `save(orderCapture, totalCents)`.
 
-`ICacheService`: `get`, `set`, `del`, `flush` — port in `application/ports/`; Redis via `CacheService`.
+`ICacheService`: `get`, `set`, `del`, `deleteByPrefix`, `flush` — port in `application/ports/`; Redis via `CacheService`.
 
 Pagination: `{ page, limit }` — max limit 50, 1-indexed pages.
 

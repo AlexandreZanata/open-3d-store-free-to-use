@@ -63,6 +63,13 @@ export function createMockCache(
     del: vi.fn(async (key) => {
       store.delete(key);
     }),
+    deleteByPrefix: vi.fn(async (prefix) => {
+      for (const key of [...store.keys()]) {
+        if (key.startsWith(prefix)) {
+          store.delete(key);
+        }
+      }
+    }),
     flush: vi.fn(async () => {
       store.clear();
     }),
@@ -78,6 +85,13 @@ export function createMockProductRepository(
     findMany: vi.fn(),
     search: vi.fn(),
     findByIds: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+    findManyAdmin: vi.fn(),
+    findByIdAdmin: vi.fn(),
+    existsBySlug: vi.fn(),
+    countOrderReferences: vi.fn(),
     ...overrides,
   };
 }

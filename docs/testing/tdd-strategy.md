@@ -36,7 +36,7 @@ Harness: `agent-rules/04-testing/test-pyramid.md`, `agent-rules/04-testing/cover
 
 | Phase | Tests |
 |-------|-------|
-| 1 | WhatsApp link builder (6 tests) |
+| 1 | WhatsApp link builder (7 tests) — **done** |
 | 3 | Price, Slug value objects |
 | 4 | Repository integration (Postgres) |
 | 5 | Use cases with mocked repos |

@@ -78,7 +78,7 @@
 |------|---------------------|---------------|
 | Frontend | `apps/web/` — TanStack Start + React 19 | Same (Phase 0 complete) |
 | Backend | Stub `@print3d/api` package | Fastify + Drizzle implementation |
-| Packages | Stub `@print3d/shared-types`, `@print3d/whatsapp` | Full shared packages (Phase 1) |
+| Packages | `@print3d/shared-types`, `@print3d/whatsapp` (Phase 1 complete) | Used by API and web |
 | Infra | Stub `infra/` placeholders | Docker, Nginx, PM2 (later phases) |
 
 Phase 0 complete — monorepo scaffold with pnpm workspaces and Turborepo.

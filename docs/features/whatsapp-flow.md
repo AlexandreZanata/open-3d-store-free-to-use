@@ -67,11 +67,11 @@ WHATSAPP_PHONE_NUMBER=5565999999999
 
 Validated at startup — see [../infrastructure/environment.md](../infrastructure/environment.md).
 
-## Tests (required before Phase 1 done)
+## Tests (Phase 1 complete)
 
 **File:** `packages/whatsapp/tests/link-builder.test.ts`
 
-Minimum 6 tests: URL format, encoding, product name, BRL total, customer name present/absent.
+7 tests: URL format, encoding, product name, BRL total, customer name present/absent, template structure.
 
 ## Harness rules
 

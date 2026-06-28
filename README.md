@@ -60,8 +60,8 @@ Full rationale: [docs/stack/technology-decisions.md](docs/stack/technology-decis
 ```
 apps/web/              # @print3d/web — TanStack Start frontend
 apps/api/              # @print3d/api — Fastify backend (Phase 2+)
-packages/shared-types/ # @print3d/shared-types
-packages/whatsapp/     # @print3d/whatsapp
+packages/shared-types/ # @print3d/shared-types — domain DTOs
+packages/whatsapp/     # @print3d/whatsapp — wa.me link builder
 infra/                 # Docker, Nginx, PM2, deploy scripts
 docs/                  # Enterprise documentation (in git)
 .local/phases/         # Execution tasks (gitignored)

@@ -27,7 +27,7 @@
 
 **ProductOption:** `{ id, name, type: select|text|boolean, required, choices?, defaultValue? }`
 
-Target types: `packages/shared-types/src/product.types.ts`
+Target types: `packages/shared-types/src/product.types.ts` (Phase 1)
 
 ### Category (root)
 
@@ -42,7 +42,7 @@ Target types: `packages/shared-types/src/product.types.ts`
 | `sortOrder` | number | |
 | `isActive` | boolean | |
 
-Target types: `packages/shared-types/src/category.types.ts`
+Target types: `packages/shared-types/src/category.types.ts` (Phase 1)
 
 ### OrderCapture (value object — analytics only)
 
@@ -59,7 +59,7 @@ Not a full aggregate. Persisted for analytics; no payment or fulfillment state.
 
 **OrderLineItem:** `{ productId, productName, quantity, selectedOptions, unitPrice }` — price frozen at capture time.
 
-Target types: `packages/shared-types/src/order.types.ts`
+Target types: `packages/shared-types/src/order.types.ts` (Phase 1)
 
 ## Value objects
 

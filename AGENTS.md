@@ -109,7 +109,7 @@ Creates `.cursor/rules/_task-active.mdc` (`alwaysApply: false`). **Delete when d
 3. State which rule files you loaded (brief list).
 4. **ASK** if AGENT-CORE-PRINCIPLES checklist items are blank — never assume business rules.
 5. Smallest diff; one logical change per commit.
-6. Verify after each edit — do not claim tests passed without running them.
+6. **Quality Gate** after each edit — typecheck **and** size/complexity (≤80 lines/function, ≤200 lines/file, cyclomatic ≤10) **and** tests. Do not claim done if only typecheck passed.
 7. English only in all artifacts.
 
 ---

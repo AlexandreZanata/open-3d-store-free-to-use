@@ -10,10 +10,10 @@
       "breakpoints": true
     },
     {
-      "idx": 1,
+      "idx": 2,
       "version": "7",
-      "when": 1782650300000,
-      "tag": "0002_add_search_vector",
+      "when": 1782650400000,
+      "tag": "0003_i18n_translations",
       "breakpoints": true
     }
   ]

@@ -14,13 +14,14 @@
 | **Language (product)** | **100% i18n** — user-facing UI and API messages in **`en`** and **`pt-BR` only** ([features/i18n.md](../features/i18n.md)) |
 | **No `.glb` in git** | Model files uploaded to server; DB stores URL paths only |
 | **Testing** | Contract-first — tests from **docs**, never mirrored from code ([testing/contract-first-testing.md](../testing/contract-first-testing.md)) |
+| **Code quality** | **≤80 lines/function**, **≤200 lines/file**, **cyclomatic ≤10** — mandatory with every typecheck ([operations/code-quality-gates.md](../operations/code-quality-gates.md)) |
 
 ## Harness alignment
 
 | Constraint area | Rule file |
 |-----------------|-----------|
 | Security | `agent-rules/03-security/README.md` |
-| Size limits | `agent-rules/00-core/size-and-complexity-limits.md` |
+| Size / complexity (universal) | `agent-rules/00-core/size-and-complexity-limits.md` |
 | Minimal scope | `.cursor/rules/ponytail.mdc` |
 | i18n (user-facing) | [../features/i18n.md](../features/i18n.md) |
 | Testing | [../testing/contract-first-testing.md](../testing/contract-first-testing.md) |

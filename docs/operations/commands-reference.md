@@ -14,6 +14,7 @@ pnpm --filter api dev                                    # API only
 ```bash
 pnpm --filter api drizzle-kit generate    # New migration SQL
 pnpm --filter api drizzle-kit migrate     # Apply migrations
+pnpm --filter api db:seed                   # Idempotent bilingual seed
 pnpm --filter api drizzle-kit studio      # Drizzle Studio GUI
 ```
 
@@ -45,6 +46,18 @@ pnpm turbo lint
 pnpm --filter web format           # Prettier
 ```
 
+## Quality Gate (mandatory before commit)
+
+Typecheck, size/complexity, and tests are **paired gates** — see [code-quality-gates.md](code-quality-gates.md).
+
+```bash
+pnpm turbo lint                              # Typecheck (tsc --noEmit)
+./agent-harness/verify-size-complexity.sh    # File ≤200 lines
+pnpm turbo test                              # Unit + integration
+```
+
+Caps: **≤80 lines/function**, **≤200 lines/file**, **cyclomatic ≤10** per function (harness universal rule).
+
 ## Production (VPS)
 
 ```bash
@@ -60,10 +73,12 @@ pm2 monit
 ./agent-harness/resolve-rules.sh <keywords>
 ./agent-harness/generate-task-rules.sh <keywords>
 ./agent-harness/generate-task-rules.sh --clean
+./agent-harness/verify-size-complexity.sh   # File line cap (200) — run with typecheck
 ```
 
 ## Related documents
 
 - [../INDEX.md](../INDEX.md)
+- [code-quality-gates.md](code-quality-gates.md)
 - [../testing/contract-first-testing.md](../testing/contract-first-testing.md)
 - `.local/phases/`

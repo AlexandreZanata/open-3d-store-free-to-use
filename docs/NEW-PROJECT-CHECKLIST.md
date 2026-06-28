@@ -32,6 +32,7 @@
 
 - [ ] **Harness installed** — `agent-rules/`, `agent-harness/`, `.cursor/rules/`
 - [ ] **AGENTS.md** — copied or linked for agent session start
+- [ ] **Quality gates configured** — typecheck + size (≤200/file, ≤80/function) + complexity (≤10) — [operations/code-quality-gates.md](operations/code-quality-gates.md)
 - [ ] **Ponytail (static)** — `.cursor/rules/ponytail.mdc` via harness install ([MIT](https://github.com/DietrichGebert/ponytail))
 
 ---

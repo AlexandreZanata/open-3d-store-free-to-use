@@ -64,6 +64,7 @@
 | [testing/contract-first-testing.md](testing/contract-first-testing.md) | Restrictive contract-first test policy |
 | [operations/performance-caching.md](operations/performance-caching.md) | Redis TTLs, DB tuning, rate limits |
 | [operations/ci-cd.md](operations/ci-cd.md) | GitHub Actions workflow |
+| [operations/code-quality-gates.md](operations/code-quality-gates.md) | **Size/complexity caps** — mandatory with typecheck |
 | [operations/commands-reference.md](operations/commands-reference.md) | Dev, test, build, prod commands |
 
 ### Governance
@@ -101,6 +102,7 @@ Resolve before non-trivial work:
 | Topic | Harness path |
 |-------|--------------|
 | Architecture | `agent-rules/AGENT-CORE-PRINCIPLES.md` |
+| Size / complexity | `agent-rules/00-core/size-and-complexity-limits.md` — **always with typecheck** |
 | API design | `agent-rules/10-api-design/contract-first.md` |
 | Security | `agent-rules/03-security/README.md` |
 | Testing | `agent-rules/04-testing/tdd.md` |

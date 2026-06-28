@@ -29,7 +29,9 @@ src/
 │   └── dtos/              ProductResponseDto, CaptureOrderDto
 ├── infrastructure/
 │   ├── db/                schema.ts, client.ts, migrations/
-│   ├── repositories/      Drizzle*Repository.ts
+│   ├── repositories/      Drizzle*Repository.ts, mappers/
+│   ├── cache/             ICacheService.ts, CacheService.ts, redis.ts
+│   └── storage/           LocalFileStorage.ts
 │   ├── cache/             redis.ts, CacheService.ts, ICacheService.ts
 │   └── storage/           LocalFileStorage.ts
 └── http/
@@ -78,7 +80,13 @@ Migration: `apps/api/src/infrastructure/db/migrations/0003_i18n_search_vectors.s
 
 ## Repository interfaces
 
-`IProductRepository`: `findBySlug`, `findById`, `findMany`, `search`, `findByIds`
+`IProductRepository`: `findBySlug`, `findById`, `findMany`, `search`, `findByIds` — all accept `SupportedLocale` for translated catalog fields.
+
+`ICategoryRepository`: `findAllActive`, `findBySlug` — locale-aware.
+
+`IOrderCaptureRepository`: `save(orderCapture, totalCents)`.
+
+`ICacheService`: `get`, `set`, `del`, `flush` — Redis-backed via `CacheService`.
 
 Pagination: `{ page, limit }` — max limit 50, 1-indexed pages.
 

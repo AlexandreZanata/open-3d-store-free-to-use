@@ -84,7 +84,7 @@ E2E tests use **documented** URLs, status codes, and visible text — not implem
 | 1 | WhatsApp unit (14), CEP unit (9) — **done** | Node dist smoke |
 | 2 | Schema integration (3) — **done** | `psql \dt`, uuidv7 |
 | 3 | Price, Slug, Locale unit — **done** | — |
-| 4 | Repository integration + search EN/PT | — |
+| 4 | Repository integration + search EN/PT — **done** | — |
 | 5 | Use case unit (mocked repos) | — |
 | 6 | HTTP route integration (`app.inject`) | `curl` smoke |
 | 7 | i18n key parity; **Playwright E2E** (4 suites) | 3D visual, WhatsApp app |

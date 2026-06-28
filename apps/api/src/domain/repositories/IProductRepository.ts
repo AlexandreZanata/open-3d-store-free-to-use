@@ -1,5 +1,7 @@
 import type { MaterialType, PrintStatus, Product } from "@print3d/shared-types";
 
+import type { SupportedLocale } from "../value-objects/Locale.js";
+
 export type PaginationParams = {
   page: number;
   limit: number;
@@ -24,15 +26,17 @@ export type ProductFilters = {
 };
 
 export interface IProductRepository {
-  findBySlug(slug: string): Promise<Product | null>;
-  findById(id: string): Promise<Product | null>;
+  findBySlug(slug: string, locale: SupportedLocale): Promise<Product | null>;
+  findById(id: string, locale: SupportedLocale): Promise<Product | null>;
   findMany(
     filters: ProductFilters,
     pagination: PaginationParams,
+    locale: SupportedLocale,
   ): Promise<PaginatedResult<Product>>;
   search(
     query: string,
     pagination: PaginationParams,
+    locale: SupportedLocale,
   ): Promise<PaginatedResult<Product>>;
-  findByIds(ids: string[]): Promise<Product[]>;
+  findByIds(ids: string[], locale: SupportedLocale): Promise<Product[]>;
 }

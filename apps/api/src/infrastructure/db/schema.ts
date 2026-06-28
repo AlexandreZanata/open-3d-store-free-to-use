@@ -38,6 +38,7 @@ export const categories = pgTable(
     imageUrl: text("image_url"),
     sortOrder: integer("sort_order").notNull().default(0),
     isActive: boolean("is_active").notNull().default(true),
+    translations: jsonb("translations").notNull().default({}),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -75,6 +76,7 @@ export const products = pgTable(
     thumbnailUrl: text("thumbnail_url").notNull(),
     imageUrls: jsonb("image_urls").notNull().default([]),
     tags: jsonb("tags").notNull().default([]),
+    translations: jsonb("translations").notNull().default({}),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

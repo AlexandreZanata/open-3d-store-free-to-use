@@ -1,5 +1,5 @@
 ---
-description: Universal hard caps — 80 lines/function, 200 lines/file, cyclomatic ≤10. Required verification.
+description: Universal hard caps — 80 lines/function, 200 lines/file, cyclomatic ≤10. Mandatory quality gate with typecheck.
 alwaysApply: true
 ---
 
@@ -15,15 +15,23 @@ alwaysApply: true
 | File / module | **200 lines** |
 | Cyclomatic complexity | **≤ 10 per function** |
 
-## Before marking work done
+## Quality Gate — run with every typecheck
 
-1. Run typecheck + lint (or project equivalent).
-2. Verify every changed function and file against the table above.
-3. If over cap → split/extract in the same change — do not defer.
+Typecheck passing **alone is not enough**. Before marking work done:
+
+1. **Typecheck** — `tsc`, `mypy`, `go build`, project equivalent.
+2. **Size** — every changed file ≤200 lines; every changed function ≤80 lines.
+3. **Complexity** — every changed function cyclomatic ≤10 (refactor at 8).
+4. **Lint + tests** — project linter and test suite.
+
+If step 2 or 3 fails → split/extract in the **same change**. Do not defer.
+
+Optional script: `./agent-harness/verify-size-complexity.sh` (file line cap).
 
 ## Agent NEVER
 
 - Ship functions > 80 lines or files > 200 lines without user waiver.
+- Skip size/complexity because typecheck passed.
 - Skip verification when tooling is missing — count manually.
 - Nest deeper to save lines — extract functions instead.
 

@@ -34,7 +34,7 @@ Full doc: `{rules_dir}/AGENT-CORE-PRINCIPLES.md`
 12. TDD pyramid: 75% unit / 20% integration / 5% E2E. Domain ≥ 90% coverage.
 13. AI in Application only: read-only, human confirm to persist, log all LLM calls.
 14. Ubiquitous language: match glossary exactly.
-15. **Size/complexity (universal):** ≤80 lines/function, ≤200 lines/file, cyclomatic ≤10 — verify on every change.
+15. **Size/complexity (universal):** ≤80 lines/function, ≤200 lines/file, cyclomatic ≤10 — **mandatory Quality Gate with typecheck** on every change.
 
 ## Extended rules
 

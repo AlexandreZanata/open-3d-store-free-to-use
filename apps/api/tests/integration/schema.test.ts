@@ -36,29 +36,38 @@ describe("database schema (integration)", () => {
   );
 
   it.skipIf(connectionString.length === 0)(
-    "products has search_vector column and GIN index",
+    "products has per-locale search vectors and GIN indexes",
     async () => {
       const client = new pg.Client({ connectionString });
       await client.connect();
 
-      const column = await client.query(
-        `SELECT column_name, data_type
-         FROM information_schema.columns
-         WHERE table_schema = 'public'
-           AND table_name = 'products'
-           AND column_name = 'search_vector'`,
-      );
-      expect(column.rows).toHaveLength(1);
-      expect(column.rows[0]?.data_type).toBe("tsvector");
+      for (const column of ["search_vector_en", "search_vector_pt"]) {
+        const result = await client.query(
+          `SELECT column_name, data_type
+           FROM information_schema.columns
+           WHERE table_schema = 'public'
+             AND table_name = 'products'
+             AND column_name = $1`,
+          [column],
+        );
+        expect(result.rows).toHaveLength(1);
+        expect(result.rows[0]?.data_type).toBe("tsvector");
+      }
 
-      const index = await client.query(
-        `SELECT indexname
-         FROM pg_indexes
-         WHERE schemaname = 'public'
-           AND tablename = 'products'
-           AND indexname = 'products_search_vector_idx'`,
-      );
-      expect(index.rows).toHaveLength(1);
+      for (const indexName of [
+        "products_search_vector_en_idx",
+        "products_search_vector_pt_idx",
+      ]) {
+        const index = await client.query(
+          `SELECT indexname
+           FROM pg_indexes
+           WHERE schemaname = 'public'
+             AND tablename = 'products'
+             AND indexname = $1`,
+          [indexName],
+        );
+        expect(index.rows).toHaveLength(1);
+      }
 
       await client.end();
     },

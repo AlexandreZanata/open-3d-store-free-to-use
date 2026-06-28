@@ -1,41 +1,50 @@
 import { Link } from "@tanstack/react-router";
-import { Heart, Star, Download } from "lucide-react";
+import { Heart } from "lucide-react";
 import { useState } from "react";
-import { formatCount, formatPrice, type Product } from "@/lib/products";
+import { useTranslation } from "react-i18next";
+import type { ProductListItem } from "@print3d/shared-types";
+
+import { resolveAssetUrl } from "@/lib/assets";
 
 export function ProductCard({
   product,
   variant = "default",
 }: {
-  product: Product;
+  product: ProductListItem;
   variant?: "default" | "wide";
 }) {
+  const { t } = useTranslation();
   const [fav, setFav] = useState(false);
   const width = variant === "wide" ? "w-[78vw] max-w-[300px]" : "w-full";
+  const imageUrl = resolveAssetUrl(product.thumbnailUrl);
 
   return (
     <article className={`${width} shrink-0 group`}>
       <div className="relative bg-surface ring-1 ring-hairline rounded-2xl overflow-hidden shadow-soft lift">
         <Link
-          to="/product/$id"
-          params={{ id: product.id }}
+          to="/product/$slug"
+          params={{ slug: product.slug }}
           className="block relative aspect-[4/5] bg-muted"
         >
-          <img
-            src={product.image}
-            alt={product.name}
-            loading="lazy"
-            width={800}
-            height={1000}
-            className="absolute inset-0 size-full object-cover"
-          />
-          {product.badge && (
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt={product.name}
+              loading="lazy"
+              width={800}
+              height={1000}
+              className="absolute inset-0 size-full object-cover"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-muted" />
+          )}
+          {product.hasModel && (
             <span className="absolute top-3 left-3 px-2 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider bg-background/90 backdrop-blur text-foreground">
-              {product.badge}
+              3D
             </span>
           )}
           <span className="absolute bottom-3 left-3 px-2 py-1 rounded-md text-[10px] font-mono font-medium bg-background/90 backdrop-blur text-muted-foreground">
-            {product.formats.slice(0, 2).join(" · ")}
+            {product.material}
           </span>
         </Link>
 
@@ -44,7 +53,7 @@ export function ProductCard({
             e.preventDefault();
             setFav((v) => !v);
           }}
-          aria-label="Favorite"
+          aria-label={t("product.favorite")}
           className="absolute top-2.5 right-2.5 size-9 grid place-items-center rounded-full bg-background/90 backdrop-blur shadow-soft press"
         >
           <Heart
@@ -57,29 +66,19 @@ export function ProductCard({
         <div className="p-3.5">
           <div className="flex items-start justify-between gap-2 mb-1">
             <h3 className="text-sm font-semibold tracking-tight truncate">{product.name}</h3>
-            <span className="text-sm font-semibold shrink-0">{formatPrice(product.price)}</span>
+            <span className="text-sm font-semibold shrink-0">{product.basePriceDisplay}</span>
           </div>
-          <p className="text-[11px] text-muted-foreground uppercase tracking-wider truncate">
-            {product.category}
+          <p className="text-[11px] text-muted-foreground line-clamp-2">
+            {product.shortDescription}
           </p>
 
-          <div className="mt-3 flex items-center justify-between">
-            <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
-              <span className="inline-flex items-center gap-1">
-                <Star className="size-3 fill-foreground text-foreground" />
-                <span className="text-foreground font-medium">{product.rating.toFixed(1)}</span>
-              </span>
-              <span className="inline-flex items-center gap-1">
-                <Download className="size-3" />
-                {formatCount(product.downloads)}
-              </span>
-            </div>
+          <div className="mt-3 flex items-center justify-end">
             <Link
-              to="/product/$id"
-              params={{ id: product.id }}
+              to="/product/$slug"
+              params={{ slug: product.slug }}
               className="text-[11px] font-semibold uppercase tracking-wider text-foreground hover:text-accent transition-colors"
             >
-              View
+              {t("common.view")}
             </Link>
           </div>
         </div>

@@ -33,7 +33,7 @@ Full policy: [contract-first-testing.md](contract-first-testing.md)
 | `@print3d/whatsapp` | `packages/whatsapp/tests/` | — | — |
 | `@print3d/cep` | `packages/cep/tests/` | — | — |
 | `apps/api` | `apps/api/tests/unit/` | `apps/api/tests/integration/` | — |
-| Full stack | — | — | `e2e/` (Playwright, Phase 7+) |
+| `apps/web` | `apps/web/tests/` (i18n parity) | — | `e2e/` (Playwright) |
 
 ## Vitest — `apps/api/vitest.config.ts`
 
@@ -54,8 +54,23 @@ Full policy: [contract-first-testing.md](contract-first-testing.md)
 | Directory | `e2e/` |
 | Config | `playwright.config.ts` (repo root) |
 | Browsers | Chromium (CI); Firefox/WebKit optional locally |
-| Base URL | `http://localhost:5173` (web dev server) |
-| API | Real API or web `page.request` against `http://localhost:3001` |
+| Base URL | `http://localhost:5173` (web dev; set `PLAYWRIGHT_BASE_URL` if Vite picks another port) |
+| API | `PLAYWRIGHT_API_PORT=3010` by default in config; requires `DATABASE_URL` + seeded catalog |
+
+### Local run
+
+```bash
+source apps/api/.env
+PORT=3010 pnpm --filter @print3d/api dev &
+VITE_API_BASE_URL=http://localhost:3010/api/v1 pnpm --filter @print3d/web dev &
+PLAYWRIGHT_SKIP_WEBSERVER=1 PLAYWRIGHT_BASE_URL=http://localhost:5173 pnpm e2e
+```
+
+Or let Playwright start servers (requires free ports and env loaded):
+
+```bash
+source apps/api/.env && PLAYWRIGHT_API_PORT=3010 pnpm e2e
+```
 
 ### Root scripts (target)
 
@@ -71,7 +86,7 @@ Full policy: [contract-first-testing.md](contract-first-testing.md)
 | Spec | Journey | Contract ref |
 |------|---------|--------------|
 | `catalog-browse.spec.ts` | Home → categories → product list | `docs/api/contract.md` |
-| `product-detail-3d.spec.ts` | Product page loads model container | `docs/features/3d-viewer.md` |
+| `product-detail.spec.ts` | Product page loads model container | `docs/features/3d-viewer.md` |
 | `order-whatsapp.spec.ts` | Cart → capture → `wa.me` redirect | `docs/features/whatsapp-flow.md` |
 | `i18n-locale.spec.ts` | Switch EN ↔ PT; visible copy changes | `docs/features/i18n.md` |
 

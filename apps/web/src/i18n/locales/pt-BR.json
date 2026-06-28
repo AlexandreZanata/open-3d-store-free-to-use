@@ -1,0 +1,136 @@
+{
+  "app": {
+    "name": "AXIS",
+    "tagline": "Catálogo de impressão 3D",
+    "metaTitle": "AXIS — Catálogo de Impressão 3D",
+    "metaDescription": "Navegue por produtos impressos em 3D, visualize modelos e peça pelo WhatsApp."
+  },
+  "nav": {
+    "home": "Início",
+    "search": "Buscar",
+    "categories": "Categorias",
+    "favorites": "Favoritos",
+    "profile": "Perfil",
+    "cart": "Carrinho",
+    "back": "Voltar",
+    "backHome": "Voltar ao início",
+    "searchPlaceholder": "Buscar produtos"
+  },
+  "language": {
+    "label": "Idioma",
+    "en": "English",
+    "pt-BR": "Português (Brasil)"
+  },
+  "home": {
+    "featuredLabel": "Destaque",
+    "featuredTitle": "Impressões 3D personalizadas — navegue e peça pelo WhatsApp",
+    "featuredCta": "Ver catálogo",
+    "categoriesTitle": "Categorias",
+    "viewAll": "Ver todas",
+    "railAll": "Todos",
+    "featuredProducts": "Produtos em destaque",
+    "allProducts": "Todos os produtos"
+  },
+  "categories": {
+    "title": "Categorias",
+    "metaDescription": "Navegue pelas categorias de produtos.",
+    "modelsCount_one": "{{count}} produto",
+    "modelsCount_other": "{{count}} produtos"
+  },
+  "search": {
+    "title": "Buscar",
+    "metaDescription": "Encontre produtos impressos em 3D.",
+    "placeholder": "Nome do produto ou palavra-chave…",
+    "clear": "Limpar busca",
+    "filters": "Filtros",
+    "filterAll": "Todos",
+    "filterCategory": "Categoria",
+    "filterMaterial": "Material",
+    "results_one": "{{count}} produto",
+    "results_other": "{{count}} produtos",
+    "emptyTitle": "Nada encontrado",
+    "emptyHint": "Ajuste os filtros ou tente outra palavra-chave."
+  },
+  "product": {
+    "notFoundTitle": "Produto não encontrado",
+    "notFoundMeta": "Não encontrado",
+    "metaFallback": "Produto — AXIS",
+    "viewerLabel": "Visualização 3D",
+    "viewerBadge": "Visualizador 3D",
+    "tabModel": "Modelo 3D",
+    "tabGallery": "Galeria",
+    "galleryCount": "Galeria ({{count}})",
+    "material": "Material",
+    "printTime": "Tempo de impressão",
+    "printTimeHours": "{{hours}} h",
+    "weight": "Peso",
+    "weightGrams": "{{grams}} g",
+    "status": "Status",
+    "tags": "Tags",
+    "related": "Produtos relacionados",
+    "favorite": "Adicionar aos favoritos",
+    "share": "Compartilhar",
+    "orderWhatsApp": "Pedir pelo WhatsApp",
+    "addToCart": "Adicionar ao carrinho",
+    "loading": "Carregando produto…",
+    "errorTitle": "Não foi possível carregar o produto",
+    "errorHint": "Verifique sua conexão e tente novamente.",
+    "viewerUnavailable": "Visualização 3D indisponível"
+  },
+  "cart": {
+    "title": "Carrinho",
+    "metaDescription": "Revise os itens e peça pelo WhatsApp.",
+    "emptyTitle": "Seu carrinho está vazio",
+    "emptyHint": "Navegue pelos produtos e adicione itens para pedir pelo WhatsApp.",
+    "browse": "Ver produtos",
+    "remove": "Remover item",
+    "decrease": "Diminuir quantidade",
+    "increase": "Aumentar quantidade",
+    "total": "Total estimado",
+    "orderWhatsApp": "Pedir pelo WhatsApp",
+    "orderHint": "Você continuará no WhatsApp para confirmar o pedido.",
+    "ordering": "Enviando pedido…",
+    "orderError": "Não foi possível enviar o pedido. Tente novamente.",
+    "customerName": "Seu nome (opcional)",
+    "customerNote": "Observação para a loja (opcional)"
+  },
+  "favorites": {
+    "title": "Favoritos",
+    "metaDescription": "Produtos salvos.",
+    "emptyTitle": "Nenhum favorito ainda",
+    "emptyHint": "Salve produtos que você gosta para acesso rápido.",
+    "browse": "Ver produtos"
+  },
+  "profile": {
+    "title": "Perfil",
+    "metaDescription": "Conta e configurações.",
+    "guestName": "Visitante",
+    "guestEmail": "Navegação anônima",
+    "version": "AXIS v1.0"
+  },
+  "errors": {
+    "pageNotFoundTitle": "Página não encontrada",
+    "pageNotFoundHint": "O conteúdo que você procura não existe ou foi movido.",
+    "pageLoadTitle": "Esta página não carregou",
+    "pageLoadHint": "Algo deu errado. Tente novamente ou volte ao início.",
+    "tryAgain": "Tentar novamente",
+    "home": "Início"
+  },
+  "common": {
+    "loading": "Carregando…",
+    "view": "Ver",
+    "retry": "Tentar novamente"
+  },
+  "material": {
+    "PLA": "PLA",
+    "PETG": "PETG",
+    "ABS": "ABS",
+    "TPU": "TPU",
+    "RESIN": "Resina"
+  },
+  "status": {
+    "active": "Disponível",
+    "out_of_stock": "Esgotado",
+    "discontinued": "Descontinuado"
+  }
+}

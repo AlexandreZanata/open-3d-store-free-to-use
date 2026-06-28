@@ -1,0 +1,136 @@
+{
+  "app": {
+    "name": "AXIS",
+    "tagline": "3D print catalog",
+    "metaTitle": "AXIS — 3D Print Catalog",
+    "metaDescription": "Browse custom 3D printed products, preview models, and order via WhatsApp."
+  },
+  "nav": {
+    "home": "Home",
+    "search": "Search",
+    "categories": "Categories",
+    "favorites": "Favorites",
+    "profile": "Profile",
+    "cart": "Cart",
+    "back": "Back",
+    "backHome": "Back to home",
+    "searchPlaceholder": "Search products"
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "pt-BR": "Português (Brasil)"
+  },
+  "home": {
+    "featuredLabel": "Featured",
+    "featuredTitle": "Custom 3D prints — browse and order via WhatsApp",
+    "featuredCta": "Browse catalog",
+    "categoriesTitle": "Categories",
+    "viewAll": "View all",
+    "railAll": "All",
+    "featuredProducts": "Featured products",
+    "allProducts": "All products"
+  },
+  "categories": {
+    "title": "Categories",
+    "metaDescription": "Browse product categories.",
+    "modelsCount_one": "{{count}} product",
+    "modelsCount_other": "{{count}} products"
+  },
+  "search": {
+    "title": "Search",
+    "metaDescription": "Find 3D printed products.",
+    "placeholder": "Product name or keyword…",
+    "clear": "Clear search",
+    "filters": "Filters",
+    "filterAll": "All",
+    "filterCategory": "Category",
+    "filterMaterial": "Material",
+    "results_one": "{{count}} product",
+    "results_other": "{{count}} products",
+    "emptyTitle": "Nothing found",
+    "emptyHint": "Adjust filters or try another keyword."
+  },
+  "product": {
+    "notFoundTitle": "Product not found",
+    "notFoundMeta": "Not found",
+    "metaFallback": "Product — AXIS",
+    "viewerLabel": "3D preview",
+    "viewerBadge": "3D Viewer",
+    "tabModel": "3D Model",
+    "tabGallery": "Gallery",
+    "galleryCount": "Gallery ({{count}})",
+    "material": "Material",
+    "printTime": "Print time",
+    "printTimeHours": "{{hours}} h",
+    "weight": "Weight",
+    "weightGrams": "{{grams}} g",
+    "status": "Status",
+    "tags": "Tags",
+    "related": "Related products",
+    "favorite": "Add to favorites",
+    "share": "Share",
+    "orderWhatsApp": "Order via WhatsApp",
+    "addToCart": "Add to cart",
+    "loading": "Loading product…",
+    "errorTitle": "Could not load product",
+    "errorHint": "Check your connection and try again.",
+    "viewerUnavailable": "3D preview unavailable"
+  },
+  "cart": {
+    "title": "Cart",
+    "metaDescription": "Review items and order via WhatsApp.",
+    "emptyTitle": "Your cart is empty",
+    "emptyHint": "Browse products and add items to order via WhatsApp.",
+    "browse": "Browse products",
+    "remove": "Remove item",
+    "decrease": "Decrease quantity",
+    "increase": "Increase quantity",
+    "total": "Estimated total",
+    "orderWhatsApp": "Order via WhatsApp",
+    "orderHint": "You will continue on WhatsApp to confirm your order.",
+    "ordering": "Sending order…",
+    "orderError": "Could not send order. Try again.",
+    "customerName": "Your name (optional)",
+    "customerNote": "Note for the shop (optional)"
+  },
+  "favorites": {
+    "title": "Favorites",
+    "metaDescription": "Saved products.",
+    "emptyTitle": "No favorites yet",
+    "emptyHint": "Save products you like for quick access.",
+    "browse": "Browse products"
+  },
+  "profile": {
+    "title": "Profile",
+    "metaDescription": "Account and settings.",
+    "guestName": "Guest",
+    "guestEmail": "Anonymous browsing",
+    "version": "AXIS v1.0"
+  },
+  "errors": {
+    "pageNotFoundTitle": "Page not found",
+    "pageNotFoundHint": "The content you are looking for does not exist or was moved.",
+    "pageLoadTitle": "This page did not load",
+    "pageLoadHint": "Something went wrong. Try again or go back home.",
+    "tryAgain": "Try again",
+    "home": "Home"
+  },
+  "common": {
+    "loading": "Loading…",
+    "view": "View",
+    "retry": "Retry"
+  },
+  "material": {
+    "PLA": "PLA",
+    "PETG": "PETG",
+    "ABS": "ABS",
+    "TPU": "TPU",
+    "RESIN": "Resin"
+  },
+  "status": {
+    "active": "Available",
+    "out_of_stock": "Out of stock",
+    "discontinued": "Discontinued"
+  }
+}

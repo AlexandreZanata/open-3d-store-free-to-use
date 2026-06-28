@@ -192,13 +192,15 @@ Harness: `agent-rules/10-api-design/idempotency.md` — consider `Idempotency-Ke
 
 ---
 
-## Frontend integration (current mock → API)
+## Frontend integration (Phase 7 — complete)
 
-| Current file | Migration target |
-|--------------|------------------|
-| `src/lib/products.ts` | Replace with API client fetching `/products`, `/categories` |
-| `src/routes/product.$id.tsx` | Use slug route `/products/:slug` |
-| `src/routes/cart.tsx` | POST `/orders/capture` → redirect to `whatsappLink` |
+| Legacy mock | Current implementation |
+|-------------|------------------------|
+| `src/lib/products.ts` | Removed — use `src/lib/api/*` + React Query hooks |
+| `src/routes/product.$id.tsx` | `src/routes/product.$slug.tsx` |
+| `src/routes/cart.tsx` | POST `/orders/capture` → redirect to WhatsApp |
+
+Web env: `apps/web/.env.example` (`VITE_API_BASE_URL`, `VITE_ASSETS_BASE_URL`).
 
 Phase 7: `.local/phases/07-frontend-integration.md`
 

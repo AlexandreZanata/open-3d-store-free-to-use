@@ -1,6 +1,9 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Search, ShoppingBag, Home, LayoutGrid, Heart, User, ArrowLeft } from "lucide-react";
 import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
+
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 type Props = {
   children: ReactNode;
@@ -17,6 +20,7 @@ export function AppShell({
   showBack = false,
   title,
 }: Props) {
+  const { t } = useTranslation();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
@@ -27,17 +31,17 @@ export function AppShell({
             {showBack ? (
               <Link
                 to="/"
-                aria-label="Back"
+                aria-label={t("nav.back")}
                 className="-ml-2 size-9 grid place-items-center rounded-full hover:bg-muted press"
               >
                 <ArrowLeft className="size-5" />
               </Link>
             ) : (
-              <Link to="/" className="flex items-center gap-2 shrink-0" aria-label="Home">
+              <Link to="/" className="flex items-center gap-2 shrink-0" aria-label={t("nav.home")}>
                 <span className="size-7 grid place-items-center rounded-md bg-foreground text-background">
                   <span className="block size-2 border border-background" />
                 </span>
-                <span className="text-sm font-semibold tracking-tight">AXIS</span>
+                <span className="text-sm font-semibold tracking-tight">{t("app.name")}</span>
               </Link>
             )}
 
@@ -51,19 +55,20 @@ export function AppShell({
                 className="flex-1 min-w-0 flex items-center gap-2 bg-muted rounded-full h-9 px-3.5 text-muted-foreground press"
               >
                 <Search className="size-4 shrink-0" />
-                <span className="truncate text-sm">Search 3D models</span>
+                <span className="truncate text-sm">{t("nav.searchPlaceholder")}</span>
               </Link>
             ) : (
               <div className="flex-1" />
             )}
 
+            <LanguageSwitcher />
+
             <Link
               to="/cart"
-              aria-label="Cart"
+              aria-label={t("nav.cart")}
               className="relative size-9 grid place-items-center rounded-full hover:bg-muted press"
             >
               <ShoppingBag className="size-5" />
-              <span className="absolute top-1.5 right-1.5 size-2 rounded-full bg-accent ring-2 ring-background" />
             </Link>
           </div>
         </header>
@@ -77,31 +82,31 @@ export function AppShell({
             to="/"
             active={pathname === "/"}
             icon={<Home className="size-5" />}
-            label="Home"
+            label={t("nav.home")}
           />
           <TabItem
             to="/search"
             active={pathname.startsWith("/search")}
             icon={<Search className="size-5" />}
-            label="Search"
+            label={t("nav.search")}
           />
           <TabItem
             to="/categories"
             active={pathname.startsWith("/categories")}
             icon={<LayoutGrid className="size-5" />}
-            label="Categories"
+            label={t("nav.categories")}
           />
           <TabItem
             to="/favorites"
             active={pathname.startsWith("/favorites")}
             icon={<Heart className="size-5" />}
-            label="Favorites"
+            label={t("nav.favorites")}
           />
           <TabItem
             to="/profile"
             active={pathname.startsWith("/profile")}
             icon={<User className="size-5" />}
-            label="Profile"
+            label={t("nav.profile")}
           />
         </div>
       </nav>

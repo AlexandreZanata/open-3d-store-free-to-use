@@ -8,7 +8,21 @@ export async function registerCors(
   config: AppConfig,
 ): Promise<void> {
   await app.register(cors, {
-    origin: config.CORS_ORIGIN,
+    origin:
+      config.NODE_ENV === "development"
+        ? (origin, callback) => {
+            if (
+              !origin ||
+              origin === config.CORS_ORIGIN ||
+              /^http:\/\/localhost:\d+$/.test(origin) ||
+              /^http:\/\/127\.0\.0\.1:\d+$/.test(origin)
+            ) {
+              callback(null, true);
+              return;
+            }
+            callback(null, false);
+          }
+        : config.CORS_ORIGIN,
     methods: ["GET", "POST", "OPTIONS"],
   });
 }

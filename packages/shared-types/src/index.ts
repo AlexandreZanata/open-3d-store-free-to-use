@@ -1,6 +1,24 @@
 export type {
+  CaptureOrderInput,
+  CaptureOrderItemInput,
+  CaptureOrderResult,
+  CategoryResponse,
+  PaginatedProducts,
+  PaginationMeta,
+  ProblemDetails,
+  ProductDetail,
+  ProductListItem,
+} from "./api.types.js";
+export type {
   Category,
 } from "./category.types.js";
+export type { SupportedLocale } from "./locale.types.js";
+export {
+  DEFAULT_LOCALE,
+  SUPPORTED_LOCALES,
+  parseLocale,
+  resolveBrowserLocale,
+} from "./locale.types.js";
 export type {
   OrderCapture,
   OrderLineItem,

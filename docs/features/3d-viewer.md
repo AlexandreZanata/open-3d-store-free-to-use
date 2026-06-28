@@ -40,7 +40,7 @@ Render only when `product.modelFileUrl` is non-null:
 )}
 ```
 
-Current placeholder: `src/routes/product.$id.tsx` — 3D viewer UI exists as static image; replace in Phase 7.
+Current implementation: `apps/web/src/routes/product.$slug.tsx` — lazy-loads `ModelViewer` when `modelFileUrl` is set (Phase 7).
 
 ## Model file layout (server)
 

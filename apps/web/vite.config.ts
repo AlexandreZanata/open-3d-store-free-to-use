@@ -13,4 +13,7 @@ export default defineConfig({
     }),
     viteReact(),
   ],
+  server: {
+    port: 5173,
+  },
 });

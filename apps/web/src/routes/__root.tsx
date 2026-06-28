@@ -8,24 +8,28 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
+import { I18nextProvider } from "react-i18next";
 
+import i18n from "../i18n";
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
+  const { t } = useTranslation();
   return (
     <div className="flex min-h-dvh items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-semibold tracking-tight text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The content you are looking for does not exist or was moved.
-        </p>
+        <h2 className="mt-4 text-xl font-semibold text-foreground">
+          {t("errors.pageNotFoundTitle")}
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground">{t("errors.pageNotFoundHint")}</p>
         <div className="mt-6">
           <Link
             to="/"
             className="inline-flex items-center justify-center rounded-full bg-foreground px-5 h-10 text-sm font-semibold text-background transition-colors hover:bg-foreground/90"
           >
-            Back to home
+            {t("errors.home")}
           </Link>
         </div>
       </div>
@@ -34,18 +38,17 @@ function NotFoundComponent() {
 }
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
-  console.error(error);
+  const { t } = useTranslation();
   const router = useRouter();
+  console.error(error);
 
   return (
     <div className="flex min-h-dvh items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page did not load
+          {t("errors.pageLoadTitle")}
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong. Try again or go back home.
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">{t("errors.pageLoadHint")}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => {
@@ -54,13 +57,13 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
             }}
             className="inline-flex items-center justify-center rounded-full bg-foreground px-5 h-10 text-sm font-semibold text-background"
           >
-            Try again
+            {t("errors.tryAgain")}
           </button>
           <a
             href="/"
             className="inline-flex items-center justify-center rounded-full border border-hairline bg-surface px-5 h-10 text-sm font-semibold text-foreground"
           >
-            Home
+            {t("errors.home")}
           </a>
         </div>
       </div>
@@ -74,18 +77,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#fafafa" },
-      { title: "AXIS — 3D Model Marketplace" },
-      {
-        name: "description",
-        content: "Premium 3D print files marketplace: verified STL, 3MF, and OBJ models.",
-      },
-      { property: "og:title", content: "AXIS — 3D Model Marketplace" },
-      {
-        property: "og:description",
-        content: "Verified STL, 3MF, and OBJ models with curated creators.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { title: "AXIS — 3D Print Catalog" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -121,8 +113,10 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Outlet />
-    </QueryClientProvider>
+    <I18nextProvider i18n={i18n}>
+      <QueryClientProvider client={queryClient}>
+        <Outlet />
+      </QueryClientProvider>
+    </I18nextProvider>
   );
 }

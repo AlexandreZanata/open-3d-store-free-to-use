@@ -1,4 +1,4 @@
-type ViteEnvKey = "VITE_API_BASE_URL" | "VITE_ASSETS_BASE_URL";
+type ViteEnvKey = "VITE_API_BASE_URL" | "VITE_ASSETS_BASE_URL" | "VITE_WHATSAPP_PHONE";
 
 function readProcessEnv(key: ViteEnvKey): string | undefined {
   if (typeof process === "undefined") return undefined;

@@ -49,6 +49,18 @@ curl -H 'Accept-Language: en' http://127.0.0.1:3001/api/v1/products/your-slug
 curl -H 'Accept-Language: pt-BR' http://127.0.0.1:3001/api/v1/products/your-slug
 ```
 
+### Admin orders & E2E (Phase 15)
+
+```bash
+pnpm --filter @print3d/admin test
+source apps/api/.env
+CI=true PLAYWRIGHT_API_PORT=3010 pnpm exec playwright test e2e/admin-auth.spec.ts --project=admin-chromium
+CI=true PLAYWRIGHT_API_PORT=3010 pnpm exec playwright test e2e/admin-product-crud.spec.ts --project=admin-crud-chromium
+
+# Orders list (requires admin session cookie)
+curl -b /tmp/admin-cookie.txt 'http://127.0.0.1:3001/api/v1/admin/orders?page=1&limit=20'
+```
+
 ## Database
 
 ```bash

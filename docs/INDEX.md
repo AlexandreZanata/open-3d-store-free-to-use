@@ -14,6 +14,7 @@
 | **AI agent** | [../AGENTS.md](../AGENTS.md) → active phase in `.local/phases/` → docs referenced by that phase |
 | **API consumer** | [api/contract.md](api/contract.md) |
 | **Admin API** | [api/admin-contract.md](api/admin-contract.md) → [adr/001-admin-authentication.md](adr/001-admin-authentication.md) |
+| **Admin panel** | [features/admin-panel.md](features/admin-panel.md) |
 | **DevOps** | [infrastructure/deployment.md](infrastructure/deployment.md) → [operations/ci-cd.md](operations/ci-cd.md) |
 
 ---
@@ -50,6 +51,7 @@
 | [features/cep-lookup.md](features/cep-lookup.md) | CEP validate + IBGE offline lookup |
 | [features/i18n.md](features/i18n.md) | Bilingual UI/API (`en` + `pt-BR`) |
 | [features/responsive-layout.md](features/responsive-layout.md) | Mobile-first UI + desktop (`lg+`) layout |
+| [features/admin-panel.md](features/admin-panel.md) | Admin SPA — routes, design, dev & E2E |
 
 ### Infrastructure & operations
 

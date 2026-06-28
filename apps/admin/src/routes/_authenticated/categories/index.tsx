@@ -7,6 +7,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { useAdminCategories, useDeleteCategory } from "@/hooks/useAdminCategories";
+import { useToast } from "@/hooks/useToast";
 import { ApiError } from "@/lib/api/client";
 import { formatApiErrorMessage } from "@/lib/utils";
 
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/_authenticated/categories/")({
 function CategoriesListPage() {
   const categoriesQuery = useAdminCategories();
   const deleteMutation = useDeleteCategory();
+  const toast = useToast();
   const categories = categoriesQuery.data?.data ?? [];
 
   const [deactivateId, setDeactivateId] = useState<string | null>(null);
@@ -27,13 +29,15 @@ function CategoriesListPage() {
     setActionError(null);
     try {
       await deleteMutation.mutateAsync(deactivateId);
+      toast.success("Category deactivated");
       setDeactivateId(null);
     } catch (caught) {
-      setActionError(
+      const message =
         caught instanceof ApiError
           ? formatApiErrorMessage(caught.problem.detail, caught.problem.title)
-          : "Deactivate failed",
-      );
+          : "Deactivate failed";
+      setActionError(message);
+      toast.error(message);
     }
   }
 

@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { type InputHTMLAttributes } from "react";
+import { useId, type InputHTMLAttributes } from "react";
 
 type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
@@ -7,7 +7,8 @@ type InputProps = InputHTMLAttributes<HTMLInputElement> & {
 };
 
 export function Input({ className, label, error, id, ...props }: InputProps) {
-  const inputId = id ?? props.name;
+  const generatedId = useId();
+  const inputId = id ?? props.name ?? generatedId;
 
   return (
     <div className="space-y-1.5">

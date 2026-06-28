@@ -12,6 +12,7 @@ import { Card } from "@/components/ui/Card";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { useToast } from "@/hooks/useToast";
 import {
   adminProductQueryKey,
   useAdminProduct,
@@ -35,13 +36,13 @@ export const Route = createFileRoute("/_authenticated/products/$id")({
 function EditProductPage() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
+  const toast = useToast();
   const productQuery = useAdminProduct(id);
   const updateMutation = useUpdateProduct(id);
   const deleteMutation = useDeleteProduct();
 
   const [formState, setFormState] = useState<ProductFormState | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [savedMessage, setSavedMessage] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -60,16 +61,19 @@ function EditProductPage() {
     setSubmitError(null);
     try {
       await updateMutation.mutateAsync(productFormToPayload(formState));
-      setSavedMessage("Saved");
-      window.setTimeout(() => setSavedMessage(null), 3000);
+      toast.success("Saved");
     } catch (caught) {
       if (caught instanceof ApiError && caught.status === 422) {
         setErrors(getFieldErrors(caught.problem));
         setSubmitError(caught.problem.detail);
+        toast.error(caught.problem.detail);
       } else if (caught instanceof ApiError) {
-        setSubmitError(formatApiErrorMessage(caught.problem.detail, caught.problem.title));
+        const message = formatApiErrorMessage(caught.problem.detail, caught.problem.title);
+        setSubmitError(message);
+        toast.error(message);
       } else {
         setSubmitError("Could not save product.");
+        toast.error("Could not save product.");
       }
     }
   }
@@ -78,13 +82,15 @@ function EditProductPage() {
     setSubmitError(null);
     try {
       await deleteMutation.mutateAsync(id);
+      toast.success("Product deleted");
       await navigate({ to: "/products", search: { page: 1, q: "", status: "", category: "" } });
     } catch (caught) {
-      setSubmitError(
+      const message =
         caught instanceof ApiError
           ? formatApiErrorMessage(caught.problem.detail, caught.problem.title)
-          : "Delete failed",
-      );
+          : "Delete failed";
+      setSubmitError(message);
+      toast.error(message);
       setConfirmDelete(false);
     }
   }
@@ -98,7 +104,6 @@ function EditProductPage() {
       <PageHeader
         title="Edit product"
         description={formState.translations["pt-BR"].name}
-        actions={savedMessage ? <span className="text-sm text-admin-accent">{savedMessage}</span> : null}
       />
       {submitError ? (
         <p className="mb-4 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">

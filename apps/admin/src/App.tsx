@@ -4,6 +4,7 @@ import { useMemo } from "react";
 
 import { AdminAuthProvider } from "@/auth/AdminAuthProvider";
 import { useAdminAuth } from "@/auth/useAdminAuth";
+import { ToastProvider } from "@/components/ToastProvider";
 import { router } from "@/router";
 
 function AdminRouter() {
@@ -19,8 +20,10 @@ function AdminRouter() {
 
 export function App() {
   return (
-    <AdminAuthProvider>
-      <AdminRouter />
-    </AdminAuthProvider>
+    <ToastProvider>
+      <AdminAuthProvider>
+        <AdminRouter />
+      </AdminAuthProvider>
+    </ToastProvider>
   );
 }

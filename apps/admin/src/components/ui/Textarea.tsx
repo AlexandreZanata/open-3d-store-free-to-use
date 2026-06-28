@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { type TextareaHTMLAttributes } from "react";
+import { useId, type TextareaHTMLAttributes } from "react";
 
 type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   label?: string;
@@ -7,7 +7,8 @@ type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
 };
 
 export function Textarea({ className, label, error, id, ...props }: TextareaProps) {
-  const inputId = id ?? props.name;
+  const generatedId = useId();
+  const inputId = id ?? props.name ?? generatedId;
 
   return (
     <div className="space-y-1.5">

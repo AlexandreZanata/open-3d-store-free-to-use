@@ -34,6 +34,7 @@ Full policy: [contract-first-testing.md](contract-first-testing.md)
 | `@print3d/cep` | `packages/cep/tests/` | — | — |
 | `apps/api` | `apps/api/tests/unit/` | `apps/api/tests/integration/` | — |
 | `apps/web` | `apps/web/tests/` (i18n parity, layout tokens) | — | `e2e/` (Playwright) |
+| `apps/admin` | `apps/admin/tests/unit/` | — | `e2e/admin-*.spec.ts` |
 | `@print3d/shared-types` | `packages/shared-types/tests/` (admin contract types) | — | — |
 | Infra / CI | `scripts/infra-contract.test.mjs` | — | — |
 
@@ -92,8 +93,16 @@ source apps/api/.env && PLAYWRIGHT_API_PORT=3010 pnpm e2e
 | `order-whatsapp.spec.ts` | Cart → capture → `wa.me` redirect | `docs/features/whatsapp-flow.md` |
 | `i18n-locale.spec.ts` | Switch EN ↔ PT; visible copy changes | `docs/features/i18n.md` |
 | `desktop-layout.spec.ts` | Desktop header nav, search sidebar, grid layout | `docs/features/responsive-layout.md` |
+| `admin-auth.spec.ts` | Login failure, success, unauthenticated redirect | `docs/api/admin-contract.md` |
+| `admin-product-crud.spec.ts` | Create product → list → edit with toast | `docs/api/admin-contract.md` |
 
-E2E tests use **documented** URLs, status codes, and visible text — not implementation selectors copied from components.
+Admin E2E uses project `admin-chromium` (port **5174**). Playwright starts API + admin dev servers when `DATABASE_URL` is set. Use `CI=true` locally so stale dev servers on 5174/3005 are not reused against a rate-limited API.
+
+```bash
+source apps/api/.env
+CI=true PLAYWRIGHT_API_PORT=3010 pnpm exec playwright test e2e/admin-auth.spec.ts --project=admin-chromium
+CI=true PLAYWRIGHT_API_PORT=3010 pnpm exec playwright test e2e/admin-product-crud.spec.ts --project=admin-crud-chromium
+```
 
 ## Required test suites by phase
 

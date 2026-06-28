@@ -10,6 +10,7 @@ import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { useAdminCategories } from "@/hooks/useAdminCategories";
 import { useAdminProducts, useDeleteProduct } from "@/hooks/useAdminProducts";
+import { useToast } from "@/hooks/useToast";
 import { ApiError } from "@/lib/api/client";
 import { formatApiErrorMessage } from "@/lib/utils";
 
@@ -58,6 +59,7 @@ function ProductsListPage() {
     category: search.category || undefined,
   });
   const deleteMutation = useDeleteProduct();
+  const toast = useToast();
 
   const products = productsQuery.data?.data ?? [];
   const pagination = productsQuery.data?.pagination;
@@ -74,13 +76,15 @@ function ProductsListPage() {
     setDeleteError(null);
     try {
       await deleteMutation.mutateAsync(deleteId);
+      toast.success("Product deleted");
       setDeleteId(null);
     } catch (caught) {
-      setDeleteError(
+      const message =
         caught instanceof ApiError
           ? formatApiErrorMessage(caught.problem.detail, caught.problem.title)
-          : "Delete failed",
-      );
+          : "Delete failed";
+      setDeleteError(message);
+      toast.error(message);
     }
   }
 

@@ -8,6 +8,7 @@ import { useAdminAuth } from "@/auth/useAdminAuth";
 import { fetchAdminCategories } from "@/lib/api/categories";
 import { fetchAdminOrders } from "@/lib/api/orders";
 import { fetchAdminProducts } from "@/lib/api/products";
+import { daysAgoIso, startOfTodayIso } from "@/lib/orderDisplay";
 
 export const Route = createFileRoute("/_authenticated/")({
   component: DashboardPage,
@@ -15,20 +16,29 @@ export const Route = createFileRoute("/_authenticated/")({
 
 function DashboardPage() {
   const { user } = useAdminAuth();
-  const productsQuery = useQuery({
-    queryKey: ["admin", "products", "count"],
-    queryFn: () => fetchAdminProducts({ page: 1, limit: 1 }),
+
+  const activeProductsQuery = useQuery({
+    queryKey: ["admin", "dashboard", "active-products"],
+    queryFn: () => fetchAdminProducts({ page: 1, limit: 1, status: "active" }),
   });
-  const ordersQuery = useQuery({
-    queryKey: ["admin", "orders", "count"],
-    queryFn: () => fetchAdminOrders({ page: 1, limit: 1 }),
+  const ordersTodayQuery = useQuery({
+    queryKey: ["admin", "dashboard", "orders-today"],
+    queryFn: () => fetchAdminOrders({ page: 1, limit: 1, from: startOfTodayIso() }),
+  });
+  const ordersWeekQuery = useQuery({
+    queryKey: ["admin", "dashboard", "orders-week"],
+    queryFn: () => fetchAdminOrders({ page: 1, limit: 1, from: daysAgoIso(7) }),
   });
   const categoriesQuery = useQuery({
-    queryKey: ["admin", "categories", "count"],
+    queryKey: ["admin", "dashboard", "categories"],
     queryFn: fetchAdminCategories,
   });
 
-  const isLoading = productsQuery.isLoading || ordersQuery.isLoading || categoriesQuery.isLoading;
+  const isLoading =
+    activeProductsQuery.isLoading ||
+    ordersTodayQuery.isLoading ||
+    ordersWeekQuery.isLoading ||
+    categoriesQuery.isLoading;
 
   return (
     <>
@@ -40,9 +50,13 @@ function DashboardPage() {
       {isLoading ? (
         <LoadingSpinner className="py-12" />
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          <StatCard label="Products" value={productsQuery.data?.pagination.total ?? 0} />
-          <StatCard label="Orders" value={ordersQuery.data?.pagination.total ?? 0} />
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <StatCard
+            label="Active products"
+            value={activeProductsQuery.data?.pagination.total ?? 0}
+          />
+          <StatCard label="Orders today" value={ordersTodayQuery.data?.pagination.total ?? 0} />
+          <StatCard label="Orders this week" value={ordersWeekQuery.data?.pagination.total ?? 0} />
           <StatCard label="Categories" value={categoriesQuery.data?.data.length ?? 0} />
         </div>
       )}

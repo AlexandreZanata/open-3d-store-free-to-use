@@ -110,6 +110,9 @@ jobs:
       - run: pnpm --filter @print3d/api exec drizzle-kit migrate
 
       - run: pnpm --filter @print3d/api db:seed
+        env:
+          ADMIN_BOOTSTRAP_EMAIL: admin@test.local
+          ADMIN_BOOTSTRAP_PASSWORD: test-password-12
 
       - run: pnpm exec playwright install chromium --with-deps
 
@@ -117,6 +120,9 @@ jobs:
         env:
           CI: true
           VITE_API_BASE_URL: http://localhost:3010/api/v1
+          ADMIN_ORIGIN: http://localhost:5174
+          ADMIN_BOOTSTRAP_EMAIL: admin@test.local
+          ADMIN_BOOTSTRAP_PASSWORD: test-password-12
 
       - uses: actions/upload-artifact@v4
         if: failure()

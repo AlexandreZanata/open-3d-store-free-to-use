@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { type SelectHTMLAttributes } from "react";
+import { useId, type SelectHTMLAttributes } from "react";
 
 type SelectProps = SelectHTMLAttributes<HTMLSelectElement> & {
   label?: string;
@@ -7,7 +7,8 @@ type SelectProps = SelectHTMLAttributes<HTMLSelectElement> & {
 };
 
 export function Select({ className, label, error, id, children, ...props }: SelectProps) {
-  const inputId = id ?? props.name;
+  const generatedId = useId();
+  const inputId = id ?? props.name ?? generatedId;
 
   return (
     <div className="space-y-1.5">

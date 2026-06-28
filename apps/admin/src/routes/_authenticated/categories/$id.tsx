@@ -10,6 +10,7 @@ import {
 } from "@/components/categories/categoryFormState";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { useToast } from "@/hooks/useToast";
 import {
   adminCategoryQueryKey,
   useAdminCategory,
@@ -30,12 +31,12 @@ export const Route = createFileRoute("/_authenticated/categories/$id")({
 
 function EditCategoryPage() {
   const { id } = Route.useParams();
+  const toast = useToast();
   const categoryQuery = useAdminCategory(id);
   const updateMutation = useUpdateCategory(id);
 
   const [formState, setFormState] = useState<CategoryFormState | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [savedMessage, setSavedMessage] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -53,16 +54,19 @@ function EditCategoryPage() {
     setSubmitError(null);
     try {
       await updateMutation.mutateAsync(categoryFormToPayload(formState));
-      setSavedMessage("Saved");
-      window.setTimeout(() => setSavedMessage(null), 3000);
+      toast.success("Saved");
     } catch (caught) {
       if (caught instanceof ApiError && caught.status === 422) {
         setErrors(getFieldErrors(caught.problem));
         setSubmitError(caught.problem.detail);
+        toast.error(caught.problem.detail);
       } else if (caught instanceof ApiError) {
-        setSubmitError(formatApiErrorMessage(caught.problem.detail, caught.problem.title));
+        const message = formatApiErrorMessage(caught.problem.detail, caught.problem.title);
+        setSubmitError(message);
+        toast.error(message);
       } else {
         setSubmitError("Could not save category.");
+        toast.error("Could not save category.");
       }
     }
   }
@@ -73,11 +77,7 @@ function EditCategoryPage() {
 
   return (
     <>
-      <PageHeader
-        title="Edit category"
-        description={formState.translations["pt-BR"].name}
-        actions={savedMessage ? <span className="text-sm text-admin-accent">{savedMessage}</span> : null}
-      />
+      <PageHeader title="Edit category" description={formState.translations["pt-BR"].name} />
       {submitError ? (
         <p className="mb-4 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
           {submitError}

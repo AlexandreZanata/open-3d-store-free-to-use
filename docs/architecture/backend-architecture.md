@@ -80,6 +80,8 @@ Integration tests: `apps/api/tests/integration/routes/` (`app.inject()` — no r
 
 Plugins: `admin-auth.ts` (cookie + `requireAdmin`), CORS allows `ADMIN_ORIGIN` with credentials. Errors: RFC 7807 via `handleAdminError.ts`. Contract: [../api/admin-contract.md](../api/admin-contract.md).
 
+Admin panel (Phase 13–15): `apps/admin` — TanStack Router SPA on port 5174. See [../features/admin-panel.md](../features/admin-panel.md).
+
 ## Database tables
 
 | Table | Purpose |

@@ -43,6 +43,11 @@ dist-ssr
 *.sln
 *.sw?
 
+# Playwright
+test-results/
+playwright-report/
+e2e/.auth/
+
 # Python tooling (harness scripts)
 __pycache__/
 .venv/

@@ -24,7 +24,20 @@ pnpm --filter @print3d/api db:seed
 # ADMIN_BOOTSTRAP_EMAIL / ADMIN_BOOTSTRAP_PASSWORD in apps/api/.env
 ```
 
-Default dev credentials: `admin@localhost` / `change-me-in-dev`.
+Default dev credentials: use a valid bootstrap email (e.g. `admin@test.local` after seed — `admin@localhost` fails API email validation).
+
+## Catalog CRUD (Phase 14)
+
+| Route | Purpose |
+|-------|---------|
+| `/products` | List, search, filter, delete |
+| `/products/new` | Create bilingual product |
+| `/products/:id` | Edit, save, delete |
+| `/categories` | List, deactivate |
+| `/categories/new` | Create bilingual category |
+| `/categories/:id` | Edit category |
+
+Features: React Query hooks, slug preview (`slugify.ts`), BRL price input → cents, file uploads (`FileUploadField`), product options editor.
 
 ## Design tokens
 

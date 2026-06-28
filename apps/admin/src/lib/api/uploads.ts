@@ -1,6 +1,6 @@
 import type { AdminUploadKind, AdminUploadResponse } from "@print3d/shared-types";
 
-import { getApiBaseUrl } from "./client";
+import { ApiError, getApiBaseUrl } from "./client";
 
 export async function uploadAdminFile(
   file: File,
@@ -17,8 +17,19 @@ export async function uploadAdminFile(
   });
 
   if (!response.ok) {
-    const problem = (await response.json()) as { title?: string; detail?: string };
-    throw new Error(problem.detail ?? problem.title ?? "Upload failed");
+    let detail = "Upload failed";
+    try {
+      const problem = (await response.json()) as { title?: string; detail?: string };
+      detail = problem.detail ?? problem.title ?? detail;
+    } catch {
+      detail = response.statusText || detail;
+    }
+    throw new ApiError(response.status, {
+      type: "https://yourdomain.com/errors/upload-failed",
+      title: "Upload failed",
+      status: response.status,
+      detail,
+    });
   }
 
   return (await response.json()) as AdminUploadResponse;

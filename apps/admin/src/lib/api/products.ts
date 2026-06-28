@@ -1,6 +1,12 @@
-import type { AdminProductListResponse, PrintStatus } from "@print3d/shared-types";
+import type {
+  AdminProductDetail,
+  AdminProductListResponse,
+  CreateProductPayload,
+  PrintStatus,
+  UpdateProductPayload,
+} from "@print3d/shared-types";
 
-import { adminFetch } from "./client";
+import { adminDelete, adminFetch, adminPatch, adminPost } from "./client";
 
 export type AdminProductQuery = {
   page?: number;
@@ -27,6 +33,24 @@ export async function fetchAdminProducts(
   return adminFetch<AdminProductListResponse>(`/products${toSearchParams(params)}`);
 }
 
-export async function fetchAdminProduct(id: string) {
-  return adminFetch<{ data: AdminProductListResponse["data"][number] }>(`/products/${id}`);
+export async function fetchAdminProduct(id: string): Promise<AdminProductDetail> {
+  const response = await adminFetch<{ data: AdminProductDetail }>(`/products/${id}`);
+  return response.data;
+}
+
+export async function createAdminProduct(payload: CreateProductPayload): Promise<AdminProductDetail> {
+  const response = await adminPost<{ data: AdminProductDetail }>("/products", payload);
+  return response.data;
+}
+
+export async function updateAdminProduct(
+  id: string,
+  payload: UpdateProductPayload,
+): Promise<AdminProductDetail> {
+  const response = await adminPatch<{ data: AdminProductDetail }>(`/products/${id}`, payload);
+  return response.data;
+}
+
+export async function deleteAdminProduct(id: string): Promise<void> {
+  await adminDelete(`/products/${id}`);
 }

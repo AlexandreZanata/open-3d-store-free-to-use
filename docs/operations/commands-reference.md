@@ -37,7 +37,16 @@ Admin SPA runs on **port 5174** — must match `ADMIN_ORIGIN` in `apps/api/.env`
 cp apps/admin/.env.example apps/admin/.env
 pnpm dev:admin
 # Open http://localhost:5174/login
-# Credentials: ADMIN_BOOTSTRAP_EMAIL / ADMIN_BOOTSTRAP_PASSWORD (default admin@localhost)
+# Credentials: ADMIN_BOOTSTRAP_EMAIL / ADMIN_BOOTSTRAP_PASSWORD (valid email required)
+```
+
+### Admin catalog CRUD smoke (Phase 14)
+
+With admin dev + API running, create a category and product in the UI, then verify the storefront:
+
+```bash
+curl -H 'Accept-Language: en' http://127.0.0.1:3001/api/v1/products/your-slug
+curl -H 'Accept-Language: pt-BR' http://127.0.0.1:3001/api/v1/products/your-slug
 ```
 
 ## Database

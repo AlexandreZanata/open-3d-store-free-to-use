@@ -22,6 +22,11 @@
     "en": "English",
     "pt-BR": "Português (Brasil)"
   },
+  "desktop": {
+    "orderViaWhatsApp": "Order via WhatsApp",
+    "heroSubtitle": "Preview models in 3D, customize options, and send your order directly through WhatsApp.",
+    "shopByCategory": "Shop by category"
+  },
   "home": {
     "featuredLabel": "Featured",
     "featuredTitle": "Custom 3D prints — browse and order via WhatsApp",

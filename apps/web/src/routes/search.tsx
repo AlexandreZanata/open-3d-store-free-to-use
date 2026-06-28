@@ -13,7 +13,7 @@ import { productsQueryKey } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
 import { useProducts } from "@/hooks/useProducts";
 import { fetchProducts } from "@/lib/api/products";
-import { desktopOnly, mobileOnly, pagePadding, productGridCols, stickyBelowHeader } from "@/lib/layout";
+import { desktopOnly, mobileOnly, pagePadding, productGridCols, stickyBelowDesktopSubHeader, stickyBelowHeader } from "@/lib/layout";
 import { getActiveLocale } from "@/lib/locale";
 import type { ProductQueryParams } from "@/lib/api/types";
 
@@ -87,7 +87,7 @@ function SearchPage() {
 
         <div>
           <div
-            className={`sticky ${stickyBelowHeader} z-30 bg-background/95 backdrop-blur-md border-b border-hairline`}
+            className={`sticky ${stickyBelowHeader} ${stickyBelowDesktopSubHeader} z-30 bg-background/95 backdrop-blur-md border-b border-hairline`}
           >
             <div className={`${pagePadding} py-3 flex items-center gap-2`}>
               <div className="flex-1 flex items-center gap-2 bg-muted rounded-full h-10 px-3.5 lg:max-w-2xl">

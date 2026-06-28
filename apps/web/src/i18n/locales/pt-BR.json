@@ -22,6 +22,11 @@
     "en": "English",
     "pt-BR": "Português (Brasil)"
   },
+  "desktop": {
+    "orderViaWhatsApp": "Peça pelo WhatsApp",
+    "heroSubtitle": "Visualize modelos em 3D, personalize opções e envie seu pedido direto pelo WhatsApp.",
+    "shopByCategory": "Comprar por categoria"
+  },
   "home": {
     "featuredLabel": "Destaque",
     "featuredTitle": "Impressões 3D personalizadas — navegue e peça pelo WhatsApp",

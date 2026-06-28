@@ -4,7 +4,14 @@ export const shellMaxWidth = "mx-auto w-full max-w-2xl lg:max-w-7xl";
 
 export const pagePadding = "px-4 lg:px-8";
 
-export const stickyBelowHeader = "top-14 lg:top-16";
+export const stickyBelowHeader = "top-14 lg:top-[6.5rem]";
+
+export const stickyBelowDesktopSubHeader = "lg:top-[9.5rem]";
+
+export const desktopMainSurface = "lg:pt-2";
+
+export const desktopHeroSurface =
+  "relative overflow-hidden rounded-3xl bg-foreground text-background shadow-card";
 
 export const mainBottomPad = "pb-24 lg:pb-8";
 

@@ -1,0 +1,28 @@
+{
+  "errors": {
+    "productNotFound": {
+      "title": "Product not found",
+      "detail": "No product with slug '{{slug}}' exists"
+    },
+    "validationFailed": {
+      "title": "Validation failed",
+      "detail": "The request body is invalid"
+    },
+    "productNotOrderable": {
+      "title": "Product not orderable",
+      "detail": "Product '{{productId}}' cannot be ordered"
+    },
+    "missingRequiredOption": {
+      "title": "Missing required option",
+      "detail": "Required option '{{optionName}}' is missing for product '{{productId}}'"
+    },
+    "productNotFoundCapture": {
+      "title": "Product not found",
+      "detail": "Product '{{productId}}' does not exist"
+    },
+    "rateLimitExceeded": {
+      "title": "Too many requests",
+      "detail": "Rate limit exceeded. Try again later."
+    }
+  }
+}

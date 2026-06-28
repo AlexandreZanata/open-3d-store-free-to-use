@@ -86,7 +86,7 @@ E2E tests use **documented** URLs, status codes, and visible text — not implem
 | 3 | Price, Slug, Locale unit — **done** | — |
 | 4 | Repository integration + search EN/PT — **done** | — |
 | 5 | Use case unit (mocked repos) — **done** | — |
-| 6 | HTTP route integration (`app.inject`) | `curl` smoke |
+| 6 | HTTP route integration (`app.inject`) — **done** | `curl` smoke |
 | 7 | i18n key parity; **Playwright E2E** (4 suites) | 3D visual, WhatsApp app |
 | 8 | Full CI pipeline (unit + integration + E2E) | Production smoke |
 

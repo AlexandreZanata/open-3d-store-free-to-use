@@ -1,0 +1,28 @@
+{
+  "errors": {
+    "productNotFound": {
+      "title": "Produto não encontrado",
+      "detail": "Não existe produto com slug '{{slug}}'"
+    },
+    "validationFailed": {
+      "title": "Falha na validação",
+      "detail": "O corpo da requisição é inválido"
+    },
+    "productNotOrderable": {
+      "title": "Produto indisponível",
+      "detail": "O produto '{{productId}}' não pode ser pedido"
+    },
+    "missingRequiredOption": {
+      "title": "Opção obrigatória ausente",
+      "detail": "A opção obrigatória '{{optionName}}' está ausente no produto '{{productId}}'"
+    },
+    "productNotFoundCapture": {
+      "title": "Produto não encontrado",
+      "detail": "O produto '{{productId}}' não existe"
+    },
+    "rateLimitExceeded": {
+      "title": "Muitas requisições",
+      "detail": "Limite de requisições excedido. Tente novamente mais tarde."
+    }
+  }
+}

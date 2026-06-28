@@ -18,6 +18,12 @@ Infrastructure Layer (Drizzle, Redis, file storage)
 
 ```
 src/
+├── config.ts              Zod env validation (crash on invalid)
+├── container.ts           DI wiring: repos → cache → use cases
+├── main.ts                Entry point (listen 127.0.0.1:PORT)
+├── i18n/
+│   ├── resolve-locale.ts  Accept-Language / ?locale= → SupportedLocale
+│   └── messages/          en.json, pt-BR.json (RFC 7807 titles)
 ├── domain/
 │   ├── entities/          Product.ts, Category.ts
 │   ├── value-objects/     Price.ts, Slug.ts, Locale.ts
@@ -36,10 +42,26 @@ src/
 │   ├── cache/             CacheService.ts, redis.ts (implements application ports)
 │   └── storage/           LocalFileStorage.ts
 └── http/
-    ├── server.ts
-    ├── plugins/           cors.ts, rate-limit.ts, cache-headers.ts
+    ├── server.ts          Fastify factory + error handler
+    ├── errors/            problemDetails.ts (RFC 7807)
+    ├── types/             fastify.d.ts (request.locale, cacheMaxAge)
+    ├── plugins/           cors.ts, rate-limit.ts, cache-headers.ts, locale.ts
     └── routes/            health, products, categories, orders
 ```
+
+## HTTP layer (Phase 6)
+
+| Route | Handler | Notes |
+|-------|---------|-------|
+| `GET /api/v1/health` | `health.routes.ts` | No cache |
+| `GET /api/v1/categories` | `categories.routes.ts` | Cache 300s |
+| `GET /api/v1/products` | `products.routes.ts` | List/search; cache 120s / 60s |
+| `GET /api/v1/products/:slug` | `products.routes.ts` | Cache 600s; RFC 7807 404 |
+| `POST /api/v1/orders/capture` | `orders.routes.ts` | Zod body; 201; rate limit 10/min |
+
+Plugins: CORS (`CORS_ORIGIN`), Redis-backed rate limit (100/min global; 10/min on capture), `Cache-Control` per route, locale resolution.
+
+Integration tests: `apps/api/tests/integration/routes/` (`app.inject()` — no real port).
 
 ## Database tables
 

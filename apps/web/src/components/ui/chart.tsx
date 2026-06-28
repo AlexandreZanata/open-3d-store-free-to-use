@@ -295,8 +295,14 @@ const ChartLegendContent = React.forwardRef<
 });
 ChartLegendContent.displayName = "ChartLegend";
 
+type ChartPayloadRecord = object;
+
 // Helper to extract item config from a payload.
-function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key: string) {
+function getPayloadConfigFromPayload(
+  config: ChartConfig,
+  payload: ChartPayloadRecord | null | undefined,
+  key: string,
+) {
   if (typeof payload !== "object" || payload === null) {
     return undefined;
   }

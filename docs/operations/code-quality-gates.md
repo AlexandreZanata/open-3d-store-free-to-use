@@ -16,19 +16,50 @@ These limits are **language-agnostic**. TypeScript, SQL migrations, shell script
 
 ---
 
+## Type safety (no `any` / `unknown`)
+
+Production TypeScript is enforced by **ESLint** (`eslint.config.mjs` at repo root):
+
+| Rule | Effect |
+|------|--------|
+| `@typescript-eslint/no-explicit-any` | Blocks explicit `any` |
+| `@typescript-eslint/no-restricted-types` | Blocks explicit `unknown` |
+| `@typescript-eslint/no-unsafe-*` | Blocks unsafe use of untyped values |
+
+**Excluded from ESLint strict rules:** generated files (`*.gen.ts`, `routeTree.gen.ts`), shadcn UI boilerplate (`apps/web/src/components/ui/**`), and test/script files (tests still typecheck via `tsc` where configured).
+
+Use `JsonValue` from `@print3d/shared-types` for JSON request bodies instead of `unknown`.
+
+---
+
 ## Quality Gate Protocol
 
-**Size and complexity are base gates — paired with typecheck, not optional extras.**
+**Size and complexity are base gates — paired with typecheck and ESLint, not optional extras.**
 
 ```text
 Before commit / PR / agent sign-off:
-  1. Typecheck     pnpm turbo lint  (tsc --noEmit per package)
-  2. Size          ≤200 lines/file, ≤80 lines/function on changed code
-  3. Complexity    ≤10 cyclomatic per changed function
+  1. Typecheck     pnpm typecheck  (tsc --noEmit per package)
+  2. ESLint        pnpm lint:eslint (no any / unknown in production code)
+  3. Size          ≤200 lines/file, ≤80 lines/function on changed code
   4. Tests         pnpm turbo test
 ```
 
-Passing typecheck **without** size/complexity verification is **not** acceptable.
+Passing typecheck **without** ESLint and size/complexity verification is **not** acceptable.
+
+---
+
+## Git hooks (automatic)
+
+[Husky](https://typicode.github.io/husky/) runs gates locally:
+
+| Hook | Command | Scope |
+|------|---------|-------|
+| **pre-commit** | `lint-staged` + `pnpm quality:quick` | ESLint on staged `.ts/.tsx` + full typecheck + ESLint |
+| **pre-push** | `pnpm quality` | Typecheck, ESLint, size/complexity, tests |
+
+To bypass hooks in an emergency (not recommended): `git commit --no-verify` / `git push --no-verify`.
+
+Install hooks after clone: `pnpm install` (runs `prepare` → `husky`).
 
 ---
 
@@ -36,10 +67,13 @@ Passing typecheck **without** size/complexity verification is **not** acceptable
 
 | Gate | Command |
 |------|---------|
-| Typecheck | `pnpm turbo lint` |
+| Typecheck | `pnpm typecheck` or `pnpm turbo lint` |
+| ESLint (strict types) | `pnpm lint:eslint` |
+| Full lint | `pnpm lint` (= typecheck + ESLint) |
 | File size (automated) | `./agent-harness/verify-size-complexity.sh` |
 | Unit + integration | `pnpm turbo test` |
-| Full local gate | `pnpm turbo lint && ./agent-harness/verify-size-complexity.sh && pnpm turbo test` |
+| **Full local gate** | `pnpm quality` or `./scripts/quality-gate.sh full` |
+| **CI gate** | `./scripts/quality-gate.sh ci` (adds build) |
 
 Function length and cyclomatic complexity: enforce via ESLint when configured; otherwise **manual count** on every changed function before sign-off.
 
@@ -49,7 +83,7 @@ Function length and cyclomatic complexity: enforce via ESLint when configured; o
 
 ## CI alignment
 
-GitHub Actions MUST run typecheck, tests, and size/complexity checks before merge. See [ci-cd.md](ci-cd.md).
+GitHub Actions (`.github/workflows/ci.yml`) runs `./scripts/quality-gate.sh ci` on push/PR to `main`/`develop`. See [ci-cd.md](ci-cd.md).
 
 When bootstrapping ESLint for a package, use harness-recommended rules from `agent-rules/00-core/size-and-complexity-limits.md`:
 
@@ -62,6 +96,7 @@ When bootstrapping ESLint for a package, use harness-recommended rules from `age
 ## Agent and reviewer checklist
 
 - [ ] Typecheck passes on all touched packages
+- [ ] ESLint passes (`pnpm lint:eslint`) — no `any` / `unknown` in production code
 - [ ] No changed file exceeds 200 lines
 - [ ] No changed function exceeds 80 lines
 - [ ] No changed function exceeds cyclomatic complexity 10

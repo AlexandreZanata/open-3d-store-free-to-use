@@ -12,6 +12,7 @@ export type {
 export type {
   Category,
 } from "./category.types.js";
+export type { JsonArray, JsonObject, JsonPrimitive, JsonValue } from "./json.types.js";
 export type { SupportedLocale } from "./locale.types.js";
 export {
   DEFAULT_LOCALE,

@@ -3,8 +3,18 @@ import "./lib/error-capture";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 
+type ServerEnv = Record<string, string | undefined>;
+
+type ServerContext = {
+  waitUntil?: (promise: Promise<void>) => void;
+};
+
 type ServerEntry = {
-  fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
+  fetch: (
+    request: Request,
+    env: ServerEnv,
+    ctx: ServerContext,
+  ) => Promise<Response> | Response;
 };
 
 let serverEntryPromise: Promise<ServerEntry> | undefined;
@@ -38,7 +48,7 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
 }
 
 export default {
-  async fetch(request: Request, env: unknown, ctx: unknown) {
+  async fetch(request: Request, env: ServerEnv, ctx: ServerContext) {
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);

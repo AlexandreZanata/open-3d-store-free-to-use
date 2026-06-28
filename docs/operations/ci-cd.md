@@ -16,12 +16,9 @@ Steps:
 2. pnpm setup (v9)
 3. Node 22
 4. `pnpm install --frozen-lockfile`
-5. `pnpm turbo build`
-6. **`pnpm turbo test`** — all packages (Vitest unit + integration)
-7. `pnpm turbo lint` — typecheck (`tsc --noEmit`)
-8. **`./agent-harness/verify-size-complexity.sh`** — file ≤200 lines (see [code-quality-gates.md](code-quality-gates.md))
+5. **`./scripts/quality-gate.sh ci`** — typecheck, ESLint (no `any`/`unknown`), size/complexity, build, tests
 
-> **Quality Gate:** typecheck, size/complexity, and tests are **paired gates** — all must pass. Harness rule: `agent-rules/00-core/size-and-complexity-limits.md`.
+> **Quality Gate:** typecheck, ESLint strict types, size/complexity, build, and tests are **paired gates** — all must pass. Harness rule: `agent-rules/00-core/size-and-complexity-limits.md`.
 
 > Tests MUST follow [../testing/contract-first-testing.md](../testing/contract-first-testing.md). Failing contract tests block merge.
 

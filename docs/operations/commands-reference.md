@@ -44,18 +44,29 @@ pnpm --filter web build            # Frontend production build
 ## Lint & format
 
 ```bash
-pnpm turbo lint
-pnpm --filter web format           # Prettier
+pnpm lint                              # Typecheck + ESLint (no any / unknown)
+pnpm typecheck                         # tsc --noEmit only (Turbo)
+pnpm lint:eslint                       # ESLint strict type rules only
+pnpm --filter web format               # Prettier
 ```
 
 ## Quality Gate (mandatory before commit)
 
-Typecheck, size/complexity, and tests are **paired gates** — see [code-quality-gates.md](code-quality-gates.md).
+Typecheck, ESLint, size/complexity, and tests are **paired gates** — see [code-quality-gates.md](code-quality-gates.md).
+
+Git hooks (Husky) run automatically:
+
+- **pre-commit:** ESLint on staged files + `pnpm quality:quick`
+- **pre-push:** `pnpm quality` (typecheck, ESLint, size, tests)
+
+Manual full gate:
 
 ```bash
-pnpm turbo lint                              # Typecheck (tsc --noEmit)
-./agent-harness/verify-size-complexity.sh    # File ≤200 lines
-pnpm turbo test                              # Unit + integration
+pnpm quality                             # typecheck + ESLint + size + tests
+./scripts/quality-gate.sh ci             # same + build (matches GitHub Actions)
+pnpm turbo lint                          # Typecheck only
+./agent-harness/verify-size-complexity.sh
+pnpm turbo test
 ```
 
 Caps: **≤80 lines/function**, **≤200 lines/file**, **cyclomatic ≤10** per function (harness universal rule).

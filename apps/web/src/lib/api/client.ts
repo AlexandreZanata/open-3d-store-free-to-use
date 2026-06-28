@@ -1,5 +1,6 @@
-import type { ProblemDetails, SupportedLocale } from "@print3d/shared-types";
+import type { JsonValue, ProblemDetails, SupportedLocale } from "@print3d/shared-types";
 
+import { readEnvString } from "../env";
 import { getActiveLocale } from "../locale";
 
 const DEFAULT_API_BASE = "http://localhost:3001/api/v1";
@@ -17,10 +18,7 @@ export class ApiError extends Error {
 }
 
 export function getApiBaseUrl(): string {
-  if (typeof process !== "undefined" && process.env.VITE_API_BASE_URL) {
-    return process.env.VITE_API_BASE_URL;
-  }
-  return import.meta.env.VITE_API_BASE_URL ?? DEFAULT_API_BASE;
+  return readEnvString("VITE_API_BASE_URL") ?? DEFAULT_API_BASE;
 }
 
 function buildHeaders(locale?: SupportedLocale): HeadersInit {
@@ -67,7 +65,7 @@ export async function apiFetch<T>(
 
 export async function apiPost<T>(
   path: string,
-  body: unknown,
+  body: JsonValue,
   init?: RequestInit & { locale?: SupportedLocale },
 ): Promise<T> {
   return apiFetch<T>(path, {

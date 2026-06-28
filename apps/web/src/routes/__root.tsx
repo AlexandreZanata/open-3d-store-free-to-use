@@ -52,7 +52,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => {
-              router.invalidate();
+              void router.invalidate();
               reset();
             }}
             className="inline-flex items-center justify-center rounded-full bg-foreground px-5 h-10 text-sm font-semibold text-background"

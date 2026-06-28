@@ -6,7 +6,7 @@
 docker compose -f infra/docker-compose.dev.yml up -d   # Postgres 18.4 + Redis 8.8
 pnpm dev                                                 # All apps (Turborepo watch)
 pnpm --filter web dev                                    # Frontend only
-pnpm --filter api dev                                    # API only (127.0.0.1:3001)
+pnpm --filter @print3d/api dev                    # API + Swagger UI at /docs
 curl http://127.0.0.1:3001/api/v1/health               # Smoke: { "status": "ok", ... }
 ```
 

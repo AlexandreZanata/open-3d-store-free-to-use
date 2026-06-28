@@ -8,6 +8,7 @@ import {
 } from "../../application/errors/ApplicationErrors.js";
 import type { AppContainer } from "../../container.js";
 import { sendProblem } from "../errors/problemDetails.js";
+import { captureOrderRouteSchema } from "../openapi/routeSchemas.js";
 
 const captureOrderBodySchema = z.object({
   items: z
@@ -30,6 +31,7 @@ export async function registerOrderRoutes(
   app.post(
     "/orders/capture",
     {
+      schema: captureOrderRouteSchema,
       config: {
         rateLimit: {
           max: 10,

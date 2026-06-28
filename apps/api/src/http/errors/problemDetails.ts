@@ -22,7 +22,7 @@ export function sendProblem(
   params: Record<string, string> = {},
 ): void {
   const { title, detail } = translate(locale, messageKey, params);
-  reply.status(status).send({
+  reply.status(status).type("application/problem+json").send({
     type: `${ERROR_BASE_URL}/${type}`,
     title,
     status,

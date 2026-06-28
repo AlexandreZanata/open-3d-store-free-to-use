@@ -3,6 +3,7 @@ import { ZodError } from "zod";
 
 import type { AppContainer } from "../container.js";
 import { translate } from "../i18n/resolve-locale.js";
+import { registerSwagger } from "./openapi/registerSwagger.js";
 import { registerCors } from "./plugins/cors.js";
 import { registerCacheHeaders } from "./plugins/cache-headers.js";
 import { registerLocale } from "./plugins/locale.js";
@@ -18,6 +19,11 @@ export async function buildServer(
   const app = Fastify({
     logger: container.config.NODE_ENV !== "test",
     trustProxy: true,
+    ajv: {
+      customOptions: {
+        strict: false,
+      },
+    },
   });
 
   app.setErrorHandler((error, request, reply) => {
@@ -26,7 +32,7 @@ export async function buildServer(
         request.locale ?? "pt-BR",
         "validationFailed",
       );
-      reply.status(422).send({
+      reply.status(422).type("application/problem+json").send({
         type: "https://yourdomain.com/errors/validation-failed",
         title,
         status: 422,
@@ -48,7 +54,7 @@ export async function buildServer(
         request.locale ?? "pt-BR",
         "rateLimitExceeded",
       );
-      reply.status(429).send({
+      reply.status(429).type("application/problem+json").send({
         type: "https://yourdomain.com/errors/rate-limit",
         title,
         status: 429,
@@ -58,7 +64,7 @@ export async function buildServer(
     }
 
     request.log.error(error);
-    reply.status(500).send({
+    reply.status(500).type("application/problem+json").send({
       type: "https://yourdomain.com/errors/internal",
       title: "Internal Server Error",
       status: 500,
@@ -67,6 +73,7 @@ export async function buildServer(
   });
 
   await registerCors(app, container.config);
+  await registerSwagger(app, container.config);
   await registerLocale(app);
   await registerRateLimit(app, container.config);
   await registerCacheHeaders(app);

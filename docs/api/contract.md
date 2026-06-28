@@ -48,6 +48,10 @@ Harness: `agent-rules/06-reliability-and-observability/exception-handling-discip
 
 **Contract tests:** HTTP integration and E2E tests for this API MUST assert shapes and status codes from **this document only** — see [../testing/contract-first-testing.md](../testing/contract-first-testing.md). Do not derive expectations from handler implementation.
 
+## OpenAPI / Swagger
+
+Interactive docs (development only): [swagger.md](swagger.md) — UI at `http://127.0.0.1:3001/docs` when `pnpm --filter @print3d/api dev` is running.
+
 ---
 
 ## `GET /health`
@@ -98,7 +102,7 @@ Returns active categories sorted by `sortOrder`.
 | `limit` | integer | 20 | 50 | Page size |
 | `category` | string | — | — | Category slug |
 | `material` | string | — | — | `PLA`, `PETG`, `ABS`, `TPU`, `RESIN` |
-| `status` | string | `active` | — | `active`, `out_of_stock` |
+| `status` | string | `active` | — | `active`, `out_of_stock`, `discontinued` |
 | `q` | string | — | — | Full-text search |
 | `minPrice` | integer | — | — | BRL cents |
 | `maxPrice` | integer | — | — | BRL cents |

@@ -4,6 +4,10 @@ import { z } from "zod";
 
 import type { AppContainer } from "../../container.js";
 import { sendProblem } from "../errors/problemDetails.js";
+import {
+  productDetailRouteSchema,
+  productsListRouteSchema,
+} from "../openapi/routeSchemas.js";
 
 const materials = ["PLA", "PETG", "ABS", "TPU", "RESIN"] as const;
 const statuses = ["active", "out_of_stock", "discontinued"] as const;
@@ -23,7 +27,7 @@ export async function registerProductRoutes(
   app: FastifyInstance,
   container: AppContainer,
 ): Promise<void> {
-  app.get("/products", async (request, reply) => {
+  app.get("/products", { schema: productsListRouteSchema }, async (request, reply) => {
     request.cacheMaxAge = 120;
     const query = listQuerySchema.parse(request.query);
 
@@ -55,7 +59,7 @@ export async function registerProductRoutes(
     return reply.send(result);
   });
 
-  app.get("/products/:slug", async (request, reply) => {
+  app.get("/products/:slug", { schema: productDetailRouteSchema }, async (request, reply) => {
     request.cacheMaxAge = 600;
     const { slug } = request.params as { slug: string };
     const product = await container.getProductBySlug.execute(

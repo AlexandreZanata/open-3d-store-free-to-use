@@ -52,6 +52,8 @@ Full Drizzle schema: see spec in phase 2 — `apps/api/src/infrastructure/db/sch
 
 PostgreSQL `to_tsvector('portuguese', ...)` on name, short_description, material. GIN index on `search_vector`.
 
+> Implemented as a **BEFORE INSERT/UPDATE trigger** (not a generated column) because `to_tsvector` with the Portuguese config is not immutable in PostgreSQL.
+
 > User-facing UI is English; search config uses Portuguese for Brazilian product content.
 
 Migration: `apps/api/src/infrastructure/db/migrations/0002_add_search_vector.sql`

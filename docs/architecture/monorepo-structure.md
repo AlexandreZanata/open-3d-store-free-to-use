@@ -36,7 +36,7 @@ open-3d-store-free-to-use/          # repo root (rename from print3d-shop in ori
 
 ```
 apps/web/               # @print3d/web — TanStack Start frontend
-apps/api/               # @print3d/api — stub (Phase 2+)
+apps/api/               # @print3d/api — Drizzle schema, migrations (Phase 2+)
 packages/shared-types/  # @print3d/shared-types — domain DTOs
 packages/whatsapp/      # @print3d/whatsapp — wa.me link builder
 packages/cep/           # @print3d/cep — CEP validate + IBGE lookup

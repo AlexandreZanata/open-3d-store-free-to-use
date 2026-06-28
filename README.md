@@ -59,7 +59,7 @@ Full rationale: [docs/stack/technology-decisions.md](docs/stack/technology-decis
 
 ```
 apps/web/              # @print3d/web — TanStack Start frontend
-apps/api/              # @print3d/api — Fastify backend (Phase 2+)
+apps/api/              # @print3d/api — Drizzle schema + migrations
 packages/shared-types/ # @print3d/shared-types — domain DTOs
 packages/whatsapp/     # @print3d/whatsapp — wa.me link builder (+ telefone)
 packages/cep/          # @print3d/cep — CEP validate + IBGE lookup

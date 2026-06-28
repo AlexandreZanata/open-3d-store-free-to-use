@@ -78,7 +78,7 @@
 | Area | Current (this repo) | Target (spec) |
 |------|---------------------|---------------|
 | Frontend | `apps/web/` — TanStack Start + React 19 | Same (Phase 0 complete) |
-| Backend | Stub `@print3d/api` package | Fastify + Drizzle implementation |
+| Backend | `@print3d/api` — Drizzle schema + migrations (Phase 2) | Fastify + use cases |
 | Packages | `@print3d/shared-types`, `@print3d/whatsapp`, `@print3d/cep` | Used by API and web |
 | Infra | Stub `infra/` placeholders | Docker, Nginx, PM2 (later phases) |
 

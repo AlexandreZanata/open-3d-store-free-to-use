@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1782650167473,
+      "tag": "0000_broken_kree",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1782650300000,
+      "tag": "0002_add_search_vector",
+      "breakpoints": true
+    }
+  ]
+}

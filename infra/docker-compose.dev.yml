@@ -11,7 +11,8 @@ services:
       POSTGRES_USER: print3d
       POSTGRES_PASSWORD: devpassword
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
+      - ./postgres/init-test-db.sql:/docker-entrypoint-initdb.d/02-init-test-db.sql:ro
 
   redis:
     image: redis:8.8-alpine

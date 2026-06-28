@@ -27,7 +27,9 @@ POSTGRES_PASSWORD=devpassword
 
 ## Test database
 
-Separate DB for Vitest: `print3d_test` — configure via `TEST_DATABASE_URL` in `.env.test`.
+Separate DB for Vitest: `print3d_test` — created on first Postgres init via `infra/postgres/init-test-db.sql`. Configure via `TEST_DATABASE_URL` in `.env.test`.
+
+> **PostgreSQL 18 Docker volume:** mount at `/var/lib/postgresql` (not `/data`) — see [postgres#1259](https://github.com/docker-library/postgres/pull/1259).
 
 ## Related documents
 

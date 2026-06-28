@@ -15,6 +15,7 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
+    "@br-validators/core": "^1.10.0",
     "@print3d/shared-types": "workspace:*"
   },
   "devDependencies": {

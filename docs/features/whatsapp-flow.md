@@ -12,12 +12,16 @@ No payment gateway. User configures order → API captures intent → returns `w
 ### Exports
 
 - `generateWhatsAppLink(options: WhatsAppLinkOptions): string`
+- `parseWhatsAppPhone(input: string): WhatsAppPhoneResult` — validates via `@br-validators/core/telefone`
+- `formatWhatsAppPhoneDisplay(input: string): string | null` — masked display, e.g. `(65) 99999-9999`
+
+Phone validation uses subpath `@br-validators/core/telefone` only (Anatel DDD rules, tree-shakeable).
 
 ### Options
 
 | Field | Type | Notes |
 |-------|------|-------|
-| `phoneNumber` | string | E.164 without `+`: `5565999999999` |
+| `phoneNumber` | string | E.164 without `+`, national, or masked — normalized by `@br-validators/core/telefone` |
 | `orderId` | string | UUIDv7 |
 | `items` | array | `{ productName, quantity, selectedOptions, unitPrice }` |
 | `customerName` | string? | |
@@ -71,7 +75,7 @@ Validated at startup — see [../infrastructure/environment.md](../infrastructur
 
 **File:** `packages/whatsapp/tests/link-builder.test.ts`
 
-7 tests: URL format, encoding, product name, BRL total, customer name present/absent, template structure.
+14 tests: URL format, encoding, product name, BRL total, customer name present/absent, template structure, phone validate/format.
 
 ## Harness rules
 

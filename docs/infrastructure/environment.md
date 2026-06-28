@@ -18,7 +18,7 @@
 | `DATABASE_URL` | `postgresql://...` | URL |
 | `TEST_DATABASE_URL` | `postgresql://...` | URL (test only) |
 | `REDIS_URL` | `redis://localhost:6379` | URL |
-| `WHATSAPP_PHONE_NUMBER` | `5565999999999` | digits 10–15 |
+| `WHATSAPP_PHONE_NUMBER` | `5565999999999` or `(65) 99999-9999` | `@br-validators/core/telefone` via `@print3d/whatsapp` |
 | `CORS_ORIGIN` | `http://localhost:5173` | URL |
 | `MODEL_FILES_BASE_PATH` | `/var/www/print3d/models` | path |
 | `MODEL_FILES_BASE_URL` | `https://yourdomain.com/models` | URL |

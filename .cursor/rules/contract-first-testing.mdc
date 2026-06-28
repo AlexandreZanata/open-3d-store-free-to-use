@@ -1,0 +1,37 @@
+---
+description: Mandatory contract-first testing — read before creating or editing any test
+alwaysApply: true
+---
+
+# Contract-first testing (mandatory)
+
+Before creating or editing **any** test file, READ:
+
+1. `docs/testing/README.md`
+2. `docs/testing/contract-first-testing.md`
+3. Relevant contract: `docs/api/contract.md` and/or `docs/features/*.md`
+
+## Non-negotiable
+
+- Tests are **executable specifications** from docs — NOT mirrors of implementation code.
+- **Contract tests are immutable** unless the documentation changes first.
+- Expected values MUST come from **docs**, never by copying production logic into the test.
+- Every test MUST fail when code violates the documented contract.
+- **Forbidden:** re-implementing the function under test inside the test to derive expectations.
+- **Forbidden:** weakening assertions to make tests pass after a refactor.
+
+## Layers
+
+| Layer | Tool |
+|-------|------|
+| Unit | Vitest — pure logic, VOs |
+| Integration | Vitest + Supertest + test DB — API contract |
+| E2E | Playwright — user journeys |
+
+CI runs automated tests via `pnpm turbo test` and `pnpm e2e`. Manual QA supplements; never replaces contract/E2E automation.
+
+## Workflow
+
+RED (from docs) → implement → GREEN → refactor code only.
+
+If unsure of expected value, **update the spec doc first** — do not read implementation to copy behavior.

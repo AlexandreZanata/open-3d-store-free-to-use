@@ -91,11 +91,13 @@ Split monolithic spec into docs/ tree. Phases in .local/.
 ### Before every commit
 
 1. Active phase task done-condition met
-2. Tests pass for affected packages: `pnpm test` or scoped filter
-3. Lint passes: `pnpm turbo lint`
-4. No secrets in diff (`.env`, keys, tokens)
-5. No `.glb` binaries in diff
-6. `.local/` must NOT appear in staged files
+2. Read [../testing/contract-first-testing.md](../testing/contract-first-testing.md) if tests were added or changed
+3. Tests pass for affected packages: `pnpm turbo test` and `pnpm e2e` (when E2E exists)
+4. Contract tests assert **docs** — not implementation mirrors
+5. Lint passes: `pnpm turbo lint`
+6. No secrets in diff (`.env`, keys, tokens)
+7. No `.glb` binaries in diff
+8. `.local/` must NOT appear in staged files
 
 ### Atomic commits
 

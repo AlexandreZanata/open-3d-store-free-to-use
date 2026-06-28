@@ -44,7 +44,9 @@ Read these files at session start or before non-trivial work:
 3. `{rules_dir}/09-ai-agent-specific/token-economy.md` — load less, execute better
 4. `{rules_dir}/09-ai-agent-specific/anti-hallucination.md` — verify before assert
 
-Cursor users: `.cursor/rules/*.mdc` applies automatically (`alwaysApply`), including Ponytail YAGNI rules.
+**Before writing or editing any test:** read [docs/testing/README.md](docs/testing/README.md) and [docs/testing/contract-first-testing.md](docs/testing/contract-first-testing.md) (also `.cursor/rules/contract-first-testing.mdc`).
+
+Cursor users: `.cursor/rules/*.mdc` applies automatically (`alwaysApply`), including Ponytail YAGNI rules and **contract-first testing**.
 
 ### Ponytail (YAGNI / minimal implementation)
 
@@ -69,6 +71,7 @@ Load **2–6 files only** — not the entire rule tree.
 
 | Task            | Example keywords                        |
 | --------------- | --------------------------------------- |
+| **Writing tests** | `tdd test contract vitest playwright e2e` — **load `docs/testing/contract-first-testing.md` first** |
 | API endpoint    | `api endpoint auth validation contract` |
 | Security review | `owasp security authz bola agentic`     |
 | Domain feature  | `domain layer state event`              |
@@ -136,6 +139,7 @@ Full install docs: [harness/README.md](harness/README.md)
 | [harness/README.md](harness/README.md)                                                                       | Install, resolve, maintenance           |
 | [rules/09-ai-agent-specific/minimal-implementation.md](rules/09-ai-agent-specific/minimal-implementation.md) | Ponytail YAGNI ladder (MIT attribution) |
 | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)                                                             | Third-party licenses                    |
+| [docs/testing/contract-first-testing.md](docs/testing/contract-first-testing.md)                             | **Read before any test**                |
 | [README.md](README.md)                                                                                       | Human-oriented project overview         |
 
 ---

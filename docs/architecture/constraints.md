@@ -13,6 +13,7 @@
 | **Language (developer)** | English in code identifiers, repo docs, commits, logs (harness `english-only.mdc`) |
 | **Language (product)** | **100% i18n** — user-facing UI and API messages in **`en`** and **`pt-BR` only** ([features/i18n.md](../features/i18n.md)) |
 | **No `.glb` in git** | Model files uploaded to server; DB stores URL paths only |
+| **Testing** | Contract-first — tests from **docs**, never mirrored from code ([testing/contract-first-testing.md](../testing/contract-first-testing.md)) |
 
 ## Harness alignment
 
@@ -22,6 +23,7 @@
 | Size limits | `agent-rules/00-core/size-and-complexity-limits.md` |
 | Minimal scope | `.cursor/rules/ponytail.mdc` |
 | i18n (user-facing) | [../features/i18n.md](../features/i18n.md) |
+| Testing | [../testing/contract-first-testing.md](../testing/contract-first-testing.md) |
 
 ## Related documents
 

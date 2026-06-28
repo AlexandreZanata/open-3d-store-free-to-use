@@ -20,11 +20,15 @@ pnpm --filter api drizzle-kit studio      # Drizzle Studio GUI
 ## Testing
 
 ```bash
-pnpm test                                              # All packages
-pnpm --filter api vitest run --coverage                # API + coverage
-pnpm --filter @print3d/whatsapp vitest run             # WhatsApp package
-pnpm --filter @print3d/cep vitest run                  # CEP package
+pnpm test                              # All unit + integration (Turbo)
+pnpm --filter @print3d/api test        # API unit + integration
+pnpm --filter @print3d/whatsapp test   # WhatsApp package
+pnpm --filter @print3d/cep test        # CEP package
+pnpm e2e                               # Playwright E2E (Phase 7+)
+pnpm e2e:ui                            # Playwright UI mode (local debug)
 ```
+
+**Mandatory before writing tests:** [../testing/README.md](../testing/README.md) → [../testing/contract-first-testing.md](../testing/contract-first-testing.md)
 
 ## Build
 
@@ -61,4 +65,5 @@ pm2 monit
 ## Related documents
 
 - [../INDEX.md](../INDEX.md)
+- [../testing/contract-first-testing.md](../testing/contract-first-testing.md)
 - `.local/phases/`

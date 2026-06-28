@@ -31,6 +31,8 @@ open-3d-store-free-to-use/          # repo root (rename from print3d-shop in ori
 ├── pnpm-workspace.yaml
 ├── turbo.json
 ├── tsconfig.base.json
+├── playwright.config.ts            # E2E (Phase 7+)
+├── e2e/                            # Playwright specs
 └── package.json
 ```
 

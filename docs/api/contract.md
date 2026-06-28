@@ -46,6 +46,8 @@ Full policy: [../features/i18n.md](../features/i18n.md).
 
 Harness: `agent-rules/06-reliability-and-observability/exception-handling-discipline.md`
 
+**Contract tests:** HTTP integration and E2E tests for this API MUST assert shapes and status codes from **this document only** — see [../testing/contract-first-testing.md](../testing/contract-first-testing.md). Do not derive expectations from handler implementation.
+
 ---
 
 ## `GET /health`

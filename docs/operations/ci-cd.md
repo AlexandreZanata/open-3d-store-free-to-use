@@ -7,7 +7,7 @@
 - Push to `main`, `develop`
 - Pull requests to `main`
 
-## Job: test
+## Job: test (unit + integration)
 
 Services: PostgreSQL 18.4, Redis 8.8
 
@@ -16,14 +16,28 @@ Steps:
 2. pnpm setup (v9)
 3. Node 22
 4. `pnpm install --frozen-lockfile`
-5. Build `@print3d/shared-types`, `@print3d/whatsapp`
-6. `pnpm turbo test --filter=api --filter=@print3d/whatsapp`
+5. `pnpm turbo build`
+6. **`pnpm turbo test`** — all packages (Vitest unit + integration)
 7. `pnpm turbo lint`
+
+> Tests MUST follow [../testing/contract-first-testing.md](../testing/contract-first-testing.md). Failing contract tests block merge.
+
+## Job: e2e (Phase 7+)
+
+Runs after `test` job passes.
+
+Steps:
+1. Install Playwright browsers: `pnpm exec playwright install chromium --with-deps`
+2. Start API + web (or use `webServer` in `playwright.config.ts`)
+3. **`pnpm e2e`**
+4. Upload Playwright report on failure
+
+Minimum suites: catalog browse, product detail, WhatsApp redirect, i18n locale switch — see [../testing/tdd-strategy.md](../testing/tdd-strategy.md).
 
 ## Job: deploy
 
 - Runs only on push to `main`
-- Needs: test job pass
+- Needs: **test** and **e2e** jobs pass
 - SSH to VPS → run `infra/scripts/deploy.sh`
 
 ## GitHub Secrets
@@ -41,5 +55,7 @@ Steps:
 
 ## Related documents
 
+- [../testing/contract-first-testing.md](../testing/contract-first-testing.md)
+- [../testing/tdd-strategy.md](../testing/tdd-strategy.md)
 - [deployment.md](../infrastructure/deployment.md)
 - `.local/phases/08-production-deployment.md`

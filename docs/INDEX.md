@@ -59,7 +59,9 @@
 
 | Document | Contents |
 |----------|----------|
-| [testing/tdd-strategy.md](testing/tdd-strategy.md) | Pyramid, Vitest, coverage gates |
+| [testing/tdd-strategy.md](testing/tdd-strategy.md) | Pyramid, Vitest, Playwright, coverage gates |
+| [testing/README.md](testing/README.md) | **Read before any test** — mandatory order |
+| [testing/contract-first-testing.md](testing/contract-first-testing.md) | Restrictive contract-first test policy |
 | [operations/performance-caching.md](operations/performance-caching.md) | Redis TTLs, DB tuning, rate limits |
 | [operations/ci-cd.md](operations/ci-cd.md) | GitHub Actions workflow |
 | [operations/commands-reference.md](operations/commands-reference.md) | Dev, test, build, prod commands |

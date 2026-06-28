@@ -1,4 +1,4 @@
-import type { ICacheService } from "./ICacheService.js";
+import type { ICacheService } from "../../application/ports/ICacheService.js";
 import type { RedisConnection } from "./redis.js";
 import {
   categoriesKey,

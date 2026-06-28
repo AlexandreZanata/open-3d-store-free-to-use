@@ -26,13 +26,14 @@ src/
 │   └── events/            DomainEvent.ts
 ├── application/
 │   ├── use-cases/         GetProductBySlug, ListProducts, SearchProducts, GetCategories, CaptureOrder
-│   └── dtos/              ProductResponseDto, CaptureOrderDto
+│   ├── dtos/              ProductResponseDto, CaptureOrderDto
+│   ├── ports/             ICacheService.ts, IEventPublisher.ts
+│   ├── cache/             cacheKeys.ts (TTL + locale-aware keys)
+│   └── errors/            ApplicationErrors.ts
 ├── infrastructure/
 │   ├── db/                schema.ts, client.ts, migrations/
 │   ├── repositories/      Drizzle*Repository.ts, mappers/
-│   ├── cache/             ICacheService.ts, CacheService.ts, redis.ts
-│   └── storage/           LocalFileStorage.ts
-│   ├── cache/             redis.ts, CacheService.ts, ICacheService.ts
+│   ├── cache/             CacheService.ts, redis.ts (implements application ports)
 │   └── storage/           LocalFileStorage.ts
 └── http/
     ├── server.ts
@@ -86,7 +87,7 @@ Migration: `apps/api/src/infrastructure/db/migrations/0003_i18n_search_vectors.s
 
 `IOrderCaptureRepository`: `save(orderCapture, totalCents)`.
 
-`ICacheService`: `get`, `set`, `del`, `flush` — Redis-backed via `CacheService`.
+`ICacheService`: `get`, `set`, `del`, `flush` — port in `application/ports/`; Redis via `CacheService`.
 
 Pagination: `{ page, limit }` — max limit 50, 1-indexed pages.
 

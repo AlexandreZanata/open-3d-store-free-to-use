@@ -1,0 +1,15 @@
+{
+  "name": "open-3d-store-free-to-use",
+  "private": true,
+  "packageManager": "pnpm@9.15.9",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "test": "turbo test",
+    "lint": "turbo lint",
+    "format": "pnpm --filter @print3d/web format"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.4"
+  }
+}

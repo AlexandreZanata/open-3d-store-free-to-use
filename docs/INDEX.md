@@ -43,6 +43,7 @@
 | [api/contract.md](api/contract.md) | REST API v1 — endpoints, errors, caching |
 | [features/3d-viewer.md](features/3d-viewer.md) | `@google/model-viewer` integration |
 | [features/whatsapp-flow.md](features/whatsapp-flow.md) | Order capture and deep-link generation |
+| [features/cep-lookup.md](features/cep-lookup.md) | CEP validate + IBGE offline lookup |
 
 ### Infrastructure & operations
 
@@ -78,7 +79,7 @@
 |------|---------------------|---------------|
 | Frontend | `apps/web/` — TanStack Start + React 19 | Same (Phase 0 complete) |
 | Backend | Stub `@print3d/api` package | Fastify + Drizzle implementation |
-| Packages | `@print3d/shared-types`, `@print3d/whatsapp` (Phase 1 complete) | Used by API and web |
+| Packages | `@print3d/shared-types`, `@print3d/whatsapp`, `@print3d/cep` | Used by API and web |
 | Infra | Stub `infra/` placeholders | Docker, Nginx, PM2 (later phases) |
 
 Phase 0 complete — monorepo scaffold with pnpm workspaces and Turborepo.

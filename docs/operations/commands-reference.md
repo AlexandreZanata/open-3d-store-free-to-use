@@ -23,6 +23,7 @@ pnpm --filter api drizzle-kit studio      # Drizzle Studio GUI
 pnpm test                                              # All packages
 pnpm --filter api vitest run --coverage                # API + coverage
 pnpm --filter @print3d/whatsapp vitest run             # WhatsApp package
+pnpm --filter @print3d/cep vitest run                  # CEP package
 ```
 
 ## Build

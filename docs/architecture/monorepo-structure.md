@@ -15,7 +15,8 @@ open-3d-store-free-to-use/          # repo root (rename from print3d-shop in ori
 │       └── package.json
 ├── packages/
 │   ├── shared-types/               # @print3d/shared-types
-│   └── whatsapp/                   # @print3d/whatsapp
+│   ├── whatsapp/                   # @print3d/whatsapp
+│   └── cep/                        # @print3d/cep
 ├── infra/
 │   ├── nginx/nginx.conf
 │   ├── docker-compose.dev.yml
@@ -31,13 +32,14 @@ open-3d-store-free-to-use/          # repo root (rename from print3d-shop in ori
 └── package.json
 ```
 
-## Current layout (Phase 0 complete)
+## Current layout (Phase 1+)
 
 ```
-apps/web/               # @print3d/web — migrated from root src/
+apps/web/               # @print3d/web — TanStack Start frontend
 apps/api/               # @print3d/api — stub (Phase 2+)
-packages/shared-types/  # stub (Phase 1)
-packages/whatsapp/      # stub (Phase 1)
+packages/shared-types/  # @print3d/shared-types — domain DTOs
+packages/whatsapp/      # @print3d/whatsapp — wa.me link builder
+packages/cep/           # @print3d/cep — CEP validate + IBGE lookup
 infra/                  # docker-compose, nginx, pm2, scripts
 pnpm-workspace.yaml
 turbo.json

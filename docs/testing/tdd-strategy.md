@@ -17,6 +17,7 @@ Harness: `agent-rules/04-testing/test-pyramid.md`, `agent-rules/04-testing/cover
 | Package / app | Test directory |
 |---------------|----------------|
 | `@print3d/whatsapp` | `packages/whatsapp/tests/` |
+| `@print3d/cep` | `packages/cep/tests/` |
 | `apps/api` unit | `apps/api/tests/unit/` |
 | `apps/api` integration | `apps/api/tests/integration/` |
 
@@ -36,7 +37,7 @@ Harness: `agent-rules/04-testing/test-pyramid.md`, `agent-rules/04-testing/cover
 
 | Phase | Tests |
 |-------|-------|
-| 1 | WhatsApp link builder (14 tests) — **done** |
+| 1 | WhatsApp link builder (14 tests), CEP lookup (9 tests) — **done** |
 | 3 | Price, Slug value objects |
 | 4 | Repository integration (Postgres) |
 | 5 | Use cases with mocked repos |

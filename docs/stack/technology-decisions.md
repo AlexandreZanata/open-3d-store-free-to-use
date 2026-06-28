@@ -19,6 +19,7 @@
 | **Reverse proxy** | Nginx | SSL, static files, gzip, cache headers |
 | **Monorepo** | pnpm workspaces + Turborepo | Fast installs, build caching, shared packages |
 | **BR phone validation** | `@br-validators/core/telefone` | Anatel DDD rules; validate + mask for WhatsApp (`@print3d/whatsapp`) |
+| **BR CEP validation** | `@br-validators/core/cep` | Correios format + IBGE CNEFE offline lookup (`@print3d/cep`) |
 | **Testing** | Vitest + Supertest | Native ESM, fast, Node 22 compatible |
 | **Containerization** | Docker Compose (dev only) | `postgres:18.4-alpine`, `redis:8.8-alpine`; prod runs on VPS directly |
 

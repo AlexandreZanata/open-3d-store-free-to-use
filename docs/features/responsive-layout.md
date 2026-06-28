@@ -30,7 +30,6 @@ Two-tier professional header, visually distinct from mobile:
 |------|---------|
 | **Utility strip** | Tagline + “Order via WhatsApp” · language switcher |
 | **Main bar** | Inverted (`bg-foreground`) — logo, text nav with accent underline, search field, labeled Cart CTA |
-| **Sub-header** | Optional page title row (back + title) on inner pages |
 
 ### Home (`HomeDesktopView`)
 
@@ -46,7 +45,7 @@ Separate desktop-only home — mobile home is wrapped in `lg:hidden`:
 
 | Page | Desktop |
 |------|---------|
-| **Search** | Persistent filter sidebar + product grid |
+| **Search** | Page intro, sticky filter card sidebar, prominent search field, catalog product cards (`2–3` cols) |
 | **Categories** | 3–4 column grid |
 | **Product** | Two columns (viewer / details) |
 | **Cart** | Centered `max-w-3xl` column |
@@ -61,7 +60,10 @@ Separate desktop-only home — mobile home is wrapped in `lg:hidden`:
 | `apps/web/src/components/AppShellDesktopHeader.tsx` | Desktop inverted header |
 | `apps/web/src/components/AppShellMobileNav.tsx` | Mobile bottom tabs |
 | `apps/web/src/components/home/HomeDesktopView.tsx` | Desktop-only home |
-| `apps/web/src/components/SearchFiltersPanel.tsx` | Search filters |
+| `apps/web/src/components/SearchFiltersPanel.tsx` | Search filters (mobile chips / desktop list) |
+| `apps/web/src/components/search/SearchDesktopView.tsx` | Desktop-only search layout |
+| `apps/web/src/components/search/SearchMobileView.tsx` | **Frozen** mobile search UI |
+| `apps/web/src/components/search/CatalogProductCard.tsx` | Desktop catalog card for search |
 
 ## Testing
 

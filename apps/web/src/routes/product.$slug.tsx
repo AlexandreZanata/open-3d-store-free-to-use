@@ -13,7 +13,8 @@ import { ApiError } from "@/lib/api/client";
 import { fetchProductBySlug } from "@/lib/api/products";
 import { resolveAssetUrl } from "@/lib/assets";
 import { addToCart } from "@/lib/cart";
-import { mobileOnly, pagePadding, railTrack, shellMaxWidth } from "@/lib/layout";
+import { mobileOnly, pagePadding, shellMaxWidth } from "@/lib/layout";
+import { RailTrack } from "@/components/Rail";
 import { getActiveLocale } from "@/lib/locale";
 import type { ProductDetail } from "@print3d/shared-types";
 
@@ -237,7 +238,7 @@ function ProductPage() {
               {t("product.related")}
             </h2>
           </div>
-          <div className={railTrack}>
+          <RailTrack>
             {relatedQuery.isLoading
               ? Array.from({ length: 2 }).map((_, index) => (
                   <div key={index} className="snap-start">
@@ -249,7 +250,7 @@ function ProductPage() {
                     <ProductCard product={item} variant="wide" />
                   </div>
                 ))}
-          </div>
+          </RailTrack>
         </section>
       )}
 

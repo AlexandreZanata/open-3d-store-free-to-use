@@ -7,7 +7,7 @@
 - Push to `main`, `develop`
 - Pull requests to `main`
 
-## Job: test (unit + integration)
+## Job: test (unit + integration + infra contract)
 
 Services: PostgreSQL 18.4, Redis 8.8
 
@@ -16,21 +16,23 @@ Steps:
 2. pnpm setup (v9)
 3. Node 22
 4. `pnpm install --frozen-lockfile`
-5. **`./scripts/quality-gate.sh ci`** — typecheck, ESLint (no `any`/`unknown`), size/complexity, build, tests
+5. **`node --test scripts/infra-contract.test.mjs`** — deployment/nginx/PM2/CI contract
+6. **`./scripts/quality-gate.sh ci`** — typecheck, ESLint (no `any`/`unknown`), size/complexity, build, tests
 
 > **Quality Gate:** typecheck, ESLint strict types, size/complexity, build, and tests are **paired gates** — all must pass. Harness rule: `agent-rules/00-core/size-and-complexity-limits.md`.
 
 > Tests MUST follow [../testing/contract-first-testing.md](../testing/contract-first-testing.md). Failing contract tests block merge.
 
-## Job: e2e (Phase 7+)
+## Job: e2e
 
 Runs after `test` job passes.
 
 Steps:
-1. Install Playwright browsers: `pnpm exec playwright install chromium --with-deps`
-2. Start API + web (or use `webServer` in `playwright.config.ts`)
-3. **`pnpm e2e`**
-4. Upload Playwright report on failure
+1. `pnpm --filter @print3d/api exec drizzle-kit migrate`
+2. `pnpm --filter @print3d/api db:seed`
+3. Install Playwright browsers: `pnpm exec playwright install chromium --with-deps`
+4. **`pnpm e2e`**
+5. Upload Playwright report on failure
 
 Minimum suites: catalog browse, product detail, WhatsApp redirect, i18n locale switch — see [../testing/tdd-strategy.md](../testing/tdd-strategy.md).
 

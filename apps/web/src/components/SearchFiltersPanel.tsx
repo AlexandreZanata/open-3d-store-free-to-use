@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { ProductQueryParams } from "@/lib/api/types";
 
 type CategoryOption = { slug: string; name: string };
@@ -10,6 +11,7 @@ type Props = {
   onCategoryChange: (slug: string | null) => void;
   onMaterialChange: (material: ProductQueryParams["material"] | undefined) => void;
   t: (key: string, options?: Record<string, string | number>) => string;
+  variant?: "mobile" | "desktop";
 };
 
 export function SearchFiltersPanel({
@@ -20,46 +22,89 @@ export function SearchFiltersPanel({
   onCategoryChange,
   onMaterialChange,
   t,
+  variant = "mobile",
 }: Props) {
+  if (variant === "desktop") {
+    return (
+      <div className="bg-surface ring-1 ring-hairline rounded-2xl p-5 shadow-soft space-y-6">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            {t("search.refineResults")}
+          </p>
+        </div>
+        <DesktopFilterGroup label={t("search.filterCategory")}>
+          <DesktopFilterOption
+            active={category === null}
+            onClick={() => onCategoryChange(null)}
+            label={t("search.filterAll")}
+          />
+          {categories.map((item) => (
+            <DesktopFilterOption
+              key={item.slug}
+              active={category === item.slug}
+              onClick={() => onCategoryChange(item.slug)}
+              label={item.name}
+            />
+          ))}
+        </DesktopFilterGroup>
+        <DesktopFilterGroup label={t("search.filterMaterial")}>
+          <DesktopFilterOption
+            active={!material}
+            onClick={() => onMaterialChange(undefined)}
+            label={t("search.filterAll")}
+          />
+          {materials.map((item) => (
+            <DesktopFilterOption
+              key={item}
+              active={material === item}
+              onClick={() => onMaterialChange(item)}
+              label={t(`material.${item}`)}
+            />
+          ))}
+        </DesktopFilterGroup>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
-      <FilterGroup label={t("search.filterCategory")}>
-        <Chip active={category === null} onClick={() => onCategoryChange(null)}>
+      <MobileFilterGroup label={t("search.filterCategory")}>
+        <MobileChip active={category === null} onClick={() => onCategoryChange(null)}>
           {t("search.filterAll")}
-        </Chip>
+        </MobileChip>
         {categories.map((item) => (
-          <Chip
+          <MobileChip
             key={item.slug}
             active={category === item.slug}
             onClick={() => onCategoryChange(item.slug)}
           >
             {item.name}
-          </Chip>
+          </MobileChip>
         ))}
-      </FilterGroup>
+      </MobileFilterGroup>
 
-      <FilterGroup label={t("search.filterMaterial")}>
-        <Chip active={!material} onClick={() => onMaterialChange(undefined)}>
+      <MobileFilterGroup label={t("search.filterMaterial")}>
+        <MobileChip active={!material} onClick={() => onMaterialChange(undefined)}>
           {t("search.filterAll")}
-        </Chip>
+        </MobileChip>
         {materials.map((item) => (
-          <Chip key={item} active={material === item} onClick={() => onMaterialChange(item)}>
+          <MobileChip key={item} active={material === item} onClick={() => onMaterialChange(item)}>
             {t(`material.${item}`)}
-          </Chip>
+          </MobileChip>
         ))}
-      </FilterGroup>
+      </MobileFilterGroup>
     </div>
   );
 }
 
-function Chip({
+function MobileChip({
   active,
   onClick,
   children,
 }: {
   active?: boolean;
   onClick?: () => void;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <button
@@ -75,7 +120,7 @@ function Chip({
   );
 }
 
-function FilterGroup({ label, children }: { label: string; children: React.ReactNode }) {
+function MobileFilterGroup({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div>
       <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-2">
@@ -83,5 +128,39 @@ function FilterGroup({ label, children }: { label: string; children: React.React
       </div>
       <div className="flex flex-wrap gap-2">{children}</div>
     </div>
+  );
+}
+
+function DesktopFilterGroup({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div>
+      <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-3">
+        {label}
+      </div>
+      <div className="space-y-1.5">{children}</div>
+    </div>
+  );
+}
+
+function DesktopFilterOption({
+  active,
+  onClick,
+  label,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full text-left h-10 px-3.5 rounded-lg text-sm font-medium press transition-colors ${
+        active
+          ? "bg-foreground text-background"
+          : "text-muted-foreground hover:text-foreground hover:bg-muted"
+      }`}
+    >
+      {label}
+    </button>
   );
 }

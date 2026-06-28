@@ -6,10 +6,19 @@
 
 - HTTP → HTTPS redirect
 - SSL termination (Let's Encrypt)
-- Serve React static build from `/var/www/print3d/web`
+- Proxy TanStack Start SSR (`127.0.0.1:4173`) for storefront routes and hashed assets
 - Serve `/models/` directly from filesystem (no Node proxy)
 - Proxy `/api/` to `127.0.0.1:3001`
-- SPA fallback: `try_files $uri $uri/ /index.html`
+- Long-cache immutable headers for proxied static assets (`*.js`, `*.css`, fonts, images)
+
+## Upstreams
+
+| Upstream | Target | Purpose |
+|----------|--------|---------|
+| `print3d_api` | `127.0.0.1:3001` | Fastify REST API |
+| `print3d_web` | `127.0.0.1:4173` | TanStack Start SSR (`pnpm --filter @print3d/web start`) |
+
+Replace `yourdomain.com` in the template before enabling the site.
 
 ## Gzip types
 
@@ -22,7 +31,7 @@ application/wasm model/gltf-binary model/gltf+json
 
 | Location | TTL |
 |----------|-----|
-| `*.js`, `*.css`, images, fonts | 1 year, immutable |
+| Proxied `*.js`, `*.css`, images, fonts | 1 year, immutable |
 | `/models/` | 30 days |
 | `/api/` | Set by API (Cache-Control from Fastify) |
 
@@ -33,7 +42,16 @@ X-Real-IP, X-Forwarded-For, X-Forwarded-Proto, Host
 proxy_read_timeout 30s
 ```
 
-Full config template: see original spec section 5 in repo history or Phase 8 task references.
+## Enable site
+
+```bash
+sudo cp infra/nginx/nginx.conf /etc/nginx/sites-available/print3d.conf
+# edit server_name + SSL paths
+sudo ln -s /etc/nginx/sites-available/print3d.conf /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+Full template: `infra/nginx/nginx.conf`
 
 ## Related documents
 

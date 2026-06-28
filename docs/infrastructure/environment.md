@@ -33,11 +33,18 @@ Harness: `agent-rules/03-security/secrets-and-credentials.md`
 
 ## Frontend env (TanStack / Vite)
 
+| File | Purpose | In git? |
+|------|---------|---------|
+| `apps/web/.env.example` | Local dev API URL | Yes |
+| `apps/web/.env.production.example` | VPS build-time URLs | Yes |
+| `apps/web/.env.production` | Production build on VPS | No |
+
 | Variable | Purpose |
 |----------|---------|
-| `VITE_API_BASE_URL` | API client base (future Phase 7) |
+| `VITE_API_BASE_URL` | REST client base (includes `/api/v1`) |
+| `VITE_ASSETS_BASE_URL` | Public origin for model thumbnails and `.glb` paths |
 
-Add to `apps/web/.env.example` when integrating API.
+Production deploy reads these at **build time**. `deploy.sh` derives them from `CORS_ORIGIN` when `.env.production` is missing.
 
 ## Related documents
 

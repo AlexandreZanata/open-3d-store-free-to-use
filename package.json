@@ -15,6 +15,7 @@
     "format": "pnpm --filter @print3d/web format",
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui",
+    "test:infra": "node --test scripts/infra-contract.test.mjs",
     "prepare": "husky"
   },
   "lint-staged": {

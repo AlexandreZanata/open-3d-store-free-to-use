@@ -21,6 +21,11 @@ run_size() {
   ./agent-harness/verify-size-complexity.sh
 }
 
+run_infra_contract() {
+  echo "==> Infra contract tests"
+  node --test scripts/infra-contract.test.mjs
+}
+
 run_tests() {
   echo "==> Tests"
   pnpm turbo test
@@ -46,6 +51,7 @@ case "$MODE" in
     run_typecheck
     run_eslint
     run_size
+    run_infra_contract
     run_build
     run_tests
     ;;

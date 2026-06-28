@@ -6,8 +6,6 @@ export const pagePadding = "px-4 lg:px-8";
 
 export const stickyBelowHeader = "top-14 lg:top-[6.5rem]";
 
-export const stickyBelowDesktopSubHeader = "lg:top-[9.5rem]";
-
 export const desktopMainSurface = "lg:pt-2";
 
 export const desktopHeroSurface =
@@ -21,13 +19,21 @@ export const productGridCols =
 export const categoryGridCols =
   "grid grid-cols-2 gap-3 lg:grid-cols-3 lg:gap-4 xl:grid-cols-4";
 
-export const railTrack =
-  "flex gap-3 overflow-x-auto px-4 pb-2 no-scrollbar snap-x snap-mandatory lg:grid lg:grid-cols-4 lg:gap-4 lg:overflow-visible lg:snap-none lg:px-8 xl:grid-cols-5";
+export const railScroll =
+  "overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory lg:overflow-visible lg:snap-none";
+
+export const railInner =
+  "flex gap-3 px-4 w-max min-w-full lg:grid lg:grid-cols-4 lg:gap-4 lg:w-full lg:px-8 xl:grid-cols-5";
+
+/** @deprecated Use `railScroll` + `railInner` for correct mobile edge padding. */
+export const railTrack = `${railScroll} ${railInner}`;
 
 export const productCardWideWidth = "w-[78vw] max-w-[300px] lg:w-full lg:max-w-none";
 
 export const categoryPillsTrack =
   "flex gap-2 overflow-x-auto px-4 pb-2 no-scrollbar lg:flex-wrap lg:overflow-visible lg:px-8";
+
+export const searchCatalogGridCols = "grid grid-cols-2 gap-5 xl:grid-cols-3";
 
 export const desktopOnly = "hidden lg:block";
 

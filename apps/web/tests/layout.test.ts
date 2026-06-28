@@ -9,8 +9,9 @@ import {
   mobileOnly,
   productCardWideWidth,
   productGridCols,
+  searchCatalogGridCols,
+  railInner,
   shellMaxWidth,
-  stickyBelowDesktopSubHeader,
   stickyBelowHeader,
 } from "../src/lib/layout";
 
@@ -39,6 +40,15 @@ describe("responsive layout tokens", () => {
   it("defines desktop header sticky offsets", () => {
     expect(stickyBelowHeader).toContain("top-14");
     expect(stickyBelowHeader).toContain("lg:top-[6.5rem]");
-    expect(stickyBelowDesktopSubHeader).toBe("lg:top-[9.5rem]");
+  });
+
+  it("defines desktop search catalog grid", () => {
+    expect(searchCatalogGridCols).toContain("grid-cols-2");
+    expect(searchCatalogGridCols).toContain("xl:grid-cols-3");
+  });
+
+  it("defines horizontal rail padding on inner track", () => {
+    expect(railInner).toContain("px-4");
+    expect(railInner).toContain("w-max");
   });
 });

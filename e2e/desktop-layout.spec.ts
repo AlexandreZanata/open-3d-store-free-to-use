@@ -33,13 +33,14 @@ test.describe("desktop layout", () => {
     await page.goto("/search");
 
     await expect(page.getByLabel(/filters|filtros/i)).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole("heading", { name: /search|buscar/i, level: 1 })).toBeVisible();
   });
 
-  test("product grid uses multi-column layout on desktop", async ({ page }) => {
-    await page.goto("/search?q=custom");
+  test("search grid uses catalog layout on desktop", async ({ page }) => {
+    await page.goto("/search");
     const grid = page.locator(".grid").filter({ has: page.locator("article") }).first();
     await expect(grid).toBeVisible({ timeout: 20_000 });
-    await expect(grid).toHaveClass(/lg:grid-cols-3/);
+    await expect(grid).toHaveClass(/xl:grid-cols-3/);
   });
 });
 

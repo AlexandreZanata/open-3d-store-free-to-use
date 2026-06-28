@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { ArrowLeft, Heart, Home, LayoutGrid, Search, ShoppingBag, User } from "lucide-react";
+import { Heart, Home, LayoutGrid, Search, ShoppingBag, User } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -39,11 +39,13 @@ const NAV_ITEMS = [
   },
 ] as const;
 
-/** Desktop-only header — inverted bar, utility strip, and page sub-header. */
-export function AppShellDesktopHeader({ showSearch = true, showBack = false, title }: Props) {
+/** Desktop-only header — inverted bar and utility strip. */
+export function AppShellDesktopHeader({
+  showSearch = true,
+  title,
+}: Props) {
   const { t } = useTranslation();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const showSubHeader = Boolean(title) || showBack;
 
   return (
     <header className={`${desktopOnly} sticky top-0 z-40`}>
@@ -108,26 +110,6 @@ export function AppShellDesktopHeader({ showSearch = true, showBack = false, tit
           </div>
         </div>
       </div>
-
-      {showSubHeader && (
-        <div className="border-b border-hairline bg-background/95 backdrop-blur-sm">
-          <div className={`${shellMaxWidth} px-8 h-12 flex items-center gap-3`}>
-            {showBack && (
-              <Link
-                to="/"
-                aria-label={t("nav.back")}
-                className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground press"
-              >
-                <ArrowLeft className="size-4" />
-                {t("nav.back")}
-              </Link>
-            )}
-            {title && (
-              <h1 className="text-sm font-semibold tracking-tight text-foreground">{title}</h1>
-            )}
-          </div>
-        </div>
-      )}
     </header>
   );
 }

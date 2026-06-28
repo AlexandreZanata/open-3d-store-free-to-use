@@ -75,9 +75,13 @@ Caps: **≤80 lines/function**, **≤200 lines/file**, **cyclomatic ≤10** per 
 
 ```bash
 pm2 logs print3d-api
-pm2 reload print3d-api             # Zero-downtime
+pm2 logs print3d-web
+pm2 reload print3d-api             # Zero-downtime API
+pm2 reload print3d-web
 pm2 monit
-./infra/scripts/deploy.sh
+./infra/scripts/migrate.sh         # Apply Drizzle migrations only
+./infra/scripts/deploy.sh          # Full pull/build/migrate/reload
+pnpm test:infra                    # Infra contract tests (Node test runner)
 ```
 
 ## Harness

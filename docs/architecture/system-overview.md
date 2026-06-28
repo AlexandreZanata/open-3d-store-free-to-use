@@ -34,6 +34,10 @@ Single bounded context: **Catalog & Order Capture**.
 
 No payment context, no fulfillment context (WhatsApp), no user account context (anonymous browsing).
 
+## Internationalization
+
+The storefront is **fully bilingual** (`en` + `pt-BR`). Users pick a language via switcher or browser preference; catalog API returns locale-specific product copy. WhatsApp order messages remain Portuguese. See [../features/i18n.md](../features/i18n.md).
+
 See [domain-model.md](domain-model.md) for aggregates and events.
 
 ## Related documents
@@ -41,6 +45,7 @@ See [domain-model.md](domain-model.md) for aggregates and events.
 | Topic | Document |
 |-------|----------|
 | Constraints | [constraints.md](constraints.md) |
+| i18n | [../features/i18n.md](../features/i18n.md) |
 | Stack | [../stack/technology-decisions.md](../stack/technology-decisions.md) |
 | API | [../api/contract.md](../api/contract.md) |
 | 3D viewer | [../features/3d-viewer.md](../features/3d-viewer.md) |

@@ -12,6 +12,10 @@
 | MongoDB | PostgreSQL JSONB covers flexible attributes; relational integrity matters |
 | Lovable vite config | Vendor lock-in; replaced with standard TanStack Start Vite config |
 | Payment gateway | Out of scope — WhatsApp handles transactions |
+| More than 2 UI locales | Scope locked to `en` + `pt-BR` only — see [../features/i18n.md](../features/i18n.md) |
+| Hardcoded UI strings | All user-visible copy must use i18n keys |
+| Google Translate / runtime MT | Quality and cost; manual translations for 2 locales |
+| Separate DB row per locale | JSONB `translations` column is simpler for solo maintainer |
 
 ## Related documents
 

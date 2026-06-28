@@ -27,6 +27,8 @@
 
 **ProductOption:** `{ id, name, type: select|text|boolean, required, choices?, defaultValue? }`
 
+**i18n:** User-visible text (`name`, `description`, `shortDescription`, option labels) stored per locale in DB `translations` JSONB — keys `en` and `pt-BR` only. Slug is not translated. See [../features/i18n.md](../features/i18n.md).
+
 Target types: `packages/shared-types/src/product.types.ts` (Phase 1)
 
 ### Category (root)
@@ -41,6 +43,8 @@ Target types: `packages/shared-types/src/product.types.ts` (Phase 1)
 | `imageUrl` | string \| null | |
 | `sortOrder` | number | |
 | `isActive` | boolean | |
+
+**i18n:** `name` and `description` are locale-specific via `translations` JSONB (`en`, `pt-BR`). Slug is shared across locales.
 
 Target types: `packages/shared-types/src/category.types.ts` (Phase 1)
 
@@ -122,4 +126,5 @@ Target: `apps/api/src/domain/events/DomainEvent.ts`
 
 - [backend-architecture.md](backend-architecture.md)
 - [../api/contract.md](../api/contract.md)
+- [../features/i18n.md](../features/i18n.md)
 - [../features/whatsapp-flow.md](../features/whatsapp-flow.md)

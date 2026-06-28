@@ -43,6 +43,7 @@ Harness: `agent-rules/04-testing/test-pyramid.md`, `agent-rules/04-testing/cover
 | 4 | Repository integration (Postgres) |
 | 5 | Use cases with mocked repos |
 | 6 | HTTP routes via `app.inject()` |
+| 7 | Web i18n key parity + manual EN/PT journey — **required** |
 
 ## TDD workflow (mandatory)
 

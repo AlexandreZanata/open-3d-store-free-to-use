@@ -44,6 +44,7 @@
 | [features/3d-viewer.md](features/3d-viewer.md) | `@google/model-viewer` integration |
 | [features/whatsapp-flow.md](features/whatsapp-flow.md) | Order capture and deep-link generation |
 | [features/cep-lookup.md](features/cep-lookup.md) | CEP validate + IBGE offline lookup |
+| [features/i18n.md](features/i18n.md) | Bilingual UI/API (`en` + `pt-BR`) |
 
 ### Infrastructure & operations
 
@@ -81,6 +82,7 @@
 | Backend | `@print3d/api` — Drizzle schema + migrations (Phase 2) | Fastify + use cases |
 | Packages | `@print3d/shared-types`, `@print3d/whatsapp`, `@print3d/cep` | Used by API and web |
 | Infra | Stub `infra/` placeholders | Docker, Nginx, PM2 (later phases) |
+| i18n | Spec in `docs/features/i18n.md` | Full `en` + `pt-BR` — Phases 1–7 |
 
 Phase 0 complete — monorepo scaffold with pnpm workspaces and Turborepo.
 

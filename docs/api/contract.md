@@ -17,6 +17,22 @@ All routes prefixed `/api/v1`. Version in path — never omit.
 
 Future admin endpoints (out of scope v1) will require separate auth — document in ADR before adding.
 
+## Internationalization
+
+All public endpoints honor **`Accept-Language: en`** or **`Accept-Language: pt-BR`**. Optional override: `?locale=en|pt-BR`.
+
+| Behavior | Detail |
+|----------|--------|
+| Catalog fields | Resolved from entity `translations` JSONB |
+| RFC 7807 errors | `title` and `detail` localized |
+| Response meta | Include `"locale": "en"` or `"locale": "pt-BR"` on catalog payloads |
+| Default | `pt-BR` when header missing or unsupported |
+| Unsupported locale | Fall back to `en`, then `pt-BR` |
+
+Full policy: [../features/i18n.md](../features/i18n.md).
+
+---
+
 ## Error format (RFC 7807)
 
 ```json

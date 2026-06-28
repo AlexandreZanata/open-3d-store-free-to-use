@@ -5,12 +5,14 @@
 ```
 open-3d-store-free-to-use/          # repo root (rename from print3d-shop in original spec)
 ├── apps/
-│   ├── web/                        # React frontend (migrate from current src/)
+│   ├── web/                        # React frontend + i18next (en, pt-BR)
 │   │   ├── src/
+│   │   │   └── i18n/locales/       # en.json, pt-BR.json
 │   │   ├── public/
 │   │   └── package.json
-│   └── api/                        # Fastify backend (to be built)
+│   └── api/                        # Fastify backend
 │       ├── src/
+│       │   └── i18n/messages/      # API error strings (en, pt-BR)
 │       ├── tests/
 │       └── package.json
 ├── packages/
@@ -35,7 +37,7 @@ open-3d-store-free-to-use/          # repo root (rename from print3d-shop in ori
 ## Current layout (Phase 1+)
 
 ```
-apps/web/               # @print3d/web — TanStack Start frontend
+apps/web/               # @print3d/web — TanStack Start + i18next (en, pt-BR)
 apps/api/               # @print3d/api — Drizzle schema, migrations (Phase 2+)
 packages/shared-types/  # @print3d/shared-types — domain DTOs
 packages/whatsapp/      # @print3d/whatsapp — wa.me link builder

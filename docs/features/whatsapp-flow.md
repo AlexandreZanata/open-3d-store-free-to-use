@@ -28,9 +28,9 @@ Phone validation uses subpath `@br-validators/core/telefone` only (Anatel DDD ru
 | `customerNote` | string? | |
 | `totalCents` | number | Integer BRL cents |
 
-## Message template (Portuguese — customer-facing)
+## Message template (Portuguese — always)
 
-WhatsApp messages to Brazilian customers use Portuguese formatting:
+WhatsApp order messages are **always Brazilian Portuguese**, regardless of the user's UI locale (`en` / `pt-BR`). See [i18n.md](i18n.md).
 
 ```
 🖨️ *Pedido - Impressão 3D*
@@ -51,7 +51,7 @@ WhatsApp messages to Brazilian customers use Portuguese formatting:
 _Olá! Gostaria de confirmar este pedido._
 ```
 
-> Code and docs in English; WhatsApp message body may use Portuguese for end customers.
+> Repo docs and code comments remain English (harness). Only the WhatsApp message body uses fixed Portuguese.
 
 ## CaptureOrder use case flow
 

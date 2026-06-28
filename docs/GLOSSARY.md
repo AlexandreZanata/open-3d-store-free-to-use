@@ -14,6 +14,8 @@
 | **Format**           | File type included in a model listing (STL, 3MF, STEP, etc.)   |
 | **Badge**            | Listing label: New, Sale, or Free                              |
 | **Difficulty**       | Print complexity: Beginner, Intermediate, Advanced             |
+| **Locale**           | User language: `en` (English) or `pt-BR` (Brazilian Portuguese) — [i18n.md](features/i18n.md) |
+| **SupportedLocale**  | Union type `en` \| `pt-BR` — the only product languages          |
 
 ## File formats
 

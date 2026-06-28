@@ -20,6 +20,7 @@ Open [http://localhost:5173](http://localhost:5173).
 | **Stack & technology** | [docs/stack/technology-decisions.md](docs/stack/technology-decisions.md) |
 | **API contract v1** | [docs/api/contract.md](docs/api/contract.md) |
 | **Domain model** | [docs/architecture/domain-model.md](docs/architecture/domain-model.md) |
+| **i18n (en + pt-BR)** | [docs/features/i18n.md](docs/features/i18n.md) |
 | **Commit conventions** | [docs/governance/commit-conventions.md](docs/governance/commit-conventions.md) |
 | **Glossary** | [docs/GLOSSARY.md](docs/GLOSSARY.md) |
 
@@ -58,7 +59,7 @@ Full rationale: [docs/stack/technology-decisions.md](docs/stack/technology-decis
 ## Project layout
 
 ```
-apps/web/              # @print3d/web — TanStack Start frontend
+apps/web/              # @print3d/web — TanStack Start + i18next (en, pt-BR)
 apps/api/              # @print3d/api — Drizzle schema + migrations
 packages/shared-types/ # @print3d/shared-types — domain DTOs
 packages/whatsapp/     # @print3d/whatsapp — wa.me link builder (+ telefone)

@@ -42,7 +42,7 @@ src/
 | Table | Purpose |
 |-------|---------|
 | `categories` | Category aggregate |
-| `products` | Product aggregate + `search_vector` tsvector |
+| `products` | Product aggregate + locale-specific `search_vector_en` / `search_vector_pt` |
 | `order_captures` | Analytics persistence |
 | `domain_events` | Event log |
 
@@ -50,13 +50,20 @@ Full Drizzle schema: see spec in phase 2 — `apps/api/src/infrastructure/db/sch
 
 ## Full-text search
 
-PostgreSQL `to_tsvector('portuguese', ...)` on name, short_description, material. GIN index on `search_vector`.
+Per-locale PostgreSQL `to_tsvector` on resolved translation fields:
 
-> Implemented as a **BEFORE INSERT/UPDATE trigger** (not a generated column) because `to_tsvector` with the Portuguese config is not immutable in PostgreSQL.
+| Column | Config | Fields |
+|--------|--------|--------|
+| `search_vector_en` | `english` | en.name, en.shortDescription, material |
+| `search_vector_pt` | `portuguese` | pt-BR name, shortDescription, material |
 
-> User-facing UI is English; search config uses Portuguese for Brazilian product content.
+GIN index on each column. Phase 4 migration replaces single `search_vector` from Phase 2.
 
-Migration: `apps/api/src/infrastructure/db/migrations/0002_add_search_vector.sql`
+> Implemented as **BEFORE INSERT/UPDATE triggers** (not generated columns) because `to_tsvector` with language configs is not immutable in PostgreSQL.
+
+> Search query uses the request locale's vector. See [../features/i18n.md](../features/i18n.md).
+
+Migration: `apps/api/src/infrastructure/db/migrations/0003_i18n_search_vectors.sql` (Phase 4)
 
 ## Use cases (summary)
 

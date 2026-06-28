@@ -18,6 +18,7 @@
 | **Process manager** | PM2 | Zero-downtime reload, log rotation, clustering |
 | **Reverse proxy** | Nginx | SSL, static files, gzip, cache headers |
 | **Monorepo** | pnpm workspaces + Turborepo | Fast installs, build caching, shared packages |
+| **i18n (UI + API)** | i18next + react-i18next (`en`, `pt-BR` only) | 100% user-facing coverage; see [features/i18n.md](../features/i18n.md) |
 | **BR phone validation** | `@br-validators/core/telefone` | Anatel DDD rules; validate + mask for WhatsApp (`@print3d/whatsapp`) |
 | **BR CEP validation** | `@br-validators/core/cep` | Correios format + IBGE CNEFE offline lookup (`@print3d/cep`) |
 | **Testing** | Vitest + Supertest | Native ESM, fast, Node 22 compatible |

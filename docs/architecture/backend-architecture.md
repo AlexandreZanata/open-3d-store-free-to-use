@@ -51,7 +51,7 @@ src/
     ├── errors/            problemDetails.ts (RFC 7807)
     ├── types/             fastify.d.ts (request.locale, cacheMaxAge)
     ├── plugins/           cors.ts, rate-limit.ts, cache-headers.ts, locale.ts
-    └── routes/            health, products, categories, orders
+    └── routes/            health, products, categories, orders, admin/*
 ```
 
 ## HTTP layer (Phase 6)
@@ -67,6 +67,18 @@ src/
 Plugins: CORS (`CORS_ORIGIN`), Redis-backed rate limit (100/min global; 10/min on capture), `Cache-Control` per route, locale resolution.
 
 Integration tests: `apps/api/tests/integration/routes/` (`app.inject()` — no real port).
+
+## Admin HTTP layer (Phase 12)
+
+| Prefix | Auth | Notes |
+|--------|------|-------|
+| `/api/v1/admin/auth/*` | Cookie session (`print3d_admin_session`) | Login rate limit 5/min; `requireAdmin` on protected routes |
+| `/api/v1/admin/products` | Yes | CRUD + bilingual payloads |
+| `/api/v1/admin/categories` | Yes | CRUD; soft-delete via `DELETE` |
+| `/api/v1/admin/orders` | Yes | Read-only list + detail |
+| `/api/v1/admin/uploads` | Yes | Multipart (`file` + `kind`) |
+
+Plugins: `admin-auth.ts` (cookie + `requireAdmin`), CORS allows `ADMIN_ORIGIN` with credentials. Errors: RFC 7807 via `handleAdminError.ts`. Contract: [../api/admin-contract.md](../api/admin-contract.md).
 
 ## Database tables
 

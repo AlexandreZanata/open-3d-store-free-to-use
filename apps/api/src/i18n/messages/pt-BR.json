@@ -23,6 +23,38 @@
     "rateLimitExceeded": {
       "title": "Muitas requisições",
       "detail": "Limite de requisições excedido. Tente novamente mais tarde."
+    },
+    "unauthorized": {
+      "title": "Não autorizado",
+      "detail": "Autenticação necessária"
+    },
+    "invalidCredentials": {
+      "title": "Não autorizado",
+      "detail": "E-mail ou senha inválidos"
+    },
+    "forbidden": {
+      "title": "Proibido",
+      "detail": "Você não tem permissão para executar esta ação"
+    },
+    "resourceNotFound": {
+      "title": "Não encontrado",
+      "detail": "{{resource}} '{{id}}' não foi encontrado"
+    },
+    "slugConflict": {
+      "title": "Conflito",
+      "detail": "O slug '{{slug}}' já existe"
+    },
+    "productHasOrderReferences": {
+      "title": "Conflito",
+      "detail": "O produto '{{productId}}' possui pedidos; use status discontinued"
+    },
+    "categoryHasActiveProducts": {
+      "title": "Conflito",
+      "detail": "A categoria '{{categoryId}}' possui produtos ativos"
+    },
+    "badRequest": {
+      "title": "Requisição inválida",
+      "detail": "A requisição não pôde ser processada"
     }
   }
 }

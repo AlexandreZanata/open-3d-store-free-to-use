@@ -23,6 +23,38 @@
     "rateLimitExceeded": {
       "title": "Too many requests",
       "detail": "Rate limit exceeded. Try again later."
+    },
+    "unauthorized": {
+      "title": "Unauthorized",
+      "detail": "Authentication required"
+    },
+    "invalidCredentials": {
+      "title": "Unauthorized",
+      "detail": "Invalid email or password"
+    },
+    "forbidden": {
+      "title": "Forbidden",
+      "detail": "You do not have permission to perform this action"
+    },
+    "resourceNotFound": {
+      "title": "Not found",
+      "detail": "{{resource}} '{{id}}' was not found"
+    },
+    "slugConflict": {
+      "title": "Conflict",
+      "detail": "Slug '{{slug}}' already exists"
+    },
+    "productHasOrderReferences": {
+      "title": "Conflict",
+      "detail": "Product '{{productId}}' has orders; set status to discontinued instead"
+    },
+    "categoryHasActiveProducts": {
+      "title": "Conflict",
+      "detail": "Category '{{categoryId}}' has active products"
+    },
+    "badRequest": {
+      "title": "Bad request",
+      "detail": "The request could not be processed"
     }
   }
 }

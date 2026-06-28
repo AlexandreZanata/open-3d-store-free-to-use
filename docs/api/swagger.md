@@ -33,6 +33,8 @@ Open [http://127.0.0.1:3001/docs](http://127.0.0.1:3001/docs).
 
 ## Documented endpoints
 
+### Public catalog
+
 | Method | Path | Success | Error responses |
 |--------|------|---------|-----------------|
 | `GET` | `/health` | 200 | 500 |
@@ -40,6 +42,29 @@ Open [http://127.0.0.1:3001/docs](http://127.0.0.1:3001/docs).
 | `GET` | `/products` | 200 | 422, 429, 500 |
 | `GET` | `/products/:slug` | 200 | 404, 429, 500 |
 | `POST` | `/orders/capture` | 201 | 404, 422, 429, 500 |
+
+### Admin (`/admin/*`, session cookie)
+
+| Method | Path | Success | Error responses |
+|--------|------|---------|-----------------|
+| `POST` | `/admin/auth/login` | 200 | 401, 422, 429, 500 |
+| `POST` | `/admin/auth/logout` | 204 | 401, 500 |
+| `GET` | `/admin/auth/me` | 200 | 401, 500 |
+| `GET` | `/admin/products` | 200 | 401, 429, 500 |
+| `GET` | `/admin/products/:id` | 200 | 401, 404, 500 |
+| `POST` | `/admin/products` | 201 | 401, 409, 422, 500 |
+| `PATCH` | `/admin/products/:id` | 200 | 401, 404, 409, 422, 500 |
+| `DELETE` | `/admin/products/:id` | 204 | 401, 404, 409, 500 |
+| `GET` | `/admin/categories` | 200 | 401, 500 |
+| `POST` | `/admin/categories` | 201 | 401, 409, 422, 500 |
+| `GET` | `/admin/categories/:id` | 200 | 401, 404, 500 |
+| `PATCH` | `/admin/categories/:id` | 200 | 401, 404, 409, 422, 500 |
+| `DELETE` | `/admin/categories/:id` | 204 | 401, 404, 409, 500 |
+| `GET` | `/admin/orders` | 200 | 401, 500 |
+| `GET` | `/admin/orders/:id` | 200 | 401, 404, 500 |
+| `POST` | `/admin/uploads` | 201 | 400, 401, 422, 500 |
+
+Admin contract: [admin-contract.md](admin-contract.md).
 
 All error responses use **RFC 7807** (`application/problem+json`).
 

@@ -12,6 +12,7 @@ import { registerHealthRoutes } from "./routes/health.routes.js";
 import { registerProductRoutes } from "./routes/products.routes.js";
 import { registerCategoryRoutes } from "./routes/categories.routes.js";
 import { registerOrderRoutes } from "./routes/orders.routes.js";
+import { registerAdminRoutes } from "./routes/admin/index.js";
 
 export async function buildServer(
   container: AppContainer,
@@ -84,6 +85,12 @@ export async function buildServer(
       await registerProductRoutes(api, container);
       await registerCategoryRoutes(api, container);
       await registerOrderRoutes(api, container);
+      await api.register(
+        async (admin) => {
+          await registerAdminRoutes(admin, container, container.config);
+        },
+        { prefix: "/admin" },
+      );
     },
     { prefix: "/api/v1" },
   );

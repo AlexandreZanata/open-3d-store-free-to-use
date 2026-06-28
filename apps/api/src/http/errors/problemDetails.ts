@@ -11,7 +11,15 @@ export type ProblemDetailKey =
   | "productNotOrderable"
   | "missingRequiredOption"
   | "productNotFoundCapture"
-  | "rateLimitExceeded";
+  | "rateLimitExceeded"
+  | "unauthorized"
+  | "invalidCredentials"
+  | "forbidden"
+  | "resourceNotFound"
+  | "slugConflict"
+  | "productHasOrderReferences"
+  | "categoryHasActiveProducts"
+  | "badRequest";
 
 export function sendProblem(
   reply: FastifyReply,

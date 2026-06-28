@@ -38,6 +38,7 @@ export async function registerSwagger(
         { name: "Categories", description: "Product categories" },
         { name: "Products", description: "Catalog browse and search" },
         { name: "Orders", description: "Order capture via WhatsApp" },
+        { name: "Admin", description: "Authenticated admin catalog and orders" },
       ],
       components: {
         schemas: {

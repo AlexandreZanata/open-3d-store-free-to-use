@@ -10,6 +10,23 @@ pnpm --filter @print3d/api dev                    # API + Swagger UI at /docs
 curl http://127.0.0.1:3001/api/v1/health               # Smoke: { "status": "ok", ... }
 ```
 
+### Admin API smoke (Phase 12)
+
+Requires `pnpm --filter @print3d/api db:migrate`, seeded catalog, and bootstrap admin (`ADMIN_BOOTSTRAP_*` in `.env`).
+
+```bash
+# Login (stores cookie in /tmp/admin-cookie.txt)
+curl -c /tmp/admin-cookie.txt -X POST http://127.0.0.1:3001/api/v1/admin/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"admin@localhost","password":"change-me-in-dev"}'
+
+# Current admin profile
+curl -b /tmp/admin-cookie.txt http://127.0.0.1:3001/api/v1/admin/auth/me
+
+# List products (all statuses)
+curl -b /tmp/admin-cookie.txt 'http://127.0.0.1:3001/api/v1/admin/products?page=1&limit=20'
+```
+
 ## Database
 
 ```bash

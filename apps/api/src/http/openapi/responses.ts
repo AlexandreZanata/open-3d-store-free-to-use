@@ -65,3 +65,13 @@ export const rateLimitResponse = {
     detail: "Rate limit exceeded. Try again later.",
   }),
 };
+
+export const unauthorizedResponse = {
+  description: "Missing or invalid admin session",
+  content: problemContent({
+    type: "https://yourdomain.com/errors/unauthorized",
+    title: "Unauthorized",
+    status: 401,
+    detail: "Authentication required",
+  }),
+};

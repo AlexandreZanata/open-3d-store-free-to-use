@@ -5,11 +5,17 @@ import { createDb, type Database } from "../src/infrastructure/db/client.js";
 export const testConnectionString =
   process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL ?? "";
 
-export function createTestDb(): ReturnType<typeof createDb> {
-  if (testConnectionString.length === 0) {
+/** Admin route tests require migrated admin tables (prefer DATABASE_URL). */
+export const adminTestConnectionString =
+  process.env.DATABASE_URL ?? process.env.TEST_DATABASE_URL ?? "";
+
+export function createTestDb(
+  connectionString: string = testConnectionString,
+): ReturnType<typeof createDb> {
+  if (connectionString.length === 0) {
     throw new Error("TEST_DATABASE_URL or DATABASE_URL is required for tests");
   }
-  return createDb(testConnectionString);
+  return createDb(connectionString);
 }
 
 export async function truncateCatalogTables(pool: pg.Pool): Promise<void> {
@@ -29,8 +35,9 @@ export async function truncateAdminTables(pool: pg.Pool): Promise<void> {
 
 export async function withTestDb<T>(
   fn: (db: Database, pool: pg.Pool) => Promise<T>,
+  connectionString: string = testConnectionString,
 ): Promise<T> {
-  const { db, pool } = createTestDb();
+  const { db, pool } = createTestDb(connectionString);
   try {
     return await fn(db, pool);
   } finally {

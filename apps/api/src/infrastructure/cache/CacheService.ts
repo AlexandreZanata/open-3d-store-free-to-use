@@ -28,12 +28,25 @@ export class CacheService implements ICacheService {
   }
 
   async deleteByPrefix(prefix: string): Promise<void> {
-    for await (const key of this.redis.scanIterator({
+    const keys: string[] = [];
+    for await (const result of this.redis.scanIterator({
       MATCH: `${prefix}*`,
       COUNT: 100,
     })) {
-      await this.redis.del(key);
+      if (typeof result === "string") {
+        keys.push(result);
+        continue;
+      }
+      if (Array.isArray(result)) {
+        for (const key of result) {
+          if (typeof key === "string") {
+            keys.push(key);
+          }
+        }
+      }
     }
+
+    await Promise.all(keys.map((key) => this.redis.del(key)));
   }
 
   async flush(): Promise<void> {

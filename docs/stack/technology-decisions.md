@@ -54,6 +54,16 @@ Internal packages use `@print3d/` scope:
 - `@print3d/shared-types`
 - `@print3d/whatsapp`
 
+### `apps/api` — database clients (npm)
+
+| npm package | Version | Targets (infra) |
+|-------------|---------|-----------------|
+| `pg` | `^8.22.0` | PostgreSQL **18.4** server (`postgres:18.4-alpine`) |
+| `redis` | `^5.12.1` | Redis **8.8** server (`redis:8.8-alpine`) |
+| `@types/pg` | `^8.20.0` | TypeScript types for `pg` |
+
+Runtime pins are also declared in `apps/api/package.json` → `print3d.runtime` and `engines.node` (≥ 22).
+
 ## Current frontend stack (already in repo)
 
 | Package | Version | Location |

@@ -10,6 +10,7 @@ import {
   truncateAdminTables,
   withTestDb,
 } from "../../setup.js";
+import { seedShopSettings } from "../../../scripts/seedShopSettings.js";
 import { closeTestApp, createTestApp } from "./testApp.js";
 import {
   buildMultipartPayload,
@@ -37,6 +38,7 @@ describe("Admin upload routes (contract)", () => {
     await withTestDb(async (_db, pool) => {
       await truncateAdminTables(pool);
       await seedTestAdmin(adminTestConnectionString);
+      await seedShopSettings(adminTestConnectionString);
     }, adminTestConnectionString);
     ({ app, container } = await createTestApp());
     sessionCookie = await loginTestAdmin(app);
@@ -135,6 +137,17 @@ describe("Admin upload routes (contract)", () => {
     expect(body.kind).toBe("model");
     expect(body.mimeType).toBe("model/stl");
     expect(body.sizeBytes).toBe(stl.byteLength);
+    expect(body.jobId).toMatch(/^[0-9a-f-]{36}$/i);
+
+    const jobResponse = await app.inject(
+      withAdminCookie(sessionCookie, {
+        method: "GET",
+        url: `/api/v1/admin/model-jobs/${body.jobId}`,
+      }),
+    );
+    expect(jobResponse.statusCode).toBe(200);
+    expect(jobResponse.json().data.status).toBe("completed");
+    expect(jobResponse.json().data.parts.length).toBeGreaterThan(0);
   });
 });
 

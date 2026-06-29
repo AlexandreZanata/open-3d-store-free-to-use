@@ -48,9 +48,9 @@ import {
 import {
   DrizzleStoreUserStateRepository,
 } from "./infrastructure/repositories/DrizzleStoreUserStateRepository.js";
+import { ProcessModelUpload } from "./application/use-cases/admin/ProcessModelUpload.js";
 import { LocalFileStorage } from "./infrastructure/storage/LocalFileStorage.js";
-import { NoOpModelProcessingPublisher } from "./infrastructure/queue/NoOpModelProcessingPublisher.js";
-import { RabbitMqModelProcessingPublisher } from "./infrastructure/queue/RabbitMqModelProcessingPublisher.js";
+import { createModelProcessingQueue } from "./infrastructure/queue/createModelProcessingQueue.js";
 import type { IModelProcessingQueue } from "./application/ports/IModelProcessingQueue.js";
 import type pg from "pg";
 
@@ -96,12 +96,12 @@ export async function createContainer(
     config.MODEL_FILES_BASE_URL,
     config.UPLOAD_MAX_BYTES,
   );
-  const modelQueue: IModelProcessingQueue = config.RABBITMQ_URL
-    ? new RabbitMqModelProcessingPublisher(
-        config.RABBITMQ_URL,
-        config.MODEL_PROCESSING_QUEUE,
-      )
-    : new NoOpModelProcessingPublisher();
+  const processModelUpload = new ProcessModelUpload(modelJobRepo, shopSettingsRepo);
+  const modelQueue: IModelProcessingQueue = createModelProcessingQueue(
+    config.RABBITMQ_URL,
+    config.MODEL_PROCESSING_QUEUE,
+    processModelUpload,
+  );
   const storeUserRepo = new DrizzleStoreUserRepository(db);
   const storeSessionRepo = new DrizzleStoreSessionRepository(db);
   const storeRegistrationRepo = new DrizzleStoreRegistrationRepository(db);

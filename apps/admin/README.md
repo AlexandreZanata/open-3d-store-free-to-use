@@ -39,7 +39,7 @@ Default dev credentials: use a valid bootstrap email (e.g. `admin@test.local` af
 | `/calculator` | Bulk pre-price from material + machine rates |
 | `/settings` | Shop profile, studio colors, material pricing |
 
-**Model studio:** `kind=model` uploads accept STL/GLB up to 256 MB. Poll `GET /admin/model-jobs/:id` after upload. Run the async worker:
+**Model studio:** `kind=model` uploads accept STL/GLB up to 256 MB. Poll `GET /admin/model-jobs/:id` after upload. If RabbitMQ is misconfigured, the API processes the mesh inline (upload still succeeds). Optional worker:
 
 ```bash
 # apps/api/.env — match your RabbitMQ credentials

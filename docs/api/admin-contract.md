@@ -623,7 +623,9 @@ Files stored under `UPLOAD_DIR` mirroring [../features/3d-viewer.md](../features
 
 ### `GET /model-jobs/:id`
 
-Poll async mesh extraction after `kind=model` upload. Worker queue: `MODEL_PROCESSING_QUEUE` (default `model.processing`); requires `RABBITMQ_URL` and `pnpm --filter @print3d/api worker:model-processing`.
+Poll async mesh extraction after `kind=model` upload.
+
+**Queue behaviour:** When `RABBITMQ_URL` is set, the API publishes to `MODEL_PROCESSING_QUEUE` (default `model.processing`). If RabbitMQ is unreachable or rejects credentials, the API **falls back to in-process extraction** so the upload still returns **201** (no 500). Without `RABBITMQ_URL`, processing runs inline on upload. For heavy production traffic, run `pnpm --filter @print3d/api worker:model-processing` with valid broker credentials.
 
 **Response 200:**
 

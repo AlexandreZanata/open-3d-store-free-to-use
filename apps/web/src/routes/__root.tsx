@@ -17,6 +17,7 @@ import { StoreAuthProvider } from "@/auth/StoreAuthProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { useCartServerSync } from "@/hooks/useCartServerSync";
 import { brandFaviconHeadLinks, brandThemeColorMeta } from "@/lib/brandFavicons";
+import { HERO_LOGO_MODEL_URL } from "@/lib/heroLogo";
 
 function NotFoundComponent() {
   const { t } = useTranslation();
@@ -86,6 +87,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       ...brandFaviconHeadLinks,
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+      { rel: "preload", href: HERO_LOGO_MODEL_URL, as: "fetch", crossOrigin: "anonymous" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "" },
       {

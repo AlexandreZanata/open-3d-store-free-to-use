@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Heart } from "lucide-react";
+import { Heart, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { ProductListItem } from "@print3d/shared-types";
 
@@ -22,13 +22,16 @@ function FavoritesPage() {
   const { t } = useTranslation();
   const favoritesQuery = useFavorites();
   const favorites = favoritesQuery.favorites;
+  const cachedCount = favoritesQuery.data?.meta.count ?? 0;
+  const isHydratingList =
+    favoritesQuery.isFetching && favorites.length === 0 && cachedCount > 0;
 
   return (
     <AppShell showSearch={false} title={t("favorites.title")}>
-      {favoritesQuery.isLoading ? (
-        <ProductGridSkeleton count={4} />
+      {isHydratingList ? (
+        <ProductGridSkeleton count={Math.min(cachedCount, 4)} />
       ) : favorites.length === 0 ? (
-        <EmptyState />
+        <EmptyState loading={favoritesQuery.isFetching} />
       ) : (
         <div className={`${pagePadding} py-4 lg:py-8`}>
           <div className={`${mobileOnly} mb-4`}>
@@ -47,7 +50,7 @@ function FavoritesPage() {
               {t("favorites.count", { count: favorites.length })}
             </p>
           </div>
-          <div className={`${productGridCols}`}>
+          <div className={productGridCols}>
             {favorites.map((product: ProductListItem) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -58,12 +61,16 @@ function FavoritesPage() {
   );
 }
 
-function EmptyState() {
+function EmptyState({ loading }: { loading: boolean }) {
   const { t } = useTranslation();
   return (
-    <div className="px-6 py-24 text-center">
+    <div className={`${pagePadding} py-24 text-center`}>
       <div className="mx-auto size-14 rounded-full bg-muted grid place-items-center mb-4">
-        <Heart className="size-6 text-muted-foreground" />
+        {loading ? (
+          <Loader2 className="size-6 text-muted-foreground animate-spin" aria-hidden />
+        ) : (
+          <Heart className="size-6 text-muted-foreground" />
+        )}
       </div>
       <h3 className="text-base font-semibold">{t("favorites.emptyTitle")}</h3>
       <p className="mt-1 text-sm text-muted-foreground">{t("favorites.emptyHint")}</p>

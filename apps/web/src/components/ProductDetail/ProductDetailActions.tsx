@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { ShareProductButton } from "@/components/ShareProductButton";
+import { useFooterInView } from "@/hooks/useFooterInView";
+import { cn } from "@/lib/utils";
 import type { ProductDetail } from "@print3d/shared-types";
 
 type ProductDetailActionsProps = {
@@ -13,9 +15,16 @@ type ProductDetailActionsProps = {
 
 export function ProductDetailActions({ product, onAddToCart }: ProductDetailActionsProps) {
   const { t } = useTranslation();
+  const footerInView = useFooterInView();
 
   return (
-    <div className="fixed inset-x-0 bottom-[3.75rem] z-40 border-t border-hairline bg-background/95 backdrop-blur-xl lg:static lg:border-t-0 lg:bg-transparent lg:backdrop-blur-none">
+    <div
+      data-testid="product-sticky-actions"
+      className={cn(
+        "fixed inset-x-0 bottom-[3.75rem] z-40 border-t border-hairline bg-background/95 backdrop-blur-xl transition-all duration-200 lg:static lg:border-t-0 lg:bg-transparent lg:opacity-100 lg:backdrop-blur-none lg:translate-y-0 lg:pointer-events-auto",
+        footerInView && "pointer-events-none translate-y-full opacity-0",
+      )}
+    >
       <div className="flex items-center gap-2 px-4 py-3 lg:gap-3 lg:px-0 lg:py-0">
         <div className="hidden items-center gap-2 lg:flex lg:gap-3">
           <FavoriteButton

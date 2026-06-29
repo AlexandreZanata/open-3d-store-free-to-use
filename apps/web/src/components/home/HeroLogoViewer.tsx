@@ -1,69 +1,89 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
-import { BrandMark } from "@/components/BrandMark";
-import { HERO_LOGO_MODEL_URL } from "@/lib/heroLogo";
+import { HERO_LOGO_MODEL_URL, preloadHeroLogo } from "@/lib/heroLogo";
 
 import type { HeroLogoHandle } from "./heroLogoScene";
 
-export function HeroLogoViewer() {
+type HeroLogoViewerProps = {
+  /** Compact tile for the mobile hero card. */
+  compact?: boolean;
+};
+
+export function HeroLogoViewer({ compact = false }: HeroLogoViewerProps) {
   const { t } = useTranslation();
+  const shellRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<HeroLogoHandle | null>(null);
-  const [showFallback, setShowFallback] = useState(true);
 
   useEffect(() => {
+    void preloadHeroLogo();
+  }, []);
+
+  useEffect(() => {
+    const shell = shellRef.current;
     const container = containerRef.current;
-    if (!container) {
+    if (!shell || !container) {
       return;
     }
 
     let cancelled = false;
-    viewerRef.current?.dispose();
-    viewerRef.current = null;
-    setShowFallback(true);
 
-    void import("./heroLogoScene")
-      .then(({ mountHeroLogoViewer }) => {
-        if (cancelled) {
-          return;
-        }
-        const handle = mountHeroLogoViewer(container, {
-          modelUrl: HERO_LOGO_MODEL_URL,
-          onReady: () => {
-            if (!cancelled) {
-              setShowFallback(false);
-            }
-          },
-          onError: () => {
-            if (!cancelled) {
-              setShowFallback(true);
-            }
-          },
-        });
-        viewerRef.current = handle;
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setShowFallback(true);
-        }
-      });
-
-    return () => {
-      cancelled = true;
+    const disposeViewer = () => {
       viewerRef.current?.dispose();
       viewerRef.current = null;
     };
-  }, []);
+
+    const mountViewer = () => {
+      if (cancelled || viewerRef.current) {
+        return;
+      }
+
+      void import("./heroLogoScene")
+        .then(({ mountHeroLogoViewer }) => {
+          if (cancelled || viewerRef.current) {
+            return;
+          }
+          viewerRef.current = mountHeroLogoViewer(container, {
+            modelUrl: HERO_LOGO_MODEL_URL,
+            skipProbe: true,
+          });
+        })
+        .catch(() => {
+          disposeViewer();
+        });
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.some((entry) => entry.isIntersecting);
+        if (visible && shell.clientWidth > 0) {
+          if (viewerRef.current) {
+            viewerRef.current.resume();
+          } else {
+            mountViewer();
+          }
+        } else {
+          viewerRef.current?.pause();
+        }
+      },
+      { threshold: 0, rootMargin: "64px 0px" },
+    );
+    observer.observe(shell);
+
+    return () => {
+      cancelled = true;
+      observer.disconnect();
+      disposeViewer();
+    };
+  }, [compact]);
+
+  const shellClass = compact
+    ? "relative size-full bg-background"
+    : "relative aspect-square w-full max-w-[17.5rem] bg-background";
 
   return (
-    <div className="relative aspect-square w-full max-w-[17.5rem]">
-      {showFallback ? (
-        <BrandMark
-          className="absolute inset-0 m-auto h-28 w-28 object-contain opacity-90"
-          aria-hidden
-        />
-      ) : null}
+    <div ref={shellRef} className={shellClass}>
       <div
         ref={containerRef}
         className="absolute inset-0"

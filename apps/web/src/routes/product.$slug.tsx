@@ -12,7 +12,7 @@ import { useProducts } from "@/hooks/useProducts";
 import { ApiError } from "@/lib/api/client";
 import { fetchProductBySlug } from "@/lib/api/products";
 import { addToCart } from "@/lib/cart";
-import { mobileOnly, pagePadding, productGridCols } from "@/lib/layout";
+import { mobileOnly, pagePadding, productGridCols, railScroll } from "@/lib/layout";
 import { getCurrentI18nLocale, default as i18n } from "@/i18n";
 import { brandPageTitle } from "@/lib/brand";
 import type { ProductDetail } from "@print3d/shared-types";
@@ -146,14 +146,12 @@ function ProductPage() {
       </div>
 
       {related.length > 0 ? (
-        <section className={`${pagePadding} mt-12 lg:mt-16`}>
-          <h2 className="text-base font-semibold tracking-tight lg:text-lg mb-4">
+        <section className="mt-12 lg:mt-16">
+          <h2 className={`${pagePadding} text-base font-semibold tracking-tight lg:text-lg mb-4`}>
             {t("product.related")}
           </h2>
-          <div className="overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory -mx-4 px-4 lg:mx-0 lg:overflow-visible lg:snap-none lg:px-0">
-            <div
-              className={`flex gap-3 w-max min-w-full lg:grid ${productGridCols} lg:w-full lg:gap-4`}
-            >
+          <div className={`${railScroll} lg:overflow-visible lg:snap-none`}>
+            <div className={`flex gap-3 px-4 w-max min-w-full lg:grid ${productGridCols} lg:w-full lg:gap-4 lg:px-8`}>
               {relatedQuery.isLoading
                 ? Array.from({ length: 2 }).map((_, index) => (
                     <div key={index} className="snap-start">

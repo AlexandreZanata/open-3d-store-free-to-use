@@ -1,7 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { FavoriteListResponse } from "@print3d/shared-types";
 import { useMemo } from "react";
 
 import { addFavorite, fetchFavorites, removeFavorite } from "@/lib/api/favorites";
+import {
+  buildPlaceholderFavorites,
+  readCachedFavoriteIds,
+  writeCachedFavoriteIds,
+} from "@/lib/favoriteCache";
 
 export const favoritesQueryKey = ["favorites"] as const;
 
@@ -11,6 +17,7 @@ export function useFavorites() {
     queryKey: favoritesQueryKey,
     queryFn: fetchFavorites,
     staleTime: 30_000,
+    placeholderData: () => buildPlaceholderFavorites(readCachedFavoriteIds()),
   });
 
   const favoriteIds = useMemo(
@@ -25,8 +32,38 @@ export function useFavorites() {
       }
       return addFavorite(productId);
     },
+    onMutate: async (productId) => {
+      await queryClient.cancelQueries({ queryKey: favoritesQueryKey });
+      const previous = queryClient.getQueryData<FavoriteListResponse>(favoritesQueryKey);
+      const wasFavorite = previous?.meta.productIds.includes(productId) ?? false;
+      const nextIds = wasFavorite
+        ? (previous?.meta.productIds ?? []).filter((id) => id !== productId)
+        : [...(previous?.meta.productIds ?? []), productId];
+      const nextData = wasFavorite
+        ? (previous?.data ?? []).filter((item) => item.id !== productId)
+        : (previous?.data ?? []);
+
+      writeCachedFavoriteIds(nextIds);
+      queryClient.setQueryData<FavoriteListResponse>(favoritesQueryKey, {
+        data: nextData,
+        meta: { count: nextIds.length, productIds: nextIds },
+      });
+      return { previous };
+    },
+    onError: (_error, _productId, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(favoritesQueryKey, context.previous);
+        writeCachedFavoriteIds(context.previous.meta.productIds);
+      }
+    },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: favoritesQueryKey });
+    },
+    onSettled: async () => {
+      const latest = queryClient.getQueryData<FavoriteListResponse>(favoritesQueryKey);
+      if (latest) {
+        writeCachedFavoriteIds(latest.meta.productIds);
+      }
     },
   });
 
@@ -36,7 +73,7 @@ export function useFavorites() {
     favoriteIds,
     isFavorite: (productId: string) => favoriteIds.has(productId),
     toggleFavorite: toggleMutation.mutateAsync,
-    isToggling: toggleMutation.isPending,
+    isTogglingProductId: toggleMutation.isPending ? toggleMutation.variables : undefined,
     ...query,
   };
 }

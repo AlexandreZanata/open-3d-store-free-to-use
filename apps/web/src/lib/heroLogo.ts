@@ -1,2 +1,15 @@
 /** Draco GLB for the desktop home hero (seeded from corvo STL). */
-export const HERO_LOGO_MODEL_URL = "/models/3d/corvo-logo-preview.glb";
+export const HERO_LOGO_MODEL_URL = "/models/3d/corvo-logo-preview.glb?v=4";
+
+let preloadPromise: Promise<void> | null = null;
+
+/** Warm the hero GLB and Three.js scene module (safe to call multiple times). */
+export function preloadHeroLogo(): Promise<void> {
+  preloadPromise ??= Promise.all([
+    import("@/components/home/heroLogoScene"),
+    typeof window !== "undefined"
+      ? fetch(HERO_LOGO_MODEL_URL, { cache: "force-cache" })
+      : Promise.resolve(),
+  ]).then(() => undefined);
+  return preloadPromise;
+}

@@ -12,8 +12,9 @@ type FavoriteButtonProps = {
 
 export function FavoriteButton({ productId, className, iconClassName }: FavoriteButtonProps) {
   const { t } = useTranslation();
-  const { isFavorite, toggleFavorite, isToggling } = useFavorites();
+  const { isFavorite, toggleFavorite, isTogglingProductId } = useFavorites();
   const favorited = isFavorite(productId);
+  const isToggling = isTogglingProductId === productId;
 
   return (
     <button
@@ -27,7 +28,7 @@ export function FavoriteButton({ productId, className, iconClassName }: Favorite
       aria-label={t("product.favorite")}
       aria-pressed={favorited}
       className={cn(
-        "size-9 grid place-items-center rounded-full bg-background/90 backdrop-blur shadow-soft press disabled:opacity-60",
+        "relative z-10 size-9 grid place-items-center rounded-full bg-background/90 backdrop-blur shadow-soft press disabled:opacity-60",
         className,
       )}
     >

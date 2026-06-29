@@ -1,22 +1,28 @@
 import * as THREE from "three";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { mergeVertices } from "three/addons/utils/BufferGeometryUtils.js";
 
 import { loadGltfScene } from "@/components/ModelViewer/createGltfLoader.js";
 import { probeModelAsset } from "@/lib/modelViewerLimits";
 
-/** Brand accent — matches desktop hero gradient (oklch 0.68 0.18 45). */
-const LOGO_COLOR = 0xd4620a;
-const ROTATE_SPEED = 0.35;
-const FIT_SIZE = 1.6;
+/** Solid black — readable on the white hero card. */
+export const HERO_LOGO_COLOR = 0x141414;
+/** Extra margin so the mesh stays inside the rounded hero tile. */
+export const HERO_LOGO_FIT_PADDING = 1.28;
+/** Zoom factor on top of the fitted frame (1.30 = 30% larger than fit, still centered). */
+export const HERO_LOGO_VIEW_SCALE = 1.3;
+/** Turntable spin on the Y axis (radians per second). */
+export const HERO_LOGO_TURN_SPEED = 0.22;
 
 export type HeroLogoHandle = {
   dispose: () => void;
+  pause: () => void;
+  resume: () => void;
 };
 
 export type HeroLogoMountOptions = {
   modelUrl: string;
-  onReady?: () => void;
-  onError?: () => void;
+  /** Skip HEAD probe — hero asset is a known small bundled GLB. */
+  skipProbe?: boolean;
 };
 
 export function mountHeroLogoViewer(
@@ -31,8 +37,7 @@ export function mountHeroLogoViewer(
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
+  renderer.toneMapping = THREE.NoToneMapping;
   renderer.setSize(container.clientWidth, container.clientHeight);
   container.appendChild(renderer.domElement);
 
@@ -43,38 +48,51 @@ export function mountHeroLogoViewer(
     200,
   );
 
-  const controls = new OrbitControls(camera, renderer.domElement);
-  controls.enablePan = false;
-  controls.enableZoom = false;
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.08;
-  controls.autoRotate = true;
-  controls.autoRotateSpeed = ROTATE_SPEED;
-
-  scene.add(new THREE.AmbientLight(0xffffff, 0.85));
-  const key = new THREE.DirectionalLight(0xffffff, 1.2);
-  key.position.set(2.5, 4, 3);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+  const key = new THREE.DirectionalLight(0xffffff, 1.6);
+  key.position.set(2, 4.5, 3);
   scene.add(key);
-  const fill = new THREE.DirectionalLight(0xfff4e8, 0.55);
-  fill.position.set(-2.5, 1.5, -2);
+  const fill = new THREE.DirectionalLight(0xf5f5f5, 0.5);
+  fill.position.set(-3, 2, -1);
   scene.add(fill);
+  const rim = new THREE.DirectionalLight(0xffffff, 0.75);
+  rim.position.set(0, 2, -4);
+  scene.add(rim);
 
+  let lastFrameMs = performance.now();
   let frameId = 0;
   let modelRoot: THREE.Object3D | null = null;
   let cancelled = false;
+  let paused = false;
 
-  const animate = () => {
+  const refitCamera = () => {
+    if (!modelRoot) {
+      return;
+    }
+    fitCameraToModel(modelRoot, camera, container.clientWidth, container.clientHeight);
+  };
+
+  const animate = (now: number) => {
     frameId = requestAnimationFrame(animate);
-    controls.update();
+    if (paused) {
+      lastFrameMs = now;
+      return;
+    }
+    const delta = (now - lastFrameMs) / 1000;
+    lastFrameMs = now;
+    if (modelRoot) {
+      modelRoot.rotation.y += HERO_LOGO_TURN_SPEED * delta;
+    }
     renderer.render(scene, camera);
   };
-  animate();
+  requestAnimationFrame(animate);
 
   void (async () => {
-    const probe = await probeModelAsset(resolved.modelUrl);
-    if (cancelled || !probe.ok) {
-      resolved.onError?.();
-      return;
+    if (!resolved.skipProbe) {
+      const probe = await probeModelAsset(resolved.modelUrl);
+      if (cancelled || !probe.ok) {
+        return;
+      }
     }
 
     try {
@@ -84,12 +102,12 @@ export function mountHeroLogoViewer(
       }
 
       normalizeHeroMesh(object);
-      fitHeroModel(object, camera, controls);
+      centerHeroModel(object);
       modelRoot = object;
       scene.add(object);
-      resolved.onReady?.();
+      refitCamera();
     } catch {
-      resolved.onError?.();
+      // Leave canvas empty — no static logo fallback in this slot.
     }
   })();
 
@@ -100,7 +118,7 @@ export function mountHeroLogoViewer(
       return;
     }
     camera.aspect = width / height;
-    camera.updateProjectionMatrix();
+    refitCamera();
     renderer.setSize(width, height);
   });
   resizeObserver.observe(container);
@@ -114,9 +132,15 @@ export function mountHeroLogoViewer(
         scene.remove(modelRoot);
         modelRoot = null;
       }
-      controls.dispose();
       renderer.dispose();
       container.removeChild(renderer.domElement);
+    },
+    pause() {
+      paused = true;
+    },
+    resume() {
+      paused = false;
+      lastFrameMs = performance.now();
     },
   };
 }
@@ -127,38 +151,50 @@ function normalizeHeroMesh(root: THREE.Object3D): void {
       return;
     }
     const mesh = object as THREE.Mesh<THREE.BufferGeometry, THREE.Material | THREE.Material[]>;
-    const geometry = mesh.geometry;
-    if (!geometry.attributes.normal) {
-      geometry.computeVertexNormals();
-    }
+    const geometry = prepareHeroGeometry(mesh.geometry);
+    mesh.geometry = geometry;
     mesh.material = new THREE.MeshStandardMaterial({
-      color: LOGO_COLOR,
-      metalness: 0.28,
+      color: HERO_LOGO_COLOR,
+      metalness: 0.42,
       roughness: 0.38,
-      envMapIntensity: 0.6,
+      side: THREE.DoubleSide,
+      flatShading: false,
+      depthWrite: true,
+      depthTest: true,
     });
   });
 }
 
-function fitHeroModel(
-  object: THREE.Object3D,
-  camera: THREE.PerspectiveCamera,
-  controls: OrbitControls,
-): void {
+function prepareHeroGeometry(geometry: THREE.BufferGeometry): THREE.BufferGeometry {
+  const merged = mergeVertices(geometry);
+  merged.computeVertexNormals();
+  return merged;
+}
+
+function centerHeroModel(object: THREE.Object3D): void {
   const box = new THREE.Box3().setFromObject(object);
   const center = box.getCenter(new THREE.Vector3());
-  const size = box.getSize(new THREE.Vector3());
   object.position.sub(center);
+}
 
-  const maxDim = Math.max(size.x, size.y, size.z, 0.001);
-  const scale = FIT_SIZE / maxDim;
-  object.scale.setScalar(scale);
+export function fitCameraToModel(
+  object: THREE.Object3D,
+  camera: THREE.PerspectiveCamera,
+  width: number,
+  height: number,
+): void {
+  const sphere = new THREE.Box3().setFromObject(object).getBoundingSphere(new THREE.Sphere());
+  const radius = Math.max(sphere.radius, 0.001);
+  const fovRad = (camera.fov * Math.PI) / 180;
+  const aspect = width / Math.max(height, 1);
+  const hFov = 2 * Math.atan(Math.tan(fovRad / 2) * aspect);
+  const distanceY = radius / Math.sin(fovRad / 2);
+  const distanceX = radius / Math.sin(hFov / 2);
+  const distance = (Math.max(distanceX, distanceY) * HERO_LOGO_FIT_PADDING) / HERO_LOGO_VIEW_SCALE;
 
-  const distance = FIT_SIZE * 2.4;
-  camera.position.set(distance * 0.2, distance * 0.12, distance * 0.95);
-  controls.target.set(0, 0, 0);
-  camera.near = 0.05;
-  camera.far = distance * 12;
+  camera.position.set(0, 0, distance);
+  camera.lookAt(0, 0, 0);
+  camera.near = Math.max(distance / 200, 0.001);
+  camera.far = distance * 24;
   camera.updateProjectionMatrix();
-  controls.update();
 }

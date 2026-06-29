@@ -17,7 +17,7 @@ Implementation tokens live in `apps/web/src/lib/layout.ts`.
 |---------|--------|
 | **Header** | `AppShellMobileHeader` — fixed top bar (`h-14`), main content uses `mobileTopPad` |
 | **Navigation** | Fixed bottom 5-tab bar (`h-[3.75rem]`, `z-50`) |
-| **Home** | Hero card + category pills + horizontal product rails |
+| **Home** | Hero card + category pills + horizontal product rails; hero tile shows rotating **3D Corvo logo** |
 | **Shell** | `max-w-2xl`, flex column with site footer above tab bar |
 
 ### Site footer (`AppShellFooter`)
@@ -63,7 +63,8 @@ Separate desktop-only home — mobile home is wrapped in `lg:hidden`:
 | **Search** | Page intro, sticky filter card sidebar, prominent search field, catalog product cards (`2–3` cols) |
 | **Categories** | 3–4 column grid |
 | **Product** | Two columns (media panel + details); sticky media on desktop; Embla gallery carousel; share button (Web Share + copy/WhatsApp/email) — [product-share.md](product-share.md) |
-| **Product (mobile)** | Vertical info stack (title → subtitle → price → material → favorite/share → description → tags); sticky cart + WhatsApp bar above tab nav |
+| **Product (mobile)** | Vertical info stack (title → subtitle → price → material → favorite/share → description → tags); sticky cart + WhatsApp bar above tab nav — **auto-hides when footer is visible** so contact icons stay tappable |
+| **Favorites (mobile)** | Empty state renders immediately (cached visitor ids); skeleton only when rehydrating a non-empty list |
 | **Cart** | Centered `max-w-3xl` column |
 
 ## Key files
@@ -77,7 +78,11 @@ Separate desktop-only home — mobile home is wrapped in `lg:hidden`:
 | `apps/web/src/components/AppShellMobileNav.tsx` | Mobile bottom tabs |
 | `apps/web/src/components/AppShellFooter.tsx` | Site footer (contact CTA) |
 | `apps/web/src/components/home/HomeDesktopView.tsx` | Desktop-only home |
-| `apps/web/src/components/home/HeroLogoViewer.tsx` | Desktop hero 3D Corvo logo |
+| `apps/web/src/components/home/HomeMobileHero.tsx` | Mobile featured hero card with 3D logo |
+| `apps/web/src/components/home/HeroLogoViewer.tsx` | Shared Corvo GLB turntable (desktop + mobile); pauses off-screen instead of disposing; preloads GLB |
+| `apps/web/src/lib/heroLogo.ts` | Hero GLB URL + `preloadHeroLogo()` |
+| `apps/web/src/lib/favoriteCache.ts` | Visitor favorite-id cache for instant empty state |
+| `apps/web/src/hooks/useFooterInView.ts` | Hides mobile sticky product actions when footer intersects |
 | `apps/web/src/components/SearchFiltersPanel.tsx` | Search filters (mobile chips / desktop list) |
 | `apps/web/src/components/search/SearchDesktopView.tsx` | Desktop-only search layout |
 | `apps/web/src/components/search/SearchMobileView.tsx` | **Frozen** mobile search UI |
@@ -96,6 +101,7 @@ Separate desktop-only home — mobile home is wrapped in `lg:hidden`:
 | E2E desktop | `e2e/desktop-layout.spec.ts` — 1280×800 |
 | E2E product | `e2e/product-detail.spec.ts` — 3D viewer + gallery carousel |
 | E2E mobile | `e2e/desktop-layout.spec.ts` — 390×844 preserved UI |
+| E2E mobile UX | `e2e/mobile-ux.spec.ts` — guest favorites, sticky bar vs footer, favorites empty state |
 
 ```bash
 PLAYWRIGHT_SKIP_WEBSERVER=1 PLAYWRIGHT_BASE_URL=http://localhost:5173 pnpm e2e e2e/desktop-layout.spec.ts

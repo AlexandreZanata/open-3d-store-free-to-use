@@ -13,6 +13,7 @@ import { productsQueryKey, useProducts } from "@/hooks/useProducts";
 import { fetchCategories } from "@/lib/api/categories";
 import { fetchProducts } from "@/lib/api/products";
 import { categoryPillsTrack, mobileOnly } from "@/lib/layout";
+import { preloadHeroLogo } from "@/lib/heroLogo";
 import { getCurrentI18nLocale, default as i18n } from "@/i18n";
 
 export const Route = createFileRoute("/")({
@@ -28,6 +29,7 @@ export const Route = createFileRoute("/")({
         queryKey: categoriesQueryKey(locale),
         queryFn: () => fetchCategories(locale),
       }),
+      preloadHeroLogo(),
     ]);
   },
   head: () => ({

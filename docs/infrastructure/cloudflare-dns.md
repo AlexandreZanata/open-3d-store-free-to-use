@@ -1,6 +1,6 @@
 # Cloudflare + Registro.br DNS
 
-> Publish the VPS (`72.60.147.2`) behind Cloudflare proxy with HTTPS.
+> Publish the VPS (`YOUR_VPS_IP`) behind Cloudflare proxy with HTTPS.
 
 ## Prerequisites
 
@@ -34,9 +34,9 @@ Registro.br does **not** host your A records once NS point to Cloudflare. All DN
 
 | Type | Name | IPv4 address | Proxy status |
 |------|------|--------------|--------------|
-| A | `@` | `72.60.147.2` | Proxied (orange cloud) |
-| A | `www` | `72.60.147.2` | Proxied |
-| A | `admin` | `72.60.147.2` | Proxied |
+| A | `@` | `YOUR_VPS_IP` | Proxied (orange cloud) |
+| A | `www` | `YOUR_VPS_IP` | Proxied |
+| A | `admin` | `YOUR_VPS_IP` | Proxied |
 
 Optional (email — only if you use Google Workspace etc.):
 
@@ -77,7 +77,7 @@ dig +short www.yourdomain.com.br
 dig +short admin.yourdomain.com.br
 ```
 
-Proxied records often return Cloudflare anycast IPs (not `72.60.147.2`) — that is expected.
+Proxied records often return Cloudflare anycast IPs (not `YOUR_VPS_IP`) — that is expected.
 
 ```bash
 curl -I https://yourdomain.com.br

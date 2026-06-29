@@ -278,6 +278,8 @@ Sets session cookie. Optional body `cart[]` merges with server cart. Optional `c
 
 ### `GET /me`
 
+Requires session cookie (`print3d_store_session`). **Response 401:** not signed in (guest storefront — normal on first visit).
+
 **Response 200:**
 
 ```json

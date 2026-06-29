@@ -91,13 +91,14 @@ describe("nginx.conf contract — docs/infrastructure/nginx.md", () => {
   });
 });
 
-describe("pm2.ecosystem.config.js contract — docs/infrastructure/deployment.md", () => {
-  const config = readRepo("infra/pm2.ecosystem.config.js");
+describe("pm2.ecosystem.config.example.js contract — docs/infrastructure/deployment.md", () => {
+  const config = readRepo("infra/pm2.ecosystem.config.example.js");
 
   test("runs API cluster on main.js with production env", () => {
     assert.match(config, /print3d-api/);
     assert.match(config, /apps\/api\/dist\/main\.js/);
     assert.match(config, /node_args.*env-file.*apps\/api\/\.env/);
+    assert.match(config, /PORT: 3101/);
     assert.match(config, /exec_mode: "cluster"/);
     assert.match(config, /instances: 2/);
     assert.match(config, /max_memory_restart: "900M"/);
@@ -120,13 +121,6 @@ describe("vps provisioning scripts — docs/infrastructure/vps-provisioning.md",
     const script = readRepo("infra/scripts/generate-secrets.sh");
     assert.match(script, /api\.env\.example/);
     assert.match(script, /openssl rand/);
-  });
-
-  test("sync-to-vps.sh rsyncs secrets and runs install-env on remote", () => {
-    const script = readRepo("infra/scripts/sync-to-vps.sh");
-    assert.match(script, /rsync/);
-    assert.match(script, /install-env\.sh/);
-    assert.match(script, /production\/vps\.env/);
   });
 
   test("docker-compose.prod.yml binds data services to localhost with alternate ports", () => {

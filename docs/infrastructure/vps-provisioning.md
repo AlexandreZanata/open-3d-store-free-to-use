@@ -1,6 +1,6 @@
 # VPS provisioning (Hostinger 16 GB)
 
-> **Target:** single VPS at `72.60.147.2` — PM2 for Node, Docker Compose for data layer (optional native Postgres/Redis).
+> **Target:** single VPS at `YOUR_VPS_IP` — PM2 for Node, Docker Compose for data layer (optional native Postgres/Redis).
 > **Not used:** Kubernetes on one node (control-plane overhead ~500 MB–1 GB). See [kubernetes.md](kubernetes.md).
 
 ## Architecture (efficient default)
@@ -61,9 +61,9 @@ Summary:
 
 | Type | Name | Content | Proxy |
 |------|------|---------|-------|
-| A | `@` | `72.60.147.2` | Proxied (orange) |
-| A | `www` | `72.60.147.2` | Proxied |
-| A | `admin` | `72.60.147.2` | Proxied |
+| A | `@` | `YOUR_VPS_IP` | Proxied (orange) |
+| A | `www` | `YOUR_VPS_IP` | Proxied |
+| A | `admin` | `YOUR_VPS_IP` | Proxied |
 
 4. SSL/TLS → **Full (strict)** after certbot on VPS.
 5. Always Use HTTPS: **On**.
@@ -73,8 +73,8 @@ Summary:
 Install your public key on the server (Hostinger panel or):
 
 ```bash
-ssh-copy-id -i production/ssh/id_ed25519_print3d.pub -p 22 root@72.60.147.2
-ssh -i production/ssh/id_ed25519_print3d root@72.60.147.2
+ssh-copy-id -i production/ssh/id_ed25519_print3d.pub -p 22 root@YOUR_VPS_IP
+ssh -i production/ssh/id_ed25519_print3d root@YOUR_VPS_IP
 ```
 
 ## Phase 4 — Clone and bootstrap (on VPS)
@@ -129,7 +129,7 @@ From local — sync secrets only when they change:
 
 | Secret | Value |
 |--------|-------|
-| `VPS_HOST` | `72.60.147.2` |
+| `VPS_HOST` | `YOUR_VPS_IP` |
 | `VPS_USER` | `root` |
 | `VPS_SSH_KEY` | contents of `production/ssh/id_ed25519_print3d` |
 

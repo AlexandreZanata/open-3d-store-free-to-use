@@ -52,7 +52,7 @@ Product and category forms support **URL text** or **file upload** (`FileUploadF
 
 | Input | Accepted in file picker | Stored |
 |-------|-------------------------|--------|
-| Thumbnail / gallery | WebP, JPEG, PNG | WebP under `/models/thumbnails/` or `/models/images/` |
+| Thumbnail / gallery | WebP, JPEG, PNG (also `image/jpg` / `application/octet-stream` with valid image bytes) | WebP under `/models/thumbnails/` or `/models/images/` |
 | 3D model | `.glb`, `.gltf` | unchanged under `/models/3d/` |
 
 Edit product pages include a primary **Back to products** button above the page title (`PageHeader` `back` slot).

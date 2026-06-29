@@ -3,6 +3,7 @@ import type { FastifyInstance } from "fastify";
 
 import type { AppContainer } from "../../../container.js";
 import { handleAdminError, sendAdminProblem } from "../../errors/handleAdminError.js";
+import { handleUploadError } from "../../errors/handleUploadError.js";
 import { adminUploadRouteSchema } from "../../openapi/adminRouteSchemas.js";
 import { adminUploadKindSchema } from "../../validation/adminSchemas.js";
 
@@ -67,24 +68,7 @@ export async function registerAdminUploadRoutes(
         });
         return reply.status(201).send({ data: uploaded });
       } catch (error) {
-        if (error instanceof Error && error.message.includes("MIME")) {
-          sendAdminProblem(
-            reply,
-            request.locale ?? "en",
-            422,
-            "validation-failed",
-            "validationFailed",
-          );
-          return;
-        }
-        if (error instanceof Error && error.message.includes("max size")) {
-          sendAdminProblem(
-            reply,
-            request.locale ?? "en",
-            422,
-            "validation-failed",
-            "validationFailed",
-          );
+        if (handleUploadError(error, request, reply, kindParsed.data)) {
           return;
         }
         if (handleAdminError(error, request, reply)) {

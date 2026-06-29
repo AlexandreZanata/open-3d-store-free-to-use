@@ -487,6 +487,10 @@ Partial update. Setting `isActive: false` soft-deletes (hidden from public catal
 
 JPEG and PNG uploads are converted server-side to WebP before storage (catalog asset convention).
 
+Browsers may send non-standard MIME types (`image/jpg`, `application/octet-stream`); the API resolves type from extension and file signature.
+
+In development, if `MODEL_FILES_BASE_PATH` is not writable (e.g. `/var/www/...`), the API falls back to `apps/api/storage/models`.
+
 **Size limits** (see `UPLOAD_MAX_BYTES`):
 
 | kind | Max size |

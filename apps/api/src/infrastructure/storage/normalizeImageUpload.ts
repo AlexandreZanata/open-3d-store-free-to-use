@@ -1,6 +1,9 @@
 import sharp from "sharp";
 
+import type { AdminUploadImageInputMime } from "@print3d/shared-types";
 import { ADMIN_UPLOAD_IMAGE_INPUT_MIMES } from "@print3d/shared-types";
+
+import { resolveImageUploadMime } from "./resolveImageUploadMime.js";
 
 export type NormalizedImageUpload = {
   data: Buffer;
@@ -16,12 +19,11 @@ export function isAllowedImageInputMime(mimeType: string): boolean {
 export async function normalizeImageUpload(
   data: Buffer,
   mimeType: string,
+  filename: string,
 ): Promise<NormalizedImageUpload> {
-  if (!isAllowedImageInputMime(mimeType)) {
-    throw new Error(`MIME type not allowed: ${mimeType}`);
-  }
+  const resolvedMime = resolveImageUploadMime(mimeType, filename, data);
 
-  if (mimeType === "image/webp") {
+  if (resolvedMime === "image/webp") {
     return { data, mimeType: "image/webp" };
   }
 

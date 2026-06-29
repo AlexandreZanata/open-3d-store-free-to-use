@@ -27,6 +27,7 @@ export type {
   AdminProductTranslations,
   AdminUploadResponse,
   AdminUploadResult,
+  AdminUploadImageInputMime,
   AdminUploadKind,
   AdminUploadMimeType,
   AdminUserSummary,

@@ -17,6 +17,9 @@ dist-ssr
 .nitro
 *.local
 
+# API dev uploads (writable fallback when /var/www is not available)
+apps/api/storage/
+
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars

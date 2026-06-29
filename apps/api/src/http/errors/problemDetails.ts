@@ -19,7 +19,11 @@ export type ProblemDetailKey =
   | "slugConflict"
   | "productHasOrderReferences"
   | "categoryHasActiveProducts"
-  | "badRequest";
+  | "badRequest"
+  | "uploadMimeNotAllowed"
+  | "uploadTooLarge"
+  | "uploadInvalidImage"
+  | "uploadStorageFailed";
 
 export function sendProblem(
   reply: FastifyReply,

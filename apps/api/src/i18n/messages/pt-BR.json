@@ -55,6 +55,22 @@
     "badRequest": {
       "title": "Requisição inválida",
       "detail": "A requisição não pôde ser processada"
+    },
+    "uploadMimeNotAllowed": {
+      "title": "Tipo de arquivo não suportado",
+      "detail": "Tipos permitidos: WebP, JPEG e PNG. Recebido: {{mimeType}}"
+    },
+    "uploadTooLarge": {
+      "title": "Arquivo muito grande",
+      "detail": "O arquivo excede o tamanho máximo para upload de {{kind}}"
+    },
+    "uploadInvalidImage": {
+      "title": "Imagem inválida",
+      "detail": "O arquivo enviado não pôde ser lido como imagem"
+    },
+    "uploadStorageFailed": {
+      "title": "Erro ao salvar upload",
+      "detail": "Não foi possível salvar o arquivo. Verifique as permissões de MODEL_FILES_BASE_PATH."
     }
   }
 }

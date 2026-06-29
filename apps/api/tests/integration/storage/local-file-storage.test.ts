@@ -54,6 +54,22 @@ describe("LocalFileStorage uploads", () => {
     expect(result.kind).toBe("thumbnail");
   });
 
+  it("accepts application/octet-stream when extension is png", async () => {
+    const png = Buffer.from(
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+      "base64",
+    );
+    const result = await storage.saveUpload({
+      kind: "gallery",
+      filename: "photo.png",
+      mimeType: "application/octet-stream",
+      data: png,
+    });
+
+    expect(result.url).toMatch(/^\/models\/images\/.+\.webp$/);
+    expect(result.mimeType).toBe("image/webp");
+  });
+
   it("rejects disallowed MIME types", async () => {
     await expect(
       storage.saveUpload({

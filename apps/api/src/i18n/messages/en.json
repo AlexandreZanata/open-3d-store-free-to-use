@@ -55,6 +55,22 @@
     "badRequest": {
       "title": "Bad request",
       "detail": "The request could not be processed"
+    },
+    "uploadMimeNotAllowed": {
+      "title": "Unsupported file type",
+      "detail": "Allowed image types are WebP, JPEG, and PNG. Received: {{mimeType}}"
+    },
+    "uploadTooLarge": {
+      "title": "File too large",
+      "detail": "The file exceeds the maximum size for {{kind}} uploads"
+    },
+    "uploadInvalidImage": {
+      "title": "Invalid image file",
+      "detail": "The uploaded file could not be read as an image"
+    },
+    "uploadStorageFailed": {
+      "title": "Upload storage error",
+      "detail": "Could not save the uploaded file. Check MODEL_FILES_BASE_PATH permissions."
     }
   }
 }

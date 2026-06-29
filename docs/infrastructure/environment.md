@@ -20,7 +20,7 @@
 | `REDIS_URL` | `redis://localhost:6379` | URL |
 | `WHATSAPP_PHONE_NUMBER` | `5565999999999` or `(65) 99999-9999` | `@br-validators/core/telefone` via `@print3d/whatsapp` |
 | `CORS_ORIGIN` | `http://localhost:5173` | URL |
-| `MODEL_FILES_BASE_PATH` | `/var/www/print3d/models` | path |
+| `MODEL_FILES_BASE_PATH` | `storage/models` (dev) or `/var/www/print3d/models` (prod) | path |
 | `MODEL_FILES_BASE_URL` | `https://yourdomain.com/models` | URL |
 
 ## Admin variables (Phase 9+)
@@ -45,6 +45,8 @@ Admin contract: [../api/admin-contract.md](../api/admin-contract.md)
 **File:** `apps/api/src/config.ts`
 
 Use Zod `envSchema.parse(process.env)` — app MUST crash at startup with clear error if invalid.
+
+In **development**, if `MODEL_FILES_BASE_PATH` is not writable (common when set to `/var/www/...`), the API automatically falls back to `apps/api/storage/models`.
 
 Harness: `agent-rules/03-security/secrets-and-credentials.md`
 

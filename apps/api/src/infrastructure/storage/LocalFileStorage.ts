@@ -10,7 +10,6 @@ import {
 import { uuidv7 } from "uuidv7";
 
 import {
-  isAllowedImageInputMime,
   normalizeImageUpload,
 } from "./normalizeImageUpload.js";
 
@@ -83,10 +82,11 @@ export class LocalFileStorage {
     mimeType: AdminUploadMimeType;
   }> {
     if (input.kind === "thumbnail" || input.kind === "gallery") {
-      if (!isAllowedImageInputMime(input.mimeType)) {
-        throw new Error(`MIME type not allowed: ${input.mimeType}`);
-      }
-      const normalized = await normalizeImageUpload(input.data, input.mimeType);
+      const normalized = await normalizeImageUpload(
+        input.data,
+        input.mimeType,
+        input.filename,
+      );
       return {
         kind: input.kind,
         data: normalized.data,

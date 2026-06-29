@@ -62,7 +62,7 @@ Separate desktop-only home — mobile home is wrapped in `lg:hidden`:
 |------|---------|
 | **Search** | Page intro, sticky filter card sidebar, prominent search field, catalog product cards (`2–3` cols) |
 | **Categories** | 3–4 column grid |
-| **Product** | Two columns (media panel + details); sticky media on desktop; Embla gallery carousel |
+| **Product** | Two columns (media panel + details); sticky media on desktop; Embla gallery carousel; share button (Web Share + copy/WhatsApp/email) — [product-share.md](product-share.md) |
 | **Cart** | Centered `max-w-3xl` column |
 
 ## Key files

@@ -1,10 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ShoppingBag, Share2 } from "lucide-react";
-import { useState } from "react";
+import { ShoppingBag } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { AppShell } from "@/components/AppShell";
 import { FavoriteButton } from "@/components/FavoriteButton";
+import { ShareProductButton } from "@/components/ShareProductButton";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductCardSkeleton, ProductDetailSkeleton } from "@/components/LoadingSkeletons";
 import { ProductMediaPanel } from "@/components/ProductMedia";
@@ -42,6 +42,7 @@ export const Route = createFileRoute("/product/$slug")({
             { name: "description", content: loaderData.shortDescription },
             { property: "og:title", content: brandPageTitle(loaderData.name) },
             { property: "og:description", content: loaderData.shortDescription },
+            { property: "og:type", content: "product" },
           ],
         }
       : { meta: [{ title: i18n.t("product.metaFallback") }] },
@@ -201,13 +202,13 @@ function ProductPage() {
                   className="size-11 shrink-0 ring-1 ring-hairline bg-surface"
                   iconClassName="size-5"
                 />
-                <button
-                  type="button"
-                  aria-label={t("product.share")}
-                  className="size-11 shrink-0 grid place-items-center rounded-full ring-1 ring-hairline bg-surface press"
-                >
-                  <Share2 className="size-5" />
-                </button>
+                <ShareProductButton
+                  product={{
+                    slug: detail.slug,
+                    name: detail.name,
+                    shortDescription: detail.shortDescription,
+                  }}
+                />
                 <button
                   type="button"
                   onClick={handleAddToCart}

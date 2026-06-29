@@ -55,6 +55,7 @@
 | [features/i18n.md](features/i18n.md) | Bilingual UI/API (`en` + `pt-BR`) |
 | [features/store-user-accounts.md](features/store-user-accounts.md) | Shopper accounts — cart & favorites persistence |
 | [features/responsive-layout.md](features/responsive-layout.md) | Mobile-first UI + desktop (`lg+`) layout |
+| [features/product-share.md](features/product-share.md) | Product page Web Share + desktop fallbacks |
 | [features/admin-panel.md](features/admin-panel.md) | Admin SPA — routes, design, dev & E2E |
 
 ### Infrastructure & operations

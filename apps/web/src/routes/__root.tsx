@@ -14,6 +14,7 @@ import { I18nextProvider } from "react-i18next";
 import i18n from "../i18n";
 import appCss from "../styles.css?url";
 import { StoreAuthProvider } from "@/auth/StoreAuthProvider";
+import { Toaster } from "@/components/ui/sonner";
 import { useCartServerSync } from "@/hooks/useCartServerSync";
 import { brandFaviconHeadLinks, brandThemeColorMeta } from "@/lib/brandFavicons";
 
@@ -123,6 +124,7 @@ function RootComponent() {
       <QueryClientProvider client={queryClient}>
         <StoreAuthProvider>
           <CartSyncBoundary />
+          <Toaster richColors closeButton position="top-center" />
         </StoreAuthProvider>
       </QueryClientProvider>
     </I18nextProvider>

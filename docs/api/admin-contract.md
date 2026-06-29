@@ -653,9 +653,9 @@ Recalculates `basePrice` (and total `weightGrams`) for products with non-empty `
 
 **Formula (per product material):**
 
-`basePrice` = `weightGrams × pricePerGramCents` + `(printTimeMinutes / 60) × machineHourlyRateCents` + `handlingFeeCents`
+`basePrice` = `weightGrams × pricePerGramCents` + `printTimeHours × machineHourlyRateCents` + `handlingFeeCents`
 
-Admin product form edits print time in **minutes**; the API stores rounded whole hours (`printTimeHours`). The **Use pre-calculated price** button on the product form uses minutes directly before save.
+Admin product form edits print time in **hours** (decimals allowed, e.g. `1.5`). The API stores rounded whole hours (`printTimeHours`). Pre-price on the form uses the exact hour value before save.
 
 `machineHourlyRateCents` and `handlingFeeCents` come from the **product's material row** in `materialPricing`. `calculator.machineHourlyRateCents` / `calculator.handlingFeeCents` are fallbacks when a row omits those fields. `calculator.defaultInfillFactor` is used during mesh weight estimation only.
 

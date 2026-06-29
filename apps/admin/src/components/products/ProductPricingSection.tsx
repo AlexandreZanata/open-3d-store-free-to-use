@@ -11,7 +11,7 @@ import { useBulkPrepriceProducts } from "@/hooks/useBulkPreprice";
 import { useToast } from "@/hooks/useToast";
 import { adminTokens } from "@/lib/admin-tokens";
 import { ApiError } from "@/lib/api/client";
-import { calculatePrepriceCents } from "@/lib/prepriceCalculator";
+import { calculatePrepriceCents, parsePrintTimeHoursInput } from "@/lib/prepriceCalculator";
 import { centsToReaisInput } from "@/lib/money";
 import { formatApiErrorMessage } from "@/lib/utils";
 
@@ -35,7 +35,7 @@ export function ProductPricingSection({ state, errors, onPatch }: ProductPricing
     }
 
     const weightGrams = resolveWeightGrams(state);
-    const printTimeMinutes = Number(state.printTimeMinutes) || 0;
+    const printTimeHours = parsePrintTimeHoursInput(state.printTimeHours);
 
     if (weightGrams <= 0) {
       toast.error("Enter weight in grams or upload a model with detected parts.");
@@ -45,7 +45,7 @@ export function ProductPricingSection({ state, errors, onPatch }: ProductPricing
     const cents = calculatePrepriceCents({
       material: state.material,
       weightGrams,
-      printTimeMinutes,
+      printTimeHours,
       materialPricing: settings.materialPricing,
       calculator: settings.calculator,
     });
@@ -81,11 +81,12 @@ export function ProductPricingSection({ state, errors, onPatch }: ProductPricing
             error={errors.basePriceReais}
           />
           <Input
-            label="Print time (minutes)"
+            label="Print time (hours)"
             type="number"
             min={0}
-            value={state.printTimeMinutes}
-            onChange={(event) => onPatch({ printTimeMinutes: event.target.value })}
+            step={0.1}
+            value={state.printTimeHours}
+            onChange={(event) => onPatch({ printTimeHours: event.target.value })}
           />
           <Input
             label="Weight (grams)"
@@ -104,7 +105,7 @@ export function ProductPricingSection({ state, errors, onPatch }: ProductPricing
           </Button>
         </div>
         <p className="text-xs text-muted-foreground">
-          Pre-price uses material, grams, and print minutes with rates from Settings → Studio.
+          Pre-price uses material, grams, and print hours (converted internally for machine cost).
           Bulk update recalculates every product that has model parts.
         </p>
         <Input

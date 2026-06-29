@@ -8,7 +8,7 @@ import type {
 } from "@print3d/shared-types";
 
 import { centsToReaisInput, reaisToCents } from "@/lib/money";
-import { storedHoursToMinutes, minutesToStoredHours } from "@/lib/prepriceCalculator";
+import { printTimeHoursToStoredHours, parsePrintTimeHoursInput } from "@/lib/prepriceCalculator";
 import { slugify } from "@/lib/slugify";
 import { validateProductOptions } from "@/components/products/productOptionValidation";
 
@@ -18,7 +18,7 @@ export type ProductFormState = {
   categoryId: string;
   basePriceReais: string;
   material: MaterialType;
-  printTimeMinutes: string;
+  printTimeHours: string;
   weightGrams: string;
   status: PrintStatus;
   options: ProductOption[];
@@ -37,7 +37,7 @@ export function createEmptyProductForm(): ProductFormState {
     categoryId: "",
     basePriceReais: "",
     material: "PETG_HF",
-    printTimeMinutes: "0",
+    printTimeHours: "0",
     weightGrams: "0",
     status: "active",
     options: [],
@@ -60,7 +60,7 @@ export function productToFormState(product: AdminProductDetail): ProductFormStat
     categoryId: product.categoryId,
     basePriceReais: centsToReaisInput(product.basePrice),
     material: product.material,
-    printTimeMinutes: String(storedHoursToMinutes(product.printTimeHours)),
+    printTimeHours: String(product.printTimeHours),
     weightGrams: String(product.weightGrams),
     status: product.status,
     options: product.options,
@@ -111,7 +111,7 @@ export function productFormToPayload(state: ProductFormState): CreateProductPayl
     categoryId: state.categoryId,
     basePrice: cents,
     material: state.material,
-    printTimeHours: minutesToStoredHours(Number(state.printTimeMinutes) || 0),
+    printTimeHours: printTimeHoursToStoredHours(parsePrintTimeHoursInput(state.printTimeHours)),
     weightGrams: Number(state.weightGrams) || 0,
     status: state.status,
     options: cleanedOptions,

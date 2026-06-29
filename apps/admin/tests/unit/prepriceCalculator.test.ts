@@ -1,12 +1,12 @@
 /**
- * Contract: docs/api/admin-contract.md — pre-price uses minutes / 60 for machine time
+ * Contract: docs/api/admin-contract.md — pre-price uses print hours × machine rate
  */
 import { describe, expect, it } from "vitest";
 
 import {
   calculatePrepriceCents,
-  minutesToStoredHours,
-  storedHoursToMinutes,
+  parsePrintTimeHoursInput,
+  printTimeHoursToStoredHours,
 } from "@/lib/prepriceCalculator";
 
 const materialPricing = {
@@ -25,36 +25,34 @@ const calculator = {
 };
 
 describe("calculatePrepriceCents", () => {
-  it("converts print minutes to fractional hours for machine cost", () => {
+  it("applies machine cost from print hours", () => {
     const cents = calculatePrepriceCents({
       material: "PLA",
       weightGrams: 100,
-      printTimeMinutes: 120,
+      printTimeHours: 2,
       materialPricing,
       calculator,
     });
 
-    // 100*15 + 2h*1500 + 500 = 5000
     expect(cents).toBe(5000);
   });
 
-  it("supports sub-hour print times via minutes", () => {
+  it("supports fractional hours (e.g. 0.5 h)", () => {
     const cents = calculatePrepriceCents({
       material: "PLA",
       weightGrams: 0,
-      printTimeMinutes: 30,
+      printTimeHours: 0.5,
       materialPricing,
       calculator,
     });
 
-    // 0.5h * 1500 + 500 handling = 1250
     expect(cents).toBe(1250);
   });
 });
 
-describe("print time conversions", () => {
-  it("rounds minutes to whole hours for API storage", () => {
-    expect(minutesToStoredHours(90)).toBe(2);
-    expect(storedHoursToMinutes(2)).toBe(120);
+describe("print time helpers", () => {
+  it("parses decimal hours from form input", () => {
+    expect(parsePrintTimeHoursInput("1,5")).toBe(1.5);
+    expect(printTimeHoursToStoredHours(1.5)).toBe(2);
   });
 });

@@ -8,6 +8,7 @@
 |---------|-------|------|---------|
 | postgres | postgres:18.4-alpine | 5432 | Dev database `print3d_dev` |
 | redis | redis:8.8-alpine | 6379 | Cache + rate limit |
+| rabbitmq | rabbitmq:3.13-management-alpine | 5672, 15672 | Model processing queue (management UI on 15672) |
 
 ## Start
 
@@ -24,6 +25,21 @@ POSTGRES_PASSWORD=devpassword
 ```
 
 **Never use dev credentials in production.**
+
+RabbitMQ (model upload queue) — set in `apps/api/.env`:
+
+```
+RABBITMQ_URL=amqp://guest:localdev123@127.0.0.1:5672
+MODEL_PROCESSING_QUEUE=model.processing
+```
+
+Management UI: http://127.0.0.1:15672 (user `guest`, password `localdev123`).
+
+Optional worker (async processing for large models):
+
+```bash
+pnpm --filter @print3d/api worker:model-processing
+```
 
 ## Test database
 

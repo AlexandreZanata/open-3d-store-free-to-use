@@ -635,6 +635,7 @@ Poll async mesh extraction after `kind=model` upload.
     "id": "019f…",
     "status": "completed",
     "sourceUrl": "/models/3d/….stl",
+    "previewUrl": "/models/3d/…-preview.glb",
     "parts": [
       { "id": "…", "name": "Solid", "volumeCm3": 12.5, "weightGrams": 3.1 }
     ],
@@ -646,6 +647,8 @@ Poll async mesh extraction after `kind=model` upload.
 ```
 
 `status`: `pending` \| `processing` \| `completed` \| `failed`.
+
+`previewUrl`: optimized Draco GLB for storefront (≤ 20 MB). Admin upload UI sets product `modelFileUrl` to this when present.
 
 ### `POST /products/bulk-preprice`
 

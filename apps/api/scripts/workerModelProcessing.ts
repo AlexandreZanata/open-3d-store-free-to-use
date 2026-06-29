@@ -15,7 +15,7 @@ async function main(): Promise<void> {
   const { db, pool } = createDb(config.DATABASE_URL);
   const jobs = new DrizzleModelProcessingJobRepository(db);
   const shopSettings = new DrizzleShopSettingsRepository(db);
-  const processor = new ProcessModelUpload(jobs, shopSettings);
+  const processor = new ProcessModelUpload(jobs, shopSettings, config.MODEL_FILES_BASE_PATH);
 
   const connection = await amqplib.connect(config.RABBITMQ_URL);
   const channel = await connection.createChannel();

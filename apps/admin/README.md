@@ -39,12 +39,13 @@ Default dev credentials: use a valid bootstrap email (e.g. `admin@test.local` af
 | `/calculator` | Bulk pre-price from material + machine rates |
 | `/settings` | Shop profile, studio colors, material pricing |
 
-**Model studio:** `kind=model` uploads accept STL/GLB up to 256 MB. Poll `GET /admin/model-jobs/:id` after upload. If RabbitMQ is misconfigured, the API processes the mesh inline (upload still succeeds). Optional worker:
+**Model studio:** `kind=model` uploads accept STL/GLB up to 256 MB. The worker builds a **Draco/meshopt preview GLB** (gltf-transform) for the storefront and sets `modelFileUrl` to `previewUrl` when ready. Poll `GET /admin/model-jobs/:id` after upload.
 
 ```bash
 # apps/api/.env — match your RabbitMQ credentials
-RABBITMQ_URL=amqp://guest:guest@127.0.0.1:5672
+RABBITMQ_URL=amqp://guest:localdev123@127.0.0.1:5672
 pnpm --filter @print3d/api worker:model-processing
+pnpm --filter @print3d/api reoptimize-model custom-photo-frame
 ```
 
 Features: React Query hooks, slug preview (`slugify.ts`), BRL price input → cents, file uploads (`FileUploadField`, `ModelUploadField`), product options editor, **pre-calculated price** on product form (print hours + grams + material).

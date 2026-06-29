@@ -40,7 +40,6 @@ function addVirtualDesk(scene: THREE.Scene, format: ModelFormat): void {
     new THREE.MeshStandardMaterial({ color: 0xc8b8a8, roughness: 0.88, metalness: 0 }),
   );
   desk.rotation.x = -Math.PI / 2;
-  desk.receiveShadow = true;
   scene.add(desk);
 
   const grid = new THREE.GridHelper(width, 14, 0x9ca3af, 0xd1d5db);
@@ -52,7 +51,6 @@ function addLights(scene: THREE.Scene): void {
   scene.add(new THREE.AmbientLight(0xffffff, 0.62));
   const key = new THREE.DirectionalLight(0xffffff, 0.95);
   key.position.set(140, 220, 120);
-  key.castShadow = true;
   scene.add(key);
   const fill = new THREE.DirectionalLight(0xffffff, 0.32);
   fill.position.set(-90, 80, -140);
@@ -174,7 +172,6 @@ export function mountThreeModelViewer(
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.shadowMap.enabled = true;
   renderer.setSize(container.clientWidth, container.clientHeight);
   container.appendChild(renderer.domElement);
 
@@ -223,8 +220,8 @@ export function mountThreeModelViewer(
       modelRoot = object;
       object.traverse((child: THREE.Object3D) => {
         if (child instanceof THREE.Mesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
+          child.castShadow = false;
+          child.receiveShadow = false;
         }
       });
       const size = placeOnDesk(object);

@@ -38,15 +38,20 @@ export function ModelUploadField({
     setIsUploading(true);
     try {
       const response = await uploadAdminFile(file, "model");
-      onChange(response.data.url);
 
       const jobId = response.data.jobId;
       if (jobId && onPartsDetected) {
         setStatus("Processing mesh (queue)…");
-        const parts = await waitForModelJob(jobId);
+        const { parts, previewUrl } = await waitForModelJob(jobId);
+        onChange(previewUrl ?? response.data.url);
         onPartsDetected(parts);
-        setStatus(`Detected ${parts.length} part(s)`);
+        setStatus(
+          previewUrl
+            ? `Detected ${parts.length} part(s) — preview optimized for web`
+            : `Detected ${parts.length} part(s)`,
+        );
       } else {
+        onChange(response.data.url);
         setStatus(null);
       }
     } catch (caught) {

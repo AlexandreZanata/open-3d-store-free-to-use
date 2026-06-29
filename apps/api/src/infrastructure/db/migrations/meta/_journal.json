@@ -78,6 +78,13 @@
       "when": 1782762000000,
       "tag": "0011_model_studio",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1782765600000,
+      "tag": "0012_model_preview_url",
+      "breakpoints": true
     }
   ]
 }

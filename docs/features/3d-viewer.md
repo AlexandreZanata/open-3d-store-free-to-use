@@ -67,7 +67,22 @@ Replaces the previous `@google/model-viewer` CDN approach so `.3mf` print files 
 └── images/       *.webp gallery images
 ```
 
-Admin `kind=model` uploads enqueue async mesh extraction (`model_processing_jobs` + RabbitMQ worker). Poll `GET /api/v1/admin/model-jobs/:id` for `parts` (names, estimated volume/weight) used by bulk pre-pricing.
+Admin `kind=model` uploads enqueue async mesh extraction (`model_processing_jobs` + RabbitMQ worker). Poll `GET /api/v1/admin/model-jobs/:id` for `parts` (names, estimated volume/weight) and optional `previewUrl` (optimized GLB for storefront).
+
+## Server-side preview optimization
+
+After upload, the model worker runs **gltf-transform** (Khronos ecosystem) with **meshoptimizer** simplification and **Draco** compression:
+
+1. STL / large GLB → welded, deduplicated mesh
+2. Iterative `simplify` until ≤ 600k vertices
+3. `draco` + `meshopt` encode → `{id}-preview.glb` under `/models/3d/`
+4. Admin upload field sets `modelFileUrl` to `previewUrl` when optimization succeeds
+
+Re-run on an existing product:
+
+```bash
+pnpm --filter @print3d/api exec tsx --env-file=.env scripts/reoptimizeModel.ts custom-photo-frame
+```
 
 ## Browser preview limits
 

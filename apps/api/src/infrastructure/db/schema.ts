@@ -133,6 +133,8 @@ export const modelProcessingJobs = pgTable(
     status: text("status").notNull().default("pending"),
     sourceUrl: text("source_url").notNull(),
     sourcePath: text("source_path").notNull(),
+    previewUrl: text("preview_url"),
+    previewPath: text("preview_path"),
     parts: jsonb("parts").notNull().default([]),
     errorMessage: text("error_message"),
     createdAt: timestamp("created_at", { withTimezone: true })

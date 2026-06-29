@@ -32,19 +32,26 @@ export function ProductMediaPanel({
   const hasModel = Boolean(modelFileUrl);
   const hasGallery = slides.length > 0;
   const [tab, setTab] = useState<"viewer" | "gallery">(hasModel ? "viewer" : "gallery");
-  const defaultColor = availableColors[0]?.hex ?? "#9ca3af";
-  const initialColors = useMemo(() => {
+  const defaultColorHex = availableColors[0]?.hex ?? "#9ca3af";
+  const partIdsKey = modelParts.map((part) => part.id).join("|");
+  const basePartColors = useMemo(() => {
     const map: Record<string, string> = {};
     for (const part of modelParts) {
-      map[part.id] = defaultColor;
+      map[part.id] = defaultColorHex;
     }
     return map;
-  }, [modelParts, defaultColor]);
-  const [partColors, setPartColors] = useState(initialColors);
+    // partIdsKey tracks part identity; modelParts is read when ids change
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- stable colors per part id
+  }, [partIdsKey, defaultColorHex]);
+  const [colorOverrides, setColorOverrides] = useState<Record<string, string>>({});
+  const partColors = useMemo(
+    () => ({ ...basePartColors, ...colorOverrides }),
+    [basePartColors, colorOverrides],
+  );
 
   useEffect(() => {
-    setPartColors(initialColors);
-  }, [initialColors]);
+    setColorOverrides({});
+  }, [partIdsKey]);
 
   const posterUrl = resolveAssetUrl(thumbnailUrl);
   const modelUrl = modelFileUrl ? resolveAssetUrl(modelFileUrl) : null;
@@ -75,7 +82,7 @@ export function ProductMediaPanel({
           parts={modelParts}
           colors={availableColors}
           value={partColors}
-          onChange={setPartColors}
+          onChange={setColorOverrides}
         />
       ) : null}
 

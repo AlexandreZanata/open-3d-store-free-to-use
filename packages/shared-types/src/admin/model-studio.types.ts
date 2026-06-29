@@ -45,6 +45,8 @@ export type ModelProcessingJob = {
   id: string;
   status: ModelProcessingJobStatus;
   sourceUrl: string;
+  /** Draco/meshopt GLB for storefront preview when optimization succeeds. */
+  previewUrl: string | null;
   parts: ModelPart[];
   errorMessage: string | null;
   createdAt: string;

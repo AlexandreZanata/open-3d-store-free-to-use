@@ -96,7 +96,11 @@ export async function createContainer(
     config.MODEL_FILES_BASE_URL,
     config.UPLOAD_MAX_BYTES,
   );
-  const processModelUpload = new ProcessModelUpload(modelJobRepo, shopSettingsRepo);
+  const processModelUpload = new ProcessModelUpload(
+    modelJobRepo,
+    shopSettingsRepo,
+    config.MODEL_FILES_BASE_PATH,
+  );
   const modelQueue: IModelProcessingQueue = createModelProcessingQueue(
     config.RABBITMQ_URL,
     config.MODEL_PROCESSING_QUEUE,

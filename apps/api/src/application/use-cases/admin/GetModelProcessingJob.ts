@@ -15,6 +15,7 @@ export class GetModelProcessingJob {
         id: job.id,
         status: job.status,
         sourceUrl: job.sourceUrl,
+        previewUrl: job.previewUrl,
         parts: job.parts,
         errorMessage: job.errorMessage,
         createdAt: job.createdAt.toISOString(),

@@ -5,6 +5,8 @@ export type ModelProcessingJobRecord = {
   status: ModelProcessingJobStatus;
   sourceUrl: string;
   sourcePath: string;
+  previewUrl: string | null;
+  previewPath: string | null;
   parts: ModelPart[];
   errorMessage: string | null;
   createdAt: Date;
@@ -20,6 +22,10 @@ export interface IModelProcessingJobRepository {
   create(input: CreateModelProcessingJobInput): Promise<ModelProcessingJobRecord>;
   findById(id: string): Promise<ModelProcessingJobRecord | null>;
   markProcessing(id: string): Promise<void>;
-  markCompleted(id: string, parts: ModelPart[]): Promise<void>;
+  markCompleted(
+    id: string,
+    parts: ModelPart[],
+    preview?: { previewUrl: string; previewPath: string },
+  ): Promise<void>;
   markFailed(id: string, errorMessage: string): Promise<void>;
 }

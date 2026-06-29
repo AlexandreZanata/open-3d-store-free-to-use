@@ -7,6 +7,7 @@ import type { IModelProcessingJobRepository } from "../../../domain/repositories
 import type { IShopSettingsRepository } from "../../../domain/repositories/IShopSettingsRepository.js";
 import { analyzeModelParts } from "../../../domain/services/modelPartAnalyzer.js";
 import { DEFAULT_MATERIAL_PRICING } from "../../../domain/services/pricingCalculator.js";
+import { optimizeModelPreview } from "../../../infrastructure/model/optimizeModelPreview.js";
 import { ResourceNotFoundError } from "../../errors/ApplicationErrors.js";
 
 const EXTENSION_MIME: Record<string, AdminUploadMimeType> = {
@@ -20,6 +21,7 @@ export class ProcessModelUpload {
   constructor(
     private readonly jobs: IModelProcessingJobRepository,
     private readonly shopSettings: IShopSettingsRepository,
+    private readonly modelsBasePath: string,
   ) {}
 
   async execute(input: { jobId: string }): Promise<void> {
@@ -49,7 +51,17 @@ export class ProcessModelUpload {
         densityGCm3: density,
       });
 
-      await this.jobs.markCompleted(input.jobId, parts);
+      const preview = await optimizeModelPreview({
+        sourcePath: job.sourcePath,
+        mimeType,
+        modelsBasePath: this.modelsBasePath,
+      });
+
+      await this.jobs.markCompleted(
+        input.jobId,
+        parts,
+        preview ?? undefined,
+      );
     } catch (error) {
       const message = error instanceof Error ? error.message : "Model processing failed";
       await this.jobs.markFailed(input.jobId, message);

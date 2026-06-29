@@ -24,7 +24,8 @@
     "db:seed": "tsx --env-file=.env scripts/seed.ts",
     "db:seed-assets": "tsx --env-file=.env scripts/generateSeedThumbnails.ts && tsx --env-file=.env scripts/seedAssets.ts",
     "db:studio": "drizzle-kit studio",
-    "worker:model-processing": "tsx --env-file=.env scripts/workerModelProcessing.ts"
+    "worker:model-processing": "tsx --env-file=.env scripts/workerModelProcessing.ts",
+    "reoptimize-model": "tsx --env-file=.env scripts/reoptimizeModel.ts"
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.2",
@@ -33,13 +34,18 @@
     "@fastify/rate-limit": "^10.3.0",
     "@fastify/swagger": "^9.7.0",
     "@fastify/swagger-ui": "^6.0.0",
+    "@gltf-transform/core": "4",
+    "@gltf-transform/extensions": "4",
+    "@gltf-transform/functions": "4",
     "@print3d/shared-types": "workspace:*",
     "@print3d/whatsapp": "workspace:*",
     "amqplib": "^0.10.8",
     "argon2": "^0.43.0",
+    "draco3dgltf": "^1.5.7",
     "drizzle-orm": "^0.44.2",
     "fastify": "^5.4.0",
     "ioredis": "^5.6.1",
+    "meshoptimizer": "^1.1.1",
     "pg": "^8.22.0",
     "redis": "^5.12.1",
     "sharp": "^0.35.2",

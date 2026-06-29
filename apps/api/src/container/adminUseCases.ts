@@ -163,6 +163,10 @@ export function createAdminUseCases(deps: AdminUseCaseDeps): AdminUseCases {
     updateStoreUserAdmin: new UpdateStoreUserAdmin(deps.storeUsers, deps.storeSessions),
     getModelProcessingJob: new GetModelProcessingJob(deps.modelJobs),
     bulkPrepriceProducts: new BulkPrepriceProducts(deps.products, deps.shopSettings, audit),
-    processModelUpload: new ProcessModelUpload(deps.modelJobs, deps.shopSettings),
+    processModelUpload: new ProcessModelUpload(
+      deps.modelJobs,
+      deps.shopSettings,
+      deps.config.MODEL_FILES_BASE_PATH,
+    ),
   };
 }

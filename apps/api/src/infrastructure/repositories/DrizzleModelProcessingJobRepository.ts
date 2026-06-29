@@ -16,6 +16,8 @@ function mapRow(row: typeof modelProcessingJobs.$inferSelect): ModelProcessingJo
     status: row.status as ModelProcessingJobRecord["status"],
     sourceUrl: row.sourceUrl,
     sourcePath: row.sourcePath,
+    previewUrl: row.previewUrl,
+    previewPath: row.previewPath,
     parts: row.parts as ModelPart[],
     errorMessage: row.errorMessage,
     createdAt: row.createdAt,
@@ -54,10 +56,21 @@ export class DrizzleModelProcessingJobRepository implements IModelProcessingJobR
       .where(eq(modelProcessingJobs.id, id));
   }
 
-  async markCompleted(id: string, parts: ModelPart[]): Promise<void> {
+  async markCompleted(
+    id: string,
+    parts: ModelPart[],
+    preview?: { previewUrl: string; previewPath: string },
+  ): Promise<void> {
     await this.db
       .update(modelProcessingJobs)
-      .set({ status: "completed", parts, errorMessage: null, updatedAt: new Date() })
+      .set({
+        status: "completed",
+        parts,
+        errorMessage: null,
+        previewUrl: preview?.previewUrl ?? null,
+        previewPath: preview?.previewPath ?? null,
+        updatedAt: new Date(),
+      })
       .where(eq(modelProcessingJobs.id, id));
   }
 

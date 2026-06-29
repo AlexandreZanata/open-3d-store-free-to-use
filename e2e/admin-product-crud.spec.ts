@@ -80,5 +80,11 @@ test.describe("admin product CRUD", () => {
     );
 
     await expect(thumbnailField).toHaveValue(/\/models\/thumbnails\/.+\.webp$/, { timeout: 15_000 });
+
+    const previewImage = page.getByTestId("upload-preview-thumbnail").locator("img");
+    await expect(previewImage).toBeVisible({ timeout: 15_000 });
+    await expect(previewImage).toHaveAttribute("src", /.+/);
+    const naturalWidth = await previewImage.evaluate((img: HTMLImageElement) => img.naturalWidth);
+    expect(naturalWidth).toBeGreaterThan(0);
   });
 });

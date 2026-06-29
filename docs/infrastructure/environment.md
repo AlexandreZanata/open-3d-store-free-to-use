@@ -48,6 +48,8 @@ Use Zod `envSchema.parse(process.env)` — app MUST crash at startup with clear 
 
 In **development**, if `MODEL_FILES_BASE_PATH` is not writable (common when set to `/var/www/...`), the API automatically falls back to `apps/api/storage/models`.
 
+The API also serves that directory at **`GET /models/*`** (no auth) so admin and storefront previews work without nginx in local dev. Set `VITE_ASSETS_BASE_URL` to the API origin (e.g. `http://127.0.0.1:3001`).
+
 Harness: `agent-rules/03-security/secrets-and-credentials.md`
 
 ## Frontend env (TanStack / Vite)

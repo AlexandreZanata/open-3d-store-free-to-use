@@ -8,6 +8,7 @@ import { registerCors } from "./plugins/cors.js";
 import { registerCacheHeaders } from "./plugins/cache-headers.js";
 import { registerLocale } from "./plugins/locale.js";
 import { registerRateLimit } from "./plugins/rate-limit.js";
+import { registerModelAssetRoutes } from "./routes/model-assets.routes.js";
 import { registerCatalogEventRoutes } from "./routes/catalog-events.routes.js";
 import { registerHealthRoutes } from "./routes/health.routes.js";
 import { registerProductRoutes } from "./routes/products.routes.js";
@@ -79,6 +80,8 @@ export async function buildServer(
   await registerLocale(app);
   await registerRateLimit(app, container.config);
   await registerCacheHeaders(app);
+
+  await registerModelAssetRoutes(app, container);
 
   await app.register(
     async (api) => {

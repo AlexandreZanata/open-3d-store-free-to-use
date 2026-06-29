@@ -1,5 +1,5 @@
 import type { AdminUploadKind } from "@print3d/shared-types";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -21,12 +21,58 @@ export function FileUploadField({ kind, label, value, onChange, error }: FileUpl
   const inputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [localPreview, setLocalPreview] = useState<string | null>(null);
+  const [remotePreviewFailed, setRemotePreviewFailed] = useState(false);
+  const remotePreviewUrl = value.length > 0 ? resolveAssetUrl(value) : "";
+
+  function clearLocalPreview() {
+    setLocalPreview((current) => {
+      if (current) URL.revokeObjectURL(current);
+      return null;
+    });
+  }
+
+  useEffect(() => {
+    return () => {
+      if (localPreview) {
+        URL.revokeObjectURL(localPreview);
+      }
+    };
+  }, [localPreview]);
+
+  useEffect(() => {
+    setRemotePreviewFailed(false);
+  }, [value]);
+
+  useEffect(() => {
+    if (!localPreview || remotePreviewUrl.length === 0) {
+      return;
+    }
+
+    const image = new Image();
+    image.onload = () => clearLocalPreview();
+    image.onerror = () => {
+      // Keep blob preview when the API asset is not reachable yet.
+    };
+    image.src = remotePreviewUrl;
+
+    return () => {
+      image.onload = null;
+      image.onerror = null;
+    };
+  }, [localPreview, remotePreviewUrl]);
 
   async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    const nextLocalPreview = URL.createObjectURL(file);
+    setLocalPreview((current) => {
+      if (current) URL.revokeObjectURL(current);
+      return nextLocalPreview;
+    });
     setUploadError(null);
+    setRemotePreviewFailed(false);
     setIsUploading(true);
     try {
       const response = await uploadAdminFile(file, kind);
@@ -43,36 +89,64 @@ export function FileUploadField({ kind, label, value, onChange, error }: FileUpl
     }
   }
 
-  const previewUrl = resolveAssetUrl(value);
-  const showImagePreview = value.length > 0 && kind !== "model";
+  const previewSrc = localPreview ?? (remotePreviewFailed ? "" : remotePreviewUrl);
+  const showImagePreview = kind !== "model" && previewSrc.length > 0;
 
   return (
     <div className="space-y-3">
-      <Input label={label} value={value} onChange={(event) => onChange(event.target.value)} error={error} />
-      <div className="flex flex-wrap items-center gap-2">
-        <input
-          ref={inputRef}
-          type="file"
-          accept={UPLOAD_ACCEPT_BY_KIND[kind]}
-          className="hidden"
-          onChange={(event) => void handleFileChange(event)}
-        />
-        <Button
-          type="button"
-          variant="secondary"
-          disabled={isUploading}
-          onClick={() => inputRef.current?.click()}
-        >
-          {isUploading ? "Uploading…" : "Upload file"}
-        </Button>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
         {kind !== "model" ? (
-          <p className="text-xs text-muted-foreground">{IMAGE_UPLOAD_HINT}</p>
+          <div
+            className="flex size-32 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-hairline bg-surface"
+            data-testid={`upload-preview-${kind}`}
+          >
+            {showImagePreview ? (
+              <img
+                src={previewSrc}
+                alt=""
+                className="size-full object-cover"
+                onError={() => {
+                  if (localPreview) return;
+                  setRemotePreviewFailed(true);
+                }}
+              />
+            ) : (
+              <span className="px-3 text-center text-xs text-muted-foreground">
+                {isUploading ? "Uploading…" : "No image"}
+              </span>
+            )}
+          </div>
         ) : null}
-        {uploadError ? <p className="text-xs text-destructive">{uploadError}</p> : null}
+
+        <div className="min-w-0 flex-1 space-y-3">
+          <Input label={label} value={value} onChange={(event) => onChange(event.target.value)} error={error} />
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              ref={inputRef}
+              type="file"
+              accept={UPLOAD_ACCEPT_BY_KIND[kind]}
+              className="hidden"
+              onChange={(event) => void handleFileChange(event)}
+            />
+            <Button
+              type="button"
+              variant="secondary"
+              disabled={isUploading}
+              onClick={() => inputRef.current?.click()}
+            >
+              {isUploading ? "Uploading…" : "Upload file"}
+            </Button>
+            {kind !== "model" ? (
+              <p className="text-xs text-muted-foreground">{IMAGE_UPLOAD_HINT}</p>
+            ) : null}
+            {uploadError ? <p className="text-xs text-destructive">{uploadError}</p> : null}
+            {remotePreviewFailed && value ? (
+              <p className="text-xs text-destructive">Preview unavailable — check VITE_ASSETS_BASE_URL matches the API host.</p>
+            ) : null}
+          </div>
+        </div>
       </div>
-      {showImagePreview ? (
-        <img src={previewUrl} alt="" className="h-20 w-20 rounded-md border border-hairline object-cover" />
-      ) : null}
+
       {kind === "model" && value ? (
         <p className="text-xs text-muted-foreground">Model URL: {value}</p>
       ) : null}

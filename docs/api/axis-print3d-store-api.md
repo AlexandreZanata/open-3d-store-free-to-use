@@ -92,6 +92,18 @@ Images are stored as WebP. See [admin-contract.md](admin-contract.md#uploads).
 
 ---
 
+## Static model assets (no `/api/v1` prefix)
+
+Uploaded and seeded files are exposed for browsers and the admin preview:
+
+| Method | Path | Description | Success |
+|--------|------|-------------|---------|
+| `GET` | `/models/*` | Thumbnails, gallery images, `.glb` under `MODEL_FILES_BASE_PATH` | 200 |
+
+Paths match upload responses (e.g. `/models/thumbnails/{id}.webp`). Production may serve the same tree via nginx — see [../infrastructure/nginx.md](../infrastructure/nginx.md).
+
+---
+
 ## Errors
 
 RFC 7807 `application/problem+json`. Localized via `Accept-Language: en` or `pt-BR`.

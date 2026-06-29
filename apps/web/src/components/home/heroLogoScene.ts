@@ -4,8 +4,10 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { loadGltfScene } from "@/components/ModelViewer/createGltfLoader.js";
 import { probeModelAsset } from "@/lib/modelViewerLimits";
 
-const LOGO_COLOR = 0x1f2937;
+/** Brand accent — matches desktop hero gradient (oklch 0.68 0.18 45). */
+const LOGO_COLOR = 0xd4620a;
 const ROTATE_SPEED = 0.35;
+const FIT_SIZE = 1.6;
 
 export type HeroLogoHandle = {
   dispose: () => void;
@@ -28,14 +30,17 @@ export function mountHeroLogoViewer(
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setClearColor(0x000000, 0);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
   renderer.setSize(container.clientWidth, container.clientHeight);
   container.appendChild(renderer.domElement);
 
   const camera = new THREE.PerspectiveCamera(
     34,
     container.clientWidth / Math.max(container.clientHeight, 1),
-    0.001,
-    100,
+    0.01,
+    200,
   );
 
   const controls = new OrbitControls(camera, renderer.domElement);
@@ -46,13 +51,13 @@ export function mountHeroLogoViewer(
   controls.autoRotate = true;
   controls.autoRotateSpeed = ROTATE_SPEED;
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.72));
-  const key = new THREE.DirectionalLight(0xffffff, 1.05);
-  key.position.set(2, 3, 2);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.85));
+  const key = new THREE.DirectionalLight(0xffffff, 1.2);
+  key.position.set(2.5, 4, 3);
   scene.add(key);
-  const rim = new THREE.DirectionalLight(0xffffff, 0.45);
-  rim.position.set(-2, 1, -1);
-  scene.add(rim);
+  const fill = new THREE.DirectionalLight(0xfff4e8, 0.55);
+  fill.position.set(-2.5, 1.5, -2);
+  scene.add(fill);
 
   let frameId = 0;
   let modelRoot: THREE.Object3D | null = null;
@@ -122,13 +127,15 @@ function normalizeHeroMesh(root: THREE.Object3D): void {
       return;
     }
     const mesh = object as THREE.Mesh<THREE.BufferGeometry, THREE.Material | THREE.Material[]>;
-    if (!mesh.geometry.attributes.normal) {
-      mesh.geometry.computeVertexNormals();
+    const geometry = mesh.geometry;
+    if (!geometry.attributes.normal) {
+      geometry.computeVertexNormals();
     }
     mesh.material = new THREE.MeshStandardMaterial({
       color: LOGO_COLOR,
-      metalness: 0.35,
-      roughness: 0.42,
+      metalness: 0.28,
+      roughness: 0.38,
+      envMapIntensity: 0.6,
     });
   });
 }
@@ -143,12 +150,15 @@ function fitHeroModel(
   const size = box.getSize(new THREE.Vector3());
   object.position.sub(center);
 
-  const maxDim = Math.max(size.x, size.y, size.z, 0.01);
-  const distance = maxDim * 2.1;
-  camera.position.set(distance * 0.35, distance * 0.55, distance * 0.9);
+  const maxDim = Math.max(size.x, size.y, size.z, 0.001);
+  const scale = FIT_SIZE / maxDim;
+  object.scale.setScalar(scale);
+
+  const distance = FIT_SIZE * 2.4;
+  camera.position.set(distance * 0.2, distance * 0.12, distance * 0.95);
   controls.target.set(0, 0, 0);
-  camera.near = distance / 100;
-  camera.far = distance * 20;
+  camera.near = 0.05;
+  camera.far = distance * 12;
   camera.updateProjectionMatrix();
   controls.update();
 }

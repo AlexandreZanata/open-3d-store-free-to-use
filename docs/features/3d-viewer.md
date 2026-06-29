@@ -98,7 +98,7 @@ Any catalog upload (`STL`, `GLB`, `GLTF`, `3MF`) is converted automatically to a
 
 If a source file is missing, that product keeps its catalog metadata without a model URL.
 
-**Desktop hero logo:** `pnpm --filter @print3d/api db:seed-hero-logo` copies `16cc56c8094335eec1baddcd7a39f5b5(1).stl` from `SEED_MODELS_SOURCE_DIR` to `corvo-logo-preview.glb` for the home hero viewer.
+**Desktop hero logo:** `pnpm --filter @print3d/api db:seed-hero-logo` copies `16cc56c8094335eec1baddcd7a39f5b5(1).stl` from `SEED_MODELS_SOURCE_DIR` to `corvo-logo-preview.glb` using a high-density read (600k triangles) + meshopt weld/simplify so the mesh stays solid (catalog previews use a lighter stride cap).
 
 Re-run optimization for an existing product:
 

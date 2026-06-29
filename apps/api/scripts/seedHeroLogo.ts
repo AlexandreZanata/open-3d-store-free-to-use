@@ -3,7 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { loadConfig } from "../src/config.js";
-import { optimizeModelPreview } from "../src/infrastructure/model/optimizeModelPreview.js";
+import { optimizeHeroLogoPreview } from "../src/infrastructure/model/optimizeHeroLogoPreview.js";
 import { DEFAULT_SEED_MODELS_SOURCE_DIR } from "./seedModelSpecs.js";
 
 /** Public GLB served at GET /models/3d/corvo-logo-preview.glb */
@@ -32,9 +32,8 @@ export async function seedHeroLogo(
   const destPath = path.join(destDir, `${HERO_LOGO_DEST_STEM}.stl`);
   await copyFile(sourcePath, destPath);
 
-  const preview = await optimizeModelPreview({
+  const preview = await optimizeHeroLogoPreview({
     sourcePath: destPath,
-    mimeType: "model/stl",
     modelsBasePath: config.MODEL_FILES_BASE_PATH,
   });
 

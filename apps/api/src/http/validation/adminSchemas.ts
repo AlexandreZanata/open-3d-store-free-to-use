@@ -15,6 +15,8 @@ const shopColorSchema = z.object({
 const materialPricingEntrySchema = z.object({
   pricePerGramCents: z.number().int().min(0),
   densityGCm3: z.number().positive(),
+  machineHourlyRateCents: z.number().int().min(0).optional(),
+  handlingFeeCents: z.number().int().min(0).optional(),
 });
 
 const calculatorSettingsSchema = z.object({

@@ -12,6 +12,7 @@ import { bulkPrepriceProducts } from "@/lib/api/model-studio";
 import { formatBrlCents } from "@/lib/money";
 import { ApiError } from "@/lib/api/client";
 import { formatApiErrorMessage } from "@/lib/utils";
+import type { MaterialType, ShopSettings } from "@print3d/shared-types";
 
 export const Route = createFileRoute("/_authenticated/calculator/")({
   component: CalculatorPage,
@@ -46,7 +47,7 @@ function CalculatorPage() {
     <>
       <PageHeader
         title="Pre-price calculator"
-        description="Apply material cost + machine time + handling fee to all products with detected model parts."
+        description="Per-material rates drive bulk pre-pricing for products with detected model parts."
       />
 
       {settingsQuery.isLoading ? (
@@ -63,42 +64,23 @@ function CalculatorPage() {
               <div>
                 <h2 className="text-lg font-semibold tracking-tight">Formula</h2>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Pre-price (centavos) = weight (g) × price/g + print hours × machine rate + handling
-                  fee. Weight comes from model part analysis (bounding box × infill × density).
+                  Pre-price = weight (g) × material price/g + print hours × material machine rate +
+                  material handling fee. Each material type has its own rates in Settings.
                 </p>
               </div>
             </div>
-            <dl className="grid gap-3 sm:grid-cols-3 text-sm">
-              <div className="rounded-lg border border-hairline p-3">
-                <dt className="text-muted-foreground">Machine rate</dt>
-                <dd className="font-semibold tabular-nums">
-                  {formatBrlCents(settings.calculator.machineHourlyRateCents)} / h
-                </dd>
-              </div>
-              <div className="rounded-lg border border-hairline p-3">
-                <dt className="text-muted-foreground">Handling fee</dt>
-                <dd className="font-semibold tabular-nums">
-                  {formatBrlCents(settings.calculator.handlingFeeCents)}
-                </dd>
-              </div>
-              <div className="rounded-lg border border-hairline p-3">
-                <dt className="text-muted-foreground">Default infill</dt>
-                <dd className="font-semibold tabular-nums">
-                  {(settings.calculator.defaultInfillFactor * 100).toFixed(0)}%
-                </dd>
-              </div>
-            </dl>
             <p className="text-xs text-muted-foreground">
-              Edit rates in Settings → Studio (material pricing & calculator). References: All3DP cost
-              guide; filament density from Prusa/MatterHackers datasheets.
+              Default infill: {(settings.calculator.defaultInfillFactor * 100).toFixed(0)}% · Edit
+              rates in Settings → Studio.
             </p>
           </Card>
+
+          <MaterialRatesTable settings={settings} />
 
           <Card className="space-y-4">
             <h2 className="text-lg font-semibold tracking-tight">Apply to catalog</h2>
             <p className="text-sm text-muted-foreground">
-              Updates base price and total weight for every product with non-empty model parts.
-              Products without parts are skipped.
+              Updates base price and total weight using each product&apos;s material row.
             </p>
             <Button type="button" disabled={isRunning} onClick={() => void handleBulkPreprice()}>
               {isRunning ? "Calculating…" : "Run bulk pre-price"}
@@ -112,5 +94,63 @@ function CalculatorPage() {
         </div>
       )}
     </>
+  );
+}
+
+function MaterialRatesTable({ settings }: { settings: ShopSettings }) {
+  const materials = settings.enabledMaterials;
+
+  if (materials.length === 0) {
+    return (
+      <Card>
+        <p className="text-sm text-muted-foreground">No materials enabled in shop settings.</p>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="overflow-x-auto">
+      <table className="w-full min-w-[640px] text-sm">
+        <thead>
+          <tr className="border-b border-hairline text-left text-muted-foreground">
+            <th className="px-3 py-2 font-medium">Material</th>
+            <th className="px-3 py-2 font-medium">Price / g</th>
+            <th className="px-3 py-2 font-medium">Machine / h</th>
+            <th className="px-3 py-2 font-medium">Handling</th>
+            <th className="px-3 py-2 font-medium">Example (50 g, 1 h)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {materials.map((material) => (
+            <MaterialRateRow key={material} material={material} settings={settings} />
+          ))}
+        </tbody>
+      </table>
+    </Card>
+  );
+}
+
+function MaterialRateRow({
+  material,
+  settings,
+}: {
+  material: MaterialType;
+  settings: ShopSettings;
+}) {
+  const row = settings.materialPricing[material];
+  const pricePerGram = row?.pricePerGramCents ?? 15;
+  const machineRate =
+    row?.machineHourlyRateCents ?? settings.calculator.machineHourlyRateCents;
+  const handling = row?.handlingFeeCents ?? settings.calculator.handlingFeeCents;
+  const example = Math.round(50 * pricePerGram + machineRate + handling);
+
+  return (
+    <tr className="border-b border-hairline/60 last:border-0">
+      <td className="px-3 py-2.5 font-medium">{material}</td>
+      <td className="px-3 py-2.5 tabular-nums">{formatBrlCents(pricePerGram)}</td>
+      <td className="px-3 py-2.5 tabular-nums">{formatBrlCents(machineRate)}</td>
+      <td className="px-3 py-2.5 tabular-nums">{formatBrlCents(handling)}</td>
+      <td className="px-3 py-2.5 tabular-nums font-semibold">{formatBrlCents(example)}</td>
+    </tr>
   );
 }

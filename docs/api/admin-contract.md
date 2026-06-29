@@ -647,7 +647,22 @@ Poll async mesh extraction after `kind=model` upload. Worker queue: `MODEL_PROCE
 
 ### `POST /products/bulk-preprice`
 
-Recalculates `basePrice` (and total `weightGrams`) for products with non-empty `modelParts`, using shop `materialPricing` and `calculator` settings.
+Recalculates `basePrice` (and total `weightGrams`) for products with non-empty `modelParts`.
+
+**Formula (per product material):**
+
+`basePrice` = `weightGrams × pricePerGramCents` + `printTimeHours × machineHourlyRateCents` + `handlingFeeCents`
+
+`machineHourlyRateCents` and `handlingFeeCents` come from the **product's material row** in `materialPricing`. `calculator.machineHourlyRateCents` / `calculator.handlingFeeCents` are fallbacks when a row omits those fields. `calculator.defaultInfillFactor` is used during mesh weight estimation only.
+
+**`materialPricing` entry (per `MaterialType`):**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `pricePerGramCents` | int | Filament cost per gram (centavos) |
+| `densityGCm3` | number | Density for volume→weight (e.g. PLA ≈ 1.24) |
+| `machineHourlyRateCents` | int? | Machine hourly rate for this material (falls back to `calculator`) |
+| `handlingFeeCents` | int? | Fixed handling fee per part for this material (falls back to `calculator`) |
 
 **Response 200:**
 

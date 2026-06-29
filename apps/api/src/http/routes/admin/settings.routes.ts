@@ -1,5 +1,7 @@
 import type { FastifyInstance } from "fastify";
 
+import type { UpdateShopSettingsPayload } from "@print3d/shared-types";
+
 import type { AppContainer } from "../../../container.js";
 import { handleAdminError } from "../../errors/handleAdminError.js";
 import {
@@ -42,7 +44,7 @@ export async function registerAdminSettingsRoutes(
       try {
         const result = await container.admin.updateShopSettingsAdmin.execute({
           adminId: request.adminUser!.id,
-          payload: parsed.data,
+          payload: parsed.data as UpdateShopSettingsPayload,
         });
         return reply.send(result);
       } catch (error) {

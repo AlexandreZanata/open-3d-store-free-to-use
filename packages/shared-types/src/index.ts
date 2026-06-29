@@ -55,6 +55,7 @@ export type {
   BulkPrepriceResult,
   CalculatorSettings,
   MaterialPricePerGram,
+  MaterialPricingEntry,
   ModelPart,
   ModelProcessingJob,
   ModelProcessingJobResponse,

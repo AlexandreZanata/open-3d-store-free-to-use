@@ -14,11 +14,13 @@ import {
   updateCartQuantity,
   writeCart,
 } from "@/lib/cart";
+import { default as i18n } from "@/i18n";
+import { brandPageTitle } from "@/lib/brand";
 import { pagePadding } from "@/lib/layout";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({
-    meta: [{ title: "Cart — AXIS" }],
+    meta: [{ title: brandPageTitle(i18n.t("cart.title")) }],
   }),
   component: CartPage,
 });

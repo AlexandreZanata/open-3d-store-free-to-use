@@ -3,6 +3,7 @@ import { Heart, Home, LayoutGrid, Search, ShoppingBag, User } from "lucide-react
 import { useTranslation } from "react-i18next";
 
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { BrandMark } from "@/components/BrandMark";
 import { desktopOnly, shellMaxWidth } from "@/lib/layout";
 
 type Props = {
@@ -63,8 +64,8 @@ export function AppShellDesktopHeader({
       <div className="bg-foreground text-background shadow-[0_8px_30px_oklch(0_0_0/0.12)]">
         <div className={`${shellMaxWidth} px-8 h-[4.25rem] flex items-center gap-10`}>
           <Link to="/" className="flex items-center gap-3 shrink-0 group" aria-label={t("nav.home")}>
-            <span className="size-9 grid place-items-center rounded-lg bg-background text-foreground transition-transform group-hover:scale-105">
-              <span className="block size-2.5 border-2 border-foreground" />
+            <span className="flex h-9 w-12 items-center justify-center transition-transform group-hover:scale-105">
+              <BrandMark className="max-h-9" />
             </span>
             <span className="text-lg font-semibold tracking-tight">{t("app.name")}</span>
           </Link>

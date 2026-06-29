@@ -12,7 +12,7 @@ import { productsQueryKey, useProducts } from "@/hooks/useProducts";
 import { fetchCategories } from "@/lib/api/categories";
 import { fetchProducts } from "@/lib/api/products";
 import { categoryPillsTrack, mobileOnly, pagePadding } from "@/lib/layout";
-import { getCurrentI18nLocale } from "@/i18n";
+import { getCurrentI18nLocale, default as i18n } from "@/i18n";
 
 export const Route = createFileRoute("/")({
   loader: async ({ context }) => {
@@ -29,7 +29,7 @@ export const Route = createFileRoute("/")({
     ]);
   },
   head: () => ({
-    meta: [{ title: "AXIS — 3D Print Catalog" }],
+    meta: [{ title: i18n.t("app.metaTitle") }],
   }),
   component: HomePage,
 });

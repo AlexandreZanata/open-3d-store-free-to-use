@@ -12,7 +12,8 @@ import { useCategories } from "@/hooks/useCategories";
 import { useProducts } from "@/hooks/useProducts";
 import { fetchProducts } from "@/lib/api/products";
 import { desktopOnly, mobileOnly } from "@/lib/layout";
-import { getCurrentI18nLocale } from "@/i18n";
+import { getCurrentI18nLocale, default as i18n } from "@/i18n";
+import { brandPageTitle } from "@/lib/brand";
 import type { ProductQueryParams } from "@/lib/api/types";
 
 const searchSchema = z.object({
@@ -33,7 +34,7 @@ export const Route = createFileRoute("/search")({
     });
   },
   head: () => ({
-    meta: [{ title: "Search — AXIS" }],
+    meta: [{ title: brandPageTitle(i18n.t("search.title")) }],
   }),
   component: SearchPage,
 });

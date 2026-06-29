@@ -2,10 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { AppShell } from "@/components/AppShell";
+import { default as i18n } from "@/i18n";
+import { brandPageTitle } from "@/lib/brand";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({
-    meta: [{ title: "Profile — AXIS" }],
+    meta: [{ title: brandPageTitle(i18n.t("profile.title")) }],
   }),
   component: ProfilePage,
 });

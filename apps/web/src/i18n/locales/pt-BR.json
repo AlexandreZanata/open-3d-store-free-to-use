@@ -1,8 +1,8 @@
 {
   "app": {
-    "name": "AXIS",
+    "name": "Corvo 3D",
     "tagline": "Catálogo de impressão 3D",
-    "metaTitle": "AXIS — Catálogo de Impressão 3D",
+    "metaTitle": "Corvo 3D — Catálogo de Impressão 3D",
     "metaDescription": "Navegue por produtos impressos em 3D, visualize modelos e peça pelo WhatsApp."
   },
   "nav": {
@@ -63,7 +63,7 @@
   "product": {
     "notFoundTitle": "Produto não encontrado",
     "notFoundMeta": "Não encontrado",
-    "metaFallback": "Produto — AXIS",
+    "metaFallback": "Produto — Corvo 3D",
     "viewerLabel": "Visualização 3D",
     "viewerBadge": "Visualizador 3D",
     "tabModel": "Modelo 3D",
@@ -115,7 +115,7 @@
     "metaDescription": "Conta e configurações.",
     "guestName": "Visitante",
     "guestEmail": "Navegação anônima",
-    "version": "AXIS v1.0"
+    "version": "Corvo 3D v1.0"
   },
   "errors": {
     "pageNotFoundTitle": "Página não encontrada",

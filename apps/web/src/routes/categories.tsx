@@ -9,7 +9,8 @@ import { useProducts } from "@/hooks/useProducts";
 import { fetchCategories } from "@/lib/api/categories";
 import { fetchProducts } from "@/lib/api/products";
 import { categoryGridCols, pagePadding } from "@/lib/layout";
-import { getCurrentI18nLocale } from "@/i18n";
+import { getCurrentI18nLocale, default as i18n } from "@/i18n";
+import { brandPageTitle } from "@/lib/brand";
 
 export const Route = createFileRoute("/categories")({
   loader: async ({ context }) => {
@@ -26,7 +27,7 @@ export const Route = createFileRoute("/categories")({
     ]);
   },
   head: () => ({
-    meta: [{ title: "Categories — AXIS" }],
+    meta: [{ title: brandPageTitle(i18n.t("categories.title")) }],
   }),
   component: CategoriesPage,
 });

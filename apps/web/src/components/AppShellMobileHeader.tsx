@@ -3,6 +3,7 @@ import { ArrowLeft, Search, ShoppingBag } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { BrandMark } from "@/components/BrandMark";
 import { mobileOnly, shellMaxWidth } from "@/lib/layout";
 
 type Props = {
@@ -30,8 +31,8 @@ export function AppShellMobileHeader({ showSearch = true, showBack = false, titl
           </Link>
         ) : (
           <Link to="/" className="flex items-center gap-2 shrink-0" aria-label={t("nav.home")}>
-            <span className="size-7 grid place-items-center rounded-md bg-foreground text-background">
-              <span className="block size-2 border border-background" />
+            <span className="flex h-7 w-9 items-center justify-center">
+              <BrandMark className="max-h-7" />
             </span>
             <span className="text-sm font-semibold tracking-tight">{t("app.name")}</span>
           </Link>

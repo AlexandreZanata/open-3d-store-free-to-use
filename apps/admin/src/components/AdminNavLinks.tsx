@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 
+import { BrandMark } from "@/components/BrandMark";
 import { adminTokens } from "@/lib/admin-tokens";
+import { ADMIN_APP_TITLE, BRAND_NAME } from "@/lib/brand";
 import { adminNavItems } from "@/lib/admin-nav";
 import { cn } from "@/lib/utils";
 
@@ -36,10 +38,17 @@ export function AdminNavLinks({ onNavigate, className }: AdminNavLinksProps) {
 export function AdminBrand() {
   return (
     <div className="border-b border-hairline px-5 py-5 md:py-6">
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-        AXIS
-      </p>
-      <p className="mt-1 text-lg font-semibold text-foreground">Admin</p>
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-12 items-center justify-center">
+          <BrandMark className="max-h-10" />
+        </div>
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            {BRAND_NAME}
+          </p>
+          <p className="mt-1 text-lg font-semibold text-foreground">Admin</p>
+        </div>
+      </div>
     </div>
   );
 }

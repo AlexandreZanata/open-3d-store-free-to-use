@@ -15,7 +15,8 @@ import { resolveAssetUrl } from "@/lib/assets";
 import { addToCart } from "@/lib/cart";
 import { mobileOnly, pagePadding, shellMaxWidth } from "@/lib/layout";
 import { RailTrack } from "@/components/Rail";
-import { getCurrentI18nLocale } from "@/i18n";
+import { getCurrentI18nLocale, default as i18n } from "@/i18n";
+import { brandPageTitle } from "@/lib/brand";
 import type { ProductDetail } from "@print3d/shared-types";
 
 export const Route = createFileRoute("/product/$slug")({
@@ -37,13 +38,13 @@ export const Route = createFileRoute("/product/$slug")({
     loaderData
       ? {
           meta: [
-            { title: `${loaderData.name} — AXIS` },
+            { title: brandPageTitle(loaderData.name) },
             { name: "description", content: loaderData.shortDescription },
-            { property: "og:title", content: `${loaderData.name} — AXIS` },
+            { property: "og:title", content: brandPageTitle(loaderData.name) },
             { property: "og:description", content: loaderData.shortDescription },
           ],
         }
-      : { meta: [{ title: "Product — AXIS" }] },
+      : { meta: [{ title: i18n.t("product.metaFallback") }] },
   notFoundComponent: ProductNotFound,
   component: ProductPage,
   pendingComponent: ProductPending,

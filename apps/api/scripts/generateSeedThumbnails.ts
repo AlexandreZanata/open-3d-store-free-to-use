@@ -21,7 +21,7 @@ function buildThumbnailSvg(label: string, colors: [string, string]): string {
   <rect width="640" height="480" fill="url(#bg)"/>
   <rect x="48" y="48" width="544" height="384" rx="24" fill="rgba(255,255,255,0.12)"/>
   <text x="320" y="250" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="42" font-weight="700" fill="#FFFFFF">${escaped}</text>
-  <text x="320" y="300" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="18" font-weight="500" fill="rgba(255,255,255,0.85)">AXIS 3D Print</text>
+  <text x="320" y="300" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="18" font-weight="500" fill="rgba(255,255,255,0.85)">Corvo 3D</text>
 </svg>`;
 }
 

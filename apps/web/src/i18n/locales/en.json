@@ -1,8 +1,8 @@
 {
   "app": {
-    "name": "AXIS",
+    "name": "Corvo 3D",
     "tagline": "3D print catalog",
-    "metaTitle": "AXIS — 3D Print Catalog",
+    "metaTitle": "Corvo 3D — 3D Print Catalog",
     "metaDescription": "Browse custom 3D printed products, preview models, and order via WhatsApp."
   },
   "nav": {
@@ -63,7 +63,7 @@
   "product": {
     "notFoundTitle": "Product not found",
     "notFoundMeta": "Not found",
-    "metaFallback": "Product — AXIS",
+    "metaFallback": "Product — Corvo 3D",
     "viewerLabel": "3D preview",
     "viewerBadge": "3D Viewer",
     "tabModel": "3D Model",
@@ -115,7 +115,7 @@
     "metaDescription": "Account and settings.",
     "guestName": "Guest",
     "guestEmail": "Anonymous browsing",
-    "version": "AXIS v1.0"
+    "version": "Corvo 3D v1.0"
   },
   "errors": {
     "pageNotFoundTitle": "Page not found",

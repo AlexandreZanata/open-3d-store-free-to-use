@@ -5,7 +5,7 @@
 
 ## Purpose
 
-Internal catalog and order management for the AXIS storefront. MVP scope: bilingual product/category CRUD, read-only orders, session auth, file uploads.
+Internal catalog and order management for the Corvo 3D storefront. MVP scope: bilingual product/category CRUD, read-only orders, session auth, file uploads.
 
 ## Design principles
 

@@ -5,6 +5,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { useAdminAuth } from "@/auth/useAdminAuth";
 import { AdminBrand, AdminNavLinks } from "@/components/AdminNavLinks";
 import { Button } from "@/components/ui/Button";
+import { ADMIN_APP_TITLE } from "@/lib/brand";
 import { adminTokens } from "@/lib/admin-tokens";
 import { cn } from "@/lib/utils";
 
@@ -88,7 +89,7 @@ export function AdminShell({ children }: AdminShellProps) {
             <Menu className="size-5" />
           </Button>
           <div className="min-w-0 flex-1 md:hidden">
-            <p className="truncate text-sm font-semibold text-foreground">AXIS Admin</p>
+            <p className="truncate text-sm font-semibold text-foreground">{ADMIN_APP_TITLE}</p>
             {user?.email ? (
               <p className="truncate text-xs text-muted-foreground">{user.email}</p>
             ) : null}

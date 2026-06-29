@@ -35,8 +35,8 @@ Admin SPA runs on **port 5174** (or custom port). `ADMIN_ORIGIN` in `apps/api/.e
 
 ```bash
 cp apps/admin/.env.example apps/admin/.env
-# Custom port example:
-export VITE_API_BASE_URL=http://127.0.0.1:3025/api/v1 VITE_ASSETS_BASE_URL=http://127.0.0.1:3025
+# Custom port example (assets load same-origin; Vite proxies /models to the API):
+export VITE_API_BASE_URL=http://127.0.0.1:3025/api/v1
 pnpm --filter @print3d/admin exec vite --host 127.0.0.1 --port 5180
 ```
 

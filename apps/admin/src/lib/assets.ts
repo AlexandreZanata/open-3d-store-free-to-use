@@ -1,9 +1,7 @@
 import { readEnvString } from "@/lib/env";
 
-const DEFAULT_ASSETS_BASE = "http://localhost:3001";
-
 export function getAssetsBaseUrl(): string {
-  return readEnvString("VITE_ASSETS_BASE_URL") ?? DEFAULT_ASSETS_BASE;
+  return readEnvString("VITE_ASSETS_BASE_URL") ?? "";
 }
 
 export function resolveAssetUrl(path: string | null | undefined): string {

@@ -1,7 +1,7 @@
 import type { SupportedLocale } from "@print3d/shared-types";
 import { DEFAULT_LOCALE, parseLocale } from "@print3d/shared-types";
 
-const LOCALE_STORAGE_KEY = "locale";
+import { LOCALE_COOKIE_NAME, LOCALE_STORAGE_KEY, writeLocaleCookie } from "@/lib/resolve-locale";
 
 let activeLocale: SupportedLocale = DEFAULT_LOCALE;
 
@@ -25,6 +25,7 @@ export function persistLocale(locale: SupportedLocale): void {
   if (typeof localStorage !== "undefined") {
     localStorage.setItem(LOCALE_STORAGE_KEY, locale);
   }
+  writeLocaleCookie(locale);
 }
 
 export function initLocaleFromStorage(): SupportedLocale {
@@ -40,4 +41,4 @@ export function setActiveLocale(locale: SupportedLocale): void {
   persistLocale(locale);
 }
 
-export { LOCALE_STORAGE_KEY };
+export { LOCALE_STORAGE_KEY, LOCALE_COOKIE_NAME };

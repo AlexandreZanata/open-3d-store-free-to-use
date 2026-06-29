@@ -12,7 +12,7 @@ import { useCategories } from "@/hooks/useCategories";
 import { useProducts } from "@/hooks/useProducts";
 import { fetchProducts } from "@/lib/api/products";
 import { desktopOnly, mobileOnly } from "@/lib/layout";
-import { getActiveLocale } from "@/lib/locale";
+import { getCurrentI18nLocale } from "@/i18n";
 import type { ProductQueryParams } from "@/lib/api/types";
 
 const searchSchema = z.object({
@@ -23,12 +23,13 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/search")({
   validateSearch: searchSchema,
   loader: async ({ context, location }) => {
+    const locale = getCurrentI18nLocale();
     const search = searchSchema.parse(location.search);
     const q = search.q?.trim();
     const params = { page: 1, limit: 50, q: q || undefined };
     await context.queryClient.ensureQueryData({
-      queryKey: productsQueryKey(params),
-      queryFn: () => fetchProducts(params, getActiveLocale()),
+      queryKey: productsQueryKey(params, locale),
+      queryFn: () => fetchProducts(params, locale),
     });
   },
   head: () => ({

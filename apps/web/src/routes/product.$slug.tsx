@@ -15,15 +15,16 @@ import { resolveAssetUrl } from "@/lib/assets";
 import { addToCart } from "@/lib/cart";
 import { mobileOnly, pagePadding, shellMaxWidth } from "@/lib/layout";
 import { RailTrack } from "@/components/Rail";
-import { getActiveLocale } from "@/lib/locale";
+import { getCurrentI18nLocale } from "@/i18n";
 import type { ProductDetail } from "@print3d/shared-types";
 
 export const Route = createFileRoute("/product/$slug")({
   loader: async ({ context, params }): Promise<ProductDetail> => {
+    const locale = getCurrentI18nLocale();
     try {
       return await context.queryClient.ensureQueryData({
-        queryKey: productQueryKey(params.slug),
-        queryFn: () => fetchProductBySlug(params.slug, getActiveLocale()),
+        queryKey: productQueryKey(params.slug, locale),
+        queryFn: () => fetchProductBySlug(params.slug, locale),
       });
     } catch (error) {
       if (error instanceof ApiError && error.status === 404) {

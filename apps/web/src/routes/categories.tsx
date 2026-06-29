@@ -9,18 +9,19 @@ import { useProducts } from "@/hooks/useProducts";
 import { fetchCategories } from "@/lib/api/categories";
 import { fetchProducts } from "@/lib/api/products";
 import { categoryGridCols, pagePadding } from "@/lib/layout";
-import { getActiveLocale } from "@/lib/locale";
+import { getCurrentI18nLocale } from "@/i18n";
 
 export const Route = createFileRoute("/categories")({
   loader: async ({ context }) => {
+    const locale = getCurrentI18nLocale();
     await Promise.all([
       context.queryClient.ensureQueryData({
-        queryKey: categoriesQueryKey(),
-        queryFn: () => fetchCategories(getActiveLocale()),
+        queryKey: categoriesQueryKey(locale),
+        queryFn: () => fetchCategories(locale),
       }),
       context.queryClient.ensureQueryData({
-        queryKey: productsQueryKey({ page: 1, limit: 50 }),
-        queryFn: () => fetchProducts({ page: 1, limit: 50 }, getActiveLocale()),
+        queryKey: productsQueryKey({ page: 1, limit: 50 }, locale),
+        queryFn: () => fetchProducts({ page: 1, limit: 50 }, locale),
       }),
     ]);
   },

@@ -10,12 +10,20 @@ test.describe("catalog browse", () => {
   test.skip(!hasDatabase, "Requires DATABASE_URL and seeded catalog");
 
   test("home lists products from API", async ({ page }) => {
+    const hydrationErrors: string[] = [];
+    page.on("console", (message) => {
+      if (message.type() === "error" && message.text().includes("Hydration")) {
+        hydrationErrors.push(message.text());
+      }
+    });
+
     await page.goto("/");
     await expect(
       page.getByRole("heading", { name: /Custom Photo Frame|Porta-retrato personalizado/i }).first(),
     ).toBeVisible({
       timeout: 20_000,
     });
+    expect(hydrationErrors).toEqual([]);
   });
 
   test("categories page shows seeded category", async ({ page }) => {

@@ -3,6 +3,11 @@ import type { FastifyInstance, FastifyRequest } from "fastify";
 import type { AppContainer } from "../../container.js";
 import { sendProblem } from "../errors/problemDetails.js";
 import {
+  storeMeCartPutRouteSchema,
+  storeMeGetRouteSchema,
+  storeMePatchRouteSchema,
+} from "../openapi/routeSchemas.js";
+import {
   storeSaveCartBodySchema,
   storeUpdateProfileBodySchema,
 } from "../validation/storeSchemas.js";
@@ -19,11 +24,11 @@ export async function registerStoreMeRoutes(
   app: FastifyInstance,
   container: AppContainer,
 ): Promise<void> {
-  app.get("/me", { preHandler: app.requireStoreUser }, async (request, reply) => {
+  app.get("/me", { schema: storeMeGetRouteSchema, preHandler: app.requireStoreUser }, async (request, reply) => {
     return reply.send({ data: buildMePayload(request) });
   });
 
-  app.patch("/me", { preHandler: app.requireStoreUser }, async (request, reply) => {
+  app.patch("/me", { schema: storeMePatchRouteSchema, preHandler: app.requireStoreUser }, async (request, reply) => {
     const parsed = storeUpdateProfileBodySchema.safeParse(request.body);
     if (!parsed.success) {
       sendProblem(reply, request.locale, 422, "validation-failed", "validationFailed");
@@ -43,7 +48,7 @@ export async function registerStoreMeRoutes(
     });
   });
 
-  app.put("/me/cart", { preHandler: app.requireStoreUser }, async (request, reply) => {
+  app.put("/me/cart", { schema: storeMeCartPutRouteSchema, preHandler: app.requireStoreUser }, async (request, reply) => {
     const parsed = storeSaveCartBodySchema.safeParse(request.body);
     if (!parsed.success) {
       sendProblem(reply, request.locale, 422, "validation-failed", "validationFailed");

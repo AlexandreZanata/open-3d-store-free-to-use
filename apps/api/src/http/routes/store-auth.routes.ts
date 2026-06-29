@@ -10,6 +10,11 @@ import { STORE_SESSION_COOKIE } from "../store/constants.js";
 import { handleStoreAuthError } from "../errors/handleStoreAuthError.js";
 import { sendProblem } from "../errors/problemDetails.js";
 import {
+  storeLoginRouteSchema,
+  storeLogoutRouteSchema,
+  storeRegisterRouteSchema,
+} from "../openapi/routeSchemas.js";
+import {
   readDeviceId,
   readVisitorIdHeader,
   storeLoginBodySchema,
@@ -23,6 +28,7 @@ export async function registerStoreAuthRoutes(
   app.post(
     "/auth/register",
     {
+      schema: storeRegisterRouteSchema,
       config: {
         rateLimit: { max: 10, timeWindow: "1 minute" },
       },
@@ -71,6 +77,7 @@ export async function registerStoreAuthRoutes(
   app.post(
     "/auth/login",
     {
+      schema: storeLoginRouteSchema,
       config: {
         rateLimit: { max: 10, timeWindow: "1 minute" },
       },
@@ -106,7 +113,7 @@ export async function registerStoreAuthRoutes(
     },
   );
 
-  app.post("/auth/logout", { preHandler: app.requireStoreUser }, async (request, reply) => {
+  app.post("/auth/logout", { schema: storeLogoutRouteSchema, preHandler: app.requireStoreUser }, async (request, reply) => {
     const rawToken = request.cookies[STORE_SESSION_COOKIE];
     if (rawToken !== undefined) {
       await container.store.logoutStoreUser.execute(hashSessionToken(rawToken));

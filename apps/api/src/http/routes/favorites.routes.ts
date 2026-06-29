@@ -5,6 +5,11 @@ import { ProductNotFoundError } from "../../application/errors/ApplicationErrors
 import type { FavoriteOwner } from "../../application/use-cases/FavoriteProducts.js";
 import type { AppContainer } from "../../container.js";
 import { sendProblem } from "../errors/problemDetails.js";
+import {
+  favoritesAddRouteSchema,
+  favoritesListRouteSchema,
+  favoritesRemoveRouteSchema,
+} from "../openapi/routeSchemas.js";
 import { readVisitorIdHeader } from "../validation/storeSchemas.js";
 
 const productIdSchema = z.string().uuid();
@@ -25,7 +30,7 @@ export async function registerFavoriteRoutes(
   app: FastifyInstance,
   container: AppContainer,
 ): Promise<void> {
-  app.get("/favorites", async (request, reply) => {
+  app.get("/favorites", { schema: favoritesListRouteSchema }, async (request, reply) => {
     const owner = resolveFavoriteOwner(request, reply);
     if (owner === null) {
       return;
@@ -37,6 +42,7 @@ export async function registerFavoriteRoutes(
   app.post(
     "/favorites/:productId",
     {
+      schema: favoritesAddRouteSchema,
       config: {
         rateLimit: { max: 60, timeWindow: "1 minute" },
       },
@@ -71,6 +77,7 @@ export async function registerFavoriteRoutes(
   app.delete(
     "/favorites/:productId",
     {
+      schema: favoritesRemoveRouteSchema,
       config: {
         rateLimit: { max: 60, timeWindow: "1 minute" },
       },

@@ -1,6 +1,8 @@
 # Swagger / OpenAPI
 
-Interactive API documentation for **v1** endpoints. The spec mirrors [contract.md](contract.md).
+Interactive API documentation for **v1** endpoints. The spec mirrors [contract.md](contract.md) and [admin-contract.md](admin-contract.md).
+
+> **Restart required:** Swagger reads routes at server startup. If `/docs` shows only legacy catalog routes or an old API title, stop and restart `pnpm --filter @print3d/api dev` (hard-refresh the browser afterward).
 
 ## Local access
 
@@ -42,7 +44,27 @@ Open [http://127.0.0.1:3001/docs](http://127.0.0.1:3001/docs).
 | `GET` | `/products` | 200 | 422, 429, 500 |
 | `GET` | `/products/:slug` | 200 | 404, 429, 500 |
 | `GET` | `/catalog/events` | 200 (SSE) | — |
+| `GET` | `/shop/config` | 200 | 404, 500 |
 | `POST` | `/orders/capture` | 201 | 404, 422, 429, 500 |
+
+### Storefront accounts
+
+| Method | Path | Success | Error responses |
+|--------|------|---------|-----------------|
+| `POST` | `/auth/register` | 201 | 400, 403, 422, 429, 500 |
+| `POST` | `/auth/login` | 200 | 401, 422, 429, 500 |
+| `POST` | `/auth/logout` | 204 | 401, 500 |
+| `GET` | `/me` | 200 | 401, 500 |
+| `PATCH` | `/me` | 200 | 401, 422, 500 |
+| `PUT` | `/me/cart` | 200 | 401, 422, 500 |
+
+### Favorites
+
+| Method | Path | Success | Error responses |
+|--------|------|---------|-----------------|
+| `GET` | `/favorites` | 200 | 400, 429, 500 |
+| `POST` | `/favorites/:productId` | 201 | 400, 404, 422, 429, 500 |
+| `DELETE` | `/favorites/:productId` | 200 | 400, 422, 429, 500 |
 
 ### Admin (`/admin/*`, session cookie)
 
@@ -65,6 +87,11 @@ Open [http://127.0.0.1:3001/docs](http://127.0.0.1:3001/docs).
 | `GET` | `/admin/orders` | 200 | 401, 500 |
 | `GET` | `/admin/orders/:id` | 200 | 401, 404, 500 |
 | `POST` | `/admin/uploads` | 201 | 400, 401, 422, 500 |
+| `GET` | `/admin/settings` | 200 | 401, 500 |
+| `PATCH` | `/admin/settings` | 200 | 401, 422, 500 |
+| `GET` | `/admin/users` | 200 | 401, 500 |
+| `GET` | `/admin/users/:id` | 200 | 401, 404, 500 |
+| `PATCH` | `/admin/users/:id` | 200 | 401, 404, 422, 500 |
 
 Multipart: `kind` (`thumbnail` \| `gallery` \| `model`) + `file`. Field order is independent on the server; the admin SPA sends `kind` before `file`.
 

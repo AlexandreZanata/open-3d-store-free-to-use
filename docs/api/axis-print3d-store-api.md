@@ -3,7 +3,7 @@
 > Machine-readable spec: Swagger UI at `/docs` when `NODE_ENV !== production`.  
 > Human contracts: [contract.md](contract.md) (public) · [admin-contract.md](admin-contract.md) (admin).
 
-OpenAPI title: **AXIS Print3D Store API** (`apps/api/src/http/openapi/registerSwagger.ts`).
+OpenAPI title: **Corvo 3D Store API** (`apps/api/src/http/openapi/registerSwagger.ts`).
 
 ## Base URLs
 
@@ -26,8 +26,25 @@ Admin routes: `/api/v1/admin/*` — session cookie `print3d_admin_session` (`cre
 | `GET` | `/products/:slug` | Product detail by slug |
 | `POST` | `/orders/capture` | WhatsApp order capture |
 | `GET` | `/catalog/events` | SSE catalog change stream (admin writes) |
+| `GET` | `/shop/config` | Public shop policy (materials, fulfillment, payments) |
 
 Details: [contract.md](contract.md). Realtime: [../features/catalog-realtime.md](../features/catalog-realtime.md).
+
+### Storefront accounts and favorites
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/auth/register` | Create shopper account (session cookie) |
+| `POST` | `/auth/login` | Login shopper |
+| `POST` | `/auth/logout` | Logout (requires session) |
+| `GET` | `/me` | Current profile + cart |
+| `PATCH` | `/me` | Update display name / checkout note |
+| `PUT` | `/me/cart` | Replace persisted cart |
+| `GET` | `/favorites` | List favorites (visitor or account) |
+| `POST` | `/favorites/:productId` | Add favorite |
+| `DELETE` | `/favorites/:productId` | Remove favorite |
+
+Details: [contract.md](contract.md#storefront-accounts-session).
 
 ---
 
@@ -74,6 +91,16 @@ The admin SPA calls `/auth/refresh` every 15 minutes and on navigation; `require
 |--------|------|-------------|---------|
 | `GET` | `/orders` | Paginated captures (`from`, `to`, `page`, `limit`) | 200 |
 | `GET` | `/orders/:id` | Order detail + line items | 200 |
+
+### Settings and store users
+
+| Method | Path | Description | Success |
+|--------|------|-------------|---------|
+| `GET` | `/settings` | Shop settings (materials, WhatsApp, fulfillment) | 200 |
+| `PATCH` | `/settings` | Update shop settings | 200 |
+| `GET` | `/users` | Paginated storefront shopper accounts | 200 |
+| `GET` | `/users/:id` | Store user detail | 200 |
+| `PATCH` | `/users/:id` | Update store user (e.g. deactivate) | 200 |
 
 ### Uploads
 

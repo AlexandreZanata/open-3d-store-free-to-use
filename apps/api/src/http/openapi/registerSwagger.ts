@@ -39,11 +39,15 @@ export async function registerSwagger(
         { name: "Categories", description: "Product categories" },
         { name: "Products", description: "Catalog browse and search" },
         { name: "Orders", description: "Order capture via WhatsApp" },
+        { name: "Shop", description: "Public shop policy (materials, fulfillment, payments)" },
         { name: "Catalog", description: "Catalog realtime events (SSE)" },
+        { name: "Store Auth", description: "Storefront shopper registration and login" },
+        { name: "Store Account", description: "Authenticated shopper profile and cart" },
+        { name: "Favorites", description: "Saved products (visitor or account)" },
         {
           name: "Admin",
           description:
-            "Authenticated admin — auth, products, categories, orders, uploads (docs/api/admin-contract.md)",
+            "Authenticated admin — auth, catalog CRUD, orders, settings, uploads, store users (docs/api/admin-contract.md)",
         },
       ],
       components: {

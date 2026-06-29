@@ -88,7 +88,30 @@ SSH keys: [ssh/README.md](ssh/README.md)
 
 ---
 
-## Reference docs (repo)
+## Troubleshooting
+
+### `Bind for 0.0.0.0:5432 failed: port is already allocated`
+
+The VPS already runs native Postgres (common on Hostinger). Docker uses **alternate host ports** via `production/env/docker.env`:
+
+| Service | Host port (default) |
+|---------|---------------------|
+| Postgres | `5433` |
+| Redis | `6380` |
+| RabbitMQ | `5673` |
+
+Regenerate env and restart data layer:
+
+```bash
+./production/deploy-to-vps.sh --env-only
+./production/deploy-to-vps.sh   # or on VPS only:
+cd /var/www/print3d
+docker compose -f infra/docker-compose.prod.yml --env-file production/env/docker.env down
+docker compose -f infra/docker-compose.prod.yml --env-file production/env/docker.env up -d
+./infra/scripts/install-env.sh && ./infra/scripts/deploy.sh
+```
+
+---
 
 - [docs/infrastructure/cloudflare-dns.md](../docs/infrastructure/cloudflare-dns.md) — Cloudflare + Registro.br
 - [docs/infrastructure/vps-provisioning.md](../docs/infrastructure/vps-provisioning.md) — full VPS setup

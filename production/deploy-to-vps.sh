@@ -71,6 +71,10 @@ prepare_production_env() {
   # shellcheck disable=SC1090
   source "${ENV_DIR}/docker.env"
 
+  POSTGRES_HOST_PORT="${POSTGRES_HOST_PORT:-5433}"
+  REDIS_HOST_PORT="${REDIS_HOST_PORT:-6380}"
+  RABBITMQ_HOST_PORT="${RABBITMQ_HOST_PORT:-5673}"
+
   local admin_secret
   admin_secret="$(read_env_val "${ENV_DIR}/api.env" "ADMIN_SESSION_SECRET" "")"
   if [[ -z "${admin_secret}" || "${admin_secret}" == "CHANGE_ME_MIN_32_RANDOM_BYTES" ]]; then
@@ -86,8 +90,8 @@ prepare_production_env() {
 NODE_ENV=production
 PORT=3001
 
-DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@127.0.0.1:5432/${POSTGRES_DB}
-REDIS_URL=redis://127.0.0.1:6379
+DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@127.0.0.1:${POSTGRES_HOST_PORT}/${POSTGRES_DB}
+REDIS_URL=redis://127.0.0.1:${REDIS_HOST_PORT}
 
 WHATSAPP_PHONE_NUMBER=${WHATSAPP_PHONE}
 
@@ -107,7 +111,7 @@ UPLOAD_MAX_BYTES=${upload_max}
 MODEL_UPLOAD_MAX_BYTES=268435456
 UPLOAD_DIR=/var/www/print3d/models
 
-RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@127.0.0.1:5672
+RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@127.0.0.1:${RABBITMQ_HOST_PORT}
 MODEL_PROCESSING_QUEUE=model.processing
 EOF
 
@@ -186,7 +190,7 @@ set -euo pipefail
 cd "${VPS_APP_DIR}"
 chmod +x infra/scripts/*.sh production/deploy-to-vps.sh 2>/dev/null || true
 ./infra/scripts/install-env.sh
-docker compose -f infra/docker-compose.prod.yml --env-file production/env/docker.env up -d
+docker compose -f infra/docker-compose.prod.yml --env-file production/env/docker.env up -d --remove-orphans
 mkdir -p models/{3d,thumbnails,images}
 export DOMAIN="${DOMAIN}"
 export VPS_HOST="${VPS_HOST}"

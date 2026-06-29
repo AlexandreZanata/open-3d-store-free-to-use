@@ -119,9 +119,10 @@ describe("vps provisioning scripts — docs/infrastructure/vps-provisioning.md",
     assert.match(script, /production\/vps\.env/);
   });
 
-  test("docker-compose.prod.yml binds data services to localhost", () => {
+  test("docker-compose.prod.yml binds data services to localhost with alternate ports", () => {
     const compose = readRepo("infra/docker-compose.prod.yml");
-    assert.match(compose, /127\.0\.0\.1:5432/);
+    assert.match(compose, /POSTGRES_HOST_PORT:-5433/);
+    assert.match(compose, /REDIS_HOST_PORT:-6380/);
     assert.match(compose, /postgres:18\.4-alpine/);
     assert.match(compose, /redis:8\.8-alpine/);
   });

@@ -631,6 +631,8 @@ For `kind=model`, the worker builds a Draco preview GLB. When optimization finis
 
 **Response 413:** Multipart file exceeds `MODEL_UPLOAD_MAX_BYTES`.
 
+Plain-text **Request Entity Too Large** (no JSON body) means **nginx** rejected the body before the API — set `client_max_body_size 256m` on the `/api/` server block ([../infrastructure/nginx.md](../infrastructure/nginx.md)).
+
 **Response 422:** MIME not allowed or file too large (post-parse validation).
 
 ---

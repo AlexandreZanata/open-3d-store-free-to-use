@@ -32,16 +32,21 @@ application/wasm model/gltf-binary model/gltf+json
 
 | Location | TTL |
 |----------|-----|
-| Proxied `*.js`, `*.css`, images, fonts | 1 year, immutable |
-| `/models/` | 30 days |
+| Proxied `/assets/*` (`*.js`, `*.css`, fonts) | 1 year, immutable |
+| `/models/` (filesystem, `^~` prefix) | 30 days |
 | `/api/` | Set by API (Cache-Control from Fastify) |
 
 ## API proxy headers
 
 ```
 X-Real-IP, X-Forwarded-For, X-Forwarded-Proto, Host
-proxy_read_timeout 30s
+client_max_body_size 256m   # matches admin model upload cap (docs/api/admin-contract.md)
+proxy_read_timeout 300s     # large multipart uploads + inline model processing
+proxy_send_timeout 300s
+client_body_timeout 300s
 ```
+
+**413 Request Entity Too Large** on admin model upload means nginx `client_max_body_size` is below the file size — redeploy `infra/nginx/nginx.conf` or `nginx.ip.conf` and run `sudo nginx -t && sudo systemctl reload nginx` on the VPS.
 
 ## Enable site
 

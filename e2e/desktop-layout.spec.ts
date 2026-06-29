@@ -74,6 +74,34 @@ test.describe("mobile layout preserved", () => {
     await expect(page.getByRole("navigation", { name: /main navigation|navegação principal/i })).toHaveCount(0);
   });
 
+  test("active tab uses filled icon without accent dot", async ({ page }) => {
+    await page.goto("/");
+
+    const bottomNav = page.locator("nav.fixed.bottom-0");
+    const homeTab = bottomNav.getByRole("link", { name: /home|início/i });
+    await expect(homeTab).toBeVisible({ timeout: 20_000 });
+    await expect(homeTab.locator(".bg-accent")).toHaveCount(0);
+    await expect(homeTab.locator("svg").first()).toHaveAttribute("fill", "currentColor");
+
+    await bottomNav.getByRole("link", { name: /search|buscar/i }).click();
+    await expect(page).toHaveURL(/\/search/);
+    const searchTab = bottomNav.getByRole("link", { name: /search|buscar/i });
+    await expect(searchTab.locator("svg").first()).toHaveAttribute("fill", "currentColor");
+    await expect(homeTab.locator("svg").first()).toHaveAttribute("fill", "none");
+  });
+
+  test("mobile hero card shows 3D Corvo logo beside featured copy", async ({ page }) => {
+    await page.goto("/");
+
+    await expect(page.getByText(/3d prints on whatsapp|impressões 3d no whatsapp/i)).toBeVisible({
+      timeout: 20_000,
+    });
+    await expect(page.getByText(/browse models and order in seconds|veja modelos e peça em segundos/i)).toBeVisible();
+    await expect(
+      page.getByRole("img", { name: /corvo 3d logo|logo 3d corvo/i }),
+    ).toBeVisible({ timeout: 25_000 });
+  });
+
   test("shows site footer above bottom tab bar", async ({ page }) => {
     await page.goto("/");
 

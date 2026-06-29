@@ -68,8 +68,9 @@ describe("nginx.conf contract — docs/infrastructure/nginx.md", () => {
   });
 
   test("serves models from filesystem and proxies API, web, and admin", () => {
-    assert.match(config, /location \/models\//);
+    assert.match(config, /location \^~ \/models\//);
     assert.match(config, /alias \/var\/www\/print3d\/models\//);
+    assert.match(config, /location ~\* \^\/assets\//);
     assert.match(config, /location \/api\//);
     assert.match(config, /127\.0\.0\.1:3101/);
     assert.match(config, /127\.0\.0\.1:4173/);
@@ -87,7 +88,23 @@ describe("nginx.conf contract — docs/infrastructure/nginx.md", () => {
     assert.match(config, /X-Real-IP/);
     assert.match(config, /X-Forwarded-For/);
     assert.match(config, /X-Forwarded-Proto/);
-    assert.match(config, /proxy_read_timeout 30s/);
+    assert.match(config, /client_max_body_size 256m/);
+    assert.match(config, /proxy_read_timeout 300s/);
+  });
+});
+
+describe("nginx.ip.conf contract — IP deploy /admin/ subpath", () => {
+  const config = readRepo("infra/nginx/nginx.ip.conf");
+
+  test("allows admin model uploads up to 256 MB", () => {
+    assert.match(config, /client_max_body_size 256m/);
+    assert.match(config, /proxy_read_timeout 300s/);
+  });
+
+  test("preserves /admin/ URI when proxying (no redirect loop)", () => {
+    assert.match(config, /location \/admin\//);
+    assert.match(config, /proxy_pass http:\/\/print3d_admin;/);
+    assert.doesNotMatch(config, /proxy_pass http:\/\/print3d_admin\//);
   });
 });
 

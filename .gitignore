@@ -11,6 +11,7 @@ node_modules
 .turbo
 dist
 dist-ssr
+*.tsbuildinfo
 .output
 .vinxi
 .tanstack/**

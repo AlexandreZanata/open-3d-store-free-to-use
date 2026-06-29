@@ -155,6 +155,7 @@ sync_to_vps() {
     --exclude node_modules \
     --exclude .turbo \
     --exclude dist \
+    --exclude '*.tsbuildinfo' \
     --exclude dist-ssr \
     --exclude .output \
     --exclude test-results \
@@ -179,35 +180,14 @@ remote_deploy() {
   source "${VPS_ENV}"
   VPS_APP_DIR="${VPS_APP_DIR:-/var/www/print3d}"
   REMOTE="${VPS_USER}@${VPS_HOST}"
-  DOMAIN="${DOMAIN:-${VPS_HOST}}"
-  VPS_USE_HTTPS="${VPS_USE_HTTPS:-0}"
-  NGINX_HTTP_PORT="${NGINX_HTTP_PORT:-80}"
 
   ssh_opts
-  echo "==> Remote build and PM2 start"
+  echo "==> Remote full deploy on VPS"
   ssh "${SSH_OPTS[@]}" "${REMOTE}" bash -s <<REMOTE_SCRIPT
 set -euo pipefail
 cd "${VPS_APP_DIR}"
-chmod +x infra/scripts/*.sh production/deploy-to-vps.sh 2>/dev/null || true
-./infra/scripts/install-env.sh
-./infra/scripts/up-data-layer.sh
-mkdir -p models/{3d,thumbnails,images}
-export DOMAIN="${DOMAIN}"
-export VPS_HOST="${VPS_HOST}"
-export NGINX_HTTP_PORT="${NGINX_HTTP_PORT}"
-export VPS_APP_DIR="${VPS_APP_DIR}"
-if [[ "${VPS_USE_HTTPS}" == "0" ]]; then
-  ./infra/scripts/install-nginx-ip.sh
-else
-  ./infra/scripts/install-nginx-domain.sh || true
-fi
-export SKIP_GIT_PULL=1
-export DOMAIN="${DOMAIN}"
-if pm2 describe print3d-api >/dev/null 2>&1; then
-  ./infra/scripts/deploy.sh
-else
-  ./infra/scripts/first-deploy.sh
-fi
+chmod +x infra/scripts/*.sh production/*.sh 2>/dev/null || true
+./infra/scripts/vps-full-deploy.sh
 REMOTE_SCRIPT
 
   local open_url="http://${DOMAIN}"

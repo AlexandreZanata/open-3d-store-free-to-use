@@ -53,8 +53,12 @@ echo "==> Checking Node.js / pnpm / PM2"
 
 echo "==> Installing dependencies"
 export HUSKY=0
+export CI=true
 # Build needs devDependencies — api.env sets NODE_ENV=production
 NODE_ENV=development pnpm install --frozen-lockfile
+
+echo "==> Cleaning stale tsbuildinfo (rsync excludes dist/)"
+find "${ROOT}/packages" "${ROOT}/apps" -name '*.tsbuildinfo' -delete 2>/dev/null || true
 
 echo "==> Building packages"
 NODE_ENV=development pnpm turbo build \

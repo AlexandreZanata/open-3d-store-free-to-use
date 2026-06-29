@@ -7,11 +7,12 @@ cd "${ROOT}"
 
 "${ROOT}/infra/scripts/install-env.sh"
 
-if [[ ! -d node_modules ]]; then
-  pnpm install --frozen-lockfile
+if [[ ! -d node_modules ]] || [[ ! -d node_modules/turbo ]]; then
+  export HUSKY=0
+  NODE_ENV=development pnpm install --frozen-lockfile
 fi
 
-pnpm turbo build \
+NODE_ENV=development pnpm turbo build \
   --filter=@print3d/shared-types \
   --filter=@print3d/whatsapp \
   --filter=@print3d/api \

@@ -42,6 +42,11 @@ describe("deploy.sh contract — docs/infrastructure/deployment.md", () => {
     assert.match(script, /SKIP_GIT_PULL/);
     assert.match(script, /\.git/);
   });
+
+  test("installs with HUSKY=0 and NODE_ENV=development for VPS build", () => {
+    assert.match(script, /HUSKY=0/);
+    assert.match(script, /NODE_ENV=development pnpm install/);
+  });
 });
 
 describe("migrate.sh contract — docs/infrastructure/deployment.md", () => {

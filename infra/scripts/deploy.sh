@@ -52,10 +52,12 @@ echo "==> Checking Node.js / pnpm / PM2"
 "${ROOT}/infra/scripts/ensure-node.sh"
 
 echo "==> Installing dependencies"
-pnpm install --frozen-lockfile
+export HUSKY=0
+# Build needs devDependencies — api.env sets NODE_ENV=production
+NODE_ENV=development pnpm install --frozen-lockfile
 
 echo "==> Building packages"
-pnpm turbo build \
+NODE_ENV=development pnpm turbo build \
   --filter=@print3d/shared-types \
   --filter=@print3d/whatsapp \
   --filter=@print3d/api \

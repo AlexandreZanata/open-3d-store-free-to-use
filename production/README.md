@@ -90,6 +90,17 @@ SSH keys: [ssh/README.md](ssh/README.md)
 
 ## Troubleshooting
 
+### `husky: not found` / `ELIFECYCLE` on `pnpm install`
+
+`NODE_ENV=production` skips devDependencies; build needs them. Fixed in `deploy.sh` — on VPS run:
+
+```bash
+cd /var/www/print3d
+export HUSKY=0
+NODE_ENV=development SKIP_GIT_PULL=1 ./infra/scripts/deploy.sh
+pm2 save
+```
+
 ### `pnpm: command not found`
 
 Node.js or pnpm not installed on VPS. As **root**:

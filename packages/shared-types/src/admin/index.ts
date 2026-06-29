@@ -46,12 +46,14 @@ export type {
   UpdateProductResponse,
 } from "./product-admin.types.js";
 export type {
+  AdminUploadImageInputMime,
   AdminUploadKind,
   AdminUploadMimeType,
   AdminUploadResponse,
   AdminUploadResult,
 } from "./upload.types.js";
 export {
+  ADMIN_UPLOAD_IMAGE_INPUT_MIMES,
   ADMIN_UPLOAD_MAX_BYTES,
   ADMIN_UPLOAD_MIME_ALLOWLIST,
 } from "./upload.types.js";

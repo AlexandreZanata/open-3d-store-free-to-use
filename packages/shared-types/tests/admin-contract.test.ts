@@ -5,6 +5,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  ADMIN_UPLOAD_IMAGE_INPUT_MIMES,
   ADMIN_UPLOAD_MAX_BYTES,
   ADMIN_UPLOAD_MIME_ALLOWLIST,
   type AdminLoginRequest,
@@ -120,11 +121,19 @@ describe("GET /admin/orders/:id — read-only detail", () => {
 });
 
 describe("POST /admin/uploads — MIME allowlist (Task 9.7)", () => {
-  it("documents webp and gltf MIME types only", () => {
+  it("documents stored MIME types for uploads", () => {
     expect(ADMIN_UPLOAD_MIME_ALLOWLIST).toEqual([
       "image/webp",
       "model/gltf-binary",
       "model/gltf+json",
+    ]);
+  });
+
+  it("documents image input MIME types accepted before WebP conversion", () => {
+    expect(ADMIN_UPLOAD_IMAGE_INPUT_MIMES).toEqual([
+      "image/webp",
+      "image/jpeg",
+      "image/png",
     ]);
   });
 

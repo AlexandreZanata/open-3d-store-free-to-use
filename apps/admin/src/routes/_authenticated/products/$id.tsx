@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 import { ProductForm } from "@/components/products/ProductForm";
@@ -102,6 +102,11 @@ function EditProductPage() {
   return (
     <>
       <PageHeader
+        back={
+          <Link to="/products" search={{ page: 1, q: "", status: "", category: "" }}>
+            <Button>Back to products</Button>
+          </Link>
+        }
         title="Edit product"
         description={formState.translations["pt-BR"].name}
       />

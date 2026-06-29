@@ -46,6 +46,17 @@ Pagination helpers: `apps/admin/src/lib/tablePagination.ts`.
 
 Pages using `DataTable`: products (`ProductsTable` wrapper), categories, orders list, order detail line items.
 
+## Media uploads
+
+Product and category forms support **URL text** or **file upload** (`FileUploadField`):
+
+| Input | Accepted in file picker | Stored |
+|-------|-------------------------|--------|
+| Thumbnail / gallery | WebP, JPEG, PNG | WebP under `/models/thumbnails/` or `/models/images/` |
+| 3D model | `.glb`, `.gltf` | unchanged under `/models/3d/` |
+
+Edit product pages include a primary **Back to products** button above the page title (`PageHeader` `back` slot).
+
 E2E: `e2e/admin-mobile.spec.ts` (Pixel 5 viewport, requires `admin-setup`).
 
 ## Routes

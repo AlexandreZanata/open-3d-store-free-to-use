@@ -1,10 +1,13 @@
 /**
  * Contract: docs/api/admin-contract.md — admin product CRUD
  */
+import path from "node:path";
+
 import { test, expect } from "@playwright/test";
 
 const adminBase = process.env.ADMIN_BASE_URL ?? "http://localhost:5174";
 const hasDatabase = Boolean(process.env.DATABASE_URL);
+const fixtureDir = path.join(process.cwd(), "e2e", "fixtures");
 
 const productSlug = `e2e-admin-${Date.now()}`;
 const productNamePt = `E2E Product PT ${productSlug}`;
@@ -62,5 +65,20 @@ test.describe("admin product CRUD", () => {
     await page.getByLabel("Price (BRL)").fill("15.00");
     await page.getByRole("button", { name: "Save changes" }).click();
     await expect(page.getByRole("status")).toContainText("Saved");
+  });
+
+  test("edit product has back button and uploads PNG thumbnail from disk", async ({ page }) => {
+    await page.goto(`${adminBase}/products`);
+    await page.getByRole("row", { name: new RegExp(productSlug) }).getByRole("link", { name: "Edit" }).click();
+
+    await expect(page.getByRole("link", { name: "Back to products" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Edit product" })).toBeVisible();
+
+    const thumbnailField = page.getByLabel("Thumbnail URL");
+    await thumbnailField.locator("xpath=ancestor::div[contains(@class,'space-y-3')][1]").locator('input[type="file"]').setInputFiles(
+      path.join(fixtureDir, "test-upload.png"),
+    );
+
+    await expect(thumbnailField).toHaveValue(/\/models\/thumbnails\/.+\.webp$/, { timeout: 15_000 });
   });
 });

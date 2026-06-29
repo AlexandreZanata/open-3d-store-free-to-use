@@ -37,13 +37,30 @@ describe("LocalFileStorage uploads", () => {
     expect(result.kind).toBe("thumbnail");
   });
 
+  it("converts thumbnail png input to stored webp", async () => {
+    const png = Buffer.from(
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+      "base64",
+    );
+    const result = await storage.saveUpload({
+      kind: "thumbnail",
+      filename: "poster.png",
+      mimeType: "image/png",
+      data: png,
+    });
+
+    expect(result.url).toMatch(/^\/models\/thumbnails\/.+\.webp$/);
+    expect(result.mimeType).toBe("image/webp");
+    expect(result.kind).toBe("thumbnail");
+  });
+
   it("rejects disallowed MIME types", async () => {
     await expect(
       storage.saveUpload({
         kind: "thumbnail",
-        filename: "bad.png",
-        mimeType: "image/png",
-        data: Buffer.from("png"),
+        filename: "bad.gif",
+        mimeType: "image/gif",
+        data: Buffer.from("gif"),
       }),
     ).rejects.toThrow(/MIME type not allowed/);
   });

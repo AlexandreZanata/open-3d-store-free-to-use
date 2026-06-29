@@ -480,10 +480,12 @@ Partial update. Setting `isActive: false` soft-deletes (hidden from public catal
 
 **MIME allowlist:**
 
-| kind | Allowed MIME | Extension |
-|------|--------------|-----------|
-| `thumbnail`, `gallery` | `image/webp` | `.webp` |
-| `model` | `model/gltf-binary`, `model/gltf+json` | `.glb`, `.gltf` |
+| kind | Accepted upload MIME | Stored as |
+|------|----------------------|-----------|
+| `thumbnail`, `gallery` | `image/webp`, `image/jpeg`, `image/png` | `image/webp` (`.webp`) |
+| `model` | `model/gltf-binary`, `model/gltf+json` | same (`.glb`, `.gltf`) |
+
+JPEG and PNG uploads are converted server-side to WebP before storage (catalog asset convention).
 
 **Size limits** (see `UPLOAD_MAX_BYTES`):
 

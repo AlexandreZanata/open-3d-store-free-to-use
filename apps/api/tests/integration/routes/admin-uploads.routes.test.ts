@@ -19,7 +19,10 @@ import {
 } from "./admin/adminRouteHelpers.js";
 
 const hasDatabase = adminTestConnectionString.length > 0;
-const webpHeader = Buffer.from([0x52, 0x49, 0x46, 0x46, 0x00, 0x00, 0x00, 0x00]);
+const pngFixture = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+  "base64",
+);
 
 describe("Admin upload routes (contract)", () => {
   let app: FastifyInstance;
@@ -55,12 +58,12 @@ describe("Admin upload routes (contract)", () => {
     expect(response.statusCode).toBe(400);
   });
 
-  it.skipIf(!hasDatabase)("uploads thumbnail and returns contract shape", async () => {
+  it.skipIf(!hasDatabase)("uploads thumbnail PNG and returns stored WebP contract shape", async () => {
     const multipart = buildMultipartPayload({
       kind: "thumbnail",
-      filename: "test.webp",
-      mimeType: "image/webp",
-      data: webpHeader,
+      filename: "test.png",
+      mimeType: "image/png",
+      data: pngFixture,
     });
 
     const response = await app.inject(
@@ -76,7 +79,7 @@ describe("Admin upload routes (contract)", () => {
 
     expect(response.statusCode).toBe(201);
     const body = response.json().data;
-    expect(body.url).toMatch(/^\/models\/thumbnails\//);
+    expect(body.url).toMatch(/^\/models\/thumbnails\/.+\.webp$/);
     expect(body.kind).toBe("thumbnail");
     expect(body.mimeType).toBe("image/webp");
     expect(body.sizeBytes).toBeGreaterThan(0);

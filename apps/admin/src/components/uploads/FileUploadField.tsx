@@ -6,13 +6,8 @@ import { Input } from "@/components/ui/Input";
 import { uploadAdminFile } from "@/lib/api/uploads";
 import { resolveAssetUrl } from "@/lib/assets";
 import { ApiError } from "@/lib/api/client";
+import { IMAGE_UPLOAD_HINT, UPLOAD_ACCEPT_BY_KIND } from "@/lib/uploadAccept";
 import { formatApiErrorMessage } from "@/lib/utils";
-
-const ACCEPT_BY_KIND: Record<AdminUploadKind, string> = {
-  thumbnail: "image/webp",
-  gallery: "image/webp",
-  model: ".glb,.gltf,model/gltf-binary,model/gltf+json",
-};
 
 type FileUploadFieldProps = {
   kind: AdminUploadKind;
@@ -58,7 +53,7 @@ export function FileUploadField({ kind, label, value, onChange, error }: FileUpl
         <input
           ref={inputRef}
           type="file"
-          accept={ACCEPT_BY_KIND[kind]}
+          accept={UPLOAD_ACCEPT_BY_KIND[kind]}
           className="hidden"
           onChange={(event) => void handleFileChange(event)}
         />
@@ -70,6 +65,9 @@ export function FileUploadField({ kind, label, value, onChange, error }: FileUpl
         >
           {isUploading ? "Uploading…" : "Upload file"}
         </Button>
+        {kind !== "model" ? (
+          <p className="text-xs text-muted-foreground">{IMAGE_UPLOAD_HINT}</p>
+        ) : null}
         {uploadError ? <p className="text-xs text-destructive">{uploadError}</p> : null}
       </div>
       {showImagePreview ? (

@@ -36,6 +36,7 @@ export type {
   UpdateProductPayload,
 } from "./admin/index.js";
 export {
+  ADMIN_UPLOAD_IMAGE_INPUT_MIMES,
   ADMIN_UPLOAD_MAX_BYTES,
   ADMIN_UPLOAD_MIME_ALLOWLIST,
 } from "./admin/index.js";

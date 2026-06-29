@@ -11,6 +11,7 @@ import {
   withTestDb,
 } from "../../setup.js";
 import { closeTestApp, createTestApp } from "./testApp.js";
+import { seedAssets } from "../../../scripts/seedAssets.js";
 import {
   buildMultipartPayload,
   loginTestAdmin,
@@ -31,6 +32,11 @@ describe("Model asset routes (contract)", () => {
 
   beforeAll(async () => {
     ({ app, container } = await createTestApp());
+    await seedAssets({
+      ...process.env,
+      NODE_ENV: "test",
+      MODEL_FILES_BASE_PATH: container.config.MODEL_FILES_BASE_PATH,
+    });
     if (!hasDatabase) {
       return;
     }
@@ -78,6 +84,19 @@ describe("Model asset routes (contract)", () => {
     expect(assetResponse.statusCode).toBe(200);
     expect(assetResponse.headers["content-type"]).toMatch(/image\/webp/);
     expect(assetResponse.rawPayload.length).toBeGreaterThan(0);
+  });
+
+  it("serves seeded catalog thumbnail with CORS for storefront origin", async () => {
+    const response = await app.inject({
+      method: "GET",
+      url: "/models/thumbnails/photo-frame.webp",
+      headers: { origin: "http://localhost:5176" },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.headers["content-type"]).toMatch(/image\/webp/);
+    expect(response.headers["access-control-allow-origin"]).toBe("http://localhost:5176");
+    expect(response.rawPayload.length).toBeGreaterThan(100);
   });
 
   it.skipIf(!hasDatabase)("returns 404 for missing asset path", async () => {

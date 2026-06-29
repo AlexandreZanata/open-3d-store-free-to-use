@@ -2,9 +2,10 @@ import { createReadStream } from "node:fs";
 import { access } from "node:fs/promises";
 import path from "node:path";
 
-import type { FastifyInstance } from "fastify";
+import type { FastifyInstance, FastifyRequest } from "fastify";
 
 import type { AppContainer } from "../../container.js";
+import { buildSseCorsHeaders, isAllowedCorsOrigin } from "../plugins/cors.js";
 
 const MIME_BY_EXT: Record<string, string> = {
   ".webp": "image/webp",
@@ -33,6 +34,32 @@ function resolveModelFilePath(basePath: string, wildcard: string): string | null
 function contentTypeFor(filePath: string): string {
   const ext = path.extname(filePath).toLowerCase();
   return MIME_BY_EXT[ext] ?? "application/octet-stream";
+}
+
+function applyAssetCorsHeaders(
+  request: FastifyRequest,
+  reply: { header: (name: string, value: string) => void },
+  container: AppContainer,
+): void {
+  const origin = request.headers.origin;
+  if (origin !== undefined) {
+    const corsHeaders = buildSseCorsHeaders(origin, container.config);
+    if (Object.keys(corsHeaders).length > 0) {
+      for (const [name, value] of Object.entries(corsHeaders)) {
+        reply.header(name, value);
+      }
+    } else if (isAllowedCorsOrigin(origin, container.config)) {
+      reply.header("Access-Control-Allow-Origin", origin);
+      reply.header("Vary", "Origin");
+    } else if (
+      (container.config.NODE_ENV === "development" || container.config.NODE_ENV === "test") &&
+      (/^http:\/\/localhost:\d+$/.test(origin) || /^http:\/\/127\.0\.0\.1:\d+$/.test(origin))
+    ) {
+      reply.header("Access-Control-Allow-Origin", origin);
+      reply.header("Vary", "Origin");
+    }
+  }
+  reply.header("Cross-Origin-Resource-Policy", "cross-origin");
 }
 
 export async function registerModelAssetRoutes(
@@ -64,6 +91,7 @@ export async function registerModelAssetRoutes(
 
     reply.header("Cache-Control", "public, max-age=3600");
     reply.type(contentTypeFor(filePath));
+    applyAssetCorsHeaders(request, reply, container);
     return reply.send(createReadStream(filePath));
   });
 }

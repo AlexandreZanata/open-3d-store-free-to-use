@@ -48,7 +48,9 @@ Use Zod `envSchema.parse(process.env)` — app MUST crash at startup with clear 
 
 In **development**, if `MODEL_FILES_BASE_PATH` is not writable (common when set to `/var/www/...`), the API automatically falls back to `apps/api/storage/models`.
 
-The API also serves that directory at **`GET /models/*`** (no auth) so admin and storefront previews work without nginx in local dev. Set `VITE_ASSETS_BASE_URL` to the API origin (e.g. `http://127.0.0.1:3001`).
+The API also serves that directory at **`GET /models/*`** (no auth) so admin and storefront previews work without nginx in local dev. Set `VITE_ASSETS_BASE_URL` to the **storefront or admin dev origin** (e.g. `http://localhost:5173` / `http://localhost:5174`) — Vite proxies `/models` to the API. Pointing at the API host (`http://127.0.0.1:3026`) works too when CORS headers are present, but same-origin via the dev proxy avoids `OpaqueResponseBlocking`.
+
+`pnpm --filter @print3d/api db:seed` copies committed thumbnails from `apps/api/seed-assets/thumbnails/` into `MODEL_FILES_BASE_PATH/thumbnails/` (photo-frame, dragon, categories, etc.).
 
 Harness: `agent-rules/03-security/secrets-and-credentials.md`
 

@@ -1,19 +1,39 @@
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import tailwindcss from "@tailwindcss/vite";
 import viteReact from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-export default defineConfig({
-  plugins: [
-    tsconfigPaths(),
-    tailwindcss(),
-    tanstackStart({
-      server: { entry: "server" },
-    }),
-    viteReact(),
-  ],
-  server: {
-    port: 5173,
-  },
+function resolveDevApiOrigin(env: Record<string, string>): string {
+  if (env.VITE_DEV_API_ORIGIN) {
+    return env.VITE_DEV_API_ORIGIN.replace(/\/$/, "");
+  }
+
+  const apiBase = env.VITE_API_BASE_URL ?? "http://127.0.0.1:3001/api/v1";
+  return apiBase.replace(/\/api\/v1\/?$/, "");
+}
+
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "");
+  const apiOrigin = resolveDevApiOrigin(env);
+
+  return {
+    plugins: [
+      tsconfigPaths(),
+      tailwindcss(),
+      tanstackStart({
+        server: { entry: "server" },
+      }),
+      viteReact(),
+    ],
+    server: {
+      port: 5173,
+      proxy: {
+        "/models": {
+          target: apiOrigin,
+          changeOrigin: true,
+        },
+      },
+    },
+  };
 });

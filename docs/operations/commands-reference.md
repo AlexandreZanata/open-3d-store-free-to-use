@@ -77,7 +77,7 @@ curl -b /tmp/admin-cookie.txt 'http://127.0.0.1:3001/api/v1/admin/orders?page=1&
 ```bash
 pnpm --filter api drizzle-kit generate    # New migration SQL
 pnpm --filter api drizzle-kit migrate     # Apply migrations
-pnpm --filter api db:seed                   # Idempotent bilingual seed
+pnpm --filter api db:seed                   # Idempotent bilingual seed + thumbnail assets
 pnpm --filter api tsx scripts/smokeUseCases.ts   # Manual use-case smoke (needs DATABASE_URL + REDIS_URL)
 pnpm --filter api drizzle-kit studio      # Drizzle Studio GUI
 ```

@@ -70,3 +70,28 @@ export function buildMultipartPayload(input: {
     contentType: `multipart/form-data; boundary=${boundary}`,
   };
 }
+
+/** Browser FormData order: file before kind — server must accept both orders. */
+export function buildMultipartPayloadFileFirst(input: {
+  kind: string;
+  filename: string;
+  mimeType: string;
+  data: Buffer;
+}): { payload: Buffer; contentType: string } {
+  const boundary = "----print3d-test-boundary";
+  const prefix = Buffer.from(
+    `--${boundary}\r\n` +
+      `Content-Disposition: form-data; name="file"; filename="${input.filename}"\r\n` +
+      `Content-Type: ${input.mimeType}\r\n\r\n`,
+  );
+  const middle = Buffer.from(
+    `\r\n--${boundary}\r\n` +
+      `Content-Disposition: form-data; name="kind"\r\n\r\n` +
+      `${input.kind}\r\n`,
+  );
+  const suffix = Buffer.from(`--${boundary}--\r\n`);
+  return {
+    payload: Buffer.concat([prefix, input.data, middle, suffix]),
+    contentType: `multipart/form-data; boundary=${boundary}`,
+  };
+}

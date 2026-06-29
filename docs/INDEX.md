@@ -13,7 +13,7 @@
 | **Human developer** | [architecture/system-overview.md](architecture/system-overview.md) → [stack/technology-decisions.md](stack/technology-decisions.md) |
 | **AI agent** | [../AGENTS.md](../AGENTS.md) → active phase in `.local/phases/` → docs referenced by that phase |
 | **API consumer** | [api/contract.md](api/contract.md) |
-| **Admin API** | [api/admin-contract.md](api/admin-contract.md) → [adr/001-admin-authentication.md](adr/001-admin-authentication.md) |
+| **Admin API** | [api/admin-contract.md](api/admin-contract.md) → [api/axis-print3d-store-api.md](api/axis-print3d-store-api.md) |
 | **Admin panel** | [features/admin-panel.md](features/admin-panel.md) |
 | **DevOps** | [infrastructure/deployment.md](infrastructure/deployment.md) → [operations/ci-cd.md](operations/ci-cd.md) |
 
@@ -44,6 +44,8 @@
 |----------|----------|
 | [api/contract.md](api/contract.md) | REST API v1 — public catalog, errors, caching |
 | [api/admin-contract.md](api/admin-contract.md) | Admin REST API v1 — auth, CRUD, uploads |
+| [api/axis-print3d-store-api.md](api/axis-print3d-store-api.md) | **AXIS Print3D Store API** — full route index (public + admin) |
+| [api/swagger.md](api/swagger.md) | Swagger UI at `/docs` (development) |
 | [adr/001-admin-authentication.md](adr/001-admin-authentication.md) | Session cookie auth decision |
 | [adr/002-admin-api-namespace.md](adr/002-admin-api-namespace.md) | `/admin` prefix, CORS, Swagger |
 | [features/3d-viewer.md](features/3d-viewer.md) | `@google/model-viewer` integration |

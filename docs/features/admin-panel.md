@@ -1,7 +1,7 @@
 # Admin Panel
 
 > Standalone SPA at `apps/admin` — React 19, TanStack Router, Tailwind v4.  
-> API contract: [../api/admin-contract.md](../api/admin-contract.md)
+> API contract: [../api/admin-contract.md](../api/admin-contract.md) · Route index: [../api/axis-print3d-store-api.md](../api/axis-print3d-store-api.md)
 
 ## Purpose
 

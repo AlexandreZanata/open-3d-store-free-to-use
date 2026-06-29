@@ -33,4 +33,18 @@ test.describe("admin authentication", () => {
     await page.goto(`${adminBase}/products`);
     await expect(page).toHaveURL(`${adminBase}/login`);
   });
+
+  test("logout clears session and returns to login", async ({ page }) => {
+    await page.goto(`${adminBase}/login`);
+    await page.getByLabel("Email").fill(adminEmail);
+    await page.getByLabel("Password").fill(adminPassword);
+    await page.getByRole("button", { name: "Sign in" }).click();
+    await expect(page).toHaveURL(`${adminBase}/`);
+
+    await page.getByRole("button", { name: "Logout" }).click();
+    await expect(page).toHaveURL(`${adminBase}/login`);
+
+    await page.goto(`${adminBase}/products`);
+    await expect(page).toHaveURL(`${adminBase}/login`);
+  });
 });

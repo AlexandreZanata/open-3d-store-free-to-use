@@ -17,8 +17,9 @@ export async function registerSwagger(
       info: {
         title: "AXIS Print3D Store API",
         description:
-          "Public REST API v1 for the 3D print catalog and WhatsApp order capture. " +
-          "Contract: docs/api/contract.md. Errors follow RFC 7807 (Problem Details).",
+          "REST API v1 for the AXIS 3D print catalog, WhatsApp order capture, and admin panel. " +
+          "Public contract: docs/api/contract.md. Admin contract: docs/api/admin-contract.md. " +
+          "Route index: docs/api/axis-print3d-store-api.md. Errors: RFC 7807.",
         version: "1.0.0",
         contact: {
           name: "API Support",
@@ -38,7 +39,11 @@ export async function registerSwagger(
         { name: "Categories", description: "Product categories" },
         { name: "Products", description: "Catalog browse and search" },
         { name: "Orders", description: "Order capture via WhatsApp" },
-        { name: "Admin", description: "Authenticated admin catalog and orders" },
+        {
+          name: "Admin",
+          description:
+            "Authenticated admin — auth, products, categories, orders, uploads (docs/api/admin-contract.md)",
+        },
       ],
       components: {
         schemas: {

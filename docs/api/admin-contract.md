@@ -478,6 +478,8 @@ Partial update. Setting `isActive: false` soft-deletes (hidden from public catal
 | `file` | Yes | Binary file |
 | `kind` | Yes | `thumbnail` \| `gallery` \| `model` |
 
+Parts may arrive in any order; the server reads the full multipart stream.
+
 **MIME allowlist:**
 
 | kind | Accepted upload MIME | Stored as |

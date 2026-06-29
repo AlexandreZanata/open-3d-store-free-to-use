@@ -13,6 +13,7 @@ import {
 import { closeTestApp, createTestApp } from "./testApp.js";
 import {
   buildMultipartPayload,
+  buildMultipartPayloadFileFirst,
   loginTestAdmin,
   seedTestAdmin,
   withAdminCookie,
@@ -83,5 +84,28 @@ describe("Admin upload routes (contract)", () => {
     expect(body.kind).toBe("thumbnail");
     expect(body.mimeType).toBe("image/webp");
     expect(body.sizeBytes).toBeGreaterThan(0);
+  });
+
+  it.skipIf(!hasDatabase)("uploads when multipart sends file before kind (browser order)", async () => {
+    const multipart = buildMultipartPayloadFileFirst({
+      kind: "thumbnail",
+      filename: "test.png",
+      mimeType: "image/png",
+      data: pngFixture,
+    });
+
+    const response = await app.inject(
+      withAdminCookie(sessionCookie, {
+        method: "POST",
+        url: "/api/v1/admin/uploads",
+        headers: {
+          "content-type": multipart.contentType,
+        },
+        payload: multipart.payload,
+      }),
+    );
+
+    expect(response.statusCode).toBe(201);
+    expect(response.json().data.kind).toBe("thumbnail");
   });
 });

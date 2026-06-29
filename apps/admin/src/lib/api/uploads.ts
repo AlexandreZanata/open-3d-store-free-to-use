@@ -7,8 +7,8 @@ export async function uploadAdminFile(
   kind: AdminUploadKind,
 ): Promise<AdminUploadResponse> {
   const formData = new FormData();
-  formData.append("file", file);
   formData.append("kind", kind);
+  formData.append("file", file);
 
   const response = await fetch(`${getApiBaseUrl()}/admin/uploads`, {
     method: "POST",

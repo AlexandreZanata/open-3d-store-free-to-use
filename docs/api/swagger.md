@@ -50,6 +50,7 @@ Open [http://127.0.0.1:3001/docs](http://127.0.0.1:3001/docs).
 | `POST` | `/admin/auth/login` | 200 | 401, 422, 429, 500 |
 | `POST` | `/admin/auth/logout` | 204 | 401, 500 |
 | `GET` | `/admin/auth/me` | 200 | 401, 500 |
+| `POST` | `/admin/auth/refresh` | 200 | 401, 500 |
 | `GET` | `/admin/products` | 200 | 401, 429, 500 |
 | `GET` | `/admin/products/:id` | 200 | 401, 404, 500 |
 | `POST` | `/admin/products` | 201 | 401, 409, 422, 500 |
@@ -64,7 +65,9 @@ Open [http://127.0.0.1:3001/docs](http://127.0.0.1:3001/docs).
 | `GET` | `/admin/orders/:id` | 200 | 401, 404, 500 |
 | `POST` | `/admin/uploads` | 201 | 400, 401, 422, 500 |
 
-Admin contract: [admin-contract.md](admin-contract.md).
+Multipart: `kind` (`thumbnail` \| `gallery` \| `model`) + `file`. Field order is independent on the server; the admin SPA sends `kind` before `file`.
+
+Full route index: [axis-print3d-store-api.md](axis-print3d-store-api.md). Admin contract: [admin-contract.md](admin-contract.md).
 
 All error responses use **RFC 7807** (`application/problem+json`).
 

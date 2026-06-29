@@ -20,7 +20,7 @@ export async function registerAdminAuth(
   app.decorate(
     "requireAdmin",
     async (request: FastifyRequest, reply: FastifyReply) => {
-      await attachAdminUser(request, container);
+      await attachAdminUser(request, container, config);
       if (request.adminUser !== undefined) {
         return;
       }
@@ -55,6 +55,7 @@ export async function registerAdminAuth(
 async function attachAdminUser(
   request: FastifyRequest,
   container: AppContainer,
+  config: AppConfig,
 ): Promise<void> {
   const rawToken = request.cookies[ADMIN_SESSION_COOKIE];
   if (rawToken === undefined || rawToken.length === 0) {
@@ -62,9 +63,11 @@ async function attachAdminUser(
   }
 
   try {
-    const admin = await container.admin.getCurrentAdmin.execute(
-      hashSessionToken(rawToken),
-    );
+    const admin = await container.admin.refreshAdminSession.execute({
+      tokenHash: hashSessionToken(rawToken),
+      sessionTtlSeconds: config.ADMIN_SESSION_TTL,
+      idleTtlSeconds: config.ADMIN_SESSION_IDLE_TTL,
+    });
     request.adminUser = admin;
   } catch {
     delete request.adminUser;

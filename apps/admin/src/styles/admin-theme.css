@@ -75,3 +75,12 @@ body {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
+
+[data-admin-sidebar] a[data-status="active"] {
+  background-color: var(--foreground);
+  color: var(--background);
+}
+
+[data-admin-sidebar] a[data-status="active"] svg {
+  color: var(--background);
+}

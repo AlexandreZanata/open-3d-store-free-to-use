@@ -15,3 +15,5 @@ export type AdminUserSummary = {
 export type AdminLoginResponse = AdminDataResponse<AdminUserSummary>;
 
 export type AdminMeResponse = AdminDataResponse<AdminUserSummary>;
+
+export type AdminRefreshResponse = AdminDataResponse<AdminUserSummary>;

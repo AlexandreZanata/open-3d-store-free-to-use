@@ -79,6 +79,27 @@ export const adminMeRouteSchema = {
   },
 } as const;
 
+export const adminRefreshRouteSchema = {
+  tags: adminTag,
+  summary: "Refresh admin session (sliding idle TTL)",
+  response: {
+    200: {
+      description: "Session extended; same shape as /auth/me",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            required: ["data"],
+            properties: { data: adminUserSchema },
+          },
+        },
+      },
+    },
+    401: unauthorizedResponse,
+    500: internalErrorResponse,
+  },
+} as const;
+
 export const adminProductListRouteSchema = {
   tags: adminTag,
   summary: "List products (all statuses)",

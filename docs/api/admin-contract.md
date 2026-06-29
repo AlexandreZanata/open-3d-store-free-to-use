@@ -21,11 +21,28 @@ Session cookie `print3d_admin_session` (see ADR 001). Browser clients MUST send 
 | `POST /auth/login` | No |
 | `POST /auth/logout` | Yes |
 | `GET /auth/me` | Yes |
+| `POST /auth/refresh` | Yes |
 | All other `/admin/*` | Yes |
 
 Unauthenticated request to protected route → **401** RFC 7807.
 
 Authenticated but insufficient role → **403** RFC 7807 (MVP: only `admin` role exists).
+
+## Rate limiting
+
+Counters use Redis (`@fastify/rate-limit`). Response **429** includes `Retry-After` when limited.
+
+| Scope | Environment | Limit | Key |
+|-------|-------------|-------|-----|
+| **Global API** | Production | 100 req / IP / minute | `{PORT}:global:{ip}` |
+| **Global API** | Development | **Disabled** | — |
+| **`POST /auth/login`** | All | 5 req / IP / minute | `admin-login:{ip}` |
+| **`GET /auth/me`**, **`POST /auth/refresh`** | All | **Excluded** | — |
+| **Public `POST /orders/capture`** | All | 10 req / IP / minute | per-route |
+
+Development disables the global bucket so local admin navigation (dashboard queries + session checks) does not hit 429. **Restart the API** after pulling changes — an old process keeps the previous limits.
+
+Login remains limited in all environments. Production storefront + admin traffic share the global bucket per IP.
 
 ## Internationalization
 
@@ -126,6 +143,20 @@ Sets `Set-Cookie: print3d_admin_session=…; HttpOnly; Path=/api/v1/admin; SameS
 ```
 
 **Response 401:** Not authenticated.
+
+Not counted toward the global API rate limit (session validation only).
+
+---
+
+### `POST /auth/refresh`
+
+Extends the sliding session idle window (ADR 001: `ADMIN_SESSION_IDLE_TTL`, capped by `ADMIN_SESSION_TTL` from login). Called by the admin SPA on a timer while the user is active.
+
+**Response 200:** Same body as `GET /auth/me`.
+
+**Response 401:** Not authenticated or session expired.
+
+Not counted toward the global API rate limit.
 
 ---
 

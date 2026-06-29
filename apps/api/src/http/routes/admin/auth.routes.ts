@@ -6,9 +6,13 @@ import {
   adminLoginRouteSchema,
   adminLogoutRouteSchema,
   adminMeRouteSchema,
+  adminRefreshRouteSchema,
 } from "../../openapi/adminRouteSchemas.js";
 import { adminLoginBodySchema } from "../../validation/adminSchemas.js";
 import { readSessionTokenHash } from "./adminSession.js";
+import { rateLimitLoginKey } from "./rate-limit-keys.js";
+
+const noSessionRateLimit = { rateLimit: false } as const;
 
 export async function registerAdminAuthRoutes(
   app: FastifyInstance,
@@ -18,7 +22,13 @@ export async function registerAdminAuthRoutes(
     "/auth/login",
     {
       schema: adminLoginRouteSchema,
-      config: { rateLimit: { max: 5, timeWindow: "1 minute" } },
+      config: {
+        rateLimit: {
+          max: 5,
+          timeWindow: "1 minute",
+          keyGenerator: rateLimitLoginKey,
+        },
+      },
     },
     async (request, reply) => {
       const parsed = adminLoginBodySchema.safeParse(request.body);
@@ -84,7 +94,23 @@ export async function registerAdminAuthRoutes(
 
   app.get(
     "/auth/me",
-    { schema: adminMeRouteSchema, preHandler: app.requireAdmin },
+    {
+      schema: adminMeRouteSchema,
+      preHandler: app.requireAdmin,
+      config: noSessionRateLimit,
+    },
+    async (request, reply) => {
+      return reply.send({ data: request.adminUser });
+    },
+  );
+
+  app.post(
+    "/auth/refresh",
+    {
+      schema: adminRefreshRouteSchema,
+      preHandler: app.requireAdmin,
+      config: noSessionRateLimit,
+    },
     async (request, reply) => {
       return reply.send({ data: request.adminUser });
     },

@@ -10,6 +10,7 @@ export type {
   AdminLoginRequest,
   AdminLoginResponse,
   AdminMeResponse,
+  AdminRefreshResponse,
   AdminUserSummary,
 } from "./auth.types.js";
 export type {

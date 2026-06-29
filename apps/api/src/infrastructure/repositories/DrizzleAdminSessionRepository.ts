@@ -43,6 +43,13 @@ export class DrizzleAdminSessionRepository implements IAdminSessionRepository {
     return mapAdminSessionRow(row);
   }
 
+  async touch(id: string, expiresAt: Date): Promise<void> {
+    await this.db
+      .update(adminSessions)
+      .set({ expiresAt })
+      .where(eq(adminSessions.id, id));
+  }
+
   async delete(id: string): Promise<void> {
     await this.db.delete(adminSessions).where(eq(adminSessions.id, id));
   }

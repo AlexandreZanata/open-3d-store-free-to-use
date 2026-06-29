@@ -4,6 +4,20 @@ import { Redis } from "ioredis";
 
 import type { AppConfig } from "../../config.js";
 
+export function resolveGlobalRateLimitMax(config: AppConfig): number {
+  if (config.NODE_ENV === "development") {
+    return 0;
+  }
+  if (config.NODE_ENV === "test") {
+    return 10_000;
+  }
+  return 100;
+}
+
+export function isGlobalRateLimitEnabled(config: AppConfig): boolean {
+  return config.NODE_ENV === "production";
+}
+
 export async function registerRateLimit(
   app: FastifyInstance,
   config: AppConfig,
@@ -14,10 +28,10 @@ export async function registerRateLimit(
   });
 
   await app.register(rateLimit, {
-    global: true,
-    max: 100,
+    global: isGlobalRateLimitEnabled(config),
+    max: resolveGlobalRateLimitMax(config),
     timeWindow: "1 minute",
     redis,
-    nameSpace: "print3d-rate-limit-",
+    nameSpace: `print3d-rate-limit-${config.PORT}-`,
   });
 }

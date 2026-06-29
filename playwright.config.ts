@@ -65,6 +65,16 @@ export default defineConfig({
       },
       testMatch: ["admin-product-crud.spec.ts"],
     },
+    {
+      name: "admin-mobile-chromium",
+      dependencies: ["admin-setup"],
+      use: {
+        ...devices["Pixel 5"],
+        baseURL: adminBaseURL,
+        storageState: adminAuthFile,
+      },
+      testMatch: ["admin-mobile.spec.ts"],
+    },
   ],
   webServer:
     hasDatabase && !skipWebServer

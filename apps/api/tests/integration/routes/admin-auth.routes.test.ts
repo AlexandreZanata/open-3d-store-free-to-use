@@ -95,6 +95,30 @@ describe("Admin auth routes (contract)", () => {
     expect(response.json().data.email).toBe(TEST_ADMIN_EMAIL);
   });
 
+  it.skipIf(!hasDatabase)("extends session on POST /auth/refresh", async () => {
+    const response = await app.inject(
+      withAdminCookie(sessionCookie, {
+        method: "POST",
+        url: "/api/v1/admin/auth/refresh",
+        payload: {},
+      }),
+    );
+    expect(response.statusCode).toBe(200);
+    expect(response.json().data.email).toBe(TEST_ADMIN_EMAIL);
+  });
+
+  it.skipIf(!hasDatabase)("allows repeated GET /auth/me without rate limit", async () => {
+    for (let attempt = 0; attempt < 12; attempt += 1) {
+      const response = await app.inject(
+        withAdminCookie(sessionCookie, {
+          method: "GET",
+          url: "/api/v1/admin/auth/me",
+        }),
+      );
+      expect(response.statusCode).toBe(200);
+    }
+  });
+
   it.skipIf(!hasDatabase)("returns 401 for protected admin route without session", async () => {
     const response = await app.inject({
       method: "GET",

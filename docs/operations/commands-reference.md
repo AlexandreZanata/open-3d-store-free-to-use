@@ -31,13 +31,23 @@ curl -b /tmp/admin-cookie.txt 'http://127.0.0.1:3001/api/v1/admin/products?page=
 
 ### Admin panel dev (Phase 13)
 
-Admin SPA runs on **port 5174** — must match `ADMIN_ORIGIN` in `apps/api/.env`.
+Admin SPA runs on **port 5174** (or custom port). `ADMIN_ORIGIN` in `apps/api/.env` must **exactly** match the browser URL (`http://localhost:5174` ≠ `http://127.0.0.1:5174`).
 
 ```bash
 cp apps/admin/.env.example apps/admin/.env
-pnpm dev:admin
-# Open http://localhost:5174/login
-# Credentials: ADMIN_BOOTSTRAP_EMAIL / ADMIN_BOOTSTRAP_PASSWORD (valid email required)
+# Custom port example:
+export VITE_API_BASE_URL=http://127.0.0.1:3025/api/v1 VITE_ASSETS_BASE_URL=http://127.0.0.1:3025
+pnpm --filter @print3d/admin exec vite --host 127.0.0.1 --port 5180
+```
+
+Load API env before `pnpm --filter @print3d/api dev` (`set -a && source apps/api/.env && set +a`). Restart API after rate-limit changes — old processes keep previous policy.
+
+**429 Too Many Requests:** In development the global bucket is off; only `POST /auth/login` is limited (5/min per IP). If login is blocked, wait 1 min or `docker compose -f infra/docker-compose.dev.yml exec redis redis-cli FLUSHDB`.
+
+```bash
+# Credentials (valid email required)
+ADMIN_BOOTSTRAP_EMAIL=admin@test.local
+ADMIN_BOOTSTRAP_PASSWORD=test-password-12
 ```
 
 ### Admin catalog CRUD smoke (Phase 14)
@@ -56,6 +66,7 @@ pnpm --filter @print3d/admin test
 source apps/api/.env
 CI=true PLAYWRIGHT_API_PORT=3010 pnpm exec playwright test e2e/admin-auth.spec.ts --project=admin-chromium
 CI=true PLAYWRIGHT_API_PORT=3010 pnpm exec playwright test e2e/admin-product-crud.spec.ts --project=admin-crud-chromium
+CI=true PLAYWRIGHT_API_PORT=3010 pnpm exec playwright test e2e/admin-mobile.spec.ts --project=admin-mobile-chromium
 
 # Orders list (requires admin session cookie)
 curl -b /tmp/admin-cookie.txt 'http://127.0.0.1:3001/api/v1/admin/orders?page=1&limit=20'

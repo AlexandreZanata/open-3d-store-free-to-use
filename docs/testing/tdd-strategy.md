@@ -95,6 +95,7 @@ source apps/api/.env && PLAYWRIGHT_API_PORT=3010 pnpm e2e
 | `desktop-layout.spec.ts` | Desktop header nav, search sidebar, grid layout | `docs/features/responsive-layout.md` |
 | `admin-auth.spec.ts` | Login failure, success, unauthenticated redirect | `docs/api/admin-contract.md` |
 | `admin-product-crud.spec.ts` | Create product → list → edit with toast | `docs/api/admin-contract.md` |
+| `admin-mobile.spec.ts` | Mobile drawer navigation → orders | `docs/features/admin-panel.md` |
 
 Admin E2E uses project `admin-chromium` (port **5174**). Playwright starts API + admin dev servers when `DATABASE_URL` is set. Use `CI=true` locally so stale dev servers on 5174/3005 are not reused against a rate-limited API.
 

@@ -7,8 +7,10 @@ export const adminTokens = {
   hairlineBorder: "border border-hairline",
   surface: "bg-surface",
   sidebarWidth: "w-60",
-  sidebarActive: "bg-primary text-primary-foreground",
-  sidebarItem: "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-foreground hover:bg-surface-muted transition-colors",
+  sidebarActive:
+    "bg-foreground text-background hover:bg-foreground/90 [&_svg]:text-background",
+  sidebarItem:
+    "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-foreground hover:bg-surface-muted transition-colors",
 } as const;
 
 export const printStatusColors: Record<

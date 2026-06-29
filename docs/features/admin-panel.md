@@ -16,9 +16,20 @@ Internal catalog and order management for the AXIS storefront. MVP scope: biling
 | Primary action | Solid black button |
 | Destructive | Red outline/text on confirm only |
 | Status badges | Text label + colored dot (not color-only) |
-| Layout | 240px sidebar, flat surfaces, hairline borders |
+| Layout | 240px sidebar (desktop); slide-out drawer + compact header (mobile) |
 
 Tokens: `apps/admin/src/styles/admin-theme.css`, `apps/admin/src/lib/admin-tokens.ts`.
+
+## Mobile layout
+
+| Viewport | Navigation | Tables / forms |
+|----------|------------|----------------|
+| `< md` (768px) | Hamburger opens left drawer (`AdminNavLinks`); closes on route change | Horizontal scroll on tables; stacked form grids |
+| `≥ md` | Fixed 240px sidebar | Multi-column grids where defined |
+
+Touch targets: header menu and nav links use min 40px height. Main content respects `safe-area-inset-bottom` on notched devices.
+
+E2E: `e2e/admin-mobile.spec.ts` (Pixel 5 viewport, requires `admin-setup`).
 
 ## Routes
 
@@ -57,7 +68,7 @@ ADMIN_BOOTSTRAP_EMAIL=admin@test.local ADMIN_BOOTSTRAP_PASSWORD=test-password-12
 | Layer | Location |
 |-------|----------|
 | Unit | `apps/admin/tests/unit/` |
-| E2E | `e2e/admin-auth.spec.ts`, `e2e/admin-product-crud.spec.ts` |
+| E2E | `e2e/admin-auth.spec.ts`, `e2e/admin-product-crud.spec.ts`, `e2e/admin-mobile.spec.ts` |
 
 ```bash
 pnpm --filter @print3d/admin test

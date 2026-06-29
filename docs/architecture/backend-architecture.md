@@ -96,7 +96,7 @@ Admin panel (Phase 13–15): `apps/admin` — TanStack Router SPA on port 5174. 
 
 Admin write repositories (Phase 10): `DrizzleAdminUserRepository`, `DrizzleAdminSessionRepository`, `DrizzleAuditLogRepository`; catalog admin CRUD on existing product/category repos. Contract: [../api/admin-contract.md](../api/admin-contract.md).
 
-Admin use cases (Phase 11, wired on `container.admin`): `LoginAdmin`, `LogoutAdmin`, `GetCurrentAdmin`, product/category CRUD, `ListOrderCaptures`, `GetOrderCapture`, `UploadAsset`. Mutations call `AuditLogger`; catalog writes invalidate Redis via `CatalogCacheInvalidator` (`deleteByPrefix` on product/search keys + category key per locale). HTTP routes in Phase 12.
+Admin use cases (Phase 11, wired on `container.admin`): `LoginAdmin`, `LogoutAdmin`, `RefreshAdminSession`, product/category CRUD, `ListOrderCaptures`, `GetOrderCapture`, `UploadAsset`. Mutations call `AuditLogger`; catalog writes invalidate Redis via `CatalogCacheInvalidator` (`deleteByPrefix` on product/search keys + category key per locale). HTTP routes in Phase 12.
 
 Full Drizzle schema: see spec in phase 2 — `apps/api/src/infrastructure/db/schema.ts`
 

@@ -17,6 +17,7 @@ export type {
   AdminLoginRequest,
   AdminLoginResponse,
   AdminMeResponse,
+  AdminRefreshResponse,
   AdminOrderDetail,
   AdminOrderListItem,
   AdminOrderListResponse,

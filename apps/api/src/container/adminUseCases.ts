@@ -10,7 +10,7 @@ import {
   UpdateCategory,
 } from "../application/use-cases/admin/CategoryAdminUseCases.js";
 import { DeleteProduct } from "../application/use-cases/admin/DeleteProduct.js";
-import { GetCurrentAdmin } from "../application/use-cases/admin/GetCurrentAdmin.js";
+import { RefreshAdminSession } from "../application/use-cases/admin/RefreshAdminSession.js";
 import {
   GetProductAdmin,
   ListProductsAdmin,
@@ -36,7 +36,7 @@ import type { IProductRepository } from "../domain/repositories/IProductReposito
 export type AdminUseCases = {
   loginAdmin: LoginAdmin;
   logoutAdmin: LogoutAdmin;
-  getCurrentAdmin: GetCurrentAdmin;
+  refreshAdminSession: RefreshAdminSession;
   createProduct: CreateProduct;
   updateProduct: UpdateProduct;
   deleteProduct: DeleteProduct;
@@ -77,7 +77,7 @@ export function createAdminUseCases(deps: AdminUseCaseDeps): AdminUseCases {
       audit,
     ),
     logoutAdmin: new LogoutAdmin(deps.sessions, audit),
-    getCurrentAdmin: new GetCurrentAdmin(deps.sessions, deps.admins),
+    refreshAdminSession: new RefreshAdminSession(deps.sessions, deps.admins),
     createProduct: new CreateProduct(
       deps.products,
       deps.categories,

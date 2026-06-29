@@ -13,12 +13,17 @@ fi
 VPS_IP="${DOMAIN:-${VPS_HOST:-72.60.147.2}}"
 NGINX_HTTP_PORT="${NGINX_HTTP_PORT:-80}"
 APP_DIR="${VPS_APP_DIR:-/var/www/print3d}"
+API_PORT="${API_PORT:-3101}"
+if [[ -f "${APP_DIR}/apps/api/.env" ]]; then
+  API_PORT="$(grep -E '^PORT=' "${APP_DIR}/apps/api/.env" | tail -1 | cut -d= -f2 | tr -d '\r' || echo "${API_PORT}")"
+fi
 src="${APP_DIR}/infra/nginx/nginx.ip.conf"
 dst="/etc/nginx/sites-available/print3d-ip.conf"
 
 sed \
   -e "s/YOUR_VPS_IP/${VPS_IP}/g" \
   -e "s/NGINX_HTTP_PORT/${NGINX_HTTP_PORT}/g" \
+  -e "s/PRINT3D_API_PORT/${API_PORT}/g" \
   "${src}" > "${dst}"
 
 ln -sf "${dst}" /etc/nginx/sites-enabled/print3d-ip.conf

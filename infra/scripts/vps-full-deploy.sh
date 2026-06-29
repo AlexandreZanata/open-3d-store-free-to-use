@@ -29,7 +29,8 @@ echo "==> Nginx IP site"
 pm2 save
 
 echo "==> Health check"
-curl -sS -o /dev/null -w "API local: HTTP %{http_code}\n" http://127.0.0.1:3001/api/v1/categories || true
+API_PORT="$(grep -E '^PORT=' "${ROOT}/apps/api/.env" | tail -1 | cut -d= -f2 | tr -d '\r' || echo 3101)"
+curl -sS -o /dev/null -w "API local: HTTP %{http_code}\n" "http://127.0.0.1:${API_PORT}/api/v1/categories" || true
 curl -sS -o /dev/null -w "API public: HTTP %{http_code}\n" http://72.60.147.2/api/v1/categories || true
 
 echo "vps-full-deploy.sh: done — http://72.60.147.2"

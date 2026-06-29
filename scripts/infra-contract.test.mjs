@@ -71,7 +71,7 @@ describe("nginx.conf contract — docs/infrastructure/nginx.md", () => {
     assert.match(config, /location \/models\//);
     assert.match(config, /alias \/var\/www\/print3d\/models\//);
     assert.match(config, /location \/api\//);
-    assert.match(config, /127\.0\.0\.1:3001/);
+    assert.match(config, /127\.0\.0\.1:3101/);
     assert.match(config, /127\.0\.0\.1:4173/);
     assert.match(config, /127\.0\.0\.1:4174/);
     assert.match(config, /admin\.yourdomain\.com/);
@@ -97,10 +97,10 @@ describe("pm2.ecosystem.config.js contract — docs/infrastructure/deployment.md
   test("runs API cluster on main.js with production env", () => {
     assert.match(config, /print3d-api/);
     assert.match(config, /apps\/api\/dist\/main\.js/);
+    assert.match(config, /node_args.*env-file.*apps\/api\/\.env/);
     assert.match(config, /exec_mode: "cluster"/);
     assert.match(config, /instances: 2/);
     assert.match(config, /max_memory_restart: "900M"/);
-    assert.match(config, /PORT: 3001/);
   });
 
   test("runs TanStack Start web preview for SSR storefront", () => {

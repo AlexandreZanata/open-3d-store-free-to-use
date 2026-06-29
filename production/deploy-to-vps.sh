@@ -74,6 +74,7 @@ prepare_production_env() {
   POSTGRES_HOST_PORT="${POSTGRES_HOST_PORT:-5433}"
   REDIS_HOST_PORT="${REDIS_HOST_PORT:-6380}"
   RABBITMQ_HOST_PORT="${RABBITMQ_HOST_PORT:-5673}"
+  API_PORT="${API_PORT:-3101}"
 
   local admin_secret
   admin_secret="$(read_env_val "${ENV_DIR}/api.env" "ADMIN_SESSION_SECRET" "")"
@@ -88,7 +89,7 @@ prepare_production_env() {
 
   cat > "${ENV_DIR}/api.env" <<EOF
 NODE_ENV=production
-PORT=3001
+PORT=${API_PORT}
 
 DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@127.0.0.1:${POSTGRES_HOST_PORT}/${POSTGRES_DB}
 REDIS_URL=redis://127.0.0.1:${REDIS_HOST_PORT}

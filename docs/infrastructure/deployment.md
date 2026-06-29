@@ -29,7 +29,7 @@ The storefront runs as a **TanStack Start SSR** process (`print3d-web` in PM2). 
 
 | App | Script | Instances | Notes |
 |-----|--------|-----------|-------|
-| `print3d-api` | `./apps/api/dist/main.js` | 2 (cluster) | `PORT=3001`, bind `127.0.0.1` |
+| `print3d-api` | `./apps/api/dist/main.js` | 2 (cluster) | `PORT=3101` via `apps/api/.env`, `--env-file` in PM2 |
 | `print3d-web` | `pnpm --filter @print3d/web start` | 1 (fork) | `vite preview` on `127.0.0.1:4173` |
 | `print3d-admin` | `pnpm --filter @print3d/admin preview` | 1 (fork) | `127.0.0.1:4174` |
 

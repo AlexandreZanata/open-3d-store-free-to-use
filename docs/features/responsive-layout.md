@@ -26,7 +26,9 @@ Global footer on every page wrapped by `AppShell`:
 
 | Element | Detail |
 |---------|--------|
+| **Surface** | Inverted dark bar (`bg-foreground`) — matches desktop header main tier |
 | **Pitch** | Bilingual CTA — “Like this site? Want your own personalized storefront?” |
+| **Contact links** | Large icon buttons on mobile (labels hidden); icon + label on desktop (`lg+`) |
 | **WhatsApp** | `VITE_WHATSAPP_PHONE` (same digits as API `WHATSAPP_PHONE_NUMBER`) with brand icon |
 | **GitHub** | [AlexandreZanata](https://github.com/AlexandreZanata) |
 | **Email** | `alexandrezanatavasconcelos@gmail.com` |
@@ -101,7 +103,7 @@ PLAYWRIGHT_SKIP_WEBSERVER=1 PLAYWRIGHT_BASE_URL=http://localhost:5173 pnpm e2e e
 2. **Desktop (≥1280px)** — dark inverted header, labeled Cart, desktop hero, category cards, product grids, no bottom tabs.
 3. **Resize** — crossing 1024px toggles layouts without breaking either experience.
 4. **Product detail** — `/product/phone-stand`: gallery tab shows carousel with multiple images; `/product/custom-photo-frame`: 3D tab shows virtual desk viewer (drag to rotate, scroll to zoom).
-5. **Footer** — pitch text, WhatsApp link (when `VITE_WHATSAPP_PHONE` is set), GitHub, and email visible above mobile tab bar.
+5. **Footer** — dark inverted bar, pitch text, icon-only contact buttons on mobile, labeled links on desktop.
 
 ## Related
 

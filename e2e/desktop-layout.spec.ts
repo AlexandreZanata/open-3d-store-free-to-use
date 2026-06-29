@@ -49,14 +49,11 @@ test.describe("desktop layout", () => {
     const footer = page.getByRole("contentinfo");
     await expect(footer).toBeVisible({ timeout: 20_000 });
     await expect(footer.getByText(/like this site|gostou deste site/i)).toBeVisible();
-    await expect(footer.getByRole("link", { name: /github/i })).toHaveAttribute(
+    await expect(footer.getByRole("link", { name: /github profile|perfil no github/i })).toHaveAttribute(
       "href",
       "https://github.com/AlexandreZanata",
     );
-    await expect(footer.getByRole("link", { name: /alexandrezanatavasconcelos@gmail.com/i })).toHaveAttribute(
-      "href",
-      "mailto:alexandrezanatavasconcelos@gmail.com",
-    );
+    await expect(footer.getByText("alexandrezanatavasconcelos@gmail.com")).toBeVisible();
   });
 });
 
@@ -79,5 +76,10 @@ test.describe("mobile layout preserved", () => {
     const footer = page.getByRole("contentinfo");
     await expect(footer).toBeVisible({ timeout: 20_000 });
     await expect(footer.getByText(/gostou deste site|like this site/i)).toBeVisible();
+    await expect(footer.getByText("alexandrezanatavasconcelos@gmail.com")).toHaveCount(0);
+    await expect(footer.getByRole("link", { name: /e-mail alexandrezanata|email alexandrezanata/i })).toHaveAttribute(
+      "href",
+      "mailto:alexandrezanatavasconcelos@gmail.com",
+    );
   });
 });

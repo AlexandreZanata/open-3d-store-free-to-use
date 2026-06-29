@@ -183,6 +183,9 @@
     "pitch": "Gostou deste site? Quer construir o seu site personalizado? Entre em contato.",
     "whatsappPrefill": "Olá! Vi sua loja 3D e gostaria de um site personalizado como este.",
     "whatsappAria": "Contato pelo WhatsApp em {{phone}}",
-    "github": "GitHub"
+    "github": "GitHub",
+    "githubAria": "Perfil no GitHub",
+    "emailAria": "E-mail {{email}}",
+    "contactNav": "Links de contato"
   }
 }

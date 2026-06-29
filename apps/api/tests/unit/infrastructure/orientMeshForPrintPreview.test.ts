@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
+import { symmetricEigen3x3 } from "../../../src/infrastructure/model/meshPrincipalAxes.js";
 import {
   orientMeshForPrintPreview,
-  scorePrintOrientation,
 } from "../../../src/infrastructure/model/orientMeshForPrintPreview.js";
 
 function bbox(positions: Float32Array) {
@@ -24,65 +24,35 @@ function bbox(positions: Float32Array) {
 }
 
 /** Two triangles spanning an axis-aligned box (meters). */
-function boxSoup(width: number, height: number, depth: number): Float32Array {
+function thinBoxSoup(width: number, height: number, depth: number): Float32Array {
   return new Float32Array([
-    0,
-    0,
-    0,
-    width,
-    0,
-    0,
-    0,
-    height,
-    depth,
-    width,
-    0,
-    0,
-    width,
-    height,
-    depth,
-    0,
-    height,
-    depth,
+    0, 0, 0, width, 0, 0, 0, height, depth, width, 0, 0, width, height, depth, 0, height, depth,
   ]);
 }
 
 describe("orientMeshForPrintPreview", () => {
-  it("prefers a taller Y extent over a wide flat pose on the bed", () => {
-    const lying = boxSoup(0.08, 0.01, 0.07);
-    const lyingScore = scorePrintOrientation(bbox(lying));
-
+  it("stands a thin box on its tallest principal axis", () => {
+    const lying = thinBoxSoup(0.08, 0.01, 0.07);
     const oriented = orientMeshForPrintPreview(lying);
-    const upright = bbox(oriented);
-    const uprightScore = scorePrintOrientation(upright);
-
-    expect(upright.maxY - upright.minY).toBeGreaterThan(0.05);
-    expect(uprightScore).toBeGreaterThan(lyingScore);
+    const size = bbox(oriented);
+    expect(size.minY).toBeCloseTo(0, 5);
+    expect(size.maxY - size.minY).toBeGreaterThan(0.05);
+    expect(size.maxY - size.minY).toBeGreaterThanOrEqual(0.07);
   });
 
-  it("maps slicer Z-up exports to glTF Y-up when Z is the tallest axis", () => {
-    const zUp = new Float32Array([
-      0,
-      0,
-      0,
-      0.05,
-      0,
-      0,
-      0,
-      0,
-      0.12,
-      0.05,
-      0,
-      0,
-      0.05,
-      0,
-      0.12,
-      0,
-      0,
-      0.12,
-    ]);
+  it("centers mesh on the virtual build plate", () => {
+    const zUp = thinBoxSoup(0.05, 0.12, 0.05);
     const oriented = orientMeshForPrintPreview(zUp);
     const size = bbox(oriented);
-    expect(size.maxY - size.minY).toBeCloseTo(0.12, 2);
+    expect(size.minY).toBeCloseTo(0, 5);
+  });
+});
+
+describe("symmetricEigen3x3", () => {
+  it("orders eigenvalues ascending for a diagonal matrix", () => {
+    const result = symmetricEigen3x3([4, 9, 16, 0, 0, 0]);
+    expect(result.values[0]).toBeCloseTo(4, 4);
+    expect(result.values[1]).toBeCloseTo(9, 4);
+    expect(result.values[2]).toBeCloseTo(16, 4);
   });
 });

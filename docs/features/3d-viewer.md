@@ -75,11 +75,12 @@ Any catalog upload (`STL`, `GLB`, `GLTF`, `3MF`) is converted automatically to a
 
 1. Worker ingests the source mesh (STL triangle soup, 3MF XML zip, or glTF)
 2. **Unit detection** — millimeter vs meter coordinates (heuristic on bounding box)
-3. **Print orientation** — 20 axis/yaw candidates (Bambu/Orca-style: maximize build-plate footprint, prefer upright height); baked into the GLB so the storefront shows the model **standing on the virtual desk**
-4. **Fast decimation** — uniform triangle stride while parsing huge STL/3MF, then **meshoptimizer** weld + simplify before glTF encoding
-5. **Draco** compression for web streaming
-6. Admin upload response `url` is the preview when ready; `sourceUrl` keeps the original for print
-7. Public product API resolves `modelFileUrl` to the preview sibling on disk when present (no manual re-link)
+3. **Print orientation** — PCA smallest variance axis → Y-up (figurine standing); thin plates fall back to middle/largest axis; yaw picks compact footprint; build-plate centering baked into the GLB
+4. **Fast decimation** — uniform triangle stride while parsing huge STL/3MF (120k cap), **meshoptimizer** weld + simplify (150k verts) with stride fallback, single Draco pass
+5. Upload worker passes the on-disk buffer once (`sourceData`) and runs part analysis + preview optimization **in parallel**
+6. **Draco** compression for web streaming
+7. Admin upload response `url` is the preview when ready; `sourceUrl` keeps the original for print
+8. Public product API resolves `modelFileUrl` to the preview sibling on disk when present (no manual re-link)
 
 Re-run optimization for an existing product:
 

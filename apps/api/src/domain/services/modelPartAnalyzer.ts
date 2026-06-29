@@ -112,18 +112,18 @@ function isAsciiStl(data: Buffer): boolean {
 
 function computeBinaryStlBbox(data: Buffer): Bbox | null {
   const triangleCount = data.readUInt32LE(80);
-  let offset = 84;
+  const stride = triangleCount > 100_000 ? Math.ceil(triangleCount / 100_000) : 1;
   const bbox = emptyBbox();
 
-  for (let i = 0; i < triangleCount; i += 1) {
-    if (offset + 50 > data.byteLength) {
+  for (let i = 0; i < triangleCount; i += stride) {
+    const triOffset = 84 + i * 50;
+    if (triOffset + 50 > data.byteLength) {
       break;
     }
     for (let v = 0; v < 3; v += 1) {
-      const base = offset + 12 + v * 12;
+      const base = triOffset + 12 + v * 12;
       expandBbox(bbox, data.readFloatLE(base), data.readFloatLE(base + 4), data.readFloatLE(base + 8));
     }
-    offset += 50;
   }
 
   return bbox.initialized ? bbox : null;

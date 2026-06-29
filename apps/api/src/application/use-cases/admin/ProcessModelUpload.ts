@@ -43,25 +43,25 @@ export class ProcessModelUpload {
         1.24;
       const filename = path.basename(job.sourcePath);
 
-      const parts = analyzeModelParts({
-        data,
-        mimeType,
-        filename,
-        infillFactor: infill,
-        densityGCm3: density,
-      });
+      const [parts, preview] = await Promise.all([
+        Promise.resolve(
+          analyzeModelParts({
+            data,
+            mimeType,
+            filename,
+            infillFactor: infill,
+            densityGCm3: density,
+          }),
+        ),
+        optimizeModelPreview({
+          sourcePath: job.sourcePath,
+          mimeType,
+          modelsBasePath: this.modelsBasePath,
+          sourceData: data,
+        }),
+      ]);
 
-      const preview = await optimizeModelPreview({
-        sourcePath: job.sourcePath,
-        mimeType,
-        modelsBasePath: this.modelsBasePath,
-      });
-
-      await this.jobs.markCompleted(
-        input.jobId,
-        parts,
-        preview ?? undefined,
-      );
+      await this.jobs.markCompleted(input.jobId, parts, preview ?? undefined);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Model processing failed";
       await this.jobs.markFailed(input.jobId, message);

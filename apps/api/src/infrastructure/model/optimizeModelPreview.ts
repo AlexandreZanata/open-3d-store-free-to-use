@@ -3,21 +3,17 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 
 import type { Document } from "@gltf-transform/core";
-import { dedup, draco, simplify, weld } from "@gltf-transform/functions";
+import { draco } from "@gltf-transform/functions";
 import type { AdminUploadMimeType } from "@print3d/shared-types";
-import { MeshoptSimplifier } from "meshoptimizer";
 
 import { createGltfIo } from "./createGltfIo.js";
 import { documentFromMesh } from "./documentFromMesh.js";
-import {
-  PREVIEW_MESH_MAX_VERTICES,
-  preparePreviewMesh,
-} from "./preparePreviewMesh.js";
+import { preparePreviewMesh } from "./preparePreviewMesh.js";
 import { read3mfMesh } from "./read3mfMesh.js";
 import { readStlPositions } from "./readStlPositions.js";
 
-/** Uniform stride while parsing huge STL/3MF files (keeps preview worker fast). */
-const PREVIEW_READ_MAX_TRIANGLES = 250_000;
+/** Uniform stride while parsing huge STL files (keeps preview worker fast). */
+const PREVIEW_READ_MAX_TRIANGLES = 120_000;
 
 /** Contract: docs/features/3d-viewer.md — browser preview limits */
 export const PREVIEW_MAX_BYTES = 20 * 1024 * 1024;
@@ -27,6 +23,8 @@ export type OptimizeModelPreviewInput = {
   sourcePath: string;
   mimeType: AdminUploadMimeType;
   modelsBasePath: string;
+  /** When set, avoids a second disk read (upload worker). */
+  sourceData?: Buffer;
 };
 
 export type OptimizeModelPreviewResult = {
@@ -75,7 +73,7 @@ async function loadDocument(
   input: OptimizeModelPreviewInput,
 ): Promise<Document | null> {
   if (input.mimeType === "model/stl") {
-    const data = await readFile(input.sourcePath);
+    const data = input.sourceData ?? (await readFile(input.sourcePath));
     const positions = readStlPositions(data, { maxTriangles: PREVIEW_READ_MAX_TRIANGLES });
     if (!positions) {
       return null;
@@ -85,7 +83,7 @@ async function loadDocument(
   }
 
   if (input.mimeType === "model/3mf") {
-    const data = await readFile(input.sourcePath);
+    const data = input.sourceData ?? (await readFile(input.sourcePath));
     const positions = read3mfMesh(data);
     if (!positions) {
       return null;
@@ -102,28 +100,7 @@ async function loadDocument(
 }
 
 async function runOptimizationPipeline(document: Document): Promise<void> {
-  await document.transform(weld({}), dedup());
-
-  if (countVertices(document) > PREVIEW_MESH_MAX_VERTICES) {
-    await document.transform(
-      simplify({ simplifier: MeshoptSimplifier, ratio: 0.5, error: 0.01 }),
-    );
-  }
-
   await document.transform(draco({ method: "edgebreaker" }));
-}
-
-function countVertices(document: Document): number {
-  let total = 0;
-  for (const mesh of document.getRoot().listMeshes()) {
-    for (const primitive of mesh.listPrimitives()) {
-      const position = primitive.getAttribute("POSITION");
-      if (position) {
-        total += position.getCount();
-      }
-    }
-  }
-  return total;
 }
 
 function buildPreviewPath(sourcePath: string): string {

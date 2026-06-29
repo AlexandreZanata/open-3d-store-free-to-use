@@ -2,6 +2,23 @@ import { MeshoptSimplifier } from "meshoptimizer";
 
 const POSITION_STRIDE = 12;
 
+/** Uniform triangle stride when meshopt cannot weld the soup. */
+function decimateTriangleStride(positions: Float32Array, maxVertices: number): Float32Array {
+  const soupVertexCount = positions.length / 3;
+  const triangleCount = soupVertexCount / 3;
+  const targetTriangles = Math.max(1, Math.floor(maxVertices / 3));
+  const stride = Math.max(1, Math.ceil(triangleCount / targetTriangles));
+  const outTriangles = Math.ceil(triangleCount / stride);
+  const out = new Float32Array(outTriangles * 9);
+  let dst = 0;
+  for (let tri = 0; tri < triangleCount; tri += stride) {
+    const src = tri * 9;
+    out.set(positions.subarray(src, src + 9), dst);
+    dst += 9;
+  }
+  return out;
+}
+
 /** Weld + simplify triangle soup before glTF encoding (faster than multi-pass gltf-transform). */
 export async function simplifyTriangleSoup(
   positions: Float32Array,
@@ -14,35 +31,39 @@ export async function simplifyTriangleSoup(
 
   await MeshoptSimplifier.ready;
 
-  const remap = MeshoptSimplifier.generatePositionRemap(positions, POSITION_STRIDE);
-  const uniquePositions = new Float32Array(remap.length * 3);
-  for (let i = 0; i < soupVertexCount; i += 1) {
-    const dst = remap[i]! * 3;
-    const src = i * 3;
-    uniquePositions[dst] = positions[src]!;
-    uniquePositions[dst + 1] = positions[src + 1]!;
-    uniquePositions[dst + 2] = positions[src + 2]!;
+  try {
+    const remap = MeshoptSimplifier.generatePositionRemap(positions, POSITION_STRIDE);
+    const uniquePositions = new Float32Array(remap.length * 3);
+    for (let i = 0; i < soupVertexCount; i += 1) {
+      const dst = remap[i]! * 3;
+      const src = i * 3;
+      uniquePositions[dst] = positions[src]!;
+      uniquePositions[dst + 1] = positions[src + 1]!;
+      uniquePositions[dst + 2] = positions[src + 2]!;
+    }
+
+    const indices = new Uint32Array(soupVertexCount);
+    for (let i = 0; i < soupVertexCount; i += 1) {
+      indices[i] = remap[i]!;
+    }
+
+    if (remap.length <= maxVertices) {
+      return soupFromIndices(uniquePositions, indices, indices.length);
+    }
+
+    const targetIndexCount = Math.max(3, Math.floor(maxVertices * 3 * 0.98));
+    const [simplified, indexCount] = MeshoptSimplifier.simplify(
+      indices,
+      uniquePositions,
+      POSITION_STRIDE,
+      targetIndexCount,
+      0.01,
+    );
+
+    return soupFromIndices(uniquePositions, simplified, indexCount);
+  } catch {
+    return decimateTriangleStride(positions, maxVertices);
   }
-
-  const indices = new Uint32Array(soupVertexCount);
-  for (let i = 0; i < soupVertexCount; i += 1) {
-    indices[i] = remap[i]!;
-  }
-
-  if (remap.length <= maxVertices) {
-    return soupFromIndices(uniquePositions, indices, indices.length);
-  }
-
-  const targetIndexCount = Math.max(3, Math.floor(maxVertices * 3 * 0.98));
-  const [simplified, indexCount] = MeshoptSimplifier.simplify(
-    indices,
-    uniquePositions,
-    POSITION_STRIDE,
-    targetIndexCount,
-    0.01,
-  );
-
-  return soupFromIndices(uniquePositions, simplified, indexCount);
 }
 
 function soupFromIndices(

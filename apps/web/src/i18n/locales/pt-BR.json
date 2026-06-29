@@ -12,6 +12,8 @@
     "favorites": "Favoritos",
     "profile": "Perfil",
     "cart": "Carrinho",
+    "cartWithCount": "Carrinho, {{count}} itens",
+    "cartWithCount_one": "Carrinho, {{count}} item",
     "back": "Voltar",
     "backHome": "Voltar ao início",
     "searchPlaceholder": "Buscar produtos",
@@ -107,14 +109,19 @@
     "ordering": "Enviando pedido…",
     "orderError": "Não foi possível enviar o pedido. Tente novamente.",
     "customerName": "Seu nome (opcional)",
-    "customerNote": "Observação para a loja (opcional)"
+    "customerNote": "Observação para a loja (opcional)",
+    "items": "{{count}} item",
+    "items_other": "{{count}} itens",
+    "summary": "Resumo"
   },
   "favorites": {
     "title": "Favoritos",
     "metaDescription": "Produtos salvos.",
     "emptyTitle": "Nenhum favorito ainda",
     "emptyHint": "Salve produtos que você gosta para acesso rápido.",
-    "browse": "Ver produtos"
+    "browse": "Ver produtos",
+    "count": "{{count}} item",
+    "count_other": "{{count}} itens"
   },
   "profile": {
     "title": "Perfil",

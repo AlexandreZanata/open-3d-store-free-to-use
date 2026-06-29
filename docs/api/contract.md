@@ -232,6 +232,78 @@ Admin write: [admin-contract.md](admin-contract.md) — `GET/PATCH /admin/settin
 
 ---
 
+## Favorites (visitor-scoped)
+
+Anonymous favorites keyed by **`X-Visitor-Id`** (UUID v4). The storefront generates and persists this id in `localStorage`.
+
+| Header | Required | Detail |
+|--------|----------|--------|
+| `X-Visitor-Id` | Yes | UUID v4 string |
+
+### `GET /favorites`
+
+Returns favorited active products for the visitor, newest first.
+
+**Response 200:**
+
+```json
+{
+  "data": [
+    {
+      "id": "01935...",
+      "slug": "custom-photo-frame",
+      "name": "Custom Photo Frame",
+      "shortDescription": "...",
+      "material": "PLA",
+      "basePriceDisplay": "R$ 45,00",
+      "thumbnailUrl": "/uploads/...",
+      "hasModel": true,
+      "status": "active"
+    }
+  ],
+  "meta": {
+    "count": 1,
+    "productIds": ["01935..."]
+  }
+}
+```
+
+**Response 400:** missing or invalid `X-Visitor-Id` (RFC 7807).
+
+### `POST /favorites/:productId`
+
+Adds a favorite. Idempotent per visitor/product pair.
+
+**Response 201:**
+
+```json
+{
+  "data": {
+    "productId": "01935...",
+    "favorited": true
+  }
+}
+```
+
+**Response 404:** product not found or not active.
+
+### `DELETE /favorites/:productId`
+
+Removes a favorite.
+
+**Response 200:**
+
+```json
+{
+  "data": {
+    "productId": "01935...",
+    "favorited": false
+  }
+}
+```
+
+---
+
 ## `GET /catalog/events` (SSE)
 
 Public Server-Sent Events stream for catalog changes after admin writes. Full spec: [../features/catalog-realtime.md](../features/catalog-realtime.md).

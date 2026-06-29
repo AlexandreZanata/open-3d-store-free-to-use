@@ -45,6 +45,7 @@ describe("GET /api/v1/categories (contract)", () => {
         slug: expect.any(String),
         name: expect.any(String),
         sortOrder: expect.any(Number),
+        imageUrl: expect.any(String),
       });
       expect(body.data[0].locale).toBe("en");
       expect(response.headers["cache-control"]).toBe("public, max-age=300");

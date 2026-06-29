@@ -12,6 +12,8 @@
     "favorites": "Favorites",
     "profile": "Profile",
     "cart": "Cart",
+    "cartWithCount": "Cart, {{count}} items",
+    "cartWithCount_one": "Cart, {{count}} item",
     "back": "Back",
     "backHome": "Back to home",
     "searchPlaceholder": "Search products",
@@ -107,14 +109,19 @@
     "ordering": "Sending order…",
     "orderError": "Could not send order. Try again.",
     "customerName": "Your name (optional)",
-    "customerNote": "Note for the shop (optional)"
+    "customerNote": "Note for the shop (optional)",
+    "items": "{{count}} item",
+    "items_other": "{{count}} items",
+    "summary": "Summary"
   },
   "favorites": {
     "title": "Favorites",
     "metaDescription": "Saved products.",
     "emptyTitle": "No favorites yet",
     "emptyHint": "Save products you like for quick access.",
-    "browse": "Browse products"
+    "browse": "Browse products",
+    "count": "{{count}} item",
+    "count_other": "{{count}} items"
   },
   "profile": {
     "title": "Profile",

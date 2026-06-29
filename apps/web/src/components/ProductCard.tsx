@@ -1,9 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { Heart } from "lucide-react";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { ProductListItem } from "@print3d/shared-types";
 
+import { FavoriteButton } from "@/components/FavoriteButton";
 import { resolveAssetUrl } from "@/lib/assets";
 import { productCardWideWidth } from "@/lib/layout";
 
@@ -15,7 +14,6 @@ export function ProductCard({
   variant?: "default" | "wide";
 }) {
   const { t } = useTranslation();
-  const [fav, setFav] = useState(false);
   const width = variant === "wide" ? productCardWideWidth : "w-full";
   const imageUrl = resolveAssetUrl(product.thumbnailUrl);
 
@@ -49,20 +47,7 @@ export function ProductCard({
           </span>
         </Link>
 
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            setFav((v) => !v);
-          }}
-          aria-label={t("product.favorite")}
-          className="absolute top-2.5 right-2.5 size-9 grid place-items-center rounded-full bg-background/90 backdrop-blur shadow-soft press"
-        >
-          <Heart
-            className={`size-4 transition-colors ${
-              fav ? "fill-accent text-accent" : "text-foreground"
-            }`}
-          />
-        </button>
+        <FavoriteButton productId={product.id} className="absolute top-2.5 right-2.5" />
 
         <div className="p-3.5">
           <div className="flex items-start justify-between gap-2 mb-1">

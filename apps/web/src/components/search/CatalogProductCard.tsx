@@ -1,15 +1,13 @@
 import { Link } from "@tanstack/react-router";
-import { Heart } from "lucide-react";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { ProductListItem } from "@print3d/shared-types";
 
+import { FavoriteButton } from "@/components/FavoriteButton";
 import { resolveAssetUrl } from "@/lib/assets";
 
 /** Desktop catalog card — roomier layout for search and category grids. */
 export function CatalogProductCard({ product }: { product: ProductListItem }) {
   const { t } = useTranslation();
-  const [fav, setFav] = useState(false);
   const imageUrl = resolveAssetUrl(product.thumbnailUrl);
 
   return (
@@ -37,21 +35,8 @@ export function CatalogProductCard({ product }: { product: ProductListItem }) {
               3D
             </span>
           )}
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              setFav((v) => !v);
-            }}
-            aria-label={t("product.favorite")}
-            className="absolute top-3 right-3 size-9 grid place-items-center rounded-full bg-background/90 backdrop-blur shadow-soft press"
-          >
-            <Heart
-              className={`size-4 transition-colors ${
-                fav ? "fill-accent text-accent" : "text-foreground"
-              }`}
-            />
-          </button>
         </Link>
+        <FavoriteButton productId={product.id} className="absolute top-3 right-3 z-10" />
 
         <div className="flex flex-1 flex-col p-5">
           <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">

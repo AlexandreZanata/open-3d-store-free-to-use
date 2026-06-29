@@ -1,9 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { Heart, Share2, ShoppingBag } from "lucide-react";
+import { ShoppingBag, Share2 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { AppShell } from "@/components/AppShell";
+import { FavoriteButton } from "@/components/FavoriteButton";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductCardSkeleton, ProductDetailSkeleton } from "@/components/LoadingSkeletons";
 import { ProductMediaPanel } from "@/components/ProductMedia";
@@ -12,8 +13,7 @@ import { useProducts } from "@/hooks/useProducts";
 import { ApiError } from "@/lib/api/client";
 import { fetchProductBySlug } from "@/lib/api/products";
 import { addToCart } from "@/lib/cart";
-import { mobileOnly, pagePadding, shellMaxWidth } from "@/lib/layout";
-import { RailTrack } from "@/components/Rail";
+import { mobileOnly, pagePadding, productGridCols } from "@/lib/layout";
 import { getCurrentI18nLocale, default as i18n } from "@/i18n";
 import { brandPageTitle } from "@/lib/brand";
 import type { ProductDetail } from "@print3d/shared-types";
@@ -100,7 +100,6 @@ function ProductPage() {
   const productQuery = useProduct(slug);
   const product = productQuery.data;
   const { t } = useTranslation();
-  const [fav, setFav] = useState(false);
   const relatedQuery = useProducts({ limit: 20, page: 1 });
   const related =
     product && relatedQuery.data?.data
@@ -125,7 +124,7 @@ function ProductPage() {
 
   return (
     <AppShell showBack showSearch={false} title={detail.name}>
-      <div className={`${shellMaxWidth} ${pagePadding} lg:pt-4`}>
+      <div className={`${pagePadding} lg:pt-4`}>
         <div className="lg:grid lg:grid-cols-2 lg:gap-x-12 lg:gap-y-8 lg:items-start">
           <section className="pt-2 lg:pt-0">
             <ProductMediaPanel
@@ -193,16 +192,11 @@ function ProductPage() {
 
             <div className="fixed bottom-16 inset-x-0 z-30 border-t border-hairline bg-background/95 backdrop-blur-xl lg:static lg:border-t-0 lg:bg-transparent lg:backdrop-blur-none">
               <div className="flex items-center gap-2 lg:gap-3">
-                <button
-                  type="button"
-                  onClick={() => setFav((value) => !value)}
-                  aria-label={t("product.favorite")}
-                  className="size-11 shrink-0 grid place-items-center rounded-full ring-1 ring-hairline bg-surface press"
-                >
-                  <Heart
-                    className={`size-5 transition-colors ${fav ? "fill-accent text-accent" : ""}`}
-                  />
-                </button>
+                <FavoriteButton
+                  productId={detail.id}
+                  className="size-11 shrink-0 ring-1 ring-hairline bg-surface"
+                  iconClassName="size-5"
+                />
                 <button
                   type="button"
                   aria-label={t("product.share")}
@@ -231,23 +225,27 @@ function ProductPage() {
       </div>
 
       {related.length > 0 ? (
-        <section className={`${shellMaxWidth} ${pagePadding} mt-12 lg:mt-16`}>
+        <section className={`${pagePadding} mt-12 lg:mt-16`}>
           <h2 className="text-base font-semibold tracking-tight lg:text-lg mb-4">
             {t("product.related")}
           </h2>
-          <RailTrack>
-            {relatedQuery.isLoading
-              ? Array.from({ length: 2 }).map((_, index) => (
-                  <div key={index} className="snap-start">
-                    <ProductCardSkeleton variant="wide" />
-                  </div>
-                ))
-              : related.map((item) => (
-                  <div key={item.id} className="snap-start">
-                    <ProductCard product={item} variant="wide" />
-                  </div>
-                ))}
-          </RailTrack>
+          <div className="overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory -mx-4 px-4 lg:mx-0 lg:overflow-visible lg:snap-none lg:px-0">
+            <div
+              className={`flex gap-3 w-max min-w-full lg:grid ${productGridCols} lg:w-full lg:gap-4`}
+            >
+              {relatedQuery.isLoading
+                ? Array.from({ length: 2 }).map((_, index) => (
+                    <div key={index} className="snap-start">
+                      <ProductCardSkeleton variant="wide" />
+                    </div>
+                  ))
+                : related.map((item) => (
+                    <div key={item.id} className="snap-start">
+                      <ProductCard product={item} variant="wide" />
+                    </div>
+                  ))}
+            </div>
+          </div>
         </section>
       ) : null}
 

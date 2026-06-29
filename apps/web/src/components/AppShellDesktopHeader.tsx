@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { BrandMark } from "@/components/BrandMark";
+import { CartCountBadge } from "@/components/CartCountBadge";
+import { useCartCount } from "@/hooks/useCartCount";
 import { desktopOnly, shellMaxWidth } from "@/lib/layout";
 
 type Props = {
@@ -47,6 +49,7 @@ export function AppShellDesktopHeader({
 }: Props) {
   const { t } = useTranslation();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const cartCount = useCartCount();
 
   return (
     <header className={`${desktopOnly} sticky top-0 z-40`}>
@@ -64,10 +67,9 @@ export function AppShellDesktopHeader({
       <div className="bg-foreground text-background shadow-[0_8px_30px_oklch(0_0_0/0.12)]">
         <div className={`${shellMaxWidth} px-8 h-[4.25rem] flex items-center gap-10`}>
           <Link to="/" className="flex items-center gap-3 shrink-0 group" aria-label={t("nav.home")}>
-            <BrandMark
-              size="md"
-              className="brightness-0 invert transition-transform group-hover:scale-105"
-            />
+            <span className="flex items-center justify-center rounded-md bg-background p-1.5 shadow-sm transition-transform group-hover:scale-105">
+              <BrandMark size="md" />
+            </span>
             <span className="text-lg font-semibold tracking-tight">{t("app.name")}</span>
           </Link>
 
@@ -104,9 +106,15 @@ export function AppShellDesktopHeader({
             )}
             <Link
               to="/cart"
-              className="inline-flex items-center gap-2 h-10 px-4 rounded-lg bg-background text-foreground text-sm font-semibold press hover:bg-background/90"
+              aria-label={
+                cartCount > 0 ? t("nav.cartWithCount", { count: cartCount }) : t("nav.cart")
+              }
+              className="relative inline-flex items-center gap-2 h-10 px-4 rounded-lg bg-background text-foreground text-sm font-semibold press hover:bg-background/90"
             >
-              <ShoppingBag className="size-4" />
+              <span className="relative grid place-items-center">
+                <ShoppingBag className="size-4" />
+                <CartCountBadge count={cartCount} className="-top-1.5 -right-1.5" />
+              </span>
               {t("nav.cart")}
             </Link>
           </div>

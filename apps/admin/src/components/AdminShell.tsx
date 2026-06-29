@@ -4,8 +4,9 @@ import { useEffect, useState, type ReactNode } from "react";
 
 import { useAdminAuth } from "@/auth/useAdminAuth";
 import { AdminBrand, AdminNavLinks } from "@/components/AdminNavLinks";
+import { BrandMark } from "@/components/BrandMark";
 import { Button } from "@/components/ui/Button";
-import { ADMIN_APP_TITLE } from "@/lib/brand";
+import { BRAND_NAME } from "@/lib/brand";
 import { adminTokens } from "@/lib/admin-tokens";
 import { cn } from "@/lib/utils";
 
@@ -39,16 +40,52 @@ export function AdminShell({ children }: AdminShellProps) {
   }
 
   return (
-    <div className="flex min-h-dvh bg-background">
-      <aside
-        className={cn(
-          "hidden shrink-0 border-r border-hairline bg-surface md:flex md:flex-col",
-          adminTokens.sidebarWidth,
-        )}
-      >
-        <AdminBrand />
-        <AdminNavLinks className="flex-1 p-3" />
-      </aside>
+    <div className="min-h-dvh bg-background">
+      <div className="hidden min-h-dvh md:grid md:grid-cols-[15rem_1fr] md:grid-rows-[6.25rem_minmax(0,1fr)]">
+        <AdminBrand className="col-start-1 row-start-1" />
+        <header className={cn("col-start-2 row-start-1", adminTokens.shellHeaderBar)}>
+          <span className="ml-auto text-sm text-muted-foreground">{user?.email}</span>
+          <Button variant="ghost" onClick={() => void handleLogout()}>
+            <LogOut className="size-4" />
+            Logout
+          </Button>
+        </header>
+        <aside className="col-start-1 row-start-2 flex flex-col border-r border-hairline bg-surface">
+          <AdminNavLinks className="flex-1 p-3" />
+        </aside>
+        <main className="col-start-2 row-start-2 px-6 py-6">{children}</main>
+      </div>
+
+      <div className="flex min-h-dvh flex-col md:hidden">
+        <header className={adminTokens.shellHeaderBar}>
+          <Button
+            type="button"
+            variant="ghost"
+            aria-expanded={mobileNavOpen}
+            aria-label="Open navigation menu"
+            onClick={() => setMobileNavOpen(true)}
+          >
+            <Menu className="size-5" />
+          </Button>
+          <div className="flex min-w-0 flex-1 items-center gap-3">
+            <BrandMark size="md" />
+            <div className="min-w-0">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                {BRAND_NAME}
+              </p>
+              <p className="mt-1 truncate text-lg font-semibold leading-tight text-foreground">
+                Admin
+              </p>
+            </div>
+          </div>
+          <Button variant="ghost" onClick={() => void handleLogout()}>
+            <LogOut className="size-4" />
+          </Button>
+        </header>
+        <main className="flex-1 px-4 py-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+          {children}
+        </main>
+      </div>
 
       {mobileNavOpen ? (
         <div className="fixed inset-0 z-50 md:hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
@@ -75,35 +112,6 @@ export function AdminShell({ children }: AdminShellProps) {
           </aside>
         </div>
       ) : null}
-
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center gap-3 border-b border-hairline bg-surface px-4 py-3 md:justify-end md:px-6 md:py-4">
-          <Button
-            type="button"
-            variant="ghost"
-            className="md:hidden"
-            aria-expanded={mobileNavOpen}
-            aria-label="Open navigation menu"
-            onClick={() => setMobileNavOpen(true)}
-          >
-            <Menu className="size-5" />
-          </Button>
-          <div className="min-w-0 flex-1 md:hidden">
-            <p className="truncate text-sm font-semibold text-foreground">{ADMIN_APP_TITLE}</p>
-            {user?.email ? (
-              <p className="truncate text-xs text-muted-foreground">{user.email}</p>
-            ) : null}
-          </div>
-          <span className="hidden text-sm text-muted-foreground sm:inline md:ml-auto">{user?.email}</span>
-          <Button variant="ghost" onClick={() => void handleLogout()}>
-            <LogOut className="size-4" />
-            <span className="hidden md:inline">Logout</span>
-          </Button>
-        </header>
-        <main className="flex-1 px-4 py-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] md:px-6 md:py-6">
-          {children}
-        </main>
-      </div>
     </div>
   );
 }

@@ -13,6 +13,7 @@ import { I18nextProvider } from "react-i18next";
 
 import i18n from "../i18n";
 import appCss from "../styles.css?url";
+import { brandFaviconHeadLinks, brandThemeColorMeta } from "@/lib/brandFavicons";
 
 function NotFoundComponent() {
   const { t } = useTranslation();
@@ -76,12 +77,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { name: "theme-color", content: "#fafafa" },
+      ...brandThemeColorMeta,
       { title: i18n.t("app.metaTitle") },
     ],
     links: [
-      { rel: "icon", href: "/favicon.png", type: "image/png" },
-      { rel: "icon", href: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      ...brandFaviconHeadLinks,
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "" },
@@ -102,6 +102,7 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <HeadContent />
       </head>
       <body>

@@ -7,6 +7,12 @@ export const adminTokens = {
   hairlineBorder: "border border-hairline",
   surface: "bg-surface",
   sidebarWidth: "w-60",
+  /** Fixed top bar — brand block and header share this exact height */
+  shellTopBarHeight: "h-[5.75rem]",
+  shellBrandBar:
+    "flex shrink-0 items-center gap-3 border-b border-hairline bg-surface px-5 h-[6.25rem]",
+  shellHeaderBar:
+    "flex shrink-0 items-center gap-3 border-b border-hairline bg-surface px-4 h-[6.25rem] md:justify-end md:px-6",
   sidebarActive:
     "bg-foreground text-background hover:bg-foreground/90 [&_svg]:text-background",
   sidebarItem:

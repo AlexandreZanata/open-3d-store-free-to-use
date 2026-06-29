@@ -78,3 +78,13 @@ export async function apiPost<T>(
     body: JSON.stringify(body),
   });
 }
+
+export async function apiDelete<T>(
+  path: string,
+  init?: RequestInit & { locale?: SupportedLocale },
+): Promise<T> {
+  return apiFetch<T>(path, {
+    ...init,
+    method: "DELETE",
+  });
+}

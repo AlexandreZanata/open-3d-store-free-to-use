@@ -8,6 +8,8 @@ export type {
   CaptureOrderItemInput,
   CaptureOrderResult,
   CategoryResponse,
+  FavoriteListResponse,
+  FavoriteToggleResult,
   PaginatedProducts,
   PaginationMeta,
   ProblemDetails,

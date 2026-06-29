@@ -68,6 +68,16 @@ export type CaptureOrderResult = {
   summary: string;
 };
 
+export type FavoriteToggleResult = {
+  productId: string;
+  favorited: boolean;
+};
+
+export type FavoriteListResponse = {
+  data: ProductListItem[];
+  meta: { count: number; productIds: string[] };
+};
+
 export type ProblemDetails = {
   type: string;
   title: string;

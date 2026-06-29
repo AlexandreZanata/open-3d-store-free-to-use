@@ -4,6 +4,7 @@ import type { TFunction } from "i18next";
 import type { CategoryResponse, ProductListItem } from "@print3d/shared-types";
 
 import { ProductCard } from "@/components/ProductCard";
+import { CategoryCard } from "@/components/CategoryCard";
 import { ProductCardSkeleton } from "@/components/LoadingSkeletons";
 import { categoryGridCols, desktopHeroSurface, productGridCols } from "@/lib/layout";
 
@@ -76,16 +77,7 @@ export function HomeDesktopView({ products, categories, isLoading, t }: Props) {
           </div>
           <div className={categoryGridCols}>
             {categories.map((category) => (
-              <Link
-                key={category.slug}
-                to="/search"
-                search={{ category: category.slug }}
-                className="group aspect-[5/3] rounded-2xl bg-surface ring-1 ring-hairline p-5 flex flex-col justify-end shadow-soft lift"
-              >
-                <span className="text-base font-semibold tracking-tight group-hover:text-accent transition-colors">
-                  {category.name}
-                </span>
-              </Link>
+              <CategoryCard key={category.slug} category={category} />
             ))}
           </div>
         </section>

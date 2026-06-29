@@ -114,6 +114,23 @@ export const shopSettings = pgTable("shop_settings", {
     .defaultNow(),
 });
 
+export const productFavorites = pgTable(
+  "product_favorites",
+  {
+    visitorId: text("visitor_id").notNull(),
+    productId: uuid("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("product_favorites_visitor_id_idx").on(table.visitorId),
+    index("product_favorites_product_id_idx").on(table.productId),
+  ],
+);
+
 export const orderCaptures = pgTable(
   "order_captures",
   {

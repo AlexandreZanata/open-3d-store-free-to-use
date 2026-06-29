@@ -1,14 +1,15 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { AppShell } from "@/components/AppShell";
+import { CategoryCard } from "@/components/CategoryCard";
 import { categoriesQueryKey } from "@/hooks/useCategories";
 import { productsQueryKey } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
 import { useProducts } from "@/hooks/useProducts";
 import { fetchCategories } from "@/lib/api/categories";
 import { fetchProducts } from "@/lib/api/products";
-import { categoryGridCols, pagePadding } from "@/lib/layout";
+import { categoryGridCols, desktopOnly, pagePadding } from "@/lib/layout";
 import { getCurrentI18nLocale, default as i18n } from "@/i18n";
 import { brandPageTitle } from "@/lib/brand";
 
@@ -42,31 +43,29 @@ function CategoriesPage() {
   return (
     <AppShell showSearch={false} title={t("categories.title")}>
       {categoriesQuery.isLoading ? (
-        <div className={`${pagePadding} py-4 ${categoryGridCols}`}>
-          {Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className="aspect-[5/4] rounded-2xl bg-muted animate-pulse" />
-          ))}
+        <div className={`${pagePadding} py-4 lg:py-8`}>
+          <div className={categoryGridCols}>
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="aspect-square rounded-2xl bg-muted animate-pulse" />
+            ))}
+          </div>
         </div>
       ) : (
-        <div className={`${pagePadding} py-4 ${categoryGridCols}`}>
-          {categories.map((category) => {
-            const count = products.filter((product) => product.categoryId === category.id).length;
-            return (
-              <Link
-                key={category.slug}
-                to="/search"
-                search={{ category: category.slug }}
-                className="aspect-[5/4] rounded-2xl bg-surface ring-1 ring-hairline p-4 flex flex-col justify-end shadow-soft lift"
-              >
-                <div>
-                  <div className="text-sm font-semibold tracking-tight">{category.name}</div>
-                  <div className="text-[11px] text-muted-foreground uppercase tracking-wider mt-0.5">
-                    {t("categories.modelsCount", { count })}
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
+        <div className={`${pagePadding} py-4 lg:py-8`}>
+          <div className={`${desktopOnly} mb-6`}>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              {t("nav.categories")}
+            </p>
+            <h2 className="mt-1 text-2xl font-semibold tracking-tight">{t("categories.title")}</h2>
+          </div>
+          <div className={categoryGridCols}>
+            {categories.map((category) => {
+              const count = products.filter((product) => product.categoryId === category.id).length;
+              return (
+                <CategoryCard key={category.slug} category={category} productCount={count} />
+              );
+            })}
+          </div>
         </div>
       )}
       {categoriesQuery.isError && (

@@ -1,69 +1,14 @@
 #!/usr/bin/env node
 /**
  * Builds transparent PNG brand assets from assets/brand/corvo-logo-source.png.
+ * Delegates to apps/api/scripts/generateBrandIcons.mjs (requires sharp via @print3d/api).
  */
-import fs from "node:fs";
+import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import sharp from "sharp";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-const src = path.join(repoRoot, "assets/brand/corvo-logo-source.png");
-const WHITE_THRESHOLD = 245;
+const script = path.join(repoRoot, "apps/api/scripts/generateBrandIcons.mjs");
 
-function removeWhiteBackground(buffer) {
-  for (let i = 0; i < buffer.length; i += 4) {
-    const r = buffer[i];
-    const g = buffer[i + 1];
-    const b = buffer[i + 2];
-    if (r >= WHITE_THRESHOLD && g >= WHITE_THRESHOLD && b >= WHITE_THRESHOLD) {
-      buffer[i + 3] = 0;
-    }
-  }
-}
-
-async function buildLogoPng() {
-  const { data, info } = await sharp(src)
-    .ensureAlpha()
-    .raw()
-    .toBuffer({ resolveWithObject: true });
-  removeWhiteBackground(data);
-  return sharp(data, { raw: info }).trim().png().toBuffer();
-}
-
-const logo = await buildLogoPng();
-
-const brandTargets = [
-  path.join(repoRoot, "apps/web/public/brand/corvo-logo.png"),
-  path.join(repoRoot, "apps/admin/public/brand/corvo-logo.png"),
-];
-
-for (const target of brandTargets) {
-  fs.mkdirSync(path.dirname(target), { recursive: true });
-  await fs.promises.writeFile(target, logo);
-}
-
-const faviconTargets = [
-  path.join(repoRoot, "apps/web/public/favicon.png"),
-  path.join(repoRoot, "apps/admin/public/favicon.png"),
-];
-
-for (const target of faviconTargets) {
-  await sharp(logo)
-    .resize(192, 192, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
-    .png()
-    .toFile(target);
-}
-
-await sharp(logo)
-  .resize(32, 32, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
-  .png()
-  .toFile(path.join(repoRoot, "apps/web/public/favicon-32.png"));
-
-await sharp(logo)
-  .resize(180, 180, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
-  .png()
-  .toFile(path.join(repoRoot, "apps/web/public/apple-touch-icon.png"));
-
-const meta = await sharp(logo).metadata();
-console.log(`Corvo logo ${meta.width}x${meta.height} written to web and admin public/`);
+const result = spawnSync("node", [script], { stdio: "inherit", cwd: repoRoot });
+process.exit(result.status ?? 1);

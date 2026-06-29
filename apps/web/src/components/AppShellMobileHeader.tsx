@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { BrandMark } from "@/components/BrandMark";
+import { CartCountBadge } from "@/components/CartCountBadge";
+import { useCartCount } from "@/hooks/useCartCount";
 import { mobileOnly, shellMaxWidth } from "@/lib/layout";
 
 type Props = {
@@ -15,6 +17,7 @@ type Props = {
 /** Mobile header — markup and classes frozen; do not add `lg:` overrides here. */
 export function AppShellMobileHeader({ showSearch = true, showBack = false, title }: Props) {
   const { t } = useTranslation();
+  const cartCount = useCartCount();
 
   return (
     <header
@@ -31,7 +34,7 @@ export function AppShellMobileHeader({ showSearch = true, showBack = false, titl
           </Link>
         ) : (
           <Link to="/" className="flex items-center gap-2 shrink-0" aria-label={t("nav.home")}>
-            <BrandMark size="sm" />
+            <BrandMark size="md" />
             <span className="text-sm font-semibold tracking-tight">{t("app.name")}</span>
           </Link>
         )}
@@ -54,10 +57,13 @@ export function AppShellMobileHeader({ showSearch = true, showBack = false, titl
 
         <Link
           to="/cart"
-          aria-label={t("nav.cart")}
+          aria-label={
+            cartCount > 0 ? t("nav.cartWithCount", { count: cartCount }) : t("nav.cart")
+          }
           className="relative size-9 grid place-items-center rounded-full hover:bg-muted press"
         >
           <ShoppingBag className="size-5" />
+          <CartCountBadge count={cartCount} className="-top-0.5 -right-0.5" />
         </Link>
       </div>
     </header>

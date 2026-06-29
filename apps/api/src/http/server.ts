@@ -10,6 +10,7 @@ import { registerLocale } from "./plugins/locale.js";
 import { registerRateLimit } from "./plugins/rate-limit.js";
 import { registerModelAssetRoutes } from "./routes/model-assets.routes.js";
 import { registerCatalogEventRoutes } from "./routes/catalog-events.routes.js";
+import { registerFavoriteRoutes } from "./routes/favorites.routes.js";
 import { registerHealthRoutes } from "./routes/health.routes.js";
 import { registerProductRoutes } from "./routes/products.routes.js";
 import { registerCategoryRoutes } from "./routes/categories.routes.js";
@@ -90,6 +91,7 @@ export async function buildServer(
       await registerProductRoutes(api, container);
       await registerCategoryRoutes(api, container);
       await registerOrderRoutes(api, container);
+      await registerFavoriteRoutes(api, container);
       await registerCatalogEventRoutes(api, container);
       await registerShopConfigRoutes(api, container);
       await api.register(

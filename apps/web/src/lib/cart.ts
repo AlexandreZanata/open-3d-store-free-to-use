@@ -1,6 +1,7 @@
 import type { ProductListItem } from "@print3d/shared-types";
 
 const CART_STORAGE_KEY = "print3d-cart";
+export const CART_CHANGE_EVENT = "print3d-cart-change";
 
 export type CartItem = {
   productId: string;
@@ -33,6 +34,7 @@ export function writeCart(items: CartItem[]): void {
     return;
   }
   localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+  window.dispatchEvent(new CustomEvent(CART_CHANGE_EVENT));
 }
 
 export function addToCart(product: ProductListItem, quantity = 1): CartItem[] {

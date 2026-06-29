@@ -2,11 +2,11 @@ import { cn } from "@/lib/utils";
 
 const ICON_SRC = "/brand/corvo-logo.png";
 
-/** Crow mark aspect ratio from ICONE.png crop (616×424). */
+/** Shared mark sizes — keep web and admin BrandMark in sync */
 const BRAND_MARK_SIZES = {
-  sm: "h-8 w-[2.875rem]",
-  md: "h-9 w-[3.25rem]",
-  lg: "h-12 w-[4.375rem]",
+  sm: "h-9 w-[3.25rem]",
+  md: "h-11 w-[4rem]",
+  lg: "h-14 w-[5rem]",
 } as const;
 
 type BrandMarkSize = keyof typeof BRAND_MARK_SIZES;

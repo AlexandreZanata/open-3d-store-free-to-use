@@ -1,5 +1,6 @@
 import type { AppConfig } from "./config.js";
 import { CaptureOrder } from "./application/use-cases/CaptureOrder.js";
+import { FavoriteProducts } from "./application/use-cases/FavoriteProducts.js";
 import { GetShopConfig } from "./application/use-cases/GetShopConfig.js";
 import { GetCategories } from "./application/use-cases/GetCategories.js";
 import { GetProductBySlug } from "./application/use-cases/GetProductBySlug.js";
@@ -24,6 +25,7 @@ import { DrizzleAdminUserRepository } from "./infrastructure/repositories/Drizzl
 import { DrizzleAuditLogRepository } from "./infrastructure/repositories/DrizzleAuditLogRepository.js";
 import { DrizzleCategoryRepository } from "./infrastructure/repositories/DrizzleCategoryRepository.js";
 import { DrizzleOrderCaptureRepository } from "./infrastructure/repositories/DrizzleOrderCaptureRepository.js";
+import { DrizzleProductFavoriteRepository } from "./infrastructure/repositories/DrizzleProductFavoriteRepository.js";
 import { DrizzleProductRepository } from "./infrastructure/repositories/DrizzleProductRepository.js";
 import { DrizzleShopSettingsRepository } from "./infrastructure/repositories/DrizzleShopSettingsRepository.js";
 import { LocalFileStorage } from "./infrastructure/storage/LocalFileStorage.js";
@@ -40,6 +42,7 @@ export type AppContainer = {
   searchProducts: SearchProducts;
   getCategories: GetCategories;
   captureOrder: CaptureOrder;
+  favoriteProducts: FavoriteProducts;
   getShopConfig: GetShopConfig;
   admin: AdminUseCases;
 };
@@ -51,6 +54,7 @@ export async function createContainer(
   const redis = await createRedisClient(config.REDIS_URL);
 
   const productRepo = new DrizzleProductRepository(db);
+  const favoriteRepo = new DrizzleProductFavoriteRepository(db);
   const shopSettingsRepo = new DrizzleShopSettingsRepository(db);
   const categoryRepo = new DrizzleCategoryRepository(db);
   const orderRepo = new DrizzleOrderCaptureRepository(db);
@@ -99,6 +103,7 @@ export async function createContainer(
       shopSettingsRepo,
       config.WHATSAPP_PHONE_NUMBER,
     ),
+    favoriteProducts: new FavoriteProducts(favoriteRepo, productRepo),
     getShopConfig: new GetShopConfig(shopSettingsRepo),
     admin,
   };

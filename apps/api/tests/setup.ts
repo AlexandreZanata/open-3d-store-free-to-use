@@ -19,6 +19,13 @@ export function createTestDb(
 }
 
 export async function truncateCatalogTables(pool: pg.Pool): Promise<void> {
+  await pool.query(`
+    DO $$ BEGIN
+      IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'product_favorites') THEN
+        TRUNCATE TABLE product_favorites RESTART IDENTITY CASCADE;
+      END IF;
+    END $$;
+  `);
   await pool.query(
     "TRUNCATE TABLE products, order_captures, domain_events RESTART IDENTITY CASCADE",
   );

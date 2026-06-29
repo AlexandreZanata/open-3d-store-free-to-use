@@ -72,7 +72,7 @@ export function CategoryForm({
             Active
           </label>
         </div>
-        <FileUploadField kind="thumbnail" label="Image URL" value={state.imageUrl} onChange={(url) => patch({ imageUrl: url })} />
+        <FileUploadField kind="thumbnail" label="Category image" value={state.imageUrl} onChange={(url) => patch({ imageUrl: url })} />
       </Card>
 
       <Card>

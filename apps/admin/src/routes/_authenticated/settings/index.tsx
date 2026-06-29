@@ -22,14 +22,14 @@ function SettingsPage() {
   });
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8">
+    <>
       <PageHeader
         title="Shop settings"
         description="Configure materials, fulfillment, payments, and WhatsApp for your storefront."
       />
 
       {settingsQuery.isLoading ? (
-        <LoadingSpinner label="Loading settings…" />
+        <LoadingSpinner className="py-12" label="Loading settings…" />
       ) : settingsQuery.isError || !settingsQuery.data?.data ? (
         <Card>
           <p className="text-sm text-destructive">
@@ -46,11 +46,11 @@ function SettingsPage() {
         />
       )}
 
-      <Card className="border-hairline/60 bg-muted/20">
+      <Card className="mt-6 border-hairline/60 bg-muted/20">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
           System status
         </h2>
-        <dl className="mt-4 grid gap-4 sm:grid-cols-3 text-sm">
+        <dl className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 text-sm">
           <div>
             <dt className="text-muted-foreground">API base URL</dt>
             <dd className="mt-1 font-mono text-xs break-all">{getApiBaseUrl()}</dd>
@@ -73,6 +73,6 @@ function SettingsPage() {
           </div>
         </dl>
       </Card>
-    </div>
+    </>
   );
 }

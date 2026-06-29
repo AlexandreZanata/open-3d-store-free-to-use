@@ -26,6 +26,10 @@ import {
   updateAdminProduct,
 } from "./productAdminPersistence.js";
 import {
+  listProductsForBulkPreprice,
+  updateProductPreprice,
+} from "./productPrepricePersistence.js";
+import {
   findManyProducts,
   findProductById,
   findProductBySlug,
@@ -96,5 +100,13 @@ export class DrizzleProductRepository implements IProductRepository {
 
   countOrderReferences(productId: string): Promise<number> {
     return countProductOrderReferences(this.db, productId);
+  }
+
+  listForBulkPreprice() {
+    return listProductsForBulkPreprice(this.db);
+  }
+
+  updatePreprice(id: string, basePrice: number, weightGrams: number): Promise<void> {
+    return updateProductPreprice(this.db, id, basePrice, weightGrams);
   }
 }

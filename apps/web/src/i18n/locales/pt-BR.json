@@ -72,6 +72,8 @@
     "viewerScaleHint": "Escala real · mesa virtual",
     "viewerBadge": "Visualizador 3D",
     "tabModel": "Modelo 3D",
+    "studioColors": "Cores do estúdio",
+    "customHex": "Cor personalizada",
     "tabGallery": "Galeria",
     "galleryCount": "Galeria ({{count}})",
     "galleryPrev": "Imagem anterior",

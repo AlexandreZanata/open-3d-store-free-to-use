@@ -1,4 +1,5 @@
 import type { MaterialType } from "./material.types.js";
+import type { ModelPart } from "./admin/model-studio.types.js";
 
 export type { MaterialType, PaymentMethod } from "./material.types.js";
 export { MATERIAL_TYPES, PAYMENT_METHODS } from "./material.types.js";
@@ -30,6 +31,7 @@ export type Product = {
   status: PrintStatus;
   options: ProductOption[];
   modelFileUrl: string | null;
+  modelParts: ModelPart[];
   thumbnailUrl: string;
   imageUrls: string[];
   tags: string[];

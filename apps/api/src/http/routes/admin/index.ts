@@ -10,6 +10,7 @@ import { registerAdminProductRoutes } from "./products.routes.js";
 import { registerAdminUploadRoutes } from "./uploads.routes.js";
 import { registerAdminSettingsRoutes } from "./settings.routes.js";
 import { registerAdminStoreUserRoutes } from "./store-users.routes.js";
+import { registerAdminModelStudioRoutes } from "./model-studio.routes.js";
 
 export async function registerAdminRoutes(
   app: FastifyInstance,
@@ -24,4 +25,5 @@ export async function registerAdminRoutes(
   await registerAdminUploadRoutes(app, container);
   await registerAdminSettingsRoutes(app, container);
   await registerAdminStoreUserRoutes(app, container);
+  await registerAdminModelStudioRoutes(app, container);
 }

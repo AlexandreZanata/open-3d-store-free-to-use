@@ -6,6 +6,11 @@ import { handleAdminError, sendAdminProblem } from "../../errors/handleAdminErro
 import { handleUploadError } from "../../errors/handleUploadError.js";
 import { parseUploadMultipart } from "./parseUploadMultipart.js";
 
+function isMultipartTooLarge(error: Error): boolean {
+  const code = (error as { code?: string }).code;
+  return code === "FST_REQ_FILE_TOO_LARGE" || error.message.includes("request file too large");
+}
+
 export async function handleAdminUpload(
   request: FastifyRequest,
   reply: FastifyReply,
@@ -17,6 +22,12 @@ export async function handleAdminUpload(
   } catch (error) {
     if (error instanceof ZodError) {
       handleAdminError(error, request, reply);
+      return;
+    }
+    if (error instanceof Error && isMultipartTooLarge(error)) {
+      sendAdminProblem(reply, request.locale ?? "en", 413, "payload-too-large", "uploadTooLarge", {
+        kind: "model",
+      });
       return;
     }
     if (error instanceof Error && error.message === "MISSING_UPLOAD_FILE") {

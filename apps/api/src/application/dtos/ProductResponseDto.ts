@@ -25,6 +25,7 @@ export type ProductDetailDto = ProductListItemDto & {
   weightGrams: number;
   options: Product["options"];
   modelFileUrl: string | null;
+  modelParts: Product["modelParts"];
   imageUrls: string[];
 };
 
@@ -71,6 +72,7 @@ export function toProductDetailDto(
     weightGrams: product.weightGrams,
     options: product.options,
     modelFileUrl: product.modelFileUrl,
+    modelParts: product.modelParts,
     imageUrls: product.imageUrls,
   };
 }

@@ -41,6 +41,9 @@ const envSchema = z.object({
   STORE_SESSION_IDLE_TTL: z.coerce.number().int().positive().default(604_800),
   ADMIN_ORIGIN: z.string().url().default("http://127.0.0.1:6202"),
   UPLOAD_MAX_BYTES: z.coerce.number().int().positive().default(5_242_880),
+  MODEL_UPLOAD_MAX_BYTES: z.coerce.number().int().positive().default(268_435_456),
+  RABBITMQ_URL: z.string().url().optional(),
+  MODEL_PROCESSING_QUEUE: z.string().min(1).default("model.processing"),
 });
 
 export type AppConfig = z.infer<typeof envSchema>;

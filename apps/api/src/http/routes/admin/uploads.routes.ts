@@ -10,7 +10,7 @@ export async function registerAdminUploadRoutes(
   container: AppContainer,
 ): Promise<void> {
   await app.register(multipart, {
-    limits: { fileSize: container.config.UPLOAD_MAX_BYTES },
+    limits: { fileSize: container.config.MODEL_UPLOAD_MAX_BYTES },
   });
 
   app.post(

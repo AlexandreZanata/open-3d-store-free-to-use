@@ -23,9 +23,11 @@ Replaces the previous `@google/model-viewer` CDN approach so `.3mf` print files 
 
 | Prop | Type | Description |
 |------|------|-------------|
-| `modelUrl` | string | Path to `.3mf`, `.glb`, or `.gltf` under `/models/3d/` |
+| `modelUrl` | string | Path to `.3mf`, `.glb`, `.gltf`, or `.stl` under `/models/3d/` |
 | `posterUrl` | string | WebP thumbnail while loading |
 | `productName` | string | Accessible alt text |
+| `modelParts` | `ModelPart[]` | Optional mesh parts from API (for per-part colors) |
+| `partColors` | `Record<string, string>` | Part id → hex color applied in Three.js |
 
 ### Behavior
 
@@ -49,17 +51,23 @@ Replaces the previous `@google/model-viewer` CDN approach so `.3mf` print files 
   thumbnailUrl={product.thumbnailUrl}
   imageUrls={product.imageUrls}
   modelFileUrl={product.modelFileUrl}
+  modelParts={product.modelParts}
+  availableColors={shopConfig.availableColors}
 />
 ```
+
+`availableColors` comes from `GET /shop/config`. Customers pick a color per `modelParts` entry; `ModelViewer` tints meshes by index/name match.
 
 ## Model file layout (server)
 
 ```
 /var/www/print3d/models/
-├── 3d/           *.3mf, *.glb  (< 5 MB each, target < 3 MB)
+├── 3d/           *.3mf, *.glb, *.stl  (up to 256 MB; target < 50 MB for catalog)
 ├── thumbnails/   *.webp 400×400, < 50 KB
 └── images/       *.webp gallery images
 ```
+
+Admin `kind=model` uploads enqueue async mesh extraction (`model_processing_jobs` + RabbitMQ worker). Poll `GET /api/v1/admin/model-jobs/:id` for `parts` (names, estimated volume/weight) used by bulk pre-pricing.
 
 ## File optimization (before upload)
 
@@ -80,6 +88,7 @@ npx gltf-pipeline -i input.glb -o output.glb --draco.compressionLevel 7
 | glTF binary | `model/gltf-binary` | `.glb` |
 | glTF JSON | `model/gltf+json` | `.gltf` |
 | 3MF | `model/3mf` | `.3mf` |
+| STL | `model/stl` | `.stl` |
 
 ## Nginx
 

@@ -1,9 +1,18 @@
-import type { MaterialType, PaymentMethod } from "@print3d/shared-types";
+import type {
+  CalculatorSettings,
+  MaterialPricePerGram,
+  MaterialType,
+  PaymentMethod,
+  ShopColor,
+} from "@print3d/shared-types";
 
 export type ShopSettingsRecord = {
   id: string;
   whatsappPhone: string;
   enabledMaterials: MaterialType[];
+  availableColors: ShopColor[];
+  materialPricing: MaterialPricePerGram;
+  calculator: CalculatorSettings;
   offersDelivery: boolean;
   pickupOnly: boolean;
   pickupLocation: string | null;

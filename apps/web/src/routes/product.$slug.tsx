@@ -9,6 +9,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { ProductCardSkeleton, ProductDetailSkeleton } from "@/components/LoadingSkeletons";
 import { ProductMediaPanel } from "@/components/ProductMedia";
 import { productQueryKey, useProduct } from "@/hooks/useProduct";
+import { useShopConfig } from "@/hooks/useShopConfig";
 import { useProducts } from "@/hooks/useProducts";
 import { ApiError } from "@/lib/api/client";
 import { fetchProductBySlug } from "@/lib/api/products";
@@ -98,6 +99,7 @@ function ProductError({ error, reset }: { error: Error; reset: () => void }) {
 function ProductPage() {
   const { slug } = Route.useParams();
   const productQuery = useProduct(slug);
+  const shopConfigQuery = useShopConfig();
   const product = productQuery.data;
   const { t } = useTranslation();
   const relatedQuery = useProducts({ limit: 20, page: 1 });
@@ -132,6 +134,8 @@ function ProductPage() {
               thumbnailUrl={detail.thumbnailUrl}
               imageUrls={detail.imageUrls}
               modelFileUrl={detail.modelFileUrl}
+              modelParts={detail.modelParts}
+              availableColors={shopConfigQuery.data?.availableColors ?? []}
             />
           </section>
 

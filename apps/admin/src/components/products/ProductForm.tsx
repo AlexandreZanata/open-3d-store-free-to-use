@@ -9,6 +9,7 @@ import {
   applySlugFromPtBrName,
   type ProductFormState,
 } from "@/components/products/productFormState";
+import { ModelUploadField } from "@/components/uploads/ModelUploadField";
 import { FileUploadField } from "@/components/uploads/FileUploadField";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -122,7 +123,31 @@ export function ProductForm({
       <Card className="space-y-4">
         <h2 className={adminTokens.sectionTitle}>Media</h2>
         <FileUploadField kind="thumbnail" label="Thumbnail URL" value={state.thumbnailUrl} onChange={(url) => patch({ thumbnailUrl: url })} error={errors.thumbnailUrl} />
-        <FileUploadField kind="model" label="3D model URL" value={state.modelFileUrl} onChange={(url) => patch({ modelFileUrl: url })} />
+        <ModelUploadField
+          label="3D model URL"
+          value={state.modelFileUrl}
+          onChange={(url) => patch({ modelFileUrl: url })}
+          onPartsDetected={(parts) => {
+            const totalWeight = parts.reduce((sum, part) => sum + (part.weightGrams ?? 0), 0);
+            patch({
+              modelParts: parts,
+              weightGrams: totalWeight > 0 ? String(Math.round(totalWeight)) : state.weightGrams,
+            });
+          }}
+        />
+        {state.modelParts.length > 0 ? (
+          <ul className="rounded-lg border border-hairline divide-y divide-hairline text-sm">
+            {state.modelParts.map((part) => (
+              <li key={part.id} className="flex justify-between gap-4 px-3 py-2">
+                <span className="font-medium">{part.name}</span>
+                <span className="text-muted-foreground tabular-nums">
+                  {part.weightGrams != null ? `${part.weightGrams} g` : "—"}
+                  {part.volumeCm3 != null ? ` · ${part.volumeCm3.toFixed(1)} cm³` : ""}
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : null}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <h3 className={adminTokens.label}>Gallery images</h3>

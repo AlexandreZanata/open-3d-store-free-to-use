@@ -7,6 +7,9 @@ export function toShopSettingsDto(record: ShopSettingsRecord): ShopSettings {
     id: record.id,
     whatsappPhone: record.whatsappPhone,
     enabledMaterials: record.enabledMaterials,
+    availableColors: record.availableColors,
+    materialPricing: record.materialPricing,
+    calculator: record.calculator,
     offersDelivery: record.offersDelivery,
     pickupOnly: record.pickupOnly,
     pickupLocation: record.pickupLocation,
@@ -20,6 +23,7 @@ export function toShopSettingsDto(record: ShopSettingsRecord): ShopSettings {
 export function toShopConfigDto(record: ShopSettingsRecord): ShopConfig {
   return {
     enabledMaterials: record.enabledMaterials,
+    availableColors: record.availableColors,
     offersDelivery: record.offersDelivery,
     pickupOnly: record.pickupOnly,
     pickupLocation: record.pickupLocation,

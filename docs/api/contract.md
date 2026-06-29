@@ -218,6 +218,9 @@ Public shop policy for storefront (materials offered, fulfillment, payments, dep
 {
   "data": {
     "enabledMaterials": ["PLA", "PETG", "PETG_HF"],
+    "availableColors": [
+      { "id": "pla-white", "name": "White", "hex": "#F5F5F5" }
+    ],
     "offersDelivery": false,
     "pickupOnly": true,
     "pickupLocation": "Pickup at the studio — Cuiabá, MT",

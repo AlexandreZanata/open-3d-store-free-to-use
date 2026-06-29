@@ -5,11 +5,39 @@ import {
   MissingRequiredOptionError,
   ProductNotFoundError,
 } from "../../../src/application/errors/ApplicationErrors.js";
+import type { IShopSettingsRepository } from "../../../src/domain/repositories/IShopSettingsRepository.js";
 import type { IOrderCaptureRepository } from "../../../src/domain/repositories/IOrderCaptureRepository.js";
 import type { IEventPublisher } from "../../../src/application/ports/IEventPublisher.js";
 import { createMockProductRepository, sampleProduct } from "./testHelpers.js";
 
 const phoneNumber = "5565999999999";
+
+function createMockShopSettings(
+  whatsappPhone = phoneNumber,
+): IShopSettingsRepository {
+  return {
+    get: vi.fn(async () => ({
+      id: "settings-1",
+      whatsappPhone,
+      enabledMaterials: ["PLA"],
+      availableColors: [],
+      materialPricing: {},
+      calculator: {
+        machineHourlyRateCents: 1500,
+        handlingFeeCents: 500,
+        defaultInfillFactor: 0.2,
+      },
+      offersDelivery: false,
+      pickupOnly: true,
+      pickupLocation: null,
+      paymentMethods: ["pix"],
+      requiresDeposit: false,
+      depositPercent: null,
+      updatedAt: new Date(),
+    })),
+    upsert: vi.fn(),
+  };
+}
 
 describe("CaptureOrder", () => {
   it("returns wa.me link and R$ 90,00 total per POST /orders/capture contract", async () => {
@@ -19,7 +47,7 @@ describe("CaptureOrder", () => {
     const orders: IOrderCaptureRepository = {
       save: vi.fn(async () => undefined),
     };
-    const useCase = new CaptureOrder(products, orders, phoneNumber);
+    const useCase = new CaptureOrder(products, orders, createMockShopSettings(), phoneNumber);
 
     const result = await useCase.execute({
       items: [
@@ -51,7 +79,7 @@ describe("CaptureOrder", () => {
         savedTotal = totalCents;
       }),
     };
-    const useCase = new CaptureOrder(products, orders, phoneNumber);
+    const useCase = new CaptureOrder(products, orders, createMockShopSettings(), phoneNumber);
 
     await useCase.execute({
       items: [
@@ -84,6 +112,7 @@ describe("CaptureOrder", () => {
     const useCase = new CaptureOrder(
       products,
       { save: vi.fn() },
+      createMockShopSettings(),
       phoneNumber,
     );
 
@@ -107,6 +136,7 @@ describe("CaptureOrder", () => {
     const useCase = new CaptureOrder(
       products,
       { save: vi.fn() },
+      createMockShopSettings(),
       phoneNumber,
     );
 
@@ -133,6 +163,7 @@ describe("CaptureOrder", () => {
     const useCase = new CaptureOrder(
       products,
       { save: vi.fn() },
+      createMockShopSettings(),
       phoneNumber,
       events,
     );

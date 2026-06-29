@@ -108,4 +108,47 @@ describe("Admin upload routes (contract)", () => {
     expect(response.statusCode).toBe(201);
     expect(response.json().data.kind).toBe("thumbnail");
   });
+
+  it.skipIf(!hasDatabase)("uploads STL model with application/octet-stream MIME", async () => {
+    const stl = buildMinimalBinaryStl();
+    const multipart = buildMultipartPayload({
+      kind: "model",
+      filename: "part.stl",
+      mimeType: "application/octet-stream",
+      data: stl,
+    });
+
+    const response = await app.inject(
+      withAdminCookie(sessionCookie, {
+        method: "POST",
+        url: "/api/v1/admin/uploads",
+        headers: {
+          "content-type": multipart.contentType,
+        },
+        payload: multipart.payload,
+      }),
+    );
+
+    expect(response.statusCode).toBe(201);
+    const body = response.json().data;
+    expect(body.url).toMatch(/^\/models\/3d\/.+\.stl$/);
+    expect(body.kind).toBe("model");
+    expect(body.mimeType).toBe("model/stl");
+    expect(body.sizeBytes).toBe(stl.byteLength);
+  });
 });
+
+function buildMinimalBinaryStl(): Buffer {
+  const buffer = Buffer.alloc(134);
+  buffer.writeUInt32LE(1, 80);
+  buffer.writeFloatLE(0, 84 + 12);
+  buffer.writeFloatLE(0, 84 + 16);
+  buffer.writeFloatLE(0, 84 + 20);
+  buffer.writeFloatLE(10, 84 + 24);
+  buffer.writeFloatLE(0, 84 + 28);
+  buffer.writeFloatLE(0, 84 + 32);
+  buffer.writeFloatLE(0, 84 + 36);
+  buffer.writeFloatLE(10, 84 + 40);
+  buffer.writeFloatLE(0, 84 + 44);
+  return buffer;
+}

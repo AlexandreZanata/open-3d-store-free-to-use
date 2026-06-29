@@ -576,7 +576,7 @@ Parts may arrive in any order; the server reads the full multipart stream.
 | kind | Accepted upload MIME | Stored as |
 |------|----------------------|-----------|
 | `thumbnail`, `gallery` | `image/webp`, `image/jpeg`, `image/png` | `image/webp` (`.webp`) |
-| `model` | `model/gltf-binary`, `model/gltf+json`, `model/3mf` | same (`.glb`, `.gltf`, `.3mf`) |
+| `model` | `model/gltf-binary`, `model/gltf+json`, `model/3mf`, `model/stl` | same (`.glb`, `.gltf`, `.3mf`, `.stl`) |
 
 JPEG and PNG uploads are converted server-side to WebP before storage (catalog asset convention).
 
@@ -584,13 +584,13 @@ Browsers may send non-standard MIME types (`image/jpg`, `application/octet-strea
 
 In development, if `MODEL_FILES_BASE_PATH` is not writable (e.g. `/var/www/...`), the API falls back to `apps/api/storage/models`.
 
-**Size limits** (see `UPLOAD_MAX_BYTES`):
+**Size limits** (`MODEL_UPLOAD_MAX_BYTES` for multipart; per-kind caps in `ADMIN_UPLOAD_MAX_BYTES`):
 
 | kind | Max size |
 |------|----------|
 | `thumbnail` | 512 KB |
 | `gallery` | 2 MB |
-| `model` | 5 MB |
+| `model` | 256 MB |
 
 Files stored under `UPLOAD_DIR` mirroring [../features/3d-viewer.md](../features/3d-viewer.md):
 
@@ -613,7 +613,54 @@ Files stored under `UPLOAD_DIR` mirroring [../features/3d-viewer.md](../features
 
 **Response 400:** Missing file or invalid multipart.
 
-**Response 422:** MIME not allowed or file too large.
+**Response 413:** Multipart file exceeds `MODEL_UPLOAD_MAX_BYTES`.
+
+**Response 422:** MIME not allowed or file too large (post-parse validation).
+
+---
+
+## Model studio
+
+### `GET /model-jobs/:id`
+
+Poll async mesh extraction after `kind=model` upload. Worker queue: `MODEL_PROCESSING_QUEUE` (default `model.processing`); requires `RABBITMQ_URL` and `pnpm --filter @print3d/api worker:model-processing`.
+
+**Response 200:**
+
+```json
+{
+  "data": {
+    "id": "019f…",
+    "status": "completed",
+    "sourceUrl": "/models/3d/….stl",
+    "parts": [
+      { "id": "…", "name": "Solid", "volumeCm3": 12.5, "weightGrams": 3.1 }
+    ],
+    "errorMessage": null,
+    "createdAt": "2026-06-29T12:00:00.000Z",
+    "updatedAt": "2026-06-29T12:00:05.000Z"
+  }
+}
+```
+
+`status`: `pending` \| `processing` \| `completed` \| `failed`.
+
+### `POST /products/bulk-preprice`
+
+Recalculates `basePrice` (and total `weightGrams`) for products with non-empty `modelParts`, using shop `materialPricing` and `calculator` settings.
+
+**Response 200:**
+
+```json
+{
+  "data": {
+    "updatedCount": 4,
+    "skippedCount": 2
+  }
+}
+```
+
+Shop settings (`GET`/`PATCH /settings`) also expose `availableColors`, `materialPricing`, and `calculator` for the model studio UI.
 
 ---
 

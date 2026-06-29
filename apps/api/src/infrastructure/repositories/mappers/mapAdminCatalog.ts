@@ -23,6 +23,7 @@ export function mapAdminProductRow(row: ProductRow): AdminProductListItem {
     status: row.status,
     options: row.options as AdminProductListItem["options"],
     modelFileUrl: row.modelFileUrl,
+    modelParts: row.modelParts as AdminProductListItem["modelParts"],
     thumbnailUrl: row.thumbnailUrl,
     imageUrls: row.imageUrls as string[],
     tags: row.tags as string[],

@@ -16,4 +16,5 @@ export type AssetUploadResult = {
 
 export interface IAssetStorage {
   saveUpload(input: AssetUploadInput): Promise<AssetUploadResult>;
+  resolvePathFromPublicUrl(publicUrl: string): string;
 }

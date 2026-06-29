@@ -50,10 +50,22 @@ export type {
   ShopSettingsResponse,
   UpdateShopSettingsPayload,
 } from "./admin/index.js";
+export type {
+  BulkPrepriceResponse,
+  BulkPrepriceResult,
+  CalculatorSettings,
+  MaterialPricePerGram,
+  ModelPart,
+  ModelProcessingJob,
+  ModelProcessingJobResponse,
+  ModelProcessingJobStatus,
+  ShopColor,
+} from "./admin/index.js";
 export {
   ADMIN_UPLOAD_IMAGE_INPUT_MIMES,
   ADMIN_UPLOAD_MAX_BYTES,
   ADMIN_UPLOAD_MIME_ALLOWLIST,
+  ADMIN_UPLOAD_MODEL_INPUT_EXTENSIONS,
 } from "./admin/index.js";
 export type {
   AdminRole,

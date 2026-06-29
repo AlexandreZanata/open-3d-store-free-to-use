@@ -27,6 +27,9 @@ export class UpdateShopSettingsAdmin {
     const record = await this.settings.upsert({
       whatsappPhone: input.payload.whatsappPhone,
       enabledMaterials: input.payload.enabledMaterials,
+      availableColors: input.payload.availableColors,
+      materialPricing: input.payload.materialPricing,
+      calculator: input.payload.calculator,
       offersDelivery: input.payload.offersDelivery,
       pickupOnly: input.payload.pickupOnly,
       pickupLocation: input.payload.pickupLocation,

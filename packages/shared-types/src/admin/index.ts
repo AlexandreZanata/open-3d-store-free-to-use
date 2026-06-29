@@ -56,6 +56,7 @@ export {
   ADMIN_UPLOAD_IMAGE_INPUT_MIMES,
   ADMIN_UPLOAD_MAX_BYTES,
   ADMIN_UPLOAD_MIME_ALLOWLIST,
+  ADMIN_UPLOAD_MODEL_INPUT_EXTENSIONS,
 } from "./upload.types.js";
 export type {
   AdminStoreUserDetail,
@@ -69,3 +70,14 @@ export type {
   ShopSettingsResponse,
   UpdateShopSettingsPayload,
 } from "./shop-settings.types.js";
+export type {
+  BulkPrepriceResponse,
+  BulkPrepriceResult,
+  CalculatorSettings,
+  MaterialPricePerGram,
+  ModelPart,
+  ModelProcessingJob,
+  ModelProcessingJobResponse,
+  ModelProcessingJobStatus,
+  ShopColor,
+} from "./model-studio.types.js";

@@ -1,15 +1,28 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import type { ModelPart } from "@print3d/shared-types";
+
+import type { ModelViewerHandle } from "./threeScene";
+
 type ModelViewerProps = {
   modelUrl: string;
   posterUrl: string;
   productName: string;
+  modelParts?: ModelPart[];
+  partColors?: Record<string, string>;
 };
 
-export function ModelViewer({ modelUrl, posterUrl, productName }: ModelViewerProps) {
+export function ModelViewer({
+  modelUrl,
+  posterUrl,
+  productName,
+  modelParts = [],
+  partColors = {},
+}: ModelViewerProps) {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
+  const viewerRef = useRef<ModelViewerHandle | null>(null);
   const [failed, setFailed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [dimensions, setDimensions] = useState<string | null>(null);
@@ -20,19 +33,22 @@ export function ModelViewer({ modelUrl, posterUrl, productName }: ModelViewerPro
       return;
     }
 
-    let cleanup: (() => void) | undefined;
     let cancelled = false;
     setLoading(true);
     setFailed(false);
     setDimensions(null);
+    viewerRef.current?.dispose();
+    viewerRef.current = null;
 
     void import("./threeScene")
       .then(({ mountThreeModelViewer }) => {
         if (cancelled) {
           return;
         }
-        cleanup = mountThreeModelViewer(container, {
+        const handle = mountThreeModelViewer(container, {
           modelUrl,
+          modelParts,
+          partColors,
           onReady: () => {
             if (!cancelled) {
               setLoading(false);
@@ -50,6 +66,7 @@ export function ModelViewer({ modelUrl, posterUrl, productName }: ModelViewerPro
             }
           },
         });
+        viewerRef.current = handle;
       })
       .catch(() => {
         if (!cancelled) {
@@ -60,9 +77,16 @@ export function ModelViewer({ modelUrl, posterUrl, productName }: ModelViewerPro
 
     return () => {
       cancelled = true;
-      cleanup?.();
+      viewerRef.current?.dispose();
+      viewerRef.current = null;
     };
-  }, [modelUrl]);
+    // partColors applied in separate effect to avoid full scene remount
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- modelUrl/modelParts only
+  }, [modelUrl, modelParts]);
+
+  useEffect(() => {
+    viewerRef.current?.updatePartColors(partColors);
+  }, [partColors]);
 
   if (failed) {
     return (

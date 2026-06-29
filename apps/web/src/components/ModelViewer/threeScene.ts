@@ -4,6 +4,8 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { STLLoader } from "three/addons/loaders/STLLoader.js";
 import { ThreeMFLoader } from "three/addons/loaders/3MFLoader.js";
 
+import type { ModelPart } from "@print3d/shared-types";
+
 import {
   detectModelFormat,
   formatDimensionsMm,
@@ -12,9 +14,12 @@ import {
 } from "@/lib/modelFormat";
 
 const SCENE_BG = 0xf4f4f5;
+const DEFAULT_MESH_COLOR = 0x9ca3af;
 
 export type MountOptions = {
   modelUrl: string;
+  modelParts?: ModelPart[];
+  partColors?: Record<string, string>;
   onReady?: () => void;
   onError?: () => void;
   onDimensions?: (text: string) => void;
@@ -88,7 +93,7 @@ async function loadModel(url: string, format: ModelFormat): Promise<THREE.Object
     const loader = new STLLoader();
     const geometry = await loader.loadAsync(url);
     const material = new THREE.MeshStandardMaterial({
-      color: 0x9ca3af,
+      color: DEFAULT_MESH_COLOR,
       metalness: 0.12,
       roughness: 0.62,
     });
@@ -100,7 +105,45 @@ async function loadModel(url: string, format: ModelFormat): Promise<THREE.Object
   return gltf.scene;
 }
 
-export function mountThreeModelViewer(container: HTMLElement, options: MountOptions): () => void {
+function applyPartColors(
+  root: THREE.Object3D,
+  modelParts: ModelPart[],
+  partColors: Record<string, string>,
+): void {
+  let meshIndex = 0;
+  root.traverse((child) => {
+    if (!(child instanceof THREE.Mesh)) {
+      return;
+    }
+    const part =
+      modelParts[meshIndex] ??
+      modelParts.find((candidate) => candidate.name === child.name);
+    meshIndex += 1;
+    if (!part) {
+      return;
+    }
+    const hex = partColors[part.id];
+    if (!hex) {
+      return;
+    }
+    const materials = Array.isArray(child.material) ? child.material : [child.material];
+    for (const material of materials) {
+      if (material instanceof THREE.MeshStandardMaterial) {
+        material.color.set(hex);
+      }
+    }
+  });
+}
+
+export type ModelViewerHandle = {
+  dispose: () => void;
+  updatePartColors: (partColors: Record<string, string>) => void;
+};
+
+export function mountThreeModelViewer(
+  container: HTMLElement,
+  options: MountOptions,
+): ModelViewerHandle {
   const format = detectModelFormat(options.modelUrl);
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(SCENE_BG);
@@ -151,6 +194,9 @@ export function mountThreeModelViewer(container: HTMLElement, options: MountOpti
       });
       const size = placeOnDesk(object);
       scene.add(object);
+      if (options.modelParts && options.partColors) {
+        applyPartColors(object, options.modelParts, options.partColors);
+      }
       fitCamera(camera, controls, size, format);
       options.onDimensions?.(formatDimensionsMm(size.x, size.y, size.z, format));
       options.onReady?.();
@@ -173,15 +219,22 @@ export function mountThreeModelViewer(container: HTMLElement, options: MountOpti
   });
   resizeObserver.observe(container);
 
-  return () => {
-    cancelled = true;
-    cancelAnimationFrame(frameId);
-    resizeObserver.disconnect();
-    if (modelRoot) {
-      scene.remove(modelRoot);
-    }
-    controls.dispose();
-    renderer.dispose();
-    container.removeChild(renderer.domElement);
+  return {
+    updatePartColors(partColors: Record<string, string>) {
+      if (modelRoot && options.modelParts) {
+        applyPartColors(modelRoot, options.modelParts, partColors);
+      }
+    },
+    dispose() {
+      cancelled = true;
+      cancelAnimationFrame(frameId);
+      resizeObserver.disconnect();
+      if (modelRoot) {
+        scene.remove(modelRoot);
+      }
+      controls.dispose();
+      renderer.dispose();
+      container.removeChild(renderer.domElement);
+    },
   };
 }

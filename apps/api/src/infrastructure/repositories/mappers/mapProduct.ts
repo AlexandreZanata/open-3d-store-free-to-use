@@ -1,4 +1,4 @@
-import type { Product, ProductOption } from "@print3d/shared-types";
+import type { Product, ProductOption, ModelPart } from "@print3d/shared-types";
 
 import type { SupportedLocale } from "../../../domain/value-objects/Locale.js";
 import type { products } from "../../db/schema.js";
@@ -39,6 +39,7 @@ export function mapProductRow(
     status: row.status,
     options: row.options as ProductOption[],
     modelFileUrl: row.modelFileUrl,
+    modelParts: row.modelParts as ModelPart[],
     thumbnailUrl: row.thumbnailUrl,
     imageUrls: row.imageUrls as string[],
     tags: row.tags as string[],

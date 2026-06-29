@@ -2,6 +2,7 @@ import type {
   AdminProductDetail,
   CreateProductPayload,
   MaterialType,
+  ModelPart,
   PrintStatus,
   ProductOption,
 } from "@print3d/shared-types";
@@ -21,6 +22,7 @@ export type ProductFormState = {
   status: PrintStatus;
   options: ProductOption[];
   modelFileUrl: string;
+  modelParts: ModelPart[];
   thumbnailUrl: string;
   imageUrls: string[];
   tags: string;
@@ -39,6 +41,7 @@ export function createEmptyProductForm(): ProductFormState {
     status: "active",
     options: [],
     modelFileUrl: "",
+    modelParts: [],
     thumbnailUrl: "",
     imageUrls: [],
     tags: "",
@@ -61,6 +64,7 @@ export function productToFormState(product: AdminProductDetail): ProductFormStat
     status: product.status,
     options: product.options,
     modelFileUrl: product.modelFileUrl ?? "",
+    modelParts: product.modelParts ?? [],
     thumbnailUrl: product.thumbnailUrl,
     imageUrls: product.imageUrls.length > 0 ? product.imageUrls : [],
     tags: product.tags.join(", "),
@@ -111,6 +115,7 @@ export function productFormToPayload(state: ProductFormState): CreateProductPayl
     status: state.status,
     options: cleanedOptions,
     modelFileUrl: state.modelFileUrl.trim().length > 0 ? state.modelFileUrl.trim() : null,
+    modelParts: state.modelParts,
     thumbnailUrl: state.thumbnailUrl.trim(),
     imageUrls: state.imageUrls.map((url) => url.trim()).filter(Boolean),
     tags: state.tags

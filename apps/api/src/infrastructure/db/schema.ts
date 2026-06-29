@@ -76,6 +76,7 @@ export const products = pgTable(
     status: printStatusEnum("status").notNull().default("active"),
     options: jsonb("options").notNull().default([]),
     modelFileUrl: text("model_file_url"),
+    modelParts: jsonb("model_parts").notNull().default([]),
     thumbnailUrl: text("thumbnail_url").notNull(),
     imageUrls: jsonb("image_urls").notNull().default([]),
     tags: jsonb("tags").notNull().default([]),
@@ -109,10 +110,43 @@ export const shopSettings = pgTable("shop_settings", {
   paymentMethods: jsonb("payment_methods").notNull().default([]),
   requiresDeposit: boolean("requires_deposit").notNull().default(false),
   depositPercent: integer("deposit_percent"),
+  availableColors: jsonb("available_colors").notNull().default([]),
+  materialPricing: jsonb("material_pricing").notNull().default({}),
+  calculatorSettings: jsonb("calculator_settings")
+    .notNull()
+    .default({
+      machineHourlyRateCents: 1500,
+      handlingFeeCents: 500,
+      defaultInfillFactor: 0.2,
+    }),
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
 });
+
+export const modelProcessingJobs = pgTable(
+  "model_processing_jobs",
+  {
+    id: uuid("id")
+      .primaryKey()
+      .default(sql`uuidv7()`),
+    status: text("status").notNull().default("pending"),
+    sourceUrl: text("source_url").notNull(),
+    sourcePath: text("source_path").notNull(),
+    parts: jsonb("parts").notNull().default([]),
+    errorMessage: text("error_message"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("model_processing_jobs_status_idx").on(table.status),
+    index("model_processing_jobs_created_at_idx").on(table.createdAt),
+  ],
+);
 
 export const productFavorites = pgTable(
   "product_favorites",

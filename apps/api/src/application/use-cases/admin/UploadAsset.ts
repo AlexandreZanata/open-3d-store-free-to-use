@@ -1,6 +1,8 @@
 import type { AdminUploadKind } from "@print3d/shared-types";
 
 import type { IAssetStorage } from "../../ports/IAssetStorage.js";
+import type { IModelProcessingQueue } from "../../ports/IModelProcessingQueue.js";
+import type { IModelProcessingJobRepository } from "../../../domain/repositories/IModelProcessingJobRepository.js";
 import type { AuditLogger } from "../../services/AuditLogger.js";
 
 export type UploadAssetInput = {
@@ -17,12 +19,15 @@ export type UploadAssetResult = {
   sizeBytes: number;
   mimeType: string;
   kind: AdminUploadKind;
+  jobId?: string;
 };
 
 export class UploadAsset {
   constructor(
     private readonly storage: IAssetStorage,
     private readonly audit: AuditLogger,
+    private readonly modelJobs: IModelProcessingJobRepository,
+    private readonly modelQueue: IModelProcessingQueue,
   ) {}
 
   async execute(input: UploadAssetInput): Promise<UploadAssetResult> {
@@ -33,11 +38,21 @@ export class UploadAsset {
       data: input.data,
     });
 
+    let jobId: string | undefined;
+    if (input.kind === "model") {
+      const job = await this.modelJobs.create({
+        sourceUrl: saved.url,
+        sourcePath: this.storage.resolvePathFromPublicUrl(saved.url),
+      });
+      await this.modelQueue.publish(job.id);
+      jobId = job.id;
+    }
+
     await this.audit.log({
       adminUserId: input.adminId,
       action: "admin.upload.created",
       resourceType: "upload",
-      resourceId: null,
+      resourceId: jobId ?? null,
       metadata: {},
     });
 
@@ -47,6 +62,7 @@ export class UploadAsset {
       sizeBytes: saved.sizeBytes,
       mimeType: saved.mimeType,
       kind: saved.kind,
+      ...(jobId !== undefined ? { jobId } : {}),
     };
   }
 }

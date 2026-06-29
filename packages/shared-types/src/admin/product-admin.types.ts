@@ -4,6 +4,7 @@ import type {
   BilingualTranslations,
 } from "./admin.types.js";
 import type { MaterialType, PrintStatus, ProductOption } from "../product.types.js";
+import type { ModelPart } from "./model-studio.types.js";
 
 export type ProductTranslationFields = {
   name: string;
@@ -23,6 +24,7 @@ export type AdminProductWriteBase = {
   status: PrintStatus;
   options: ProductOption[];
   modelFileUrl: string | null;
+  modelParts: ModelPart[];
   thumbnailUrl: string;
   imageUrls: string[];
   tags: string[];

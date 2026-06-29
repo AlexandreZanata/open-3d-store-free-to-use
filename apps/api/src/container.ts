@@ -27,6 +27,7 @@ import { DrizzleCategoryRepository } from "./infrastructure/repositories/Drizzle
 import { DrizzleOrderCaptureRepository } from "./infrastructure/repositories/DrizzleOrderCaptureRepository.js";
 import { DrizzleProductFavoriteRepository } from "./infrastructure/repositories/DrizzleProductFavoriteRepository.js";
 import { DrizzleProductRepository } from "./infrastructure/repositories/DrizzleProductRepository.js";
+import { DrizzleModelProcessingJobRepository } from "./infrastructure/repositories/DrizzleModelProcessingJobRepository.js";
 import { DrizzleShopSettingsRepository } from "./infrastructure/repositories/DrizzleShopSettingsRepository.js";
 import {
   createStoreUseCases,
@@ -48,6 +49,9 @@ import {
   DrizzleStoreUserStateRepository,
 } from "./infrastructure/repositories/DrizzleStoreUserStateRepository.js";
 import { LocalFileStorage } from "./infrastructure/storage/LocalFileStorage.js";
+import { NoOpModelProcessingPublisher } from "./infrastructure/queue/NoOpModelProcessingPublisher.js";
+import { RabbitMqModelProcessingPublisher } from "./infrastructure/queue/RabbitMqModelProcessingPublisher.js";
+import type { IModelProcessingQueue } from "./application/ports/IModelProcessingQueue.js";
 import type pg from "pg";
 
 export type AppContainer = {
@@ -74,6 +78,7 @@ export async function createContainer(
   const redis = await createRedisClient(config.REDIS_URL);
 
   const productRepo = new DrizzleProductRepository(db);
+  const modelJobRepo = new DrizzleModelProcessingJobRepository(db);
   const favoriteRepo = new DrizzleProductFavoriteRepository(db);
   const shopSettingsRepo = new DrizzleShopSettingsRepository(db);
   const categoryRepo = new DrizzleCategoryRepository(db);
@@ -91,6 +96,12 @@ export async function createContainer(
     config.MODEL_FILES_BASE_URL,
     config.UPLOAD_MAX_BYTES,
   );
+  const modelQueue: IModelProcessingQueue = config.RABBITMQ_URL
+    ? new RabbitMqModelProcessingPublisher(
+        config.RABBITMQ_URL,
+        config.MODEL_PROCESSING_QUEUE,
+      )
+    : new NoOpModelProcessingPublisher();
   const storeUserRepo = new DrizzleStoreUserRepository(db);
   const storeSessionRepo = new DrizzleStoreSessionRepository(db);
   const storeRegistrationRepo = new DrizzleStoreRegistrationRepository(db);
@@ -120,6 +131,8 @@ export async function createContainer(
     shopSettings: shopSettingsRepo,
     storeUsers: storeUserRepo,
     storeSessions: storeSessionRepo,
+    modelJobs: modelJobRepo,
+    modelQueue,
   });
 
   return {

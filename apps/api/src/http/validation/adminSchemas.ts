@@ -6,6 +6,30 @@ const paymentMethods = PAYMENT_METHODS;
 const statuses = ["active", "out_of_stock", "discontinued"] as const;
 const uploadKinds = ["thumbnail", "gallery", "model"] as const;
 
+const shopColorSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  hex: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
+});
+
+const materialPricingEntrySchema = z.object({
+  pricePerGramCents: z.number().int().min(0),
+  densityGCm3: z.number().positive(),
+});
+
+const calculatorSettingsSchema = z.object({
+  machineHourlyRateCents: z.number().int().min(0),
+  handlingFeeCents: z.number().int().min(0),
+  defaultInfillFactor: z.number().min(0).max(1),
+});
+
+const modelPartSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  volumeCm3: z.number().nullable(),
+  weightGrams: z.number().int().nullable(),
+});
+
 const productTranslationSchema = z.object({
   name: z.string().min(1),
   description: z.string().min(1),
@@ -47,6 +71,7 @@ const productWriteBodySchema = z.object({
   status: z.enum(statuses),
   options: z.array(productOptionSchema),
   modelFileUrl: z.string().nullable(),
+  modelParts: z.array(modelPartSchema).default([]),
   thumbnailUrl: z.string().min(1),
   imageUrls: z.array(z.string()),
   tags: z.array(z.string()),
@@ -110,6 +135,9 @@ export const updateShopSettingsBodySchema = z
   .object({
     whatsappPhone: z.string().min(8).max(20),
     enabledMaterials: z.array(z.enum(materials)).min(1),
+    availableColors: z.array(shopColorSchema),
+    materialPricing: z.record(z.enum(materials), materialPricingEntrySchema),
+    calculator: calculatorSettingsSchema,
     offersDelivery: z.boolean(),
     pickupOnly: z.boolean(),
     pickupLocation: z.string().max(500).nullable(),

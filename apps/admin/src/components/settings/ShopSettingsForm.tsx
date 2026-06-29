@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { StudioSettingsCard } from "@/components/settings/StudioSettingsCard";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { useToast } from "@/hooks/useToast";
@@ -125,6 +126,8 @@ export function ShopSettingsForm({ settings, onSave, isSaving }: ShopSettingsFor
           ))}
         </div>
       </Card>
+
+      <StudioSettingsCard form={form} onChange={setForm} />
 
       <Card className="border-hairline/80 shadow-sm">
         <h2 className="text-lg font-semibold tracking-tight">Fulfillment</h2>
@@ -242,6 +245,9 @@ function toFormState(settings: ShopSettings): UpdateShopSettingsPayload {
   return {
     whatsappPhone: settings.whatsappPhone,
     enabledMaterials: settings.enabledMaterials,
+    availableColors: settings.availableColors,
+    materialPricing: settings.materialPricing,
+    calculator: settings.calculator,
     offersDelivery: settings.offersDelivery,
     pickupOnly: settings.pickupOnly,
     pickupLocation: settings.pickupLocation,

@@ -72,6 +72,8 @@
     "viewerScaleHint": "Real scale · virtual desk",
     "viewerBadge": "3D Viewer",
     "tabModel": "3D Model",
+    "studioColors": "Studio colors",
+    "customHex": "Custom color",
     "tabGallery": "Gallery",
     "galleryCount": "Gallery ({{count}})",
     "galleryPrev": "Previous image",

@@ -1,7 +1,4 @@
-import type { AppConfig } from "../config.js";
-import { AuditLogger } from "../application/services/AuditLogger.js";
-import { CatalogCacheInvalidator } from "../application/services/CatalogCacheInvalidator.js";
-import { CreateProduct } from "../application/use-cases/admin/CreateProduct.js";
+import { BulkPrepriceProducts } from "../application/use-cases/admin/BulkPrepriceProducts.js";
 import {
   CreateCategory,
   DeleteCategory,
@@ -10,6 +7,7 @@ import {
   UpdateCategory,
 } from "../application/use-cases/admin/CategoryAdminUseCases.js";
 import { DeleteProduct } from "../application/use-cases/admin/DeleteProduct.js";
+import { GetModelProcessingJob } from "../application/use-cases/admin/GetModelProcessingJob.js";
 import { RefreshAdminSession } from "../application/use-cases/admin/RefreshAdminSession.js";
 import {
   GetProductAdmin,
@@ -21,6 +19,7 @@ import {
   GetOrderCapture,
   ListOrderCaptures,
 } from "../application/use-cases/admin/OrderAdminUseCases.js";
+import { ProcessModelUpload } from "../application/use-cases/admin/ProcessModelUpload.js";
 import { UpdateProduct } from "../application/use-cases/admin/UpdateProduct.js";
 import { UploadAsset } from "../application/use-cases/admin/UploadAsset.js";
 import {
@@ -32,17 +31,23 @@ import {
   ListStoreUsersAdmin,
   UpdateStoreUserAdmin,
 } from "../application/use-cases/admin/StoreUserAdminUseCases.js";
-import type { IShopSettingsRepository } from "../domain/repositories/IShopSettingsRepository.js";
-import type { ICatalogEventPublisher } from "../application/ports/ICatalogEventPublisher.js";
+import { CreateProduct } from "../application/use-cases/admin/CreateProduct.js";
+import type { AppConfig } from "../config.js";
+import { AuditLogger } from "../application/services/AuditLogger.js";
+import { CatalogCacheInvalidator } from "../application/services/CatalogCacheInvalidator.js";
+import type { IModelProcessingQueue } from "../application/ports/IModelProcessingQueue.js";
 import type { IAssetStorage } from "../application/ports/IAssetStorage.js";
 import type { IPasswordHasher } from "../application/ports/IPasswordHasher.js";
 import type { ICacheService } from "../application/ports/ICacheService.js";
+import type { ICatalogEventPublisher } from "../application/ports/ICatalogEventPublisher.js";
 import type { IAdminSessionRepository } from "../domain/repositories/IAdminSessionRepository.js";
 import type { IAdminUserRepository } from "../domain/repositories/IAdminUserRepository.js";
 import type { IAuditLogRepository } from "../domain/repositories/IAuditLogRepository.js";
 import type { ICategoryRepository } from "../domain/repositories/ICategoryRepository.js";
+import type { IModelProcessingJobRepository } from "../domain/repositories/IModelProcessingJobRepository.js";
 import type { IOrderCaptureRepository } from "../domain/repositories/IOrderCaptureRepository.js";
 import type { IProductRepository } from "../domain/repositories/IProductRepository.js";
+import type { IShopSettingsRepository } from "../domain/repositories/IShopSettingsRepository.js";
 import type {
   IStoreSessionRepository,
   IStoreUserRepository,
@@ -70,6 +75,9 @@ export type AdminUseCases = {
   listStoreUsersAdmin: ListStoreUsersAdmin;
   getStoreUserAdmin: GetStoreUserAdmin;
   updateStoreUserAdmin: UpdateStoreUserAdmin;
+  getModelProcessingJob: GetModelProcessingJob;
+  bulkPrepriceProducts: BulkPrepriceProducts;
+  processModelUpload: ProcessModelUpload;
 };
 
 type AdminUseCaseDeps = {
@@ -87,6 +95,8 @@ type AdminUseCaseDeps = {
   shopSettings: IShopSettingsRepository;
   storeUsers: IStoreUserRepository;
   storeSessions: IStoreSessionRepository;
+  modelJobs: IModelProcessingJobRepository;
+  modelQueue: IModelProcessingQueue;
 };
 
 export function createAdminUseCases(deps: AdminUseCaseDeps): AdminUseCases {
@@ -140,11 +150,19 @@ export function createAdminUseCases(deps: AdminUseCaseDeps): AdminUseCases {
     getCategoryAdmin: new GetCategoryAdmin(deps.categories),
     listOrderCaptures: new ListOrderCaptures(deps.orders),
     getOrderCapture: new GetOrderCapture(deps.orders),
-    uploadAsset: new UploadAsset(deps.assetStorage, audit),
+    uploadAsset: new UploadAsset(
+      deps.assetStorage,
+      audit,
+      deps.modelJobs,
+      deps.modelQueue,
+    ),
     getShopSettingsAdmin: new GetShopSettingsAdmin(deps.shopSettings),
     updateShopSettingsAdmin: new UpdateShopSettingsAdmin(deps.shopSettings, audit),
     listStoreUsersAdmin: new ListStoreUsersAdmin(deps.storeUsers),
     getStoreUserAdmin: new GetStoreUserAdmin(deps.storeUsers),
     updateStoreUserAdmin: new UpdateStoreUserAdmin(deps.storeUsers, deps.storeSessions),
+    getModelProcessingJob: new GetModelProcessingJob(deps.modelJobs),
+    bulkPrepriceProducts: new BulkPrepriceProducts(deps.products, deps.shopSettings, audit),
+    processModelUpload: new ProcessModelUpload(deps.modelJobs, deps.shopSettings),
   };
 }

@@ -30,3 +30,7 @@ export {
   adminStoreUserListRouteSchema,
   adminStoreUserUpdateRouteSchema,
 } from "./adminStoreUserRouteSchemas.js";
+export {
+  adminBulkPrepriceRouteSchema,
+  adminModelJobDetailRouteSchema,
+} from "./adminModelStudioRouteSchemas.js";

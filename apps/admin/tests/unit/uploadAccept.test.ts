@@ -8,6 +8,11 @@ describe("uploadAccept", () => {
     expect(UPLOAD_ACCEPT_BY_KIND.gallery).toBe("image/webp,image/jpeg,image/png");
   });
 
+  it("accepts glb gltf 3mf stl and octet-stream for model uploads", () => {
+    expect(UPLOAD_ACCEPT_BY_KIND.model).toContain(".stl");
+    expect(UPLOAD_ACCEPT_BY_KIND.model).toContain("application/octet-stream");
+  });
+
   it("documents stored-as-webp hint for admins", () => {
     expect(IMAGE_UPLOAD_HINT).toContain("WebP");
     expect(IMAGE_UPLOAD_HINT).toContain("JPEG");

@@ -4,6 +4,10 @@
 import { describe, expect, it, afterAll, beforeAll } from "vitest";
 import type { FastifyInstance } from "fastify";
 
+import {
+  DEFAULT_CALCULATOR_SETTINGS,
+  DEFAULT_MATERIAL_PRICING,
+} from "../../../src/domain/services/pricingCalculator.js";
 import { seedShopSettings } from "../../../scripts/seedShopSettings.js";
 import type { AppContainer } from "../../../src/container.js";
 import {
@@ -62,6 +66,9 @@ describe("Admin settings routes (contract)", () => {
         payload: {
           whatsappPhone: "5565999887766",
           enabledMaterials: ["PLA", "PETG_HF"],
+          availableColors: [],
+          materialPricing: DEFAULT_MATERIAL_PRICING,
+          calculator: DEFAULT_CALCULATOR_SETTINGS,
           offersDelivery: true,
           pickupOnly: false,
           pickupLocation: "Studio pickup",

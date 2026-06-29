@@ -3,15 +3,13 @@ import path from "node:path";
 
 import {
   ADMIN_UPLOAD_MAX_BYTES,
-  ADMIN_UPLOAD_MIME_ALLOWLIST,
   type AdminUploadKind,
   type AdminUploadMimeType,
 } from "@print3d/shared-types";
 import { uuidv7 } from "uuidv7";
 
-import {
-  normalizeImageUpload,
-} from "./normalizeImageUpload.js";
+import { normalizeImageUpload } from "./normalizeImageUpload.js";
+import { resolveModelUploadMime } from "./resolveModelUploadMime.js";
 
 export type SaveUploadInput = {
   kind: AdminUploadKind;
@@ -38,6 +36,7 @@ const EXTENSION_BY_MIME: Record<AdminUploadMimeType, string> = {
   "model/gltf-binary": ".glb",
   "model/gltf+json": ".gltf",
   "model/3mf": ".3mf",
+  "model/stl": ".stl",
 };
 
 export class LocalFileStorage {
@@ -53,6 +52,11 @@ export class LocalFileStorage {
 
   resolveFilePath(relativePath: string): string {
     return `${this.stripTrailingSlash(this.basePath)}/${this.stripLeadingSlash(relativePath)}`;
+  }
+
+  resolvePathFromPublicUrl(publicUrl: string): string {
+    const relative = publicUrl.replace(/^\/models\//, "");
+    return this.resolveFilePath(relative);
   }
 
   async saveUpload(input: SaveUploadInput): Promise<SaveUploadResult> {
@@ -95,14 +99,15 @@ export class LocalFileStorage {
       };
     }
 
-    if (!ADMIN_UPLOAD_MIME_ALLOWLIST.includes(input.mimeType as AdminUploadMimeType)) {
+    const resolved = resolveModelUploadMime(input.filename, input.mimeType);
+    if (resolved === null) {
       throw new Error(`MIME type not allowed: ${input.mimeType}`);
     }
 
     return {
       kind: input.kind,
       data: input.data,
-      mimeType: input.mimeType as AdminUploadMimeType,
+      mimeType: resolved,
     };
   }
 
@@ -125,7 +130,7 @@ export class LocalFileStorage {
     if (prepared.data.byteLength > kindLimit) {
       throw new Error(`Upload exceeds max size for kind ${prepared.kind}`);
     }
-    if (prepared.data.byteLength > this.maxBytes) {
+    if (prepared.kind !== "model" && prepared.data.byteLength > this.maxBytes) {
       throw new Error("Upload exceeds global max size");
     }
   }

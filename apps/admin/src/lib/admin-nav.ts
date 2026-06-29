@@ -1,4 +1,5 @@
 import {
+  Calculator,
   FolderTree,
   LayoutDashboard,
   Package,
@@ -14,6 +15,7 @@ export const adminNavItems = [
   { to: "/categories", label: "Categories", icon: FolderTree },
   { to: "/orders", label: "Orders", icon: ShoppingBag },
   { to: "/users", label: "Users", icon: Users },
+  { to: "/calculator", label: "Calculator", icon: Calculator },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const satisfies ReadonlyArray<{
   to: string;

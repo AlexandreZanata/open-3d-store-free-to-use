@@ -1,5 +1,6 @@
 import type { Product } from "./product.types.js";
 import type { SupportedLocale } from "./locale.types.js";
+import type { ModelPart } from "./admin/model-studio.types.js";
 
 export type ProductListItem = {
   id: string;
@@ -23,6 +24,7 @@ export type ProductDetail = ProductListItem & {
   weightGrams: number;
   options: Product["options"];
   modelFileUrl: string | null;
+  modelParts: ModelPart[];
   imageUrls: string[];
 };
 

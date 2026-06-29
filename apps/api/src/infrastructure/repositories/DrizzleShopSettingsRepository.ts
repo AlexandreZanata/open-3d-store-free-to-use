@@ -1,14 +1,24 @@
 import { eq } from "drizzle-orm";
 
-import type { MaterialType, PaymentMethod } from "@print3d/shared-types";
+import type {
+  CalculatorSettings,
+  MaterialPricePerGram,
+  MaterialType,
+  PaymentMethod,
+  ShopColor,
+} from "@print3d/shared-types";
 
-import type { Database } from "../db/client.js";
-import { shopSettings } from "../db/schema.js";
 import type {
   IShopSettingsRepository,
   ShopSettingsRecord,
   ShopSettingsUpdate,
 } from "../../domain/repositories/IShopSettingsRepository.js";
+import {
+  DEFAULT_CALCULATOR_SETTINGS,
+  DEFAULT_MATERIAL_PRICING,
+} from "../../domain/services/pricingCalculator.js";
+import type { Database } from "../db/client.js";
+import { shopSettings } from "../db/schema.js";
 
 const SINGLETON_KEY = "default";
 
@@ -17,6 +27,9 @@ function mapRow(row: typeof shopSettings.$inferSelect): ShopSettingsRecord {
     id: row.id,
     whatsappPhone: row.whatsappPhone,
     enabledMaterials: row.enabledMaterials as MaterialType[],
+    availableColors: row.availableColors as ShopColor[],
+    materialPricing: row.materialPricing as MaterialPricePerGram,
+    calculator: row.calculatorSettings as CalculatorSettings,
     offersDelivery: row.offersDelivery,
     pickupOnly: row.pickupOnly,
     pickupLocation: row.pickupLocation,
@@ -49,6 +62,9 @@ export class DrizzleShopSettingsRepository implements IShopSettingsRepository {
           singletonKey: SINGLETON_KEY,
           whatsappPhone: input.whatsappPhone,
           enabledMaterials: input.enabledMaterials,
+          availableColors: input.availableColors,
+          materialPricing: input.materialPricing,
+          calculatorSettings: input.calculator,
           offersDelivery: input.offersDelivery,
           pickupOnly: input.pickupOnly,
           pickupLocation: input.pickupLocation,
@@ -65,6 +81,9 @@ export class DrizzleShopSettingsRepository implements IShopSettingsRepository {
       .set({
         whatsappPhone: input.whatsappPhone,
         enabledMaterials: input.enabledMaterials,
+        availableColors: input.availableColors,
+        materialPricing: input.materialPricing,
+        calculatorSettings: input.calculator,
         offersDelivery: input.offersDelivery,
         pickupOnly: input.pickupOnly,
         pickupLocation: input.pickupLocation,
@@ -78,3 +97,9 @@ export class DrizzleShopSettingsRepository implements IShopSettingsRepository {
     return mapRow(updated[0]!);
   }
 }
+
+export const SHOP_SETTINGS_SEED_DEFAULTS = {
+  availableColors: [] as ShopColor[],
+  materialPricing: DEFAULT_MATERIAL_PRICING,
+  calculator: DEFAULT_CALCULATOR_SETTINGS,
+};

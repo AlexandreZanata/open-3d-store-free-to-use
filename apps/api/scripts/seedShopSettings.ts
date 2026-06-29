@@ -2,7 +2,10 @@ import { MATERIAL_TYPES, PAYMENT_METHODS } from "@print3d/shared-types";
 
 import { loadConfig } from "../src/config.js";
 import { createDb } from "../src/infrastructure/db/client.js";
-import { DrizzleShopSettingsRepository } from "../src/infrastructure/repositories/DrizzleShopSettingsRepository.js";
+import {
+  DrizzleShopSettingsRepository,
+  SHOP_SETTINGS_SEED_DEFAULTS,
+} from "../src/infrastructure/repositories/DrizzleShopSettingsRepository.js";
 
 export async function seedShopSettings(
   connectionString: string,
@@ -16,6 +19,9 @@ export async function seedShopSettings(
     await repo.upsert({
       whatsappPhone: config.WHATSAPP_PHONE_NUMBER,
       enabledMaterials: [...MATERIAL_TYPES],
+      availableColors: SHOP_SETTINGS_SEED_DEFAULTS.availableColors,
+      materialPricing: SHOP_SETTINGS_SEED_DEFAULTS.materialPricing,
+      calculator: SHOP_SETTINGS_SEED_DEFAULTS.calculator,
       offersDelivery: false,
       pickupOnly: true,
       pickupLocation: "Pickup at the studio — Cuiabá, MT",

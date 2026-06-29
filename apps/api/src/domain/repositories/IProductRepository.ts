@@ -1,10 +1,12 @@
 import type {
   AdminProductListItem,
   CreateProductPayload,
+  MaterialType,
+  ModelPart,
+  PrintStatus,
   Product,
   UpdateProductPayload,
 } from "@print3d/shared-types";
-import type { MaterialType, PrintStatus } from "@print3d/shared-types";
 
 import type { SupportedLocale } from "../value-objects/Locale.js";
 
@@ -42,6 +44,13 @@ export type OrderDateRange = {
   to?: Date | undefined;
 };
 
+export type BulkPrepriceProductRow = {
+  id: string;
+  material: MaterialType;
+  printTimeHours: number;
+  modelParts: ModelPart[];
+};
+
 export interface IProductRepository {
   findBySlug(slug: string, locale: SupportedLocale): Promise<Product | null>;
   findById(id: string, locale: SupportedLocale): Promise<Product | null>;
@@ -66,4 +75,6 @@ export interface IProductRepository {
   findByIdAdmin(id: string): Promise<AdminProductListItem | null>;
   existsBySlug(slug: string, excludeId?: string): Promise<boolean>;
   countOrderReferences(productId: string): Promise<number>;
+  listForBulkPreprice(): Promise<BulkPrepriceProductRow[]>;
+  updatePreprice(id: string, basePrice: number, weightGrams: number): Promise<void>;
 }

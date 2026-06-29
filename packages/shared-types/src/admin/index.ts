@@ -58,6 +58,13 @@ export {
   ADMIN_UPLOAD_MIME_ALLOWLIST,
 } from "./upload.types.js";
 export type {
+  AdminStoreUserDetail,
+  AdminStoreUserDetailResponse,
+  AdminStoreUserListItem,
+  AdminStoreUserListResponse,
+  UpdateStoreUserAdminPayload,
+} from "./store-user-admin.types.js";
+export type {
   ShopSettings,
   ShopSettingsResponse,
   UpdateShopSettingsPayload,

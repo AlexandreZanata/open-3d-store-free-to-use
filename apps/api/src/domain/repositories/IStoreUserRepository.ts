@@ -1,6 +1,7 @@
 import type { StoreCartItem } from "@print3d/shared-types";
 
 import type { CreateStoreSessionInput, StoreSession, StoreUser } from "../entities/StoreUser.js";
+import type { PaginatedResult, PaginationParams } from "./IProductRepository.js";
 
 export interface IStoreUserRepository {
   findByEmail(email: string): Promise<StoreUser | null>;
@@ -11,13 +12,35 @@ export interface IStoreUserRepository {
     displayName: string;
   }): Promise<StoreUser>;
   updateProfile(id: string, displayName: string): Promise<StoreUser>;
+  setActive(id: string, isActive: boolean): Promise<StoreUser>;
+  findManyAdmin(
+    filters: StoreUserAdminFilters,
+    pagination: PaginationParams,
+  ): Promise<PaginatedResult<StoreUserAdminListRow>>;
+  findAdminDetail(userId: string): Promise<StoreUserAdminDetailRow | null>;
 }
+
+export type StoreUserAdminFilters = {
+  emailQuery?: string | undefined;
+};
+
+export type StoreUserAdminListRow = {
+  user: StoreUser;
+  cartItemCount: number;
+  favoriteCount: number;
+};
+
+export type StoreUserAdminDetailRow = StoreUserAdminListRow & {
+  registrationIp: string | null;
+  registrationDeviceId: string | null;
+};
 
 export interface IStoreSessionRepository {
   create(input: CreateStoreSessionInput): Promise<StoreSession>;
   findByTokenHash(tokenHash: string): Promise<StoreSession | null>;
   touch(id: string, expiresAt: Date): Promise<void>;
   deleteByTokenHash(tokenHash: string): Promise<void>;
+  deleteAllForUser(userId: string): Promise<void>;
 }
 
 export interface IStoreRegistrationRepository {

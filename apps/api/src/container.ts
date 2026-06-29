@@ -34,11 +34,19 @@ import {
 } from "./container/storeUseCases.js";
 import {
   DrizzleStoreRegistrationRepository,
+} from "./infrastructure/repositories/DrizzleStoreRegistrationRepository.js";
+import {
   DrizzleStoreSessionRepository,
+} from "./infrastructure/repositories/DrizzleStoreSessionRepository.js";
+import {
   DrizzleStoreUserFavoriteRepository,
+} from "./infrastructure/repositories/DrizzleStoreUserFavoriteRepository.js";
+import {
   DrizzleStoreUserRepository,
-  DrizzleStoreUserStateRepository,
 } from "./infrastructure/repositories/DrizzleStoreUserRepository.js";
+import {
+  DrizzleStoreUserStateRepository,
+} from "./infrastructure/repositories/DrizzleStoreUserStateRepository.js";
 import { LocalFileStorage } from "./infrastructure/storage/LocalFileStorage.js";
 import type pg from "pg";
 
@@ -110,6 +118,8 @@ export async function createContainer(
     passwordHasher,
     assetStorage,
     shopSettings: shopSettingsRepo,
+    storeUsers: storeUserRepo,
+    storeSessions: storeSessionRepo,
   });
 
   return {

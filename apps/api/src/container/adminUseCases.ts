@@ -27,6 +27,11 @@ import {
   GetShopSettingsAdmin,
   UpdateShopSettingsAdmin,
 } from "../application/use-cases/admin/ShopSettingsAdminUseCases.js";
+import {
+  GetStoreUserAdmin,
+  ListStoreUsersAdmin,
+  UpdateStoreUserAdmin,
+} from "../application/use-cases/admin/StoreUserAdminUseCases.js";
 import type { IShopSettingsRepository } from "../domain/repositories/IShopSettingsRepository.js";
 import type { ICatalogEventPublisher } from "../application/ports/ICatalogEventPublisher.js";
 import type { IAssetStorage } from "../application/ports/IAssetStorage.js";
@@ -38,6 +43,10 @@ import type { IAuditLogRepository } from "../domain/repositories/IAuditLogReposi
 import type { ICategoryRepository } from "../domain/repositories/ICategoryRepository.js";
 import type { IOrderCaptureRepository } from "../domain/repositories/IOrderCaptureRepository.js";
 import type { IProductRepository } from "../domain/repositories/IProductRepository.js";
+import type {
+  IStoreSessionRepository,
+  IStoreUserRepository,
+} from "../domain/repositories/IStoreUserRepository.js";
 
 export type AdminUseCases = {
   loginAdmin: LoginAdmin;
@@ -58,6 +67,9 @@ export type AdminUseCases = {
   uploadAsset: UploadAsset;
   getShopSettingsAdmin: GetShopSettingsAdmin;
   updateShopSettingsAdmin: UpdateShopSettingsAdmin;
+  listStoreUsersAdmin: ListStoreUsersAdmin;
+  getStoreUserAdmin: GetStoreUserAdmin;
+  updateStoreUserAdmin: UpdateStoreUserAdmin;
 };
 
 type AdminUseCaseDeps = {
@@ -73,6 +85,8 @@ type AdminUseCaseDeps = {
   passwordHasher: IPasswordHasher;
   assetStorage: IAssetStorage;
   shopSettings: IShopSettingsRepository;
+  storeUsers: IStoreUserRepository;
+  storeSessions: IStoreSessionRepository;
 };
 
 export function createAdminUseCases(deps: AdminUseCaseDeps): AdminUseCases {
@@ -129,5 +143,8 @@ export function createAdminUseCases(deps: AdminUseCaseDeps): AdminUseCases {
     uploadAsset: new UploadAsset(deps.assetStorage, audit),
     getShopSettingsAdmin: new GetShopSettingsAdmin(deps.shopSettings),
     updateShopSettingsAdmin: new UpdateShopSettingsAdmin(deps.shopSettings, audit),
+    listStoreUsersAdmin: new ListStoreUsersAdmin(deps.storeUsers),
+    getStoreUserAdmin: new GetStoreUserAdmin(deps.storeUsers),
+    updateStoreUserAdmin: new UpdateStoreUserAdmin(deps.storeUsers, deps.storeSessions),
   };
 }

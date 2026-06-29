@@ -88,6 +88,18 @@ export const adminOrderListQuerySchema = z.object({
   to: z.string().datetime().optional(),
 });
 
+export const adminStoreUserListQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(50).default(20),
+  q: z.string().optional(),
+});
+
+export const updateStoreUserAdminBodySchema = z
+  .object({
+    isActive: z.boolean(),
+  })
+  .strict();
+
 export const adminUploadKindSchema = z.enum(uploadKinds);
 
 export const adminIdParamSchema = z.object({

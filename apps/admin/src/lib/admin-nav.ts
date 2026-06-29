@@ -4,6 +4,7 @@ import {
   Package,
   Settings,
   ShoppingBag,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 
@@ -12,6 +13,7 @@ export const adminNavItems = [
   { to: "/products", label: "Products", icon: Package },
   { to: "/categories", label: "Categories", icon: FolderTree },
   { to: "/orders", label: "Orders", icon: ShoppingBag },
+  { to: "/users", label: "Users", icon: Users },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const satisfies ReadonlyArray<{
   to: string;

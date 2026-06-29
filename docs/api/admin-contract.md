@@ -513,6 +513,51 @@ Audit: `admin.settings.updated`.
 
 ---
 
+## Storefront users (read + status)
+
+Shopper accounts created via public `POST /auth/register`. Admin can list, inspect, and activate/deactivate accounts. Deactivation clears all active sessions.
+
+### `GET /users`
+
+| Query | Type | Default |
+|-------|------|---------|
+| `page` | number | 1 |
+| `limit` | number | 20 (max 50) |
+| `q` | string | optional email substring filter |
+
+**Response 200:**
+
+```json
+{
+  "data": [
+    {
+      "id": "019f…",
+      "email": "buyer@example.com",
+      "displayName": "Maria",
+      "isActive": true,
+      "createdAt": "2026-06-29T12:00:00.000Z",
+      "cartItemCount": 2,
+      "favoriteCount": 3
+    }
+  ],
+  "pagination": { "total": 1, "page": 1, "totalPages": 1, "limit": 20 }
+}
+```
+
+### `GET /users/:id`
+
+**Response 200:** same list fields plus `updatedAt`, `registrationIp`, `registrationDeviceId` (from registration origin; nullable if missing).
+
+### `PATCH /users/:id`
+
+```json
+{ "isActive": false }
+```
+
+**Response 200:** updated user detail. Setting `isActive` to `false` invalidates all storefront sessions for that user.
+
+---
+
 ## Uploads
 
 ### `POST /uploads`

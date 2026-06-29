@@ -12,7 +12,7 @@ export const seedProducts: SeedProduct[] = [
     printTimeHours: 4,
     weightGrams: 120,
     status: "active",
-    modelFileUrl: "/models/3d/custom-photo-frame.glb",
+    modelFileUrl: null,
     thumbnailUrl: "/models/thumbnails/photo-frame.webp",
     imageUrls: [
       "/models/thumbnails/photo-frame.webp",

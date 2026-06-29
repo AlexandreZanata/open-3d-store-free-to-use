@@ -85,6 +85,35 @@ function fitCamera(
   controls.update();
 }
 
+function normalizeLoadedMeshes(root: THREE.Object3D): void {
+  root.traverse((object) => {
+    if (!(object instanceof THREE.Mesh)) {
+      return;
+    }
+    const mesh = object as THREE.Mesh<THREE.BufferGeometry, THREE.Material | THREE.Material[]>;
+    const geometry = mesh.geometry;
+    if (!geometry.attributes.normal) {
+      geometry.computeVertexNormals();
+    }
+    const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+    const needsMaterial = materials.length === 0 || materials.every((material) => !material);
+    if (needsMaterial) {
+      mesh.material = new THREE.MeshStandardMaterial({
+        color: DEFAULT_MESH_COLOR,
+        metalness: 0.12,
+        roughness: 0.62,
+        side: THREE.DoubleSide,
+      });
+      return;
+    }
+    for (const material of materials) {
+      if (material instanceof THREE.MeshStandardMaterial) {
+        material.side = THREE.DoubleSide;
+      }
+    }
+  });
+}
+
 async function loadModel(url: string, format: ModelFormat): Promise<THREE.Object3D> {
   if (format === "3mf") {
     const loader = new ThreeMFLoader();
@@ -216,6 +245,7 @@ export function mountThreeModelViewer(
         return;
       }
 
+      normalizeLoadedMeshes(object);
       modelRoot = object;
       object.traverse((child: THREE.Object3D) => {
         if (child instanceof THREE.Mesh) {

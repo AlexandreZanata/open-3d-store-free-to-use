@@ -23,6 +23,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:seed": "tsx --env-file=.env scripts/seed.ts",
     "db:seed-assets": "tsx --env-file=.env scripts/generateSeedThumbnails.ts && tsx --env-file=.env scripts/seedAssets.ts",
+    "db:seed-models": "tsx --env-file=.env scripts/seedModels.ts",
     "db:studio": "drizzle-kit studio",
     "worker:model-processing": "tsx --env-file=.env scripts/workerModelProcessing.ts",
     "reoptimize-model": "tsx --env-file=.env scripts/reoptimizeModel.ts"

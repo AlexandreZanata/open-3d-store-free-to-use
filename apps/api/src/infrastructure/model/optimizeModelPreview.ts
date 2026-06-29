@@ -3,8 +3,9 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 
 import type { Document } from "@gltf-transform/core";
-import { draco } from "@gltf-transform/functions";
+import { dedup, draco, normals, simplify, weld } from "@gltf-transform/functions";
 import type { AdminUploadMimeType } from "@print3d/shared-types";
+import { MeshoptSimplifier } from "meshoptimizer";
 
 import { createGltfIo } from "./createGltfIo.js";
 import { documentFromMesh } from "./documentFromMesh.js";
@@ -100,7 +101,14 @@ async function loadDocument(
 }
 
 async function runOptimizationPipeline(document: Document): Promise<void> {
-  await document.transform(draco({ method: "edgebreaker" }));
+  await MeshoptSimplifier.ready;
+  await document.transform(
+    weld(),
+    dedup(),
+    simplify({ simplifier: MeshoptSimplifier, ratio: 0.25, error: 0.01 }),
+    normals(),
+    draco({ method: "edgebreaker" }),
+  );
 }
 
 function buildPreviewPath(sourcePath: string): string {

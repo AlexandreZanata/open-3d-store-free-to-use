@@ -1,6 +1,7 @@
 import { seedCatalog } from "./seedCatalog.js";
 import { seedAdminUser } from "./seedAdmin.js";
 import { seedAssets } from "./seedAssets.js";
+import { seedModels } from "./seedModels.js";
 import { seedShopSettings } from "./seedShopSettings.js";
 
 const connectionString =
@@ -12,7 +13,8 @@ if (connectionString.length === 0) {
 }
 
 await seedAssets(process.env);
-await seedCatalog(connectionString);
+const modelOverrides = await seedModels(process.env);
+await seedCatalog(connectionString, modelOverrides);
 await seedShopSettings(connectionString, process.env);
 await seedAdminUser(connectionString);
-console.log("Seed completed successfully (catalog, assets, admin).");
+console.log("Seed completed successfully (catalog, assets, models, admin).");

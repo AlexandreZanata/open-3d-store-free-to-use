@@ -4,8 +4,12 @@ import { createDb } from "../src/infrastructure/db/client.js";
 import { categories, products } from "../src/infrastructure/db/schema.js";
 import { seedCategories } from "./seedCategories.js";
 import { seedProducts } from "./seedProducts.js";
+import type { SeedModelsResult } from "./seedModels.js";
 
-export async function seedCatalog(connectionString: string): Promise<void> {
+export async function seedCatalog(
+  connectionString: string,
+  modelOverrides: SeedModelsResult = new Map(),
+): Promise<void> {
   const { db, pool } = createDb(connectionString);
 
   try {
@@ -57,45 +61,55 @@ export async function seedCatalog(connectionString: string): Promise<void> {
         throw new Error(`Missing category for product: ${item.slug}`);
       }
 
+      const modelOverride = modelOverrides.get(item.slug);
+      const modelFileUrl = modelOverride?.modelFileUrl ?? item.modelFileUrl;
+      const weightGrams = modelOverride?.weightGrams ?? item.weightGrams;
+
+      const insertValues = {
+        slug: item.slug,
+        name: item.name,
+        description: item.description,
+        shortDescription: item.shortDescription,
+        categoryId,
+        basePrice: item.basePrice,
+        material: item.material,
+        printTimeHours: item.printTimeHours,
+        weightGrams,
+        status: item.status,
+        modelFileUrl,
+        modelParts: modelOverride?.modelParts ?? [],
+        thumbnailUrl: item.thumbnailUrl,
+        imageUrls: item.imageUrls,
+        tags: item.tags,
+        translations: item.translations,
+        options: [],
+      };
+
+      const updateValues = {
+        name: item.name,
+        description: item.description,
+        shortDescription: item.shortDescription,
+        categoryId,
+        basePrice: item.basePrice,
+        material: item.material,
+        printTimeHours: item.printTimeHours,
+        weightGrams,
+        status: item.status,
+        modelFileUrl,
+        thumbnailUrl: item.thumbnailUrl,
+        imageUrls: item.imageUrls,
+        tags: item.tags,
+        translations: item.translations,
+        updatedAt: new Date(),
+        ...(modelOverride ? { modelParts: modelOverride.modelParts } : {}),
+      };
+
       await db
         .insert(products)
-        .values({
-          slug: item.slug,
-          name: item.name,
-          description: item.description,
-          shortDescription: item.shortDescription,
-          categoryId,
-          basePrice: item.basePrice,
-          material: item.material,
-          printTimeHours: item.printTimeHours,
-          weightGrams: item.weightGrams,
-          status: item.status,
-          modelFileUrl: item.modelFileUrl,
-          thumbnailUrl: item.thumbnailUrl,
-          imageUrls: item.imageUrls,
-          tags: item.tags,
-          translations: item.translations,
-          options: [],
-        })
+        .values(insertValues)
         .onConflictDoUpdate({
           target: products.slug,
-          set: {
-            name: item.name,
-            description: item.description,
-            shortDescription: item.shortDescription,
-            categoryId,
-            basePrice: item.basePrice,
-            material: item.material,
-            printTimeHours: item.printTimeHours,
-            weightGrams: item.weightGrams,
-            status: item.status,
-            modelFileUrl: item.modelFileUrl,
-            thumbnailUrl: item.thumbnailUrl,
-            imageUrls: item.imageUrls,
-            tags: item.tags,
-            translations: item.translations,
-            updatedAt: new Date(),
-          },
+          set: updateValues,
         });
     }
   } finally {

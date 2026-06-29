@@ -1,9 +1,27 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  documentFromMesh,
   millimetersToMeters,
   positionsToMeters,
 } from "../../../src/infrastructure/model/documentFromMesh.js";
+
+describe("documentFromMesh", () => {
+  it("creates indexed TRIANGLES primitive with PBR material", () => {
+    const positions = new Float32Array([
+      0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0,
+    ]);
+    const document = documentFromMesh(positions, "Test");
+    expect(document).not.toBeNull();
+
+    const primitive = document!.getRoot().listMeshes()[0]!.listPrimitives()[0]!;
+    expect(primitive.getMode()).toBe(4);
+    expect(primitive.getIndices()?.getCount()).toBe(6);
+    expect(primitive.getAttribute("POSITION")?.getCount()).toBe(6);
+    expect(primitive.getMaterial()).not.toBeNull();
+    expect(primitive.getMaterial()?.getDoubleSided()).toBe(true);
+  });
+});
 
 describe("positionsToMeters", () => {
   it("keeps meter-scale STL coordinates unchanged", () => {

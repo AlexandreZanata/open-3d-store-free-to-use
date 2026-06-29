@@ -76,11 +76,27 @@ Any catalog upload (`STL`, `GLB`, `GLTF`, `3MF`) is converted automatically to a
 1. Worker ingests the source mesh (STL triangle soup, 3MF XML zip, or glTF)
 2. **Unit detection** — millimeter vs meter coordinates (heuristic on bounding box)
 3. **Print orientation** — PCA smallest variance axis → Y-up (figurine standing); thin plates fall back to middle/largest axis; yaw picks compact footprint; build-plate centering baked into the GLB
-4. **Fast decimation** — uniform triangle stride while parsing huge STL/3MF (120k cap), **meshoptimizer** weld + simplify (150k verts) with stride fallback, single Draco pass
+4. **glTF encoding** — indexed `TRIANGLES` primitive + PBR material; `weld` → `dedup` → `meshopt simplify` → `normals` → **Draco**
 5. Upload worker passes the on-disk buffer once (`sourceData`) and runs part analysis + preview optimization **in parallel**
 6. **Draco** compression for web streaming
 7. Admin upload response `url` is the preview when ready; `sourceUrl` keeps the original for print
 8. Public product API resolves `modelFileUrl` to the preview sibling on disk when present (no manual re-link)
+
+**3MF (Bambu Studio):** the reader resolves `<build>` items, nested `<components>`, external `3D/Objects/*.model` files, and 3×4 transform matrices per the [3MF specification](https://3mf.io/specification/).
+
+## Seed catalog models
+
+`pnpm --filter @print3d/api db:seed` copies real STL/3MF files from `SEED_MODELS_SOURCE_DIR` (default `/data/downloads`) into `MODEL_FILES_BASE_PATH/3d/seed-{slug}.*`, optimizes each to `-preview.glb`, and updates product `modelFileUrl` / `modelParts`:
+
+| Product slug | Source file |
+|--------------|-------------|
+| `custom-photo-frame` | `placa_estudo_hiragana_PRONTA.stl` |
+| `dragon-figurine` | `mini_dino.3mf` |
+| `phone-stand` | `iPhone_Stand_-_Standard.3mf` |
+| `custom-keychain` | `polar_bear_keychain_-_profile.3mf` |
+| `planter-pot` | `Capy.3mf` |
+
+If a source file is missing, that product keeps its catalog metadata without a model URL.
 
 Re-run optimization for an existing product:
 
@@ -139,7 +155,7 @@ Serve `/models/` directly — see [../infrastructure/nginx.md](../infrastructure
 | Layer | File |
 |-------|------|
 | Web unit | `apps/web/tests/unit/modelFormat.test.ts`, `apps/web/tests/unit/modelViewerLimits.test.ts` |
-| API unit | `apps/api/tests/unit/infrastructure/orientMeshForPrintPreview.test.ts`, `documentFromMesh.test.ts` |
+| API unit | `apps/api/tests/unit/infrastructure/orientMeshForPrintPreview.test.ts`, `documentFromMesh.test.ts`, `read3mfMesh.test.ts` |
 | E2E | `e2e/product-detail.spec.ts` |
 
 ## Related documents

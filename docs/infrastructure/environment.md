@@ -50,7 +50,11 @@ In **development**, if `MODEL_FILES_BASE_PATH` is not writable (common when set 
 
 The API also serves that directory at **`GET /models/*`** (no auth) so admin and storefront previews work without nginx in local dev. In dev, omit `VITE_ASSETS_BASE_URL` so the SPA loads `/models/...` on the same origin; Vite proxies `/models` to the API (`apps/admin/vite.config.ts`, `apps/web/vite.config.ts`). Set `VITE_ASSETS_BASE_URL` only for production builds or when assets are on a separate CDN.
 
-`pnpm --filter @print3d/api db:seed` copies committed thumbnails from `apps/api/seed-assets/thumbnails/` into `MODEL_FILES_BASE_PATH/thumbnails/` (photo-frame, dragon, categories, etc.).
+`pnpm --filter @print3d/api db:seed` copies committed thumbnails from `apps/api/seed-assets/thumbnails/` into `MODEL_FILES_BASE_PATH/thumbnails/` (photo-frame, dragon, categories, etc.) and optimizes real STL/3MF models from `SEED_MODELS_SOURCE_DIR` (default `/data/downloads`) — see [../features/3d-viewer.md](../features/3d-viewer.md#seed-catalog-models).
+
+| Variable | Example | Notes |
+|----------|---------|-------|
+| `SEED_MODELS_SOURCE_DIR` | `/data/downloads` | Local folder with Bambu-tested `.stl` / `.3mf` files for catalog seed |
 
 Harness: `agent-rules/03-security/secrets-and-credentials.md`
 

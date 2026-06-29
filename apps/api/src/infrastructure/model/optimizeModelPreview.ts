@@ -3,14 +3,21 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 
 import type { Document } from "@gltf-transform/core";
-import { dedup, draco, meshopt, simplify, weld } from "@gltf-transform/functions";
+import { dedup, draco, simplify, weld } from "@gltf-transform/functions";
 import type { AdminUploadMimeType } from "@print3d/shared-types";
-import { MeshoptEncoder, MeshoptSimplifier } from "meshoptimizer";
+import { MeshoptSimplifier } from "meshoptimizer";
 
 import { createGltfIo } from "./createGltfIo.js";
-import { documentFromMesh, millimetersToMeters } from "./documentFromMesh.js";
+import { documentFromMesh } from "./documentFromMesh.js";
+import {
+  PREVIEW_MESH_MAX_VERTICES,
+  preparePreviewMesh,
+} from "./preparePreviewMesh.js";
 import { read3mfMesh } from "./read3mfMesh.js";
 import { readStlPositions } from "./readStlPositions.js";
+
+/** Uniform stride while parsing huge STL/3MF files (keeps preview worker fast). */
+const PREVIEW_READ_MAX_TRIANGLES = 250_000;
 
 /** Contract: docs/features/3d-viewer.md — browser preview limits */
 export const PREVIEW_MAX_BYTES = 20 * 1024 * 1024;
@@ -28,7 +35,7 @@ export type OptimizeModelPreviewResult = {
   sizeBytes: number;
 };
 
-/** Convert STL / GLB / GLTF / 3MF to Draco + meshopt GLB for in-browser preview. */
+/** Convert STL / GLB / GLTF / 3MF to Draco-compressed GLB for in-browser preview. */
 export async function optimizeModelPreview(
   input: OptimizeModelPreviewInput,
 ): Promise<OptimizeModelPreviewResult | null> {
@@ -69,11 +76,12 @@ async function loadDocument(
 ): Promise<Document | null> {
   if (input.mimeType === "model/stl") {
     const data = await readFile(input.sourcePath);
-    const positions = readStlPositions(data);
+    const positions = readStlPositions(data, { maxTriangles: PREVIEW_READ_MAX_TRIANGLES });
     if (!positions) {
       return null;
     }
-    return documentFromMesh(millimetersToMeters(positions));
+    const prepared = await preparePreviewMesh(positions);
+    return documentFromMesh(prepared);
   }
 
   if (input.mimeType === "model/3mf") {
@@ -82,7 +90,8 @@ async function loadDocument(
     if (!positions) {
       return null;
     }
-    return documentFromMesh(millimetersToMeters(positions));
+    const prepared = await preparePreviewMesh(positions);
+    return documentFromMesh(prepared);
   }
 
   if (input.mimeType === "model/gltf-binary" || input.mimeType === "model/gltf+json") {
@@ -95,18 +104,13 @@ async function loadDocument(
 async function runOptimizationPipeline(document: Document): Promise<void> {
   await document.transform(weld({}), dedup());
 
-  let ratio = 0.5;
-  for (let pass = 0; pass < 8; pass += 1) {
-    if (countVertices(document) <= PREVIEW_MAX_VERTICES) {
-      break;
-    }
+  if (countVertices(document) > PREVIEW_MESH_MAX_VERTICES) {
     await document.transform(
-      simplify({ simplifier: MeshoptSimplifier, ratio, error: 0.0001 }),
+      simplify({ simplifier: MeshoptSimplifier, ratio: 0.5, error: 0.01 }),
     );
-    ratio *= 0.5;
   }
 
-  await document.transform(draco({ method: "edgebreaker" }), meshopt({ encoder: MeshoptEncoder }));
+  await document.transform(draco({ method: "edgebreaker" }));
 }
 
 function countVertices(document: Document): number {

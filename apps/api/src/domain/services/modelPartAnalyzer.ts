@@ -1,6 +1,8 @@
 import type { AdminUploadMimeType, ModelPart } from "@print3d/shared-types";
 import { uuidv7 } from "uuidv7";
 
+import { formatModelPartName } from "./formatModelPartName.js";
+
 type Bbox = { minX: number; minY: number; minZ: number; maxX: number; maxY: number; maxZ: number };
 
 export type AnalyzeModelInput = {
@@ -18,13 +20,24 @@ export function analyzeModelParts(input: AnalyzeModelInput): ModelPart[] {
     return analyzeGlb(input.data, input.infillFactor, input.densityGCm3);
   }
   if (input.mimeType === "model/stl") {
-    return [buildPart(stem, computeStlBbox(input.data), "mm", input.infillFactor, input.densityGCm3)];
+    const bbox = computeStlBbox(input.data);
+    return [
+      buildPart(
+        formatModelPartName(stem),
+        bbox,
+        inferStlVolumeUnit(bbox),
+        input.infillFactor,
+        input.densityGCm3,
+      ),
+    ];
   }
   if (input.mimeType === "model/3mf") {
-    return [buildPart(stem, null, "mm", input.infillFactor, input.densityGCm3)];
+    return [
+      buildPart(formatModelPartName(stem), null, "mm", input.infillFactor, input.densityGCm3),
+    ];
   }
 
-  return [buildPart(stem, null, "mm", input.infillFactor, input.densityGCm3)];
+  return [buildPart(formatModelPartName(stem), null, "mm", input.infillFactor, input.densityGCm3)];
 }
 
 function analyzeGlb(
@@ -125,6 +138,21 @@ function computeAsciiStlBbox(text: string): Bbox | null {
     match = vertexPattern.exec(text);
   }
   return bbox.initialized ? bbox : null;
+}
+
+function inferStlVolumeUnit(bbox: Bbox | null): "mm" | "m" {
+  if (bbox === null) {
+    return "mm";
+  }
+  const max = Math.max(
+    Math.abs(bbox.maxX),
+    Math.abs(bbox.minX),
+    Math.abs(bbox.maxY),
+    Math.abs(bbox.minY),
+    Math.abs(bbox.maxZ),
+    Math.abs(bbox.minZ),
+  );
+  return max > 20 ? "mm" : "m";
 }
 
 function buildPart(

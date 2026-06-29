@@ -1,18 +1,11 @@
 import type { ShopColor, UpdateShopSettingsPayload } from "@print3d/shared-types";
+import { DEFAULT_SHOP_COLORS } from "@print3d/shared-types";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 
 import { StudioPricingFields } from "./StudioPricingFields";
-
-const FILAMENT_PRESETS: ShopColor[] = [
-  { id: "pla-white", name: "White", hex: "#F5F5F5" },
-  { id: "pla-black", name: "Black", hex: "#1A1A1A" },
-  { id: "pla-red", name: "Red", hex: "#C62828" },
-  { id: "pla-blue", name: "Blue", hex: "#1565C0" },
-  { id: "pla-green", name: "Green", hex: "#2E7D32" },
-];
 
 type StudioSettingsCardProps = {
   form: UpdateShopSettingsPayload;
@@ -36,7 +29,7 @@ export function StudioSettingsCard({ form, onChange }: StudioSettingsCardProps) 
             onClick={() =>
               onChange({
                 ...form,
-                availableColors: FILAMENT_PRESETS.map((color) => ({ ...color })),
+                availableColors: DEFAULT_SHOP_COLORS.map((color) => ({ ...color })),
               })
             }
           >

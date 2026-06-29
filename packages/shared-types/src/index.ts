@@ -98,6 +98,7 @@ export type {
 export { MATERIAL_TYPES, PAYMENT_METHODS } from "./material.types.js";
 export type { PaymentMethod } from "./material.types.js";
 export type { ShopConfig, ShopConfigResponse } from "./shop-config.types.js";
+export { DEFAULT_SHOP_COLORS } from "./shop-defaults.js";
 export type {
   StoreCartItem,
   StoreCartResponse,

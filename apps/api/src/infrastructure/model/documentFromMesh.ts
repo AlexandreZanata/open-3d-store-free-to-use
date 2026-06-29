@@ -27,3 +27,12 @@ export function millimetersToMeters(mm: Float32Array): Float32Array {
   }
   return meters;
 }
+
+/** Heuristic: coords above ~20 are typical millimeter print sizes; smaller values are already meters. */
+export function positionsToMeters(positions: Float32Array): Float32Array {
+  let maxAbs = 0;
+  for (let i = 0; i < positions.length; i += 1) {
+    maxAbs = Math.max(maxAbs, Math.abs(positions[i]!));
+  }
+  return maxAbs > 20 ? millimetersToMeters(positions) : positions;
+}

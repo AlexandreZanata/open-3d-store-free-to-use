@@ -47,6 +47,17 @@ export const productOptionSchema = {
   },
 } as const;
 
+export const modelPartSchema = {
+  type: "object",
+  required: ["id", "name"],
+  properties: {
+    id: { type: "string", format: "uuid" },
+    name: { type: "string" },
+    volumeCm3: { type: "number", nullable: true },
+    weightGrams: { type: "number", nullable: true },
+  },
+} as const;
+
 export const productListItemSchema = {
   type: "object",
   required: [
@@ -92,6 +103,7 @@ export const productDetailSchema = {
         "weightGrams",
         "options",
         "modelFileUrl",
+        "modelParts",
         "imageUrls",
       ],
       properties: {
@@ -100,6 +112,7 @@ export const productDetailSchema = {
         weightGrams: { type: "number" },
         options: { type: "array", items: productOptionSchema },
         modelFileUrl: { type: "string", nullable: true },
+        modelParts: { type: "array", items: modelPartSchema },
         imageUrls: { type: "array", items: { type: "string" } },
       },
     },

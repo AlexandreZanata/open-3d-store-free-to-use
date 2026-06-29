@@ -7,6 +7,7 @@ import type {
   PaymentMethod,
   ShopColor,
 } from "@print3d/shared-types";
+import { DEFAULT_SHOP_COLORS } from "@print3d/shared-types";
 
 import type {
   IShopSettingsRepository,
@@ -99,7 +100,7 @@ export class DrizzleShopSettingsRepository implements IShopSettingsRepository {
 }
 
 export const SHOP_SETTINGS_SEED_DEFAULTS = {
-  availableColors: [] as ShopColor[],
+  availableColors: DEFAULT_SHOP_COLORS,
   materialPricing: DEFAULT_MATERIAL_PRICING,
   calculator: DEFAULT_CALCULATOR_SETTINGS,
 };

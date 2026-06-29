@@ -1,11 +1,12 @@
 /**
- * Re-optimize an on-disk model and optionally update a product's modelFileUrl.
+ * Re-optimize an on-disk model and update a product's modelFileUrl + modelParts.
  *
  * Usage:
  *   pnpm --filter @print3d/api exec tsx --env-file=.env scripts/reoptimizeModel.ts custom-photo-frame
+ *   pnpm --filter @print3d/api exec tsx --env-file=.env scripts/reoptimizeModel.ts dragon-figurine storage/models/3d/file.stl
  */
 import path from "node:path";
-import { access } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 
 import { eq } from "drizzle-orm";
 
@@ -18,15 +19,19 @@ import { productCacheKey } from "../src/application/cache/cacheKeys.js";
 import { LocalFileStorage } from "../src/infrastructure/storage/LocalFileStorage.js";
 import { optimizeModelPreview } from "../src/infrastructure/model/optimizeModelPreview.js";
 import { resolveModelUploadMime } from "../src/infrastructure/storage/resolveModelUploadMime.js";
+import { analyzeModelParts } from "../src/domain/services/modelPartAnalyzer.js";
+import { DrizzleShopSettingsRepository } from "../src/infrastructure/repositories/DrizzleShopSettingsRepository.js";
 
 async function main(): Promise<void> {
   const slug = process.argv[2];
+  const sourceOverride = process.argv[3];
   if (!slug) {
-    throw new Error("Usage: reoptimizeModel.ts <product-slug>");
+    throw new Error("Usage: reoptimizeModel.ts <product-slug> [source-path]");
   }
 
   const config = loadConfig();
   const { db, pool } = createDb(config.DATABASE_URL);
+  const shopSettings = new DrizzleShopSettingsRepository(db);
   const storage = new LocalFileStorage(
     config.MODEL_FILES_BASE_PATH,
     config.MODEL_FILES_BASE_URL,
@@ -35,13 +40,28 @@ async function main(): Promise<void> {
 
   const rows = await db.select().from(products).where(eq(products.slug, slug)).limit(1);
   const product = rows[0];
-  if (!product?.modelFileUrl) {
-    throw new Error(`Product ${slug} has no modelFileUrl`);
+  if (!product) {
+    throw new Error(`Product ${slug} not found`);
   }
 
-  const sourcePath = await resolveOptimizationSourcePath(
-    storage.resolvePathFromPublicUrl(product.modelFileUrl),
-  );
+  let sourcePath: string;
+  if (sourceOverride) {
+    sourcePath = path.resolve(sourceOverride);
+  } else if (product.modelFileUrl) {
+    sourcePath = await resolveOptimizationSourcePath(
+      storage.resolvePathFromPublicUrl(product.modelFileUrl),
+    );
+  } else {
+    throw new Error(
+      `Product ${slug} has no model source; pass a file path as the second argument`,
+    );
+  }
+
+  try {
+    await access(sourcePath);
+  } catch {
+    throw new Error(`Model source not found: ${sourcePath}`);
+  }
   const mimeType = resolveModelUploadMime(
     path.basename(sourcePath),
     "application/octet-stream",
@@ -61,9 +81,25 @@ async function main(): Promise<void> {
     throw new Error("Optimization failed or preview still too large");
   }
 
+  const settings = await shopSettings.get();
+  const infill = settings?.calculator.defaultInfillFactor ?? 0.2;
+  const density = settings?.materialPricing.PLA?.densityGCm3 ?? 1.24;
+  const sourceData = await readFile(sourcePath);
+  const modelParts = analyzeModelParts({
+    data: sourceData,
+    mimeType,
+    filename: path.basename(sourcePath),
+    infillFactor: infill,
+    densityGCm3: density,
+  });
+
   await db
     .update(products)
-    .set({ modelFileUrl: preview.previewUrl, updatedAt: new Date() })
+    .set({
+      modelFileUrl: preview.previewUrl,
+      modelParts,
+      updatedAt: new Date(),
+    })
     .where(eq(products.id, product.id));
 
   const redis = await createRedisClient(config.REDIS_URL);

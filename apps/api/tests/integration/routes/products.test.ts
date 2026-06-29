@@ -50,6 +50,7 @@ describe("GET /api/v1/products (contract)", () => {
       });
       expect(pt.json().data.name).toBe("Porta-retrato personalizado");
       expect(pt.json().data.locale).toBe("pt-BR");
+      expect(Array.isArray(pt.json().data.modelParts)).toBe(true);
     },
   );
 

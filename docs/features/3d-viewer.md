@@ -71,18 +71,21 @@ Admin `kind=model` uploads enqueue async mesh extraction (`model_processing_jobs
 
 ## Server-side preview optimization
 
-Any catalog upload (`STL`, `GLB`, `GLTF`, `3MF`) is converted automatically to a **Draco + meshopt GLB** (`{id}-preview.glb`, target &lt; 20 MB):
+Any catalog upload (`STL`, `GLB`, `GLTF`, `3MF`) is converted automatically to a **Draco GLB** (`{id}-preview.glb`, target &lt; 20 MB):
 
 1. Worker ingests the source mesh (STL triangle soup, 3MF XML zip, or glTF)
-2. **meshoptimizer** simplifies until ≤ 600k vertices
-3. **Draco** + **meshopt** compress for web streaming
-4. Admin upload response `url` is the preview when ready; `sourceUrl` keeps the original for print
-5. Public product API resolves `modelFileUrl` to the preview sibling on disk when present (no manual re-link)
+2. **Unit detection** — millimeter vs meter coordinates (heuristic on bounding box)
+3. **Print orientation** — 20 axis/yaw candidates (Bambu/Orca-style: maximize build-plate footprint, prefer upright height); baked into the GLB so the storefront shows the model **standing on the virtual desk**
+4. **Fast decimation** — uniform triangle stride while parsing huge STL/3MF, then **meshoptimizer** weld + simplify before glTF encoding
+5. **Draco** compression for web streaming
+6. Admin upload response `url` is the preview when ready; `sourceUrl` keeps the original for print
+7. Public product API resolves `modelFileUrl` to the preview sibling on disk when present (no manual re-link)
 
 Re-run optimization for an existing product:
 
 ```bash
 pnpm --filter @print3d/api reoptimize-model custom-photo-frame
+pnpm --filter @print3d/api reoptimize-model dragon-figurine storage/models/3d/<upload-id>.stl
 ```
 
 ## Browser preview limits
@@ -135,6 +138,7 @@ Serve `/models/` directly — see [../infrastructure/nginx.md](../infrastructure
 | Layer | File |
 |-------|------|
 | Web unit | `apps/web/tests/unit/modelFormat.test.ts`, `apps/web/tests/unit/modelViewerLimits.test.ts` |
+| API unit | `apps/api/tests/unit/infrastructure/orientMeshForPrintPreview.test.ts`, `documentFromMesh.test.ts` |
 | E2E | `e2e/product-detail.spec.ts` |
 
 ## Related documents

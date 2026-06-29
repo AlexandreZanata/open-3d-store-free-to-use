@@ -90,6 +90,19 @@ SSH keys: [ssh/README.md](ssh/README.md)
 
 ## Troubleshooting
 
+### `POSTGRES_PASSWORD is missing a value`
+
+`production/env/docker.env` is incomplete. Rebuild from `api.env` (passwords must match):
+
+```bash
+cd /var/www/print3d
+chmod +x infra/scripts/repair-docker-env.sh
+./infra/scripts/repair-docker-env.sh
+./infra/scripts/up-data-layer.sh
+```
+
+Or from your machine: `./production/deploy-to-vps.sh --env-only` then sync.
+
 ### `Bind for 0.0.0.0:5432 failed: port is already allocated`
 
 The VPS already runs native Postgres (common on Hostinger). Docker uses **alternate host ports** via `production/env/docker.env`:

@@ -14,7 +14,10 @@ read_api_val() {
 
 parse_url_password() {
   local url="$1"
-  echo "${url}" | sed -n 's|.*://[^:]*:\([^@]*\)@.*|\1|p'
+  local rest userpass
+  rest="${url#*://}"
+  userpass="${rest%%@*}"
+  echo "${userpass#*:}"
 }
 
 if [[ ! -f "${API_ENV}" ]]; then

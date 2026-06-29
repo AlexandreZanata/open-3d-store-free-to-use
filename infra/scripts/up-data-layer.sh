@@ -28,6 +28,6 @@ if [[ -z "${POSTGRES_PASSWORD:-}" ]]; then
 fi
 
 docker compose -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" up -d --remove-orphans
-docker compose -f "${COMPOSE_FILE}" ps
+docker compose -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" ps
 
 echo "up-data-layer.sh: data layer running"

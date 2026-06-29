@@ -48,6 +48,9 @@ else
   git pull --ff-only
 fi
 
+echo "==> Checking Node.js / pnpm / PM2"
+"${ROOT}/infra/scripts/ensure-node.sh"
+
 echo "==> Installing dependencies"
 pnpm install --frozen-lockfile
 

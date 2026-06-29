@@ -90,7 +90,35 @@ SSH keys: [ssh/README.md](ssh/README.md)
 
 ## Troubleshooting
 
-### `POSTGRES_PASSWORD is missing a value`
+### `pnpm: command not found`
+
+Node.js or pnpm not installed on VPS. As **root**:
+
+```bash
+cd /var/www/print3d
+chmod +x infra/scripts/ensure-node.sh
+./infra/scripts/ensure-node.sh
+SKIP_GIT_PULL=1 ./infra/scripts/deploy.sh
+```
+
+Or full bootstrap: `./infra/scripts/bootstrap-vps.sh`
+
+### `POSTGRES_PASSWORD is missing` on `docker compose ps`
+
+Containers may still be running. Always pass the env file:
+
+```bash
+docker compose -f infra/docker-compose.prod.yml --env-file production/env/docker.env ps
+```
+
+Rebuild `docker.env` from `api.env`:
+
+```bash
+./infra/scripts/repair-docker-env.sh
+./infra/scripts/up-data-layer.sh
+```
+
+### `POSTGRES_PASSWORD is missing a value` (compose up)
 
 `production/env/docker.env` is incomplete. Rebuild from `api.env` (passwords must match):
 

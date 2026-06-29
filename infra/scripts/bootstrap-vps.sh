@@ -20,7 +20,7 @@ install_packages() {
 }
 
 install_node() {
-  if command -v node >/dev/null 2>&1; then
+  if command -v node >/dev/null 2>&1 && command -v pnpm >/dev/null 2>&1 && command -v pm2 >/dev/null 2>&1; then
     return
   fi
   curl -fsSL https://deb.nodesource.com/setup_22.x | bash -

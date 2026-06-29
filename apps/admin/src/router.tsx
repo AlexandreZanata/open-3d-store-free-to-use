@@ -9,8 +9,14 @@ export type RouterContext = {
   queryClient: QueryClient;
 };
 
+function readAdminBasePath(): string | undefined {
+  const base = import.meta.env.BASE_URL;
+  return base === "/" ? undefined : base.replace(/\/$/, "");
+}
+
 export const router = createRouter({
   routeTree,
+  basepath: readAdminBasePath(),
   context: {
     auth: undefined as never,
     queryClient: undefined as never,

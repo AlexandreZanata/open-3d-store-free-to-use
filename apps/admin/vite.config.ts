@@ -19,8 +19,11 @@ function resolveDevApiOrigin(env: Record<string, string>): string {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const apiOrigin = resolveDevApiOrigin(env);
+  const adminBase = env.VITE_ADMIN_BASE_PATH?.replace(/\/$/, "") ?? "";
+  const base = adminBase ? `${adminBase}/` : "/";
 
   return {
+    base,
     plugins: [
       tanstackRouter({ target: "react", autoCodeSplitting: true }),
       tsconfigPaths(),

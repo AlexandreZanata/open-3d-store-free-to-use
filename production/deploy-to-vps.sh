@@ -41,9 +41,27 @@ prepare_production_env() {
   source "${VPS_ENV}"
 
   : "${VPS_HOST:?set VPS_HOST in production/vps.env}"
-  DOMAIN="${DOMAIN:-yourdomain.com.br}"
+  DOMAIN="${DOMAIN:-${VPS_HOST}}"
+  VPS_USE_HTTPS="${VPS_USE_HTTPS:-0}"
+  NGINX_HTTP_PORT="${NGINX_HTTP_PORT:-80}"
+
   if [[ "${DOMAIN}" == "yourdomain.com.br" ]]; then
-    echo "deploy-to-vps.sh: WARNING — set real DOMAIN in production/vps.env" >&2
+    DOMAIN="${VPS_HOST}"
+    VPS_USE_HTTPS=0
+  fi
+
+  local base admin_origin admin_base_path=""
+  if [[ "${VPS_USE_HTTPS}" == "0" ]]; then
+    if [[ "${NGINX_HTTP_PORT}" == "80" ]]; then
+      base="http://${DOMAIN}"
+    else
+      base="http://${DOMAIN}:${NGINX_HTTP_PORT}"
+    fi
+    admin_origin="${base}/admin"
+    admin_base_path="/admin"
+  else
+    base="https://${DOMAIN}"
+    admin_origin="https://admin.${DOMAIN}"
   fi
 
   if [[ ! -f "${ENV_DIR}/docker.env" ]]; then
@@ -59,7 +77,6 @@ prepare_production_env() {
     admin_secret="$(openssl rand -base64 32 | tr -d '\n/')"
   fi
 
-  local base="https://${DOMAIN}"
   local admin_ttl idle_ttl upload_max
   admin_ttl="$(read_env_val "${DEV_ENV}" "ADMIN_SESSION_TTL" "28800")"
   idle_ttl="$(read_env_val "${DEV_ENV}" "ADMIN_SESSION_IDLE_TTL" "1800")"
@@ -81,7 +98,7 @@ MODEL_FILES_BASE_URL=${base}/models
 ADMIN_SESSION_SECRET=${admin_secret}
 ADMIN_SESSION_TTL=${admin_ttl}
 ADMIN_SESSION_IDLE_TTL=${idle_ttl}
-ADMIN_ORIGIN=https://admin.${DOMAIN}
+ADMIN_ORIGIN=${admin_origin}
 
 STORE_SESSION_TTL=2592000
 STORE_SESSION_IDLE_TTL=604800
@@ -104,10 +121,11 @@ EOF
 VITE_API_BASE_URL=${base}/api/v1
 VITE_ASSETS_BASE_URL=${base}
 VITE_WHATSAPP_PHONE=${WHATSAPP_PHONE}
+${admin_base_path:+VITE_ADMIN_BASE_PATH=${admin_base_path}}
 EOF
 
   chmod 600 "${ENV_DIR}/"*.env
-  echo "deploy-to-vps.sh: env ready (WhatsApp ${WHATSAPP_PHONE}, domain ${DOMAIN})"
+  echo "deploy-to-vps.sh: env ready (${base}, WhatsApp ${WHATSAPP_PHONE})"
 }
 
 ssh_opts() {
@@ -157,7 +175,9 @@ remote_deploy() {
   source "${VPS_ENV}"
   VPS_APP_DIR="${VPS_APP_DIR:-/var/www/print3d}"
   REMOTE="${VPS_USER}@${VPS_HOST}"
-  DOMAIN="${DOMAIN:-yourdomain.com.br}"
+  DOMAIN="${DOMAIN:-${VPS_HOST}}"
+  VPS_USE_HTTPS="${VPS_USE_HTTPS:-0}"
+  NGINX_HTTP_PORT="${NGINX_HTTP_PORT:-80}"
 
   ssh_opts
   echo "==> Remote build and PM2 start"
@@ -168,6 +188,13 @@ chmod +x infra/scripts/*.sh production/deploy-to-vps.sh 2>/dev/null || true
 ./infra/scripts/install-env.sh
 docker compose -f infra/docker-compose.prod.yml --env-file production/env/docker.env up -d
 mkdir -p models/{3d,thumbnails,images}
+export DOMAIN="${DOMAIN}"
+export VPS_HOST="${VPS_HOST}"
+export NGINX_HTTP_PORT="${NGINX_HTTP_PORT}"
+export VPS_APP_DIR="${VPS_APP_DIR}"
+if [[ "${VPS_USE_HTTPS}" == "0" ]]; then
+  ./infra/scripts/install-nginx-ip.sh
+fi
 export SKIP_GIT_PULL=1
 export DOMAIN="${DOMAIN}"
 if pm2 describe print3d-api >/dev/null 2>&1; then
@@ -177,7 +204,10 @@ else
 fi
 REMOTE_SCRIPT
 
-  echo "deploy-to-vps.sh: done — open https://${DOMAIN}"
+  local open_url="http://${DOMAIN}"
+  [[ "${VPS_USE_HTTPS}" == "1" ]] && open_url="https://${DOMAIN}"
+  [[ "${NGINX_HTTP_PORT:-80}" != "80" && "${VPS_USE_HTTPS}" == "0" ]] && open_url="${open_url}:${NGINX_HTTP_PORT}"
+  echo "deploy-to-vps.sh: done — open ${open_url} (admin ${open_url}/admin/)"
 }
 
 main() {

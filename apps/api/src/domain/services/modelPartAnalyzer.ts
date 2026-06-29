@@ -164,7 +164,7 @@ function buildPart(
 ): ModelPart {
   const volumeCm3 = bbox === null ? null : bboxVolumeCm3(bbox, unit);
   const weightGrams =
-    volumeCm3 === null ? null : Math.round(volumeCm3 * infillFactor * densityGCm3 * 10) / 10;
+    volumeCm3 === null ? null : Math.round(volumeCm3 * infillFactor * densityGCm3);
 
   return { id: uuidv7(), name, volumeCm3, weightGrams };
 }

@@ -653,7 +653,7 @@ Poll async mesh extraction after `kind=model` upload.
     "sourceUrl": "/models/3d/….stl",
     "previewUrl": "/models/3d/…-preview.glb",
     "parts": [
-      { "id": "…", "name": "Solid", "volumeCm3": 12.5, "weightGrams": 3.1 }
+      { "id": "…", "name": "Solid", "volumeCm3": 12.5, "weightGrams": 3 }
     ],
     "errorMessage": null,
     "createdAt": "2026-06-29T12:00:00.000Z",

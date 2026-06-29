@@ -4,6 +4,7 @@ import {
   type AdminProductTranslations,
   type CreateCategoryPayload,
   type CreateProductPayload,
+  type ModelPart,
   type UpdateCategoryPayload,
   type UpdateProductPayload,
 } from "@print3d/shared-types";
@@ -58,6 +59,7 @@ export function normalizeCreateProductInput(
     ...input,
     slug: parseProductSlug(input.slug),
     basePrice: parseProductPrice(input.basePrice),
+    modelParts: normalizeModelParts(input.modelParts ?? []),
   };
 }
 
@@ -71,10 +73,21 @@ export function normalizeUpdateProductInput(
   if (input.basePrice !== undefined) {
     normalized.basePrice = parseProductPrice(input.basePrice);
   }
+  if (input.modelParts !== undefined) {
+    normalized.modelParts = normalizeModelParts(input.modelParts);
+  }
   if (input.translations !== undefined) {
     validateProductTranslations(input.translations);
   }
   return normalized;
+}
+
+function normalizeModelParts(parts: ModelPart[]): ModelPart[] {
+  return parts.map((part) => ({
+    ...part,
+    weightGrams:
+      part.weightGrams === null ? null : Math.round(part.weightGrams),
+  }));
 }
 
 export function normalizeCreateCategoryInput(

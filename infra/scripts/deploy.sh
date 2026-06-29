@@ -16,6 +16,7 @@ fi
 
 export VITE_API_BASE_URL="${VITE_API_BASE_URL:-${CORS_ORIGIN:-}/api/v1}"
 export VITE_ASSETS_BASE_URL="${VITE_ASSETS_BASE_URL:-${CORS_ORIGIN:-}}"
+export VITE_WHATSAPP_PHONE="${VITE_WHATSAPP_PHONE:-${WHATSAPP_PHONE_NUMBER:-}}"
 
 if [[ -z "${VITE_API_BASE_URL}" || "${VITE_API_BASE_URL}" == "/api/v1" ]]; then
   echo "deploy.sh: set CORS_ORIGIN or VITE_API_BASE_URL in apps/api/.env" >&2

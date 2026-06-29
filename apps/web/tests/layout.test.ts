@@ -5,6 +5,7 @@ import {
   desktopHeroSurface,
   desktopMainSurface,
   desktopOnly,
+  footerBottomPad,
   mainBottomPad,
   mobileOnly,
   productCardWideWidth,
@@ -19,7 +20,7 @@ import {
 describe("responsive layout tokens", () => {
   it("keeps mobile shell width at max-w-2xl", () => {
     expect(shellMaxWidth).toContain("max-w-2xl");
-    expect(mainBottomPad).toContain("pb-24");
+    expect(mainBottomPad).toContain("pb-8");
     expect(productCardWideWidth).toContain("calc(100vw-2rem)");
   });
 
@@ -52,5 +53,10 @@ describe("responsive layout tokens", () => {
     expect(railInner).toContain("px-4");
     expect(railInner).toContain("w-max");
     expect(railScroll).toContain("scroll-px-4");
+  });
+
+  it("clears mobile tab bar via footer padding token", () => {
+    expect(footerBottomPad).toContain("pb-20");
+    expect(footerBottomPad).toContain("lg:pb-0");
   });
 });

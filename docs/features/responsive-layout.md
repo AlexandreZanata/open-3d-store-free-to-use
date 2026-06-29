@@ -18,7 +18,20 @@ Implementation tokens live in `apps/web/src/lib/layout.ts`.
 | **Header** | `AppShellMobileHeader` — frozen markup, no `lg:` classes |
 | **Navigation** | Fixed bottom 5-tab bar |
 | **Home** | Hero card + category pills + horizontal product rails |
-| **Shell** | `max-w-2xl`, `pb-24` for tab bar clearance |
+| **Shell** | `max-w-2xl`, flex column with site footer above tab bar |
+
+### Site footer (`AppShellFooter`)
+
+Global footer on every page wrapped by `AppShell`:
+
+| Element | Detail |
+|---------|--------|
+| **Pitch** | Bilingual CTA — “Like this site? Want your own personalized storefront?” |
+| **WhatsApp** | `VITE_WHATSAPP_PHONE` (same digits as API `WHATSAPP_PHONE_NUMBER`) with brand icon |
+| **GitHub** | [AlexandreZanata](https://github.com/AlexandreZanata) |
+| **Email** | `alexandrezanatavasconcelos@gmail.com` |
+
+Mobile footer uses `footerBottomPad` so content clears the fixed bottom tab bar.
 
 ## Desktop design (lg+)
 
@@ -59,6 +72,7 @@ Separate desktop-only home — mobile home is wrapped in `lg:hidden`:
 | `apps/web/src/components/AppShellMobileHeader.tsx` | **Frozen** mobile header |
 | `apps/web/src/components/AppShellDesktopHeader.tsx` | Desktop inverted header |
 | `apps/web/src/components/AppShellMobileNav.tsx` | Mobile bottom tabs |
+| `apps/web/src/components/AppShellFooter.tsx` | Site footer (contact CTA) |
 | `apps/web/src/components/home/HomeDesktopView.tsx` | Desktop-only home |
 | `apps/web/src/components/SearchFiltersPanel.tsx` | Search filters (mobile chips / desktop list) |
 | `apps/web/src/components/search/SearchDesktopView.tsx` | Desktop-only search layout |
@@ -72,6 +86,7 @@ Separate desktop-only home — mobile home is wrapped in `lg:hidden`:
 | Layer | File |
 |-------|------|
 | Unit | `apps/web/tests/layout.test.ts` |
+| Unit | `apps/web/tests/unit/contact.test.ts` |
 | E2E desktop | `e2e/desktop-layout.spec.ts` — 1280×800 |
 | E2E product | `e2e/product-detail.spec.ts` — 3D viewer + gallery carousel |
 | E2E mobile | `e2e/desktop-layout.spec.ts` — 390×844 preserved UI |
@@ -86,6 +101,7 @@ PLAYWRIGHT_SKIP_WEBSERVER=1 PLAYWRIGHT_BASE_URL=http://localhost:5173 pnpm e2e e
 2. **Desktop (≥1280px)** — dark inverted header, labeled Cart, desktop hero, category cards, product grids, no bottom tabs.
 3. **Resize** — crossing 1024px toggles layouts without breaking either experience.
 4. **Product detail** — `/product/phone-stand`: gallery tab shows carousel with multiple images; `/product/custom-photo-frame`: 3D tab shows virtual desk viewer (drag to rotate, scroll to zoom).
+5. **Footer** — pitch text, WhatsApp link (when `VITE_WHATSAPP_PHONE` is set), GitHub, and email visible above mobile tab bar.
 
 ## Related
 

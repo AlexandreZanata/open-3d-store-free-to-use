@@ -42,6 +42,22 @@ test.describe("desktop layout", () => {
     await expect(grid).toBeVisible({ timeout: 20_000 });
     await expect(grid).toHaveClass(/xl:grid-cols-3/);
   });
+
+  test("shows site footer with contact links", async ({ page }) => {
+    await page.goto("/");
+
+    const footer = page.getByRole("contentinfo");
+    await expect(footer).toBeVisible({ timeout: 20_000 });
+    await expect(footer.getByText(/like this site|gostou deste site/i)).toBeVisible();
+    await expect(footer.getByRole("link", { name: /github/i })).toHaveAttribute(
+      "href",
+      "https://github.com/AlexandreZanata",
+    );
+    await expect(footer.getByRole("link", { name: /alexandrezanatavasconcelos@gmail.com/i })).toHaveAttribute(
+      "href",
+      "mailto:alexandrezanatavasconcelos@gmail.com",
+    );
+  });
 });
 
 test.describe("mobile layout preserved", () => {
@@ -55,5 +71,13 @@ test.describe("mobile layout preserved", () => {
     await expect(page.locator("nav.fixed.bottom-0")).toBeVisible({ timeout: 20_000 });
     await expect(page.getByRole("link", { name: /home|início/i })).toBeVisible();
     await expect(page.getByRole("navigation", { name: /main navigation|navegação principal/i })).toHaveCount(0);
+  });
+
+  test("shows site footer above bottom tab bar", async ({ page }) => {
+    await page.goto("/");
+
+    const footer = page.getByRole("contentinfo");
+    await expect(footer).toBeVisible({ timeout: 20_000 });
+    await expect(footer.getByText(/gostou deste site|like this site/i)).toBeVisible();
   });
 });

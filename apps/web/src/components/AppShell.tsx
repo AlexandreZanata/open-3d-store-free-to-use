@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { CatalogRealtimeListener } from "@/components/CatalogRealtimeListener";
 import { AppShellDesktopHeader } from "@/components/AppShellDesktopHeader";
+import { AppShellFooter } from "@/components/AppShellFooter";
 import { AppShellMobileHeader } from "@/components/AppShellMobileHeader";
 import { AppShellMobileNav } from "@/components/AppShellMobileNav";
 import { desktopMainSurface, mainBottomPad, shellMaxWidth } from "@/lib/layout";
@@ -24,7 +25,7 @@ export function AppShell({
   const headerProps = { showSearch, showBack, title };
 
   return (
-    <div className="min-h-dvh bg-background text-foreground lg:bg-surface-muted/40">
+    <div className="flex min-h-dvh flex-col bg-background text-foreground lg:bg-surface-muted/40">
       <CatalogRealtimeListener />
       {showTopBar && (
         <>
@@ -33,8 +34,11 @@ export function AppShell({
         </>
       )}
 
-      <main className={`${shellMaxWidth} ${mainBottomPad} ${desktopMainSurface}`}>{children}</main>
+      <main className={`flex-1 ${shellMaxWidth} ${mainBottomPad} ${desktopMainSurface}`}>
+        {children}
+      </main>
 
+      <AppShellFooter />
       <AppShellMobileNav />
     </div>
   );

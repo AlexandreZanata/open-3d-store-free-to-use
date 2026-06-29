@@ -98,7 +98,7 @@ export default defineConfig({
             env: sharedServerEnv,
           },
           {
-            command: `VITE_API_BASE_URL=${apiBase}/api/v1 pnpm --filter @print3d/web dev`,
+            command: `VITE_API_BASE_URL=${apiBase}/api/v1 VITE_WHATSAPP_PHONE=${process.env.WHATSAPP_PHONE_NUMBER ?? "5565999999999"} pnpm --filter @print3d/web dev`,
             url: baseURL,
             reuseExistingServer: !process.env.CI,
             timeout: 180_000,

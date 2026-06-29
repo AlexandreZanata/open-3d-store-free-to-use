@@ -66,8 +66,9 @@ Harness: `agent-rules/03-security/secrets-and-credentials.md`
 |----------|---------|
 | `VITE_API_BASE_URL` | REST client base (includes `/api/v1`) |
 | `VITE_ASSETS_BASE_URL` | Public origin for model thumbnails and `.glb` paths |
+| `VITE_WHATSAPP_PHONE` | Footer contact link — same digits as API `WHATSAPP_PHONE_NUMBER` |
 
-Production deploy reads these at **build time**. `deploy.sh` derives them from `CORS_ORIGIN` when `.env.production` is missing.
+Production deploy reads these at **build time**. `deploy.sh` derives `VITE_API_BASE_URL` and `VITE_ASSETS_BASE_URL` from `CORS_ORIGIN` when `.env.production` is missing, and `VITE_WHATSAPP_PHONE` from `WHATSAPP_PHONE_NUMBER` when unset.
 
 ## Related documents
 

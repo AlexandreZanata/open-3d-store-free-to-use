@@ -11,7 +11,10 @@ export const desktopMainSurface = "lg:pt-2";
 export const desktopHeroSurface =
   "relative overflow-hidden rounded-3xl bg-foreground text-background shadow-card";
 
-export const mainBottomPad = "pb-24 lg:pb-8";
+export const mainBottomPad = "pb-8 lg:pb-8";
+
+/** Clears fixed mobile tab bar when footer is the last scrollable block. */
+export const footerBottomPad = "pb-20 lg:pb-0";
 
 export const productGridCols =
   "grid grid-cols-2 gap-3 lg:grid-cols-3 lg:gap-4 xl:grid-cols-4";

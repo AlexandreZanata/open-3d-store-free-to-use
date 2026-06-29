@@ -32,6 +32,8 @@
   "home": {
     "featuredLabel": "Featured",
     "featuredTitle": "Custom 3D prints — browse and order via WhatsApp",
+    "featuredTitleMobile": "3D prints on WhatsApp",
+    "featuredSubtitleMobile": "Browse models and order in seconds",
     "featuredCta": "Browse catalog",
     "categoriesTitle": "Categories",
     "viewAll": "View all",
@@ -139,6 +141,8 @@
     "loginAction": "Sign in",
     "registerAction": "Create account",
     "email": "Email",
+    "passwordLabel": "Password",
+    "passwordHint": "At least 8 characters",
     "password": "Password (min. 8 characters)",
     "displayName": "Display name",
     "save": "Save profile",
@@ -174,5 +178,11 @@
     "active": "Available",
     "out_of_stock": "Out of stock",
     "discontinued": "Discontinued"
+  },
+  "footer": {
+    "pitch": "Like this site? Want to build your own personalized storefront? Get in touch.",
+    "whatsappPrefill": "Hi! I saw your 3D store and would like a personalized site like this.",
+    "whatsappAria": "Contact on WhatsApp at {{phone}}",
+    "github": "GitHub"
   }
 }

@@ -1,4 +1,4 @@
-type ViteEnvKey = "VITE_API_BASE_URL" | "VITE_ASSETS_BASE_URL";
+type ViteEnvKey = "VITE_API_BASE_URL" | "VITE_ASSETS_BASE_URL" | "VITE_WHATSAPP_PHONE";
 
 function readProcessEnv(key: ViteEnvKey): string | undefined {
   if (typeof process === "undefined") return undefined;
@@ -6,19 +6,11 @@ function readProcessEnv(key: ViteEnvKey): string | undefined {
   return typeof nodeValue === "string" && nodeValue.length > 0 ? nodeValue : undefined;
 }
 
-function readViteApiBaseUrl(): string | undefined {
-  const value = import.meta.env.VITE_API_BASE_URL;
-  return typeof value === "string" && value.length > 0 ? value : undefined;
-}
-
-function readViteAssetsBaseUrl(): string | undefined {
-  const value = import.meta.env.VITE_ASSETS_BASE_URL;
+function readViteEnv(key: ViteEnvKey): string | undefined {
+  const value = import.meta.env[key];
   return typeof value === "string" && value.length > 0 ? value : undefined;
 }
 
 export function readEnvString(key: ViteEnvKey): string | undefined {
-  if (key === "VITE_API_BASE_URL") {
-    return readViteApiBaseUrl() ?? readProcessEnv(key);
-  }
-  return readViteAssetsBaseUrl() ?? readProcessEnv(key);
+  return readViteEnv(key) ?? readProcessEnv(key);
 }

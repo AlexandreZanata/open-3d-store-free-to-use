@@ -32,6 +32,8 @@
   "home": {
     "featuredLabel": "Destaque",
     "featuredTitle": "Impressões 3D personalizadas — navegue e peça pelo WhatsApp",
+    "featuredTitleMobile": "Impressões 3D no WhatsApp",
+    "featuredSubtitleMobile": "Veja modelos e peça em segundos",
     "featuredCta": "Ver catálogo",
     "categoriesTitle": "Categorias",
     "viewAll": "Ver todas",
@@ -139,6 +141,8 @@
     "loginAction": "Entrar",
     "registerAction": "Criar conta",
     "email": "E-mail",
+    "passwordLabel": "Senha",
+    "passwordHint": "Mínimo de 8 caracteres",
     "password": "Senha (mín. 8 caracteres)",
     "displayName": "Nome de exibição",
     "save": "Salvar perfil",
@@ -174,5 +178,11 @@
     "active": "Disponível",
     "out_of_stock": "Esgotado",
     "discontinued": "Descontinuado"
+  },
+  "footer": {
+    "pitch": "Gostou deste site? Quer construir o seu site personalizado? Entre em contato.",
+    "whatsappPrefill": "Olá! Vi sua loja 3D e gostaria de um site personalizado como este.",
+    "whatsappAria": "Contato pelo WhatsApp em {{phone}}",
+    "github": "GitHub"
   }
 }

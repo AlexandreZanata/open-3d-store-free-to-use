@@ -190,7 +190,7 @@ set -euo pipefail
 cd "${VPS_APP_DIR}"
 chmod +x infra/scripts/*.sh production/deploy-to-vps.sh 2>/dev/null || true
 ./infra/scripts/install-env.sh
-docker compose -f infra/docker-compose.prod.yml --env-file production/env/docker.env up -d --remove-orphans
+./infra/scripts/up-data-layer.sh
 mkdir -p models/{3d,thumbnails,images}
 export DOMAIN="${DOMAIN}"
 export VPS_HOST="${VPS_HOST}"

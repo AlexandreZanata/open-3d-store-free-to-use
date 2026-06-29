@@ -41,11 +41,11 @@ if [[ -z "${VITE_API_BASE_URL}" || "${VITE_API_BASE_URL}" == "/api/v1" ]]; then
   exit 1
 fi
 
-if [[ "${SKIP_GIT_PULL:-}" != "1" ]]; then
+if [[ "${SKIP_GIT_PULL:-}" == "1" ]] || [[ ! -d "${ROOT}/.git" ]]; then
+  echo "deploy.sh: skipping git pull (rsync deploy or SKIP_GIT_PULL=1)"
+else
   echo "==> Pulling latest code"
   git pull --ff-only
-else
-  echo "deploy.sh: SKIP_GIT_PULL=1 — using synced tree"
 fi
 
 echo "==> Installing dependencies"

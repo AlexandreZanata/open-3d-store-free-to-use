@@ -104,12 +104,33 @@ Regenerate env and restart data layer:
 
 ```bash
 ./production/deploy-to-vps.sh --env-only
-./production/deploy-to-vps.sh   # or on VPS only:
-cd /var/www/print3d
-docker compose -f infra/docker-compose.prod.yml --env-file production/env/docker.env down
-docker compose -f infra/docker-compose.prod.yml --env-file production/env/docker.env up -d
-./infra/scripts/install-env.sh && ./infra/scripts/deploy.sh
+./production/deploy-to-vps.sh   # syncs updated docker-compose.prod.yml from local
 ```
+
+**On VPS manually:** the compose file must use `${POSTGRES_HOST_PORT:-5433}` — if you still see `5432` in the error, sync from local:
+
+```bash
+# From your machine:
+scp -i production/ssh/id_ed25519_print3d infra/docker-compose.prod.yml root@72.60.147.2:/var/www/print3d/infra/
+```
+
+Then on VPS:
+
+```bash
+cd /var/www/print3d
+./infra/scripts/up-data-layer.sh
+SKIP_GIT_PULL=1 ./infra/scripts/deploy.sh
+```
+
+### `fatal: not a git repository`
+
+Normal for rsync deploy (no `.git` on VPS). Use:
+
+```bash
+SKIP_GIT_PULL=1 ./infra/scripts/deploy.sh
+```
+
+Or re-run `./production/deploy-to-vps.sh` from your machine (sets this automatically).
 
 ---
 

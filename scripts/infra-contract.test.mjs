@@ -37,6 +37,11 @@ describe("deploy.sh contract — docs/infrastructure/deployment.md", () => {
   test("installs production env when production/env/api.env exists", () => {
     assert.match(script, /install-env\.sh/);
   });
+
+  test("skips git pull for rsync deploy without .git", () => {
+    assert.match(script, /SKIP_GIT_PULL/);
+    assert.match(script, /\.git/);
+  });
 });
 
 describe("migrate.sh contract — docs/infrastructure/deployment.md", () => {

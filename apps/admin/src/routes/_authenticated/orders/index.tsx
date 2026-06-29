@@ -1,15 +1,58 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/Button";
+import { DataTable, type DataTableColumn } from "@/components/ui/DataTable";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { useAdminOrders } from "@/hooks/useAdminOrders";
 import { formatOrderDate, formatOrderDisplayId, daysAgoIso } from "@/lib/orderDisplay";
+import { toTablePagination } from "@/lib/tablePagination";
+import type { AdminOrderListItem } from "@print3d/shared-types";
 
 type OrdersSearch = {
   page: number;
 };
+
+const orderColumns: DataTableColumn<AdminOrderListItem>[] = [
+  {
+    id: "order",
+    header: "Order",
+    cell: (order) => <span className="font-mono text-xs">{formatOrderDisplayId(order.id)}</span>,
+  },
+  {
+    id: "date",
+    header: "Date",
+    cell: (order) => formatOrderDate(order.capturedAt),
+  },
+  {
+    id: "items",
+    header: "Items",
+    cell: (order) => order.itemCount,
+  },
+  {
+    id: "customer",
+    header: "Customer",
+    cell: (order) => order.customerName ?? "—",
+  },
+  {
+    id: "total",
+    header: "Total",
+    align: "right",
+    cellClassName: "font-medium",
+    cell: (order) => order.totalDisplay,
+  },
+  {
+    id: "actions",
+    header: "Actions",
+    align: "right",
+    cell: (order) => (
+      <Link to="/orders/$id" params={{ id: order.id }}>
+        <Button variant="secondary">View</Button>
+      </Link>
+    ),
+  },
+];
 
 export const Route = createFileRoute("/_authenticated/orders/")({
   validateSearch: (search: Record<string, never>): OrdersSearch => ({
@@ -53,69 +96,14 @@ function OrdersListPage() {
       ) : null}
 
       {orders.length > 0 ? (
-        <div className="overflow-x-auto rounded-lg border border-hairline">
-          <table className="min-w-full text-sm">
-            <caption className="sr-only">Captured orders</caption>
-            <thead className="border-b border-hairline bg-surface-muted">
-              <tr>
-                <th scope="col" className="px-4 py-3 text-left font-medium">
-                  Order
-                </th>
-                <th scope="col" className="px-4 py-3 text-left font-medium">
-                  Date
-                </th>
-                <th scope="col" className="px-4 py-3 text-left font-medium">
-                  Items
-                </th>
-                <th scope="col" className="px-4 py-3 text-left font-medium">
-                  Customer
-                </th>
-                <th scope="col" className="px-4 py-3 text-right font-medium">
-                  Total
-                </th>
-                <th scope="col" className="px-4 py-3 text-right font-medium">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order) => (
-                <tr key={order.id} className="border-b border-hairline last:border-0">
-                  <td className="px-4 py-3 font-mono text-xs">{formatOrderDisplayId(order.id)}</td>
-                  <td className="px-4 py-3">{formatOrderDate(order.capturedAt)}</td>
-                  <td className="px-4 py-3">{order.itemCount}</td>
-                  <td className="px-4 py-3">{order.customerName ?? "—"}</td>
-                  <td className="px-4 py-3 text-right font-medium">{order.totalDisplay}</td>
-                  <td className="px-4 py-3 text-right">
-                    <Link to="/orders/$id" params={{ id: order.id }}>
-                      <Button variant="secondary">View</Button>
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : null}
-
-      {pagination && pagination.totalPages > 1 ? (
-        <div className="mt-4 flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            Page {pagination.page} of {pagination.totalPages} ({pagination.total} total)
-          </p>
-          <div className="flex gap-2">
-            <Button variant="secondary" disabled={pagination.page <= 1} onClick={() => goToPage(pagination.page - 1)}>
-              Previous
-            </Button>
-            <Button
-              variant="secondary"
-              disabled={pagination.page >= pagination.totalPages}
-              onClick={() => goToPage(pagination.page + 1)}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
+        <DataTable
+          caption="Captured orders"
+          columns={orderColumns}
+          rows={orders}
+          getRowKey={(order) => order.id}
+          pagination={pagination ? toTablePagination(pagination) : null}
+          onPageChange={goToPage}
+        />
       ) : null}
     </>
   );

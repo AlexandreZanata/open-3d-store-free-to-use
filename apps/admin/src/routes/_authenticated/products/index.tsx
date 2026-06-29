@@ -12,6 +12,7 @@ import { useAdminCategories } from "@/hooks/useAdminCategories";
 import { useAdminProducts, useDeleteProduct } from "@/hooks/useAdminProducts";
 import { useToast } from "@/hooks/useToast";
 import { ApiError } from "@/lib/api/client";
+import { toTablePagination } from "@/lib/tablePagination";
 import { formatApiErrorMessage } from "@/lib/utils";
 
 type ProductsSearch = {
@@ -126,31 +127,13 @@ function ProductsListPage() {
       ) : null}
 
       {products.length > 0 ? (
-        <ProductsTable products={products} categoryMap={categoryMap} onDelete={setDeleteId} />
-      ) : null}
-
-      {pagination && pagination.totalPages > 1 ? (
-        <div className="mt-4 flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            Page {pagination.page} of {pagination.totalPages} ({pagination.total} total)
-          </p>
-          <div className="flex gap-2">
-            <Button
-              variant="secondary"
-              disabled={pagination.page <= 1}
-              onClick={() => applyFilters({ page: pagination.page - 1 })}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="secondary"
-              disabled={pagination.page >= pagination.totalPages}
-              onClick={() => applyFilters({ page: pagination.page + 1 })}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
+        <ProductsTable
+          products={products}
+          categoryMap={categoryMap}
+          onDelete={setDeleteId}
+          pagination={pagination ? toTablePagination(pagination) : null}
+          onPageChange={(page) => applyFilters({ page })}
+        />
       ) : null}
 
       <ConfirmDialog

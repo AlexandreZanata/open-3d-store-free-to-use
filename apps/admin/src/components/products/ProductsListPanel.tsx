@@ -3,68 +3,96 @@ import type { AdminProductListItem, PrintStatus } from "@print3d/shared-types";
 
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { DataTable, type DataTableColumn } from "@/components/ui/DataTable";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { resolveAssetUrl } from "@/lib/assets";
 import { formatBrlCents } from "@/lib/money";
+import type { TablePaginationState } from "@/lib/tablePagination";
 import { cn } from "@/lib/utils";
 
 type ProductsTableProps = {
   products: AdminProductListItem[];
   categoryMap: Map<string, string>;
   onDelete: (id: string) => void;
+  pagination: TablePaginationState | null;
+  onPageChange: (page: number) => void;
 };
 
-export function ProductsTable({ products, categoryMap, onDelete }: ProductsTableProps) {
+const productColumns = (
+  categoryMap: Map<string, string>,
+  onDelete: (id: string) => void,
+): DataTableColumn<AdminProductListItem>[] => [
+  {
+    id: "product",
+    header: "Product",
+    cell: (product) => (
+      <div className="flex items-center gap-3">
+        {product.thumbnailUrl ? (
+          <img
+            src={resolveAssetUrl(product.thumbnailUrl)}
+            alt=""
+            className="size-10 rounded border border-hairline object-cover"
+          />
+        ) : null}
+        <span>{product.translations["pt-BR"].name}</span>
+      </div>
+    ),
+  },
+  {
+    id: "slug",
+    header: "Slug",
+    cellClassName: "text-muted-foreground",
+    cell: (product) => product.slug,
+  },
+  {
+    id: "category",
+    header: "Category",
+    cell: (product) => categoryMap.get(product.categoryId) ?? "—",
+  },
+  {
+    id: "price",
+    header: "Price",
+    cell: (product) => formatBrlCents(product.basePrice),
+  },
+  {
+    id: "status",
+    header: "Status",
+    cell: (product) => <Badge status={product.status} />,
+  },
+  {
+    id: "actions",
+    header: "Actions",
+    align: "right",
+    cell: (product) => (
+      <div className="flex justify-end gap-2">
+        <Link to="/products/$id" params={{ id: product.id }}>
+          <Button variant="secondary">Edit</Button>
+        </Link>
+        <Button variant="danger" onClick={() => onDelete(product.id)}>
+          Delete
+        </Button>
+      </div>
+    ),
+  },
+];
+
+export function ProductsTable({
+  products,
+  categoryMap,
+  onDelete,
+  pagination,
+  onPageChange,
+}: ProductsTableProps) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-hairline">
-      <table className="min-w-full text-sm">
-        <thead className="border-b border-hairline bg-surface-muted">
-          <tr>
-            <th className="px-4 py-3 text-left font-medium">Product</th>
-            <th className="px-4 py-3 text-left font-medium">Slug</th>
-            <th className="px-4 py-3 text-left font-medium">Category</th>
-            <th className="px-4 py-3 text-left font-medium">Price</th>
-            <th className="px-4 py-3 text-left font-medium">Status</th>
-            <th className="px-4 py-3 text-right font-medium">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product) => (
-            <tr key={product.id} className="border-b border-hairline last:border-0">
-              <td className="px-4 py-3">
-                <div className="flex items-center gap-3">
-                  {product.thumbnailUrl ? (
-                    <img
-                      src={resolveAssetUrl(product.thumbnailUrl)}
-                      alt=""
-                      className="size-10 rounded border border-hairline object-cover"
-                    />
-                  ) : null}
-                  <span>{product.translations["pt-BR"].name}</span>
-                </div>
-              </td>
-              <td className="px-4 py-3 text-muted-foreground">{product.slug}</td>
-              <td className="px-4 py-3">{categoryMap.get(product.categoryId) ?? "—"}</td>
-              <td className="px-4 py-3">{formatBrlCents(product.basePrice)}</td>
-              <td className="px-4 py-3">
-                <Badge status={product.status} />
-              </td>
-              <td className="px-4 py-3">
-                <div className="flex justify-end gap-2">
-                  <Link to="/products/$id" params={{ id: product.id }}>
-                    <Button variant="secondary">Edit</Button>
-                  </Link>
-                  <Button variant="danger" onClick={() => onDelete(product.id)}>
-                    Delete
-                  </Button>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <DataTable
+      caption="Catalog products"
+      columns={productColumns(categoryMap, onDelete)}
+      rows={products}
+      getRowKey={(product) => product.id}
+      pagination={pagination}
+      onPageChange={onPageChange}
+    />
   );
 }
 

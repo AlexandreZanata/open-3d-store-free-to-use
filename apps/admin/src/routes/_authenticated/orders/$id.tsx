@@ -2,12 +2,44 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { DataTable, type DataTableColumn } from "@/components/ui/DataTable";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { adminOrderQueryKey, useAdminOrder } from "@/hooks/useAdminOrders";
 import { fetchAdminOrder } from "@/lib/api/orders";
 import { formatBrlCents } from "@/lib/money";
 import { formatOrderDate, formatOrderDisplayId } from "@/lib/orderDisplay";
+import type { AdminOrderDetail } from "@print3d/shared-types";
+
+type LineItem = AdminOrderDetail["items"][number];
+
+const lineItemColumns: DataTableColumn<LineItem>[] = [
+  {
+    id: "product",
+    header: "Product",
+    cell: (item) => item.productName,
+  },
+  {
+    id: "qty",
+    header: "Qty",
+    cell: (item) => item.quantity,
+  },
+  {
+    id: "options",
+    header: "Options",
+    cellClassName: "text-muted-foreground",
+    cell: (item) =>
+      Object.entries(item.selectedOptions)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join(", ") || "—",
+  },
+  {
+    id: "unitPrice",
+    header: "Unit price",
+    align: "right",
+    cell: (item) => formatBrlCents(item.unitPrice),
+  },
+];
 
 export const Route = createFileRoute("/_authenticated/orders/$id")({
   loader: ({ context, params }) =>
@@ -43,32 +75,15 @@ function OrderDetailPage() {
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <h2 className="text-base font-semibold text-foreground">Line items</h2>
-          <div className="mt-4 overflow-x-auto">
-            <table className="min-w-full text-sm">
-              <caption className="sr-only">Order line items</caption>
-              <thead className="border-b border-hairline">
-                <tr>
-                  <th scope="col" className="px-2 py-2 text-left font-medium">Product</th>
-                  <th scope="col" className="px-2 py-2 text-left font-medium">Qty</th>
-                  <th scope="col" className="px-2 py-2 text-left font-medium">Options</th>
-                  <th scope="col" className="px-2 py-2 text-right font-medium">Unit price</th>
-                </tr>
-              </thead>
-              <tbody>
-                {order.items.map((item, index) => (
-                  <tr key={`${item.productId}-${index}`} className="border-b border-hairline last:border-0">
-                    <td className="px-2 py-2">{item.productName}</td>
-                    <td className="px-2 py-2">{item.quantity}</td>
-                    <td className="px-2 py-2 text-muted-foreground">
-                      {Object.entries(item.selectedOptions)
-                        .map(([key, value]) => `${key}: ${value}`)
-                        .join(", ") || "—"}
-                    </td>
-                    <td className="px-2 py-2 text-right">{formatBrlCents(item.unitPrice)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="mt-4">
+            <DataTable
+              caption="Order line items"
+              columns={lineItemColumns}
+              rows={order.items}
+              getRowKey={(item, index) => `${item.productId}-${index}`}
+              density="compact"
+              className="border-0"
+            />
           </div>
         </Card>
 

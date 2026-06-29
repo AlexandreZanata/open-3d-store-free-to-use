@@ -1,8 +1,10 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import type { AdminCategoryListItem } from "@print3d/shared-types";
 
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { DataTable, type DataTableColumn } from "@/components/ui/DataTable";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -10,6 +12,49 @@ import { useAdminCategories, useDeleteCategory } from "@/hooks/useAdminCategorie
 import { useToast } from "@/hooks/useToast";
 import { ApiError } from "@/lib/api/client";
 import { formatApiErrorMessage } from "@/lib/utils";
+
+const categoryColumns = (
+  onDeactivate: (id: string) => void,
+): DataTableColumn<AdminCategoryListItem>[] => [
+  {
+    id: "name",
+    header: "Name (PT-BR)",
+    cell: (category) => category.translations["pt-BR"].name,
+  },
+  {
+    id: "slug",
+    header: "Slug",
+    cellClassName: "text-muted-foreground",
+    cell: (category) => category.slug,
+  },
+  {
+    id: "sort",
+    header: "Sort",
+    cell: (category) => category.sortOrder,
+  },
+  {
+    id: "active",
+    header: "Active",
+    cell: (category) => (category.isActive ? "Yes" : "No"),
+  },
+  {
+    id: "actions",
+    header: "Actions",
+    align: "right",
+    cell: (category) => (
+      <div className="flex justify-end gap-2">
+        <Link to="/categories/$id" params={{ id: category.id }}>
+          <Button variant="secondary">Edit</Button>
+        </Link>
+        {category.isActive ? (
+          <Button variant="danger" onClick={() => onDeactivate(category.id)}>
+            Deactivate
+          </Button>
+        ) : null}
+      </div>
+    ),
+  },
+];
 
 export const Route = createFileRoute("/_authenticated/categories/")({
   component: CategoriesListPage,
@@ -68,41 +113,12 @@ function CategoriesListPage() {
       ) : null}
 
       {categories.length > 0 ? (
-        <div className="overflow-x-auto rounded-lg border border-hairline">
-          <table className="min-w-full text-sm">
-            <thead className="border-b border-hairline bg-surface-muted">
-              <tr>
-                <th className="px-4 py-3 text-left font-medium">Name (PT-BR)</th>
-                <th className="px-4 py-3 text-left font-medium">Slug</th>
-                <th className="px-4 py-3 text-left font-medium">Sort</th>
-                <th className="px-4 py-3 text-left font-medium">Active</th>
-                <th className="px-4 py-3 text-right font-medium">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {categories.map((category) => (
-                <tr key={category.id} className="border-b border-hairline last:border-0">
-                  <td className="px-4 py-3">{category.translations["pt-BR"].name}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{category.slug}</td>
-                  <td className="px-4 py-3">{category.sortOrder}</td>
-                  <td className="px-4 py-3">{category.isActive ? "Yes" : "No"}</td>
-                  <td className="px-4 py-3">
-                    <div className="flex justify-end gap-2">
-                      <Link to="/categories/$id" params={{ id: category.id }}>
-                        <Button variant="secondary">Edit</Button>
-                      </Link>
-                      {category.isActive ? (
-                        <Button variant="danger" onClick={() => setDeactivateId(category.id)}>
-                          Deactivate
-                        </Button>
-                      ) : null}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          caption="Product categories"
+          columns={categoryColumns(setDeactivateId)}
+          rows={categories}
+          getRowKey={(category) => category.id}
+        />
       ) : null}
 
       <ConfirmDialog

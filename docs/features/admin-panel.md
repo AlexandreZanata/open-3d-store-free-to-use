@@ -31,6 +31,21 @@ Touch targets: header menu and nav links use min 40px height. Main content respe
 
 List pages (e.g. products) use a bordered filter toolbar: labeled `Input` / `Select` fields in a responsive grid with the action button bottom-aligned on desktop (`xl:items-end`).
 
+## Data tables
+
+All list pages share `DataTable` (`apps/admin/src/components/ui/DataTable.tsx`):
+
+| Feature | Behavior |
+|---------|----------|
+| Rows | White base (`bg-surface`) with zebra striping (`even` rows use `bg-surface-muted/60`) |
+| Header | `bg-surface-muted` on white card |
+| Pagination | Built-in footer when API returns `pagination` meta (products, orders); Previous/Next + summary text |
+| Compact | `density="compact"` for nested tables (order line items) |
+
+Pagination helpers: `apps/admin/src/lib/tablePagination.ts`.
+
+Pages using `DataTable`: products (`ProductsTable` wrapper), categories, orders list, order detail line items.
+
 E2E: `e2e/admin-mobile.spec.ts` (Pixel 5 viewport, requires `admin-setup`).
 
 ## Routes

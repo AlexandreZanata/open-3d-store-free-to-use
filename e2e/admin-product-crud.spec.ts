@@ -27,6 +27,13 @@ test.describe("admin product CRUD", () => {
     await expect(page).toHaveURL(/[?&]q=photo/);
   });
 
+  test("products list shows shared DataTable with pagination footer", async ({ page }) => {
+    await page.goto(`${adminBase}/products`);
+    await expect(page.getByRole("table")).toBeVisible();
+    await expect(page.getByLabel("Table pagination")).toBeVisible();
+    await expect(page.getByLabel("Table pagination")).toContainText(/Page \d+ of \d+/);
+  });
+
   test("creates product and shows it in the list", async ({ page }) => {
     await page.goto(`${adminBase}/products/new`);
     await page.getByLabel("Slug").fill(productSlug);

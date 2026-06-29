@@ -17,8 +17,9 @@
 |----------|--------|---------|
 | `print3d_api` | `127.0.0.1:3001` | Fastify REST API |
 | `print3d_web` | `127.0.0.1:4173` | TanStack Start SSR (`pnpm --filter @print3d/web start`) |
+| `print3d_admin` | `127.0.0.1:4174` | Admin SPA (`pnpm --filter @print3d/admin preview`) |
 
-Replace `yourdomain.com` in the template before enabling the site.
+Replace `yourdomain.com` in the template before enabling the site. Admin subdomain: `admin.yourdomain.com`.
 
 ## Gzip types
 

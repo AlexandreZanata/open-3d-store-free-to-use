@@ -26,11 +26,16 @@ describe("deploy.sh contract — docs/infrastructure/deployment.md", () => {
     assert.match(script, /pm2 reload/);
   });
 
-  test("builds shared-types, whatsapp, api, and web packages", () => {
+  test("builds shared-types, whatsapp, api, web, and admin packages", () => {
     assert.match(script, /@print3d\/shared-types/);
     assert.match(script, /@print3d\/whatsapp/);
     assert.match(script, /@print3d\/api/);
     assert.match(script, /@print3d\/web/);
+    assert.match(script, /@print3d\/admin/);
+  });
+
+  test("installs production env when production/env/api.env exists", () => {
+    assert.match(script, /install-env\.sh/);
   });
 });
 
@@ -52,12 +57,14 @@ describe("nginx.conf contract — docs/infrastructure/nginx.md", () => {
     assert.match(config, /ssl_certificate/);
   });
 
-  test("serves models from filesystem and proxies API and web", () => {
+  test("serves models from filesystem and proxies API, web, and admin", () => {
     assert.match(config, /location \/models\//);
     assert.match(config, /alias \/var\/www\/print3d\/models\//);
     assert.match(config, /location \/api\//);
     assert.match(config, /127\.0\.0\.1:3001/);
     assert.match(config, /127\.0\.0\.1:4173/);
+    assert.match(config, /127\.0\.0\.1:4174/);
+    assert.match(config, /admin\.yourdomain\.com/);
   });
 
   test("sets gzip types and cache headers per spec", () => {
@@ -89,6 +96,34 @@ describe("pm2.ecosystem.config.js contract — docs/infrastructure/deployment.md
   test("runs TanStack Start web preview for SSR storefront", () => {
     assert.match(config, /print3d-web/);
     assert.match(config, /@print3d\/web start/);
+  });
+
+  test("runs admin SPA preview on port 4174", () => {
+    assert.match(config, /print3d-admin/);
+    assert.match(config, /@print3d\/admin preview/);
+    assert.match(config, /max_memory_restart: "384M"/);
+  });
+});
+
+describe("vps provisioning scripts — docs/infrastructure/vps-provisioning.md", () => {
+  test("generate-secrets.sh creates env from examples", () => {
+    const script = readRepo("infra/scripts/generate-secrets.sh");
+    assert.match(script, /api\.env\.example/);
+    assert.match(script, /openssl rand/);
+  });
+
+  test("sync-to-vps.sh rsyncs secrets and runs install-env on remote", () => {
+    const script = readRepo("infra/scripts/sync-to-vps.sh");
+    assert.match(script, /rsync/);
+    assert.match(script, /install-env\.sh/);
+    assert.match(script, /production\/vps\.env/);
+  });
+
+  test("docker-compose.prod.yml binds data services to localhost", () => {
+    const compose = readRepo("infra/docker-compose.prod.yml");
+    assert.match(compose, /127\.0\.0\.1:5432/);
+    assert.match(compose, /postgres:18\.4-alpine/);
+    assert.match(compose, /redis:8\.8-alpine/);
   });
 });
 

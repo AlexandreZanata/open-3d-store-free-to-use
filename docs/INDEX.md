@@ -16,7 +16,7 @@
 | **Admin API** | [api/admin-contract.md](api/admin-contract.md) → [api/axis-print3d-store-api.md](api/axis-print3d-store-api.md) |
 | **Admin panel** | [features/admin-panel.md](features/admin-panel.md) |
 | **Catalog realtime (SSE)** | [features/catalog-realtime.md](features/catalog-realtime.md) |
-| **DevOps** | [infrastructure/deployment.md](infrastructure/deployment.md) → [operations/ci-cd.md](operations/ci-cd.md) |
+| **DevOps** | [infrastructure/vps-provisioning.md](infrastructure/vps-provisioning.md) → [infrastructure/deployment.md](infrastructure/deployment.md) → [operations/ci-cd.md](operations/ci-cd.md) |
 
 ---
 
@@ -63,6 +63,9 @@
 | Document | Contents |
 |----------|----------|
 | [infrastructure/deployment.md](infrastructure/deployment.md) | VPS layout, PM2, deploy script |
+| [infrastructure/vps-provisioning.md](infrastructure/vps-provisioning.md) | **End-to-end VPS + Cloudflare setup** |
+| [infrastructure/cloudflare-dns.md](infrastructure/cloudflare-dns.md) | Cloudflare + Registro.br DNS |
+| [infrastructure/kubernetes.md](infrastructure/kubernetes.md) | Why K8s is not used on single VPS |
 | [infrastructure/nginx.md](infrastructure/nginx.md) | Reverse proxy, static files, SSL |
 | [infrastructure/docker-compose.md](infrastructure/docker-compose.md) | Local Postgres 18.4 + Redis 8.8 |
 | [infrastructure/environment.md](infrastructure/environment.md) | Env vars, Zod validation |

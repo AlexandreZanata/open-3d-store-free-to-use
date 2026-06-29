@@ -1,8 +1,9 @@
-# Docker Compose (Local Dev)
+# Docker Compose (Local Dev + Production Data)
 
-**File:** `infra/docker-compose.dev.yml`
+**Dev file:** `infra/docker-compose.dev.yml`  
+**Prod data layer:** `infra/docker-compose.prod.yml` (VPS only — Postgres, Redis, RabbitMQ on `127.0.0.1`)
 
-## Services
+## Local dev services
 
 | Service | Image | Port | Purpose |
 |---------|-------|------|---------|
@@ -46,6 +47,26 @@ pnpm --filter @print3d/api worker:model-processing
 Separate DB for Vitest: `print3d_test` — created on first Postgres init via `infra/postgres/init-test-db.sql`. Configure via `TEST_DATABASE_URL` in `.env.test`.
 
 > **PostgreSQL 18 Docker volume:** mount at `/var/lib/postgresql` (not `/data`) — see [postgres#1259](https://github.com/docker-library/postgres/pull/1259).
+
+## Production data layer (VPS)
+
+Efficient default on 16 GB Hostinger: **PM2 for Node**, **Docker Compose for data** (bind localhost only).
+
+```bash
+cp production/env/docker.env.example production/env/docker.env
+# fill POSTGRES_PASSWORD and RABBITMQ_PASSWORD (generate-secrets.sh does this)
+docker compose -f infra/docker-compose.prod.yml --env-file production/env/docker.env up -d
+```
+
+| Service | Memory limit | Port |
+|---------|--------------|------|
+| postgres:18.4-alpine | 4 GB | 127.0.0.1:5432 |
+| redis:8.8-alpine | 512 MB | 127.0.0.1:6379 |
+| rabbitmq:3.13-management | 512 MB | 127.0.0.1:5672 |
+
+Alternative: native `postgresql-18` + `redis-server` via `bootstrap-vps.sh` with `USE_DOCKER_DATA=0`.
+
+Kubernetes is **not** used on a single VPS — see [kubernetes.md](kubernetes.md).
 
 ## Related documents
 

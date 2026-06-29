@@ -83,6 +83,10 @@ agent-rules/           # Harness rules
 | `pnpm lint` | ESLint via Turborepo |
 | `pnpm format` | Prettier (web package) |
 
+## Production deploy
+
+See [docs/infrastructure/vps-provisioning.md](docs/infrastructure/vps-provisioning.md) and [production/README.md](production/README.md).
+
 ## License
 
 MIT — see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

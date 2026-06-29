@@ -1,0 +1,49 @@
+# Production data layer — bind to localhost only (see docs/infrastructure/docker-compose.md)
+# Usage on VPS:
+#   cp production/env/docker.env.example production/env/docker.env  # fill secrets
+#   docker compose -f infra/docker-compose.prod.yml --env-file production/env/docker.env up -d
+
+services:
+  postgres:
+    image: postgres:18.4-alpine
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-print3d_prod}
+      POSTGRES_USER: ${POSTGRES_USER:-print3d}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in docker.env}
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+
+  redis:
+    image: redis:8.8-alpine
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6379:6379"
+    command: redis-server --maxmemory 512mb --maxmemory-policy allkeys-lru
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5672:5672"
+      - "127.0.0.1:15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-print3d}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:?set RABBITMQ_PASSWORD in docker.env}
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+volumes:
+  postgres_prod_data:

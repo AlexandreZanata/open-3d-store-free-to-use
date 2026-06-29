@@ -35,5 +35,18 @@ module.exports = {
         NODE_ENV: "production",
       },
     },
+    {
+      name: "print3d-admin",
+      cwd: "/var/www/print3d",
+      script: "pnpm",
+      args: "--filter @print3d/admin preview",
+      interpreter: "none",
+      exec_mode: "fork",
+      instances: 1,
+      max_memory_restart: "384M",
+      env_production: {
+        NODE_ENV: "production",
+      },
+    },
   ],
 };

@@ -35,6 +35,17 @@ production/**
 production/env/**
 !production/env/README.md
 !production/env/*.example
+!production/ssh/
+production/ssh/**
+!production/ssh/README.md
+!production/vps.env.example
+production/vps.env
+production/ssh/id_*
+production/ssh/*.pem
+
+# Kubeconfig / deploy artifacts (if added later)
+kubeconfig
+*.kubeconfig
 
 # Environment and secrets
 .env

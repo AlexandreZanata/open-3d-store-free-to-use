@@ -8,6 +8,7 @@
 | Redis 8.8 | 512 MB | `maxmemory 512mb`, `allkeys-lru` |
 | Node.js API (PM2) | 2 GB | 2 workers × ~1 GB |
 | TanStack Start web (PM2) | 512 MB | SSR via `vite preview` on `127.0.0.1:4173` |
+| Admin SPA (PM2) | 384 MB | `vite preview` on `127.0.0.1:4174` |
 | Nginx | 64 MB | Reverse proxy + `/models/` static |
 | OS + headroom | ~9 GB | Swap, growth |
 
@@ -30,11 +31,13 @@ The storefront runs as a **TanStack Start SSR** process (`print3d-web` in PM2). 
 |-----|--------|-----------|-------|
 | `print3d-api` | `./apps/api/dist/main.js` | 2 (cluster) | `PORT=3001`, bind `127.0.0.1` |
 | `print3d-web` | `pnpm --filter @print3d/web start` | 1 (fork) | `vite preview` on `127.0.0.1:4173` |
+| `print3d-admin` | `pnpm --filter @print3d/admin preview` | 1 (fork) | `127.0.0.1:4174` |
 
 | Setting | Value |
 |---------|-------|
 | API max_memory_restart | 900M |
 | Web max_memory_restart | 512M |
+| Admin max_memory_restart | 384M |
 
 ```bash
 pm2 start infra/pm2.ecosystem.config.js --env production
@@ -45,7 +48,7 @@ pm2 startup && pm2 save
 
 **File:** `infra/scripts/deploy.sh`
 
-Steps: `git pull --ff-only` → `pnpm install --frozen-lockfile` → turbo build (`shared-types`, `whatsapp`, `api`, `web`) → `migrate.sh` → `pm2 reload` (API + web)
+Steps: `git pull --ff-only` → `pnpm install --frozen-lockfile` → turbo build (`shared-types`, `whatsapp`, `api`, `web`, `admin`) → `migrate.sh` → `pm2 reload` (API + web + admin)
 
 Build reads `CORS_ORIGIN` from `apps/api/.env` to derive `VITE_*` URLs when `apps/web/.env.production` is absent.
 
@@ -57,14 +60,16 @@ Sources `apps/api/.env`, then runs `drizzle-kit migrate` in `apps/api/`.
 
 ## First deploy (VPS checklist)
 
-1. Install Node.js 22 LTS, pnpm 9, PM2, PostgreSQL 18.4, Redis 8.8, Nginx, certbot
-2. Tune PostgreSQL — see [../operations/performance-caching.md](../operations/performance-caching.md)
-3. Copy `infra/nginx/nginx.conf` → `/etc/nginx/sites-available/print3d.conf`, enable site, `nginx -t && systemctl reload nginx`
-4. `certbot --nginx -d yourdomain.com`
-5. Clone repo to `/var/www/print3d`, init harness submodule if used
-6. Create `apps/api/.env` and `apps/web/.env.production` from examples
+Full walkthrough: [vps-provisioning.md](vps-provisioning.md) · DNS: [cloudflare-dns.md](cloudflare-dns.md)
+
+1. Install Node.js 22 LTS, pnpm 9, PM2, Nginx, certbot (or run `infra/scripts/bootstrap-vps.sh`)
+2. Docker Compose prod data layer **or** native PostgreSQL 18.4 + Redis 8.8
+3. Copy `infra/nginx/nginx.conf` → `/etc/nginx/sites-available/print3d.conf`, enable site
+4. Cloudflare DNS → A records to VPS; Registro.br NS → Cloudflare
+5. `certbot --nginx -d yourdomain.com.br -d www.yourdomain.com.br -d admin.yourdomain.com.br`
+6. Clone repo to `/var/www/print3d`, sync secrets (`infra/scripts/sync-to-vps.sh`)
 7. Create `/var/www/print3d/models/{3d,thumbnails,images}/`, upload `.glb` via SCP
-8. `./infra/scripts/deploy.sh` then `pm2 startup && pm2 save`
+8. `./infra/scripts/first-deploy.sh` then `pm2 startup && pm2 save`
 
 ## SSL
 
@@ -74,6 +79,9 @@ certbot --nginx -d yourdomain.com -d www.yourdomain.com
 
 ## Related documents
 
+- [vps-provisioning.md](vps-provisioning.md)
+- [cloudflare-dns.md](cloudflare-dns.md)
+- [kubernetes.md](kubernetes.md)
 - [nginx.md](nginx.md)
 - [docker-compose.md](docker-compose.md)
 - [environment.md](environment.md)

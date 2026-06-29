@@ -63,6 +63,7 @@ Separate desktop-only home — mobile home is wrapped in `lg:hidden`:
 | **Search** | Page intro, sticky filter card sidebar, prominent search field, catalog product cards (`2–3` cols) |
 | **Categories** | 3–4 column grid |
 | **Product** | Two columns (media panel + details); sticky media on desktop; Embla gallery carousel; share button (Web Share + copy/WhatsApp/email) — [product-share.md](product-share.md) |
+| **Product (mobile)** | Vertical info stack (title → subtitle → price → material → favorite/share → description → tags); sticky cart + WhatsApp bar above tab nav |
 | **Cart** | Centered `max-w-3xl` column |
 
 ## Key files
@@ -80,6 +81,8 @@ Separate desktop-only home — mobile home is wrapped in `lg:hidden`:
 | `apps/web/src/components/search/SearchDesktopView.tsx` | Desktop-only search layout |
 | `apps/web/src/components/search/SearchMobileView.tsx` | **Frozen** mobile search UI |
 | `apps/web/src/components/search/CatalogProductCard.tsx` | Desktop catalog card for search |
+| `apps/web/src/components/ProductDetail/ProductDetailInfo.tsx` | Product title stack + specs (mobile/desktop layouts) |
+| `apps/web/src/components/ProductDetail/ProductDetailActions.tsx` | Cart / WhatsApp bar; desktop share + favorite |
 | `apps/web/src/components/ProductMedia/ProductMediaPanel.tsx` | Product 3D viewer + gallery tabs |
 | `apps/web/src/components/ProductMedia/ProductImageCarousel.tsx` | Multi-image Embla carousel |
 
@@ -102,7 +105,7 @@ PLAYWRIGHT_SKIP_WEBSERVER=1 PLAYWRIGHT_BASE_URL=http://localhost:5173 pnpm e2e e
 1. **Mobile (390px)** — bottom tabs, compact header, horizontal rails, no desktop nav.
 2. **Desktop (≥1280px)** — dark inverted header, labeled Cart, desktop hero, category cards, product grids, no bottom tabs.
 3. **Resize** — crossing 1024px toggles layouts without breaking either experience.
-4. **Product detail** — `/product/phone-stand`: gallery tab shows carousel with multiple images; `/product/custom-photo-frame`: 3D tab shows virtual desk viewer (drag to rotate, scroll to zoom).
+4. **Product detail** — `/product/phone-stand`: gallery tab shows carousel with multiple images; `/product/custom-photo-frame`: 3D tab shows virtual desk viewer (drag to rotate, scroll to zoom). On mobile (390px), favorite and share appear below material; cart actions stay in the sticky bar.
 5. **Footer** — dark inverted bar, pitch text, icon-only contact buttons on mobile, labeled links on desktop.
 
 ## Related

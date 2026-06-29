@@ -45,6 +45,22 @@ test.describe("product detail", () => {
     await expect(page.getByText(/real scale|escala real/i)).toBeVisible();
   });
 
+  test("mobile product info shows favorite, share, and stacked details", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/product/dragon-figurine");
+
+    await expect(
+      page.getByRole("main").getByRole("heading", { name: /Dragon Figurine|Miniatura de dragão/i }),
+    ).toBeVisible({ timeout: 15_000 });
+
+    const social = page.getByTestId("product-social-actions");
+    await expect(social).toBeVisible();
+    await expect(social.getByRole("button", { name: /favorite|favorito/i })).toBeVisible();
+    await expect(social.getByRole("button", { name: /share|compartilhar/i })).toBeVisible();
+    await expect(page.locator(".lg\\:hidden").getByText(/R\$/)).toBeVisible();
+    await expect(page.locator(".lg\\:hidden").getByText(/PETG/i)).toBeVisible();
+  });
+
   test("gallery carousel advances on product with multiple images", async ({ page }) => {
     await page.goto("/product/custom-photo-frame");
     await expect(

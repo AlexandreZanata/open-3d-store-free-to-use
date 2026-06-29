@@ -1,11 +1,9 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ShoppingBag } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { AppShell } from "@/components/AppShell";
-import { FavoriteButton } from "@/components/FavoriteButton";
-import { ShareProductButton } from "@/components/ShareProductButton";
 import { ProductCard } from "@/components/ProductCard";
+import { ProductDetailActions, ProductDetailInfo } from "@/components/ProductDetail";
 import { ProductCardSkeleton, ProductDetailSkeleton } from "@/components/LoadingSkeletons";
 import { ProductMediaPanel } from "@/components/ProductMedia";
 import { productQueryKey, useProduct } from "@/hooks/useProduct";
@@ -141,90 +139,8 @@ function ProductPage() {
           </section>
 
           <div className="mt-8 lg:mt-0 flex flex-col gap-6">
-            <header className="space-y-3">
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0 space-y-2">
-                  <h1 className="text-2xl font-semibold tracking-tight text-balance lg:text-3xl">
-                    {detail.name}
-                  </h1>
-                  <p className="text-sm text-muted-foreground lg:text-base">
-                    {detail.shortDescription}
-                  </p>
-                </div>
-                <div className="text-right shrink-0 pt-0.5">
-                  <div className="text-2xl font-semibold tabular-nums lg:text-3xl">
-                    {detail.basePriceDisplay}
-                  </div>
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground mt-1">
-                    {t(`material.${detail.material}`)}
-                  </div>
-                </div>
-              </div>
-
-              <p className="text-sm text-foreground/85 leading-relaxed lg:text-base">
-                {detail.description}
-              </p>
-
-              {detail.tags.length > 0 ? (
-                <div className="flex flex-wrap gap-1.5">
-                  {detail.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-2.5 h-7 inline-flex items-center rounded-full bg-muted text-[11px] text-muted-foreground"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              ) : null}
-            </header>
-
-            <section
-              className="bg-surface ring-1 ring-hairline rounded-2xl divide-y divide-hairline shadow-soft overflow-hidden"
-              aria-label={t("product.specsLabel")}
-            >
-              <Spec label={t("product.material")} value={t(`material.${detail.material}`)} />
-              <Spec
-                label={t("product.printTime")}
-                value={t("product.printTimeHours", { hours: detail.printTimeHours })}
-              />
-              <Spec
-                label={t("product.weight")}
-                value={t("product.weightGrams", { grams: detail.weightGrams })}
-              />
-              <Spec label={t("product.status")} value={t(`status.${detail.status}`)} />
-            </section>
-
-            <div className="fixed bottom-16 inset-x-0 z-30 border-t border-hairline bg-background/95 backdrop-blur-xl lg:static lg:border-t-0 lg:bg-transparent lg:backdrop-blur-none">
-              <div className="flex items-center gap-2 lg:gap-3">
-                <FavoriteButton
-                  productId={detail.id}
-                  className="size-11 shrink-0 ring-1 ring-hairline bg-surface"
-                  iconClassName="size-5"
-                />
-                <ShareProductButton
-                  product={{
-                    slug: detail.slug,
-                    name: detail.name,
-                    shortDescription: detail.shortDescription,
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={handleAddToCart}
-                  className="flex-1 h-11 rounded-full border border-hairline bg-surface inline-flex items-center justify-center gap-2 text-sm font-semibold press"
-                >
-                  <ShoppingBag className="size-4" />
-                  {t("product.addToCart")}
-                </button>
-                <Link
-                  to="/cart"
-                  className="flex-1 h-11 rounded-full bg-foreground text-background inline-flex items-center justify-center gap-2 text-sm font-semibold press hover:bg-foreground/90"
-                >
-                  {t("product.orderWhatsApp")}
-                </Link>
-              </div>
-            </div>
+            <ProductDetailInfo product={detail} />
+            <ProductDetailActions product={detail} onAddToCart={handleAddToCart} />
           </div>
         </div>
       </div>
@@ -258,14 +174,5 @@ function ProductPage() {
         <div className="h-14" />
       </div>
     </AppShell>
-  );
-}
-
-function Spec({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-start justify-between gap-4 px-4 py-3.5">
-      <span className="text-xs uppercase tracking-wider text-muted-foreground">{label}</span>
-      <span className="text-sm font-medium text-right">{value}</span>
-    </div>
   );
 }

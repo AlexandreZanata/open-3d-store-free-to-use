@@ -32,7 +32,9 @@ Payload text:
 |------|------|
 | `apps/web/src/lib/share.ts` | Pure URL/payload builders + clipboard helper |
 | `apps/web/src/components/ShareProductButton.tsx` | Product page share control |
-| `apps/web/src/routes/product.$slug.tsx` | Wires share next to cart actions |
+| `apps/web/src/components/ProductDetail/ProductDetailInfo.tsx` | Mobile favorite/share row in product info |
+| `apps/web/src/components/ProductDetail/ProductDetailActions.tsx` | Desktop favorite/share; mobile sticky cart bar |
+| `apps/web/src/routes/product.$slug.tsx` | Wires product detail page |
 
 WhatsApp share uses `https://wa.me/?text=…` (user picks the chat). Email uses `mailto:` with subject and body.
 

@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type SetStateAction } from "react";
 
 import { ProductForm } from "@/components/products/ProductForm";
 import {
@@ -48,10 +48,23 @@ function EditProductPage() {
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
-    if (productQuery.data) {
+    setFormState(null);
+  }, [id]);
+
+  useEffect(() => {
+    if (productQuery.data && formState === null) {
       setFormState(productToFormState(productQuery.data));
     }
-  }, [productQuery.data]);
+  }, [productQuery.data, formState]);
+
+  function handleFormChange(updater: SetStateAction<ProductFormState>) {
+    setFormState((prev) => {
+      if (prev === null) {
+        return prev;
+      }
+      return typeof updater === "function" ? updater(prev) : updater;
+    });
+  }
 
   async function handleSubmit() {
     if (!formState) return;
@@ -61,7 +74,8 @@ function EditProductPage() {
 
     setSubmitError(null);
     try {
-      await updateMutation.mutateAsync(productFormToPayload(formState));
+      const saved = await updateMutation.mutateAsync(productFormToPayload(formState));
+      setFormState(productToFormState(saved));
       toast.success("Saved");
     } catch (caught) {
       if (caught instanceof ApiError && caught.status === 422) {
@@ -121,7 +135,7 @@ function EditProductPage() {
       <ProductForm
         state={formState}
         errors={errors}
-        onChange={setFormState}
+        onChange={handleFormChange}
         onSubmit={() => void handleSubmit()}
         submitLabel="Save changes"
         isSubmitting={updateMutation.isPending}

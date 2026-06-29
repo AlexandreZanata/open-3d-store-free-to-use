@@ -1,5 +1,5 @@
 import type { MaterialType, PrintStatus } from "@print3d/shared-types";
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 
 import {
   ProductOptionsEditor,
@@ -28,7 +28,7 @@ const localeTabs = [
 type ProductFormProps = {
   state: ProductFormState;
   errors: Record<string, string>;
-  onChange: (state: ProductFormState) => void;
+  onChange: Dispatch<SetStateAction<ProductFormState>>;
   onSubmit: () => void;
   submitLabel: string;
   isSubmitting?: boolean;
@@ -49,18 +49,20 @@ export function ProductForm({
   const [activeLocale, setActiveLocale] = useState<(typeof localeTabs)[number]["id"]>("pt-BR");
 
   function patch(patchValue: Partial<ProductFormState>) {
-    onChange(applySlugFromPtBrName({ ...state, ...patchValue }));
+    onChange((prev) => applySlugFromPtBrName({ ...prev, ...patchValue }));
   }
 
   function patchTranslation(locale: "en" | "pt-BR", field: "name" | "shortDescription" | "description", value: string) {
-    const next = {
-      ...state,
-      translations: {
-        ...state.translations,
-        [locale]: { ...state.translations[locale], [field]: value },
-      },
-    };
-    onChange(locale === "pt-BR" ? applySlugFromPtBrName(next) : next);
+    onChange((prev) => {
+      const next = {
+        ...prev,
+        translations: {
+          ...prev.translations,
+          [locale]: { ...prev.translations[locale], [field]: value },
+        },
+      };
+      return locale === "pt-BR" ? applySlugFromPtBrName(next) : next;
+    });
   }
 
   return (

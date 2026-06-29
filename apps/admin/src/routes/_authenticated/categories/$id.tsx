@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type SetStateAction } from "react";
 
 import { CategoryForm } from "@/components/categories/CategoryForm";
 import {
@@ -41,10 +41,23 @@ function EditCategoryPage() {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (categoryQuery.data) {
+    setFormState(null);
+  }, [id]);
+
+  useEffect(() => {
+    if (categoryQuery.data && formState === null) {
       setFormState(categoryToFormState(categoryQuery.data));
     }
-  }, [categoryQuery.data]);
+  }, [categoryQuery.data, formState]);
+
+  function handleFormChange(updater: SetStateAction<CategoryFormState>) {
+    setFormState((prev) => {
+      if (prev === null) {
+        return prev;
+      }
+      return typeof updater === "function" ? updater(prev) : updater;
+    });
+  }
 
   async function handleSubmit() {
     if (!formState) return;
@@ -54,7 +67,8 @@ function EditCategoryPage() {
 
     setSubmitError(null);
     try {
-      await updateMutation.mutateAsync(categoryFormToPayload(formState));
+      const saved = await updateMutation.mutateAsync(categoryFormToPayload(formState));
+      setFormState(categoryToFormState(saved));
       toast.success("Saved");
     } catch (caught) {
       if (caught instanceof ApiError && caught.status === 422) {
@@ -92,7 +106,7 @@ function EditCategoryPage() {
         state={formState}
         errors={errors}
         categoryId={id}
-        onChange={setFormState}
+        onChange={handleFormChange}
         onSubmit={() => void handleSubmit()}
         submitLabel="Save changes"
         isSubmitting={updateMutation.isPending}

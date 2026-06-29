@@ -86,5 +86,12 @@ test.describe("admin product CRUD", () => {
     await expect(previewImage).toHaveAttribute("src", /.+/);
     const naturalWidth = await previewImage.evaluate((img: HTMLImageElement) => img.naturalWidth);
     expect(naturalWidth).toBeGreaterThan(0);
+
+    await page.getByRole("button", { name: "Save changes" }).click();
+    await expect(page.getByRole("status")).toContainText("Saved");
+
+    await page.reload();
+    await expect(page.getByLabel("Thumbnail URL")).toHaveValue(/\/models\/thumbnails\/.+\.webp$/);
+    await expect(page.getByTestId("upload-preview-thumbnail").locator("img")).toBeVisible();
   });
 });

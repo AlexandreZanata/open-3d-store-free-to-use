@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 
 import {
   applySlugFromPtBrName,
@@ -23,7 +23,7 @@ type CategoryFormProps = {
   state: CategoryFormState;
   errors: Record<string, string>;
   categoryId?: string;
-  onChange: (state: CategoryFormState) => void;
+  onChange: Dispatch<SetStateAction<CategoryFormState>>;
   onSubmit: () => void;
   submitLabel: string;
   isSubmitting?: boolean;
@@ -45,7 +45,7 @@ export function CategoryForm({
   const [activeLocale, setActiveLocale] = useState<(typeof localeTabs)[number]["id"]>("pt-BR");
 
   function patch(patchValue: Partial<CategoryFormState>) {
-    onChange(applySlugFromPtBrName({ ...state, ...patchValue }));
+    onChange((prev) => applySlugFromPtBrName({ ...prev, ...patchValue }));
   }
 
   return (

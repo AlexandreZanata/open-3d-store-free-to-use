@@ -95,6 +95,28 @@ describe("Admin product routes (contract)", () => {
     expect(patch.statusCode).toBe(200);
     expect(patch.json().data.status).toBe("out_of_stock");
 
+    const newThumbnail = "/models/thumbnails/admin-route-frame.webp";
+    const patchThumbnail = await app.inject(
+      withAdminCookie(sessionCookie, {
+        method: "PATCH",
+        url: `/api/v1/admin/products/${created.id}`,
+        payload: {
+          thumbnailUrl: newThumbnail,
+          imageUrls: [newThumbnail],
+        },
+      }),
+    );
+    expect(patchThumbnail.statusCode).toBe(200);
+    expect(patchThumbnail.json().data.thumbnailUrl).toBe(newThumbnail);
+
+    const detailAfterThumbnail = await app.inject(
+      withAdminCookie(sessionCookie, {
+        method: "GET",
+        url: `/api/v1/admin/products/${created.id}`,
+      }),
+    );
+    expect(detailAfterThumbnail.json().data.thumbnailUrl).toBe(newThumbnail);
+
     const list = await app.inject(
       withAdminCookie(sessionCookie, {
         method: "GET",

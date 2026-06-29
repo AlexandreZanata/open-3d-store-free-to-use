@@ -128,6 +128,18 @@
     "metaDescription": "Account and settings.",
     "guestName": "Guest",
     "guestEmail": "Anonymous browsing",
+    "guestHint": "Create an account to save your cart and favorites across devices.",
+    "loginTab": "Sign in",
+    "registerTab": "Create account",
+    "loginAction": "Sign in",
+    "registerAction": "Create account",
+    "email": "Email",
+    "password": "Password (min. 8 characters)",
+    "displayName": "Display name",
+    "save": "Save profile",
+    "saving": "Saving…",
+    "saved": "Profile updated.",
+    "logout": "Sign out",
     "version": "Corvo 3D v1.0"
   },
   "errors": {

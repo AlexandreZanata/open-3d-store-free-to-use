@@ -2,21 +2,23 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
 
 import { ProductNotFoundError } from "../../application/errors/ApplicationErrors.js";
+import type { FavoriteOwner } from "../../application/use-cases/FavoriteProducts.js";
 import type { AppContainer } from "../../container.js";
 import { sendProblem } from "../errors/problemDetails.js";
+import { readVisitorIdHeader } from "../validation/storeSchemas.js";
 
-const visitorIdSchema = z.string().uuid();
 const productIdSchema = z.string().uuid();
 
-function readVisitorId(request: FastifyRequest, reply: FastifyReply): string | null {
-  const header = request.headers["x-visitor-id"];
-  const value = Array.isArray(header) ? header[0] : header;
-  const parsed = visitorIdSchema.safeParse(value);
-  if (!parsed.success) {
+function resolveFavoriteOwner(request: FastifyRequest, reply: FastifyReply): FavoriteOwner | null {
+  if (request.storeUser !== undefined) {
+    return { type: "user", userId: request.storeUser.id };
+  }
+  const visitorId = readVisitorIdHeader(request.headers["x-visitor-id"]);
+  if (visitorId === null) {
     sendProblem(reply, request.locale, 400, "validation-failed", "validationFailed");
     return null;
   }
-  return parsed.data;
+  return { type: "visitor", visitorId };
 }
 
 export async function registerFavoriteRoutes(
@@ -24,11 +26,11 @@ export async function registerFavoriteRoutes(
   container: AppContainer,
 ): Promise<void> {
   app.get("/favorites", async (request, reply) => {
-    const visitorId = readVisitorId(request, reply);
-    if (visitorId === null) {
+    const owner = resolveFavoriteOwner(request, reply);
+    if (owner === null) {
       return;
     }
-    const data = await container.favoriteProducts.list(visitorId, request.locale);
+    const data = await container.favoriteProducts.list(owner, request.locale);
     return reply.send(data);
   });
 
@@ -40,8 +42,8 @@ export async function registerFavoriteRoutes(
       },
     },
     async (request, reply) => {
-      const visitorId = readVisitorId(request, reply);
-      if (visitorId === null) {
+      const owner = resolveFavoriteOwner(request, reply);
+      if (owner === null) {
         return;
       }
       const params = z.object({ productId: productIdSchema }).safeParse(request.params);
@@ -51,7 +53,7 @@ export async function registerFavoriteRoutes(
       }
       try {
         const data = await container.favoriteProducts.add(
-          visitorId,
+          owner,
           params.data.productId,
           request.locale,
         );
@@ -74,8 +76,8 @@ export async function registerFavoriteRoutes(
       },
     },
     async (request, reply) => {
-      const visitorId = readVisitorId(request, reply);
-      if (visitorId === null) {
+      const owner = resolveFavoriteOwner(request, reply);
+      if (owner === null) {
         return;
       }
       const params = z.object({ productId: productIdSchema }).safeParse(request.params);
@@ -83,7 +85,7 @@ export async function registerFavoriteRoutes(
         sendProblem(reply, request.locale, 422, "validation-failed", "validationFailed");
         return;
       }
-      const data = await container.favoriteProducts.remove(visitorId, params.data.productId);
+      const data = await container.favoriteProducts.remove(owner, params.data.productId);
       return reply.send({ data });
     },
   );

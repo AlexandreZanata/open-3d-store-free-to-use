@@ -57,6 +57,13 @@
       "when": 1782750000000,
       "tag": "0008_product_favorites",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1782754000000,
+      "tag": "0009_store_users",
+      "breakpoints": true
     }
   ]
 }

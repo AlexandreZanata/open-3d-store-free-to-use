@@ -81,3 +81,13 @@ export type {
 export { MATERIAL_TYPES, PAYMENT_METHODS } from "./material.types.js";
 export type { PaymentMethod } from "./material.types.js";
 export type { ShopConfig, ShopConfigResponse } from "./shop-config.types.js";
+export type {
+  StoreCartItem,
+  StoreCartResponse,
+  StoreLoginRequest,
+  StoreMeResponse,
+  StoreRegisterRequest,
+  StoreSaveCartRequest,
+  StoreUpdateProfileRequest,
+  StoreUserProfile,
+} from "./store-auth.types.js";

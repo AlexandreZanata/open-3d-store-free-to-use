@@ -71,6 +71,14 @@
     "uploadStorageFailed": {
       "title": "Erro ao salvar upload",
       "detail": "Não foi possível salvar o arquivo. Verifique as permissões de MODEL_FILES_BASE_PATH."
+    },
+    "emailConflict": {
+      "title": "Conflito",
+      "detail": "Este e-mail já está cadastrado"
+    },
+    "registrationLimit": {
+      "title": "Cadastro não permitido",
+      "detail": "O limite de 2 contas por endereço IP e por dispositivo foi atingido"
     }
   }
 }

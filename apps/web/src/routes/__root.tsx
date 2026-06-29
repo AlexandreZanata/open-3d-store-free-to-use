@@ -13,6 +13,8 @@ import { I18nextProvider } from "react-i18next";
 
 import i18n from "../i18n";
 import appCss from "../styles.css?url";
+import { StoreAuthProvider } from "@/auth/StoreAuthProvider";
+import { useCartServerSync } from "@/hooks/useCartServerSync";
 import { brandFaviconHeadLinks, brandThemeColorMeta } from "@/lib/brandFavicons";
 
 function NotFoundComponent() {
@@ -119,8 +121,15 @@ function RootComponent() {
   return (
     <I18nextProvider i18n={i18n}>
       <QueryClientProvider client={queryClient}>
-        <Outlet />
+        <StoreAuthProvider>
+          <CartSyncBoundary />
+        </StoreAuthProvider>
       </QueryClientProvider>
     </I18nextProvider>
   );
+}
+
+function CartSyncBoundary() {
+  useCartServerSync();
+  return <Outlet />;
 }

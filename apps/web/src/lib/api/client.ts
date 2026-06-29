@@ -39,7 +39,7 @@ export async function apiFetch<T>(
     ...requestInit.headers,
   };
 
-  const response = await fetch(url, { ...requestInit, headers, cache: "no-store" });
+  const response = await fetch(url, { ...requestInit, headers, cache: "no-store", credentials: "include" });
 
   if (!response.ok) {
     let problem: ProblemDetails;
@@ -86,5 +86,21 @@ export async function apiDelete<T>(
   return apiFetch<T>(path, {
     ...init,
     method: "DELETE",
+  });
+}
+
+export async function apiPatch<T>(
+  path: string,
+  body: JsonValue,
+  init?: RequestInit & { locale?: SupportedLocale },
+): Promise<T> {
+  return apiFetch<T>(path, {
+    ...init,
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      ...init?.headers,
+    },
+    body: JSON.stringify(body),
   });
 }

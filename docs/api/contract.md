@@ -232,13 +232,78 @@ Admin write: [admin-contract.md](admin-contract.md) — `GET/PATCH /admin/settin
 
 ---
 
-## Favorites (visitor-scoped)
+## Storefront accounts (session)
 
-Anonymous favorites keyed by **`X-Visitor-Id`** (UUID v4). The storefront generates and persists this id in `localStorage`.
+Optional shopper accounts for cart and favorites persistence. Full guide: [../features/store-user-accounts.md](../features/store-user-accounts.md).
+
+| Cookie | Path | Detail |
+|--------|------|--------|
+| `print3d_store_session` | `/api/v1` | HttpOnly session token |
 
 | Header | Required | Detail |
 |--------|----------|--------|
-| `X-Visitor-Id` | Yes | UUID v4 string |
+| `X-Device-Id` | Register only | UUID v4 — max 2 accounts per device |
+| `X-Visitor-Id` | Favorites (anonymous) | Merged into account on register/login |
+
+**Registration limit:** max 2 accounts per IP **and** max 2 per device → **403** `registrationLimit`.
+
+### `POST /auth/register`
+
+**Response 201:**
+
+```json
+{
+  "data": {
+    "id": "01935...",
+    "email": "maria@example.com",
+    "displayName": "Maria",
+    "cart": []
+  }
+}
+```
+
+Sets session cookie. Optional body `cart[]` merges with server cart.
+
+### `POST /auth/login`
+
+**Response 200:** Same shape as register. Sets session cookie.
+
+### `POST /auth/logout`
+
+**Response 204.** Clears session cookie. Requires session.
+
+### `GET /me`
+
+**Response 200:**
+
+```json
+{
+  "data": {
+    "id": "01935...",
+    "email": "maria@example.com",
+    "displayName": "Maria",
+    "cart": []
+  }
+}
+```
+
+### `PATCH /me`
+
+Body: `{ "displayName": "Maria" }` — **Response 200:** same as `GET /me`.
+
+### `PUT /me/cart`
+
+Body: `{ "cart": [ /* StoreCartItem[] */ ] }` — **Response 200:** `{ "data": { "cart": [] } }`.
+
+---
+
+## Favorites (visitor or account)
+
+Anonymous favorites keyed by **`X-Visitor-Id`** (UUID v4) **or** session cookie when signed in.
+
+| Header | Required | Detail |
+|--------|----------|--------|
+| `X-Visitor-Id` | Yes (if no session) | UUID v4 string |
 
 ### `GET /favorites`
 

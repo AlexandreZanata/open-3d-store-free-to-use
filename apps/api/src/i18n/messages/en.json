@@ -71,6 +71,14 @@
     "uploadStorageFailed": {
       "title": "Upload storage error",
       "detail": "Could not save the uploaded file. Check MODEL_FILES_BASE_PATH permissions."
+    },
+    "emailConflict": {
+      "title": "Conflict",
+      "detail": "This email is already registered"
+    },
+    "registrationLimit": {
+      "title": "Registration not allowed",
+      "detail": "The maximum of 2 accounts per IP address and per device has been reached"
     }
   }
 }

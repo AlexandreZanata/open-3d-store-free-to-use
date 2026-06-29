@@ -28,6 +28,17 @@ import { DrizzleOrderCaptureRepository } from "./infrastructure/repositories/Dri
 import { DrizzleProductFavoriteRepository } from "./infrastructure/repositories/DrizzleProductFavoriteRepository.js";
 import { DrizzleProductRepository } from "./infrastructure/repositories/DrizzleProductRepository.js";
 import { DrizzleShopSettingsRepository } from "./infrastructure/repositories/DrizzleShopSettingsRepository.js";
+import {
+  createStoreUseCases,
+  type StoreUseCases,
+} from "./container/storeUseCases.js";
+import {
+  DrizzleStoreRegistrationRepository,
+  DrizzleStoreSessionRepository,
+  DrizzleStoreUserFavoriteRepository,
+  DrizzleStoreUserRepository,
+  DrizzleStoreUserStateRepository,
+} from "./infrastructure/repositories/DrizzleStoreUserRepository.js";
 import { LocalFileStorage } from "./infrastructure/storage/LocalFileStorage.js";
 import type pg from "pg";
 
@@ -45,6 +56,7 @@ export type AppContainer = {
   favoriteProducts: FavoriteProducts;
   getShopConfig: GetShopConfig;
   admin: AdminUseCases;
+  store: StoreUseCases;
 };
 
 export async function createContainer(
@@ -71,7 +83,20 @@ export async function createContainer(
     config.MODEL_FILES_BASE_URL,
     config.UPLOAD_MAX_BYTES,
   );
-
+  const storeUserRepo = new DrizzleStoreUserRepository(db);
+  const storeSessionRepo = new DrizzleStoreSessionRepository(db);
+  const storeRegistrationRepo = new DrizzleStoreRegistrationRepository(db);
+  const storeStateRepo = new DrizzleStoreUserStateRepository(db);
+  const storeUserFavoriteRepo = new DrizzleStoreUserFavoriteRepository(db);
+  const store = createStoreUseCases({
+    config,
+    users: storeUserRepo,
+    sessions: storeSessionRepo,
+    registrations: storeRegistrationRepo,
+    state: storeStateRepo,
+    favorites: storeUserFavoriteRepo,
+    passwordHasher,
+  });
   const admin = createAdminUseCases({
     config,
     admins: adminUserRepo,
@@ -103,9 +128,14 @@ export async function createContainer(
       shopSettingsRepo,
       config.WHATSAPP_PHONE_NUMBER,
     ),
-    favoriteProducts: new FavoriteProducts(favoriteRepo, productRepo),
+    favoriteProducts: new FavoriteProducts(
+      favoriteRepo,
+      storeUserFavoriteRepo,
+      productRepo,
+    ),
     getShopConfig: new GetShopConfig(shopSettingsRepo),
     admin,
+    store,
   };
 }
 

@@ -1,4 +1,3 @@
-import cookie from "@fastify/cookie";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
 import { hashSessionToken } from "../../application/services/sessionToken.js";
@@ -15,8 +14,6 @@ export async function registerAdminAuth(
   container: AppContainer,
   config: AppConfig,
 ): Promise<void> {
-  await app.register(cookie);
-
   app.decorate(
     "requireAdmin",
     async (request: FastifyRequest, reply: FastifyReply) => {

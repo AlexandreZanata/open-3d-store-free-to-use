@@ -186,3 +186,13 @@ export {
   adminUsersRelations,
   adminSessionsRelations,
 } from "./schema.admin.js";
+
+export {
+  storeUsers,
+  storeSessions,
+  storeRegistrationOrigins,
+  storeUserState,
+  storeUserFavorites,
+  storeUsersRelations,
+  storeSessionsRelations,
+} from "./schema.store.js";

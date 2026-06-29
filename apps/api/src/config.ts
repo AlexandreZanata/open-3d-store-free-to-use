@@ -37,6 +37,8 @@ const envSchema = z.object({
   MODEL_FILES_BASE_URL: z.string().url(),
   ADMIN_SESSION_TTL: z.coerce.number().int().positive().default(28_800),
   ADMIN_SESSION_IDLE_TTL: z.coerce.number().int().positive().default(1800),
+  STORE_SESSION_TTL: z.coerce.number().int().positive().default(2_592_000),
+  STORE_SESSION_IDLE_TTL: z.coerce.number().int().positive().default(604_800),
   ADMIN_ORIGIN: z.string().url().default("http://localhost:5174"),
   UPLOAD_MAX_BYTES: z.coerce.number().int().positive().default(5_242_880),
 });

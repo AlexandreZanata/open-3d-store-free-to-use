@@ -1,4 +1,5 @@
 import Fastify, { type FastifyInstance } from "fastify";
+import cookie from "@fastify/cookie";
 import { ZodError } from "zod";
 
 import type { AppContainer } from "../container.js";
@@ -16,6 +17,9 @@ import { registerProductRoutes } from "./routes/products.routes.js";
 import { registerCategoryRoutes } from "./routes/categories.routes.js";
 import { registerOrderRoutes } from "./routes/orders.routes.js";
 import { registerShopConfigRoutes } from "./routes/shop-config.routes.js";
+import { registerStoreAuth } from "./plugins/store-auth.js";
+import { registerStoreAuthRoutes } from "./routes/store-auth.routes.js";
+import { registerStoreMeRoutes } from "./routes/store-me.routes.js";
 import { registerAdminRoutes } from "./routes/admin/index.js";
 
 export async function buildServer(
@@ -87,7 +91,11 @@ export async function buildServer(
 
   await app.register(
     async (api) => {
+      await api.register(cookie);
+      await registerStoreAuth(api, container, container.config);
       await registerHealthRoutes(api, container);
+      await registerStoreAuthRoutes(api, container);
+      await registerStoreMeRoutes(api, container);
       await registerProductRoutes(api, container);
       await registerCategoryRoutes(api, container);
       await registerOrderRoutes(api, container);

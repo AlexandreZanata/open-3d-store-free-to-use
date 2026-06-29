@@ -23,7 +23,9 @@ export type ProblemDetailKey =
   | "uploadMimeNotAllowed"
   | "uploadTooLarge"
   | "uploadInvalidImage"
-  | "uploadStorageFailed";
+  | "uploadStorageFailed"
+  | "emailConflict"
+  | "registrationLimit";
 
 export function sendProblem(
   reply: FastifyReply,

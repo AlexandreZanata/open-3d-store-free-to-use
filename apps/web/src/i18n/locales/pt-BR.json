@@ -128,6 +128,18 @@
     "metaDescription": "Conta e configurações.",
     "guestName": "Visitante",
     "guestEmail": "Navegação anônima",
+    "guestHint": "Crie uma conta para salvar carrinho e favoritos em qualquer dispositivo.",
+    "loginTab": "Entrar",
+    "registerTab": "Criar conta",
+    "loginAction": "Entrar",
+    "registerAction": "Criar conta",
+    "email": "E-mail",
+    "password": "Senha (mín. 8 caracteres)",
+    "displayName": "Nome de exibição",
+    "save": "Salvar perfil",
+    "saving": "Salvando…",
+    "saved": "Perfil atualizado.",
+    "logout": "Sair",
     "version": "Corvo 3D v1.0"
   },
   "errors": {

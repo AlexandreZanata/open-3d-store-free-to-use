@@ -4,6 +4,7 @@ export default defineConfig({
   schema: [
     "./src/infrastructure/db/schema.ts",
     "./src/infrastructure/db/schema.admin.ts",
+    "./src/infrastructure/db/schema.store.ts",
   ],
   out: "./src/infrastructure/db/migrations",
   dialect: "postgresql",

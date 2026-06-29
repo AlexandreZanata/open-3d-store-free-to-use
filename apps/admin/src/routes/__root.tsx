@@ -59,7 +59,7 @@ function AdminError({ error, reset }: { error: Error; reset: () => void }) {
             Try again
           </Button>
           <Link to="/">
-            <Button variant="secondary">Back to dashboard</Button>
+            <Button>Back to dashboard</Button>
           </Link>
         </div>
       </div>

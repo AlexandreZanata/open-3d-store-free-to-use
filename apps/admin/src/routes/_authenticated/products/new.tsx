@@ -7,6 +7,7 @@ import {
   productFormToPayload,
   validateProductForm,
 } from "@/components/products/productFormState";
+import { PageBackLink } from "@/components/ui/PageBackLink";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { useCreateProduct } from "@/hooks/useAdminProducts";
 import { ApiError, getFieldErrors } from "@/lib/api/client";
@@ -46,7 +47,17 @@ function NewProductPage() {
 
   return (
     <>
-      <PageHeader title="Create product" description="Add a bilingual catalog product." />
+      <PageHeader
+        back={
+          <PageBackLink
+            to="/products"
+            search={{ page: 1, q: "", status: "", category: "" }}
+            label="Back to products"
+          />
+        }
+        title="Create product"
+        description="Add a bilingual catalog product."
+      />
       {submitError ? (
         <p className="mb-4 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
           {submitError}

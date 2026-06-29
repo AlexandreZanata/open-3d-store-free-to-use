@@ -55,7 +55,7 @@ Product and category forms support **URL text** or **file upload** (`FileUploadF
 | Thumbnail / gallery | WebP, JPEG, PNG (also `image/jpg` / `application/octet-stream` with valid image bytes) | WebP under `/models/thumbnails/` or `/models/images/` |
 | 3D model | `.glb`, `.gltf` | unchanged under `/models/3d/` |
 
-Edit product pages include a primary **Back to products** button above the page title (`PageHeader` `back` slot).
+Edit and create pages use **`PageBackLink`** (primary black button) on the **right** of the page title via `PageHeader` `back` slot.
 
 E2E: `e2e/admin-mobile.spec.ts` (Pixel 5 viewport, requires `admin-setup`).
 

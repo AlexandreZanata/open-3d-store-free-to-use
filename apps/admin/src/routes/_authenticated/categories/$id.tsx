@@ -9,6 +9,7 @@ import {
   type CategoryFormState,
 } from "@/components/categories/categoryFormState";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { PageBackLink } from "@/components/ui/PageBackLink";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { useToast } from "@/hooks/useToast";
 import {
@@ -77,7 +78,11 @@ function EditCategoryPage() {
 
   return (
     <>
-      <PageHeader title="Edit category" description={formState.translations["pt-BR"].name} />
+      <PageHeader
+        back={<PageBackLink to="/categories" label="Back to categories" />}
+        title="Edit category"
+        description={formState.translations["pt-BR"].name}
+      />
       {submitError ? (
         <p className="mb-4 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
           {submitError}

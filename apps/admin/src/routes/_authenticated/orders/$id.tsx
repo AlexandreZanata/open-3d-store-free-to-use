@@ -1,9 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
-import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { DataTable, type DataTableColumn } from "@/components/ui/DataTable";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { PageBackLink } from "@/components/ui/PageBackLink";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { adminOrderQueryKey, useAdminOrder } from "@/hooks/useAdminOrders";
 import { fetchAdminOrder } from "@/lib/api/orders";
@@ -63,13 +63,9 @@ function OrderDetailPage() {
   return (
     <>
       <PageHeader
+        back={<PageBackLink to="/orders" search={{ page: 1 }} label="Back to orders" />}
         title={`Order ${formatOrderDisplayId(order.id)}`}
         description={`Captured ${formatOrderDate(order.capturedAt)}`}
-        actions={
-          <Link to="/orders" search={{ page: 1 }}>
-            <Button variant="secondary">Back to orders</Button>
-          </Link>
-        }
       />
 
       <div className="grid gap-4 lg:grid-cols-3">

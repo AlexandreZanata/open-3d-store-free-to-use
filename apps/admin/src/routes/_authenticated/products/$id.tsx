@@ -1,4 +1,4 @@
-import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 import { ProductForm } from "@/components/products/ProductForm";
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { PageBackLink } from "@/components/ui/PageBackLink";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { useToast } from "@/hooks/useToast";
 import {
@@ -103,9 +104,11 @@ function EditProductPage() {
     <>
       <PageHeader
         back={
-          <Link to="/products" search={{ page: 1, q: "", status: "", category: "" }}>
-            <Button>Back to products</Button>
-          </Link>
+          <PageBackLink
+            to="/products"
+            search={{ page: 1, q: "", status: "", category: "" }}
+            label="Back to products"
+          />
         }
         title="Edit product"
         description={formState.translations["pt-BR"].name}

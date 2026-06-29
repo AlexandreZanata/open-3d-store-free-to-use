@@ -7,6 +7,7 @@ import {
   createEmptyCategoryForm,
   validateCategoryForm,
 } from "@/components/categories/categoryFormState";
+import { PageBackLink } from "@/components/ui/PageBackLink";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { useCreateCategory } from "@/hooks/useAdminCategories";
 import { ApiError, getFieldErrors } from "@/lib/api/client";
@@ -46,7 +47,11 @@ function NewCategoryPage() {
 
   return (
     <>
-      <PageHeader title="Create category" description="Add a bilingual catalog category." />
+      <PageHeader
+        back={<PageBackLink to="/categories" label="Back to categories" />}
+        title="Create category"
+        description="Add a bilingual catalog category."
+      />
       {submitError ? (
         <p className="mb-4 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
           {submitError}

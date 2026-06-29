@@ -40,11 +40,15 @@ export const ADMIN_UPLOAD_MAX_BYTES: Readonly<Record<AdminUploadKind, number>> =
 } as const;
 
 export type AdminUploadResult = {
+  /** Viewer URL — preview GLB when optimization succeeded, else original upload path. */
   url: string;
+  /** Original uploaded asset path (print / archive). */
+  sourceUrl: string;
   mimeType: AdminUploadMimeType;
   sizeBytes: number;
   kind: AdminUploadKind;
   jobId?: string;
+  previewUrl?: string | null;
 };
 
 export type AdminUploadResponse = AdminDataResponse<AdminUploadResult>;

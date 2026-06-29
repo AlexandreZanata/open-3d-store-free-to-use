@@ -38,21 +38,25 @@ export function ModelUploadField({
     setIsUploading(true);
     try {
       const response = await uploadAdminFile(file, "model");
+      onChange(response.data.url);
 
       const jobId = response.data.jobId;
       if (jobId && onPartsDetected) {
-        setStatus("Processing mesh (queue)…");
+        if (!response.data.previewUrl) {
+          setStatus("Processing mesh (queue)…");
+        }
         const { parts, previewUrl } = await waitForModelJob(jobId);
-        onChange(previewUrl ?? response.data.url);
+        if (previewUrl) {
+          onChange(previewUrl);
+        }
         onPartsDetected(parts);
         setStatus(
           previewUrl
-            ? `Detected ${parts.length} part(s) — preview optimized for web`
+            ? `Detected ${parts.length} part(s) — web preview ready`
             : `Detected ${parts.length} part(s)`,
         );
       } else {
-        onChange(response.data.url);
-        setStatus(null);
+        setStatus(response.data.previewUrl ? "Web preview ready" : null);
       }
     } catch (caught) {
       const message =

@@ -1,5 +1,6 @@
 import type { IProductRepository } from "../../domain/repositories/IProductRepository.js";
 import type { SupportedLocale } from "../../domain/value-objects/Locale.js";
+import { resolveViewerModelUrl } from "../../domain/services/resolveViewerModelUrl.js";
 import type { ICacheService } from "../ports/ICacheService.js";
 import {
   CACHE_TTL,
@@ -14,6 +15,7 @@ export class GetProductBySlug {
   constructor(
     private readonly products: IProductRepository,
     private readonly cache: ICacheService,
+    private readonly modelsBasePath: string,
   ) {}
 
   async execute(
@@ -23,7 +25,13 @@ export class GetProductBySlug {
     const key = productCacheKey(slug, locale);
     const cached = await this.cache.get<ProductDetailDto>(key);
     if (cached !== null) {
-      return cached;
+      return {
+        ...cached,
+        modelFileUrl: await resolveViewerModelUrl(
+          cached.modelFileUrl,
+          this.modelsBasePath,
+        ),
+      };
     }
 
     const product = await this.products.findBySlug(slug, locale);
@@ -32,6 +40,7 @@ export class GetProductBySlug {
     }
 
     const dto = toProductDetailDto(product, locale);
+    dto.modelFileUrl = await resolveViewerModelUrl(dto.modelFileUrl, this.modelsBasePath);
     await this.cache.set(key, dto, CACHE_TTL.productDetail);
     return dto;
   }

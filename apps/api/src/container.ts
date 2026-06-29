@@ -145,7 +145,11 @@ export async function createContainer(
     pool,
     redis,
     catalogEventHub,
-    getProductBySlug: new GetProductBySlug(productRepo, cache),
+    getProductBySlug: new GetProductBySlug(
+      productRepo,
+      cache,
+      config.MODEL_FILES_BASE_PATH,
+    ),
     listProducts: new ListProducts(productRepo, cache),
     searchProducts: new SearchProducts(productRepo, cache),
     getCategories: new GetCategories(categoryRepo, cache),

@@ -611,6 +611,22 @@ Files stored under `UPLOAD_DIR` mirroring [../features/3d-viewer.md](../features
 }
 ```
 
+For `kind=model`, the worker builds a Draco preview GLB. When optimization finishes (inline or before the HTTP response returns), `url` is the **viewer** path and `sourceUrl` is the original upload:
+
+```json
+{
+  "data": {
+    "url": "/models/3d/019f…-preview.glb",
+    "sourceUrl": "/models/3d/019f….stl",
+    "previewUrl": "/models/3d/019f…-preview.glb",
+    "mimeType": "model/stl",
+    "sizeBytes": 74888384,
+    "kind": "model",
+    "jobId": "019f…"
+  }
+}
+```
+
 **Response 400:** Missing file or invalid multipart.
 
 **Response 413:** Multipart file exceeds `MODEL_UPLOAD_MAX_BYTES`.

@@ -71,17 +71,18 @@ Admin `kind=model` uploads enqueue async mesh extraction (`model_processing_jobs
 
 ## Server-side preview optimization
 
-After upload, the model worker runs **gltf-transform** (Khronos ecosystem) with **meshoptimizer** simplification and **Draco** compression:
+Any catalog upload (`STL`, `GLB`, `GLTF`, `3MF`) is converted automatically to a **Draco + meshopt GLB** (`{id}-preview.glb`, target &lt; 20 MB):
 
-1. STL / large GLB → welded, deduplicated mesh
-2. Iterative `simplify` until ≤ 600k vertices
-3. `draco` + `meshopt` encode → `{id}-preview.glb` under `/models/3d/`
-4. Admin upload field sets `modelFileUrl` to `previewUrl` when optimization succeeds
+1. Worker ingests the source mesh (STL triangle soup, 3MF XML zip, or glTF)
+2. **meshoptimizer** simplifies until ≤ 600k vertices
+3. **Draco** + **meshopt** compress for web streaming
+4. Admin upload response `url` is the preview when ready; `sourceUrl` keeps the original for print
+5. Public product API resolves `modelFileUrl` to the preview sibling on disk when present (no manual re-link)
 
-Re-run on an existing product:
+Re-run optimization for an existing product:
 
 ```bash
-pnpm --filter @print3d/api exec tsx --env-file=.env scripts/reoptimizeModel.ts custom-photo-frame
+pnpm --filter @print3d/api reoptimize-model custom-photo-frame
 ```
 
 ## Browser preview limits
@@ -93,7 +94,7 @@ The storefront viewer loads models in the browser via Three.js. Large meshes can
 | Max file size (HEAD `Content-Length`) | 20 MB | Shows poster + message; does not parse the file |
 | Max STL vertices after parse | 600,000 | Disposes geometry and shows the same message |
 
-The API accepts uploads up to **256 MB** for storage and worker analysis; optimize catalog models to **&lt; 20 MB GLB** (Draco) for reliable in-browser preview.
+The API accepts uploads up to **256 MB** for storage and worker analysis. The storefront never loads the raw file when a `-preview.glb` sibling exists.
 
 `GET` and `HEAD` `/models/*` responses include `Content-Length` so the viewer can reject oversized files before download.
 

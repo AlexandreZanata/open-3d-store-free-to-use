@@ -189,6 +189,9 @@ importers:
       fastify:
         specifier: ^5.4.0
         version: 5.9.0
+      fflate:
+        specifier: ^0.8.3
+        version: 0.8.3
       ioredis:
         specifier: ^5.6.1
         version: 5.11.1

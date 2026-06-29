@@ -2,12 +2,14 @@ import { stat } from "node:fs/promises";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-import { Document } from "@gltf-transform/core";
+import type { Document } from "@gltf-transform/core";
 import { dedup, draco, meshopt, simplify, weld } from "@gltf-transform/functions";
 import type { AdminUploadMimeType } from "@print3d/shared-types";
 import { MeshoptEncoder, MeshoptSimplifier } from "meshoptimizer";
 
 import { createGltfIo } from "./createGltfIo.js";
+import { documentFromMesh, millimetersToMeters } from "./documentFromMesh.js";
+import { read3mfMesh } from "./read3mfMesh.js";
 import { readStlPositions } from "./readStlPositions.js";
 
 /** Contract: docs/features/3d-viewer.md — browser preview limits */
@@ -26,6 +28,7 @@ export type OptimizeModelPreviewResult = {
   sizeBytes: number;
 };
 
+/** Convert STL / GLB / GLTF / 3MF to Draco + meshopt GLB for in-browser preview. */
 export async function optimizeModelPreview(
   input: OptimizeModelPreviewInput,
 ): Promise<OptimizeModelPreviewResult | null> {
@@ -66,7 +69,20 @@ async function loadDocument(
 ): Promise<Document | null> {
   if (input.mimeType === "model/stl") {
     const data = await readFile(input.sourcePath);
-    return documentFromStl(data);
+    const positions = readStlPositions(data);
+    if (!positions) {
+      return null;
+    }
+    return documentFromMesh(millimetersToMeters(positions));
+  }
+
+  if (input.mimeType === "model/3mf") {
+    const data = await readFile(input.sourcePath);
+    const positions = read3mfMesh(data);
+    if (!positions) {
+      return null;
+    }
+    return documentFromMesh(millimetersToMeters(positions));
   }
 
   if (input.mimeType === "model/gltf-binary" || input.mimeType === "model/gltf+json") {
@@ -76,35 +92,11 @@ async function loadDocument(
   return null;
 }
 
-function documentFromStl(data: Buffer): Document | null {
-  const positions = readStlPositions(data);
-  if (positions === null || positions.length === 0) {
-    return null;
-  }
-
-  const meters = new Float32Array(positions.length);
-  for (let i = 0; i < positions.length; i += 1) {
-    meters[i] = positions[i]! / 1000;
-  }
-
-  const document = new Document();
-  const buffer = document.createBuffer();
-  const accessor = document
-    .createAccessor()
-    .setType("VEC3")
-    .setArray(meters)
-    .setBuffer(buffer);
-  const primitive = document.createPrimitive().setAttribute("POSITION", accessor);
-  const mesh = document.createMesh("Part").addPrimitive(primitive);
-  document.createScene().addChild(document.createNode().setMesh(mesh));
-  return document;
-}
-
 async function runOptimizationPipeline(document: Document): Promise<void> {
   await document.transform(weld({}), dedup());
 
   let ratio = 0.5;
-  for (let pass = 0; pass < 6; pass += 1) {
+  for (let pass = 0; pass < 8; pass += 1) {
     if (countVertices(document) <= PREVIEW_MAX_VERTICES) {
       break;
     }

@@ -16,10 +16,12 @@ export type UploadAssetInput = {
 export type UploadAssetResult = {
   url: string;
   path: string;
+  sourceUrl: string;
   sizeBytes: number;
   mimeType: string;
   kind: AdminUploadKind;
   jobId?: string;
+  previewUrl?: string | null;
 };
 
 export class UploadAsset {
@@ -39,6 +41,7 @@ export class UploadAsset {
     });
 
     let jobId: string | undefined;
+    let previewUrl: string | null = null;
     if (input.kind === "model") {
       const job = await this.modelJobs.create({
         sourceUrl: saved.url,
@@ -46,7 +49,11 @@ export class UploadAsset {
       });
       await this.modelQueue.publish(job.id);
       jobId = job.id;
+      const completed = await this.modelJobs.findById(job.id);
+      previewUrl = completed?.previewUrl ?? null;
     }
+
+    const viewerUrl = previewUrl ?? saved.url;
 
     await this.audit.log({
       adminUserId: input.adminId,
@@ -57,12 +64,14 @@ export class UploadAsset {
     });
 
     return {
-      url: saved.url,
-      path: saved.url,
+      url: input.kind === "model" ? viewerUrl : saved.url,
+      path: viewerUrl,
+      sourceUrl: saved.url,
       sizeBytes: saved.sizeBytes,
       mimeType: saved.mimeType,
       kind: saved.kind,
       ...(jobId !== undefined ? { jobId } : {}),
+      ...(input.kind === "model" ? { previewUrl } : {}),
     };
   }
 }

@@ -144,7 +144,7 @@ Returns active categories sorted by `sortOrder`.
 
 Full product detail including options and model URL.
 
-**Response 200:** Full product object with `options[]`, `modelFileUrl`, `imageUrls[]`, `printTimeHours`, `weightGrams`.
+**Response 200:** Full product object with `options[]`, `modelFileUrl` (viewer-optimized GLB when `-preview.glb` exists on disk), `imageUrls[]`, `printTimeHours`, `weightGrams`.
 
 **Response 404:** RFC 7807 problem detail.
 

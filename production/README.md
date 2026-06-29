@@ -16,16 +16,33 @@ This folder holds **production-only** configuration. Real values never belong in
 | `ssh/README.md` | SSH key setup guide | Yes |
 | `ssh/id_*` | Deploy private keys | **No** |
 
+## One-command manual deploy (recommended)
+
+```bash
+# 1. SSH key on VPS — see ssh/README.md
+# 2. Set DOMAIN in production/vps.env
+chmod +x production/deploy-to-vps.sh infra/scripts/*.sh
+./production/deploy-to-vps.sh
+```
+
+Prepare env only (no SSH):
+
+```bash
+./production/deploy-to-vps.sh --env-only
+```
+
+WhatsApp default in script: `5566997227927` (from dev-style settings).
+
 ## First-time setup (local)
 
 ```bash
 chmod +x infra/scripts/*.sh
 ./infra/scripts/generate-secrets.sh
-# Edit domain, WhatsApp, vps.env
+# Edit DOMAIN in production/vps.env
 ./infra/scripts/install-env.sh   # optional: test build locally
 ```
 
-## Sync secrets to VPS
+## Sync secrets only
 
 ```bash
 ./infra/scripts/sync-to-vps.sh

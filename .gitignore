@@ -31,6 +31,7 @@ apps/api/storage/
 # Production module — real VPS secrets never in git (see production/README.md)
 production/**
 !production/README.md
+!production/deploy-to-vps.sh
 !production/env/
 production/env/**
 !production/env/README.md

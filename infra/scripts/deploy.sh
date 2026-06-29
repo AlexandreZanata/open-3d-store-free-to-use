@@ -41,8 +41,12 @@ if [[ -z "${VITE_API_BASE_URL}" || "${VITE_API_BASE_URL}" == "/api/v1" ]]; then
   exit 1
 fi
 
-echo "==> Pulling latest code"
-git pull --ff-only
+if [[ "${SKIP_GIT_PULL:-}" != "1" ]]; then
+  echo "==> Pulling latest code"
+  git pull --ff-only
+else
+  echo "deploy.sh: SKIP_GIT_PULL=1 — using synced tree"
+fi
 
 echo "==> Installing dependencies"
 pnpm install --frozen-lockfile
@@ -59,6 +63,11 @@ echo "==> Running database migrations"
 "${ROOT}/infra/scripts/migrate.sh"
 
 echo "==> Reloading PM2 processes"
-pm2 reload "${ROOT}/infra/pm2.ecosystem.config.js" --env production --update-env
+if pm2 describe print3d-api >/dev/null 2>&1; then
+  pm2 reload "${ROOT}/infra/pm2.ecosystem.config.js" --env production --update-env
+else
+  pm2 start "${ROOT}/infra/pm2.ecosystem.config.js" --env production
+  pm2 save
+fi
 
 echo "deploy.sh: deploy finished successfully"

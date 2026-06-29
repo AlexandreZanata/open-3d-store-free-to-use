@@ -1,8 +1,9 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { STLLoader } from "three/addons/loaders/STLLoader.js";
 import { ThreeMFLoader } from "three/addons/loaders/3MFLoader.js";
+
+import { loadGltfScene } from "./createGltfLoader.js";
 
 import type { ModelPart } from "@print3d/shared-types";
 
@@ -108,9 +109,7 @@ async function loadModel(url: string, format: ModelFormat): Promise<THREE.Object
     return new THREE.Mesh(geometry, material);
   }
 
-  const loader = new GLTFLoader();
-  const gltf = await loader.loadAsync(url);
-  return gltf.scene;
+  return loadGltfScene(url);
 }
 
 function disposeObject3D(root: THREE.Object3D): void {

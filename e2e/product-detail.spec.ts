@@ -28,6 +28,23 @@ test.describe("product detail", () => {
     await expect(page.getByText(/real scale|escala real/i)).toBeVisible();
   });
 
+  test("dragon figurine loads Draco preview GLB without unavailable fallback", async ({ page }) => {
+    await page.goto("/product/dragon-figurine");
+    await expect(
+      page.getByRole("main").getByRole("heading", {
+        name: /Dragon Figurine|Miniatura de dragão/i,
+      }),
+    ).toBeVisible({ timeout: 15_000 });
+
+    await expect(page.getByText(/3D preview unavailable|Visualização 3D indisponível/i)).toHaveCount(
+      0,
+    );
+    await expect(page.getByRole("img", { name: /3D preview|Visualização 3D/i })).toBeVisible({
+      timeout: 25_000,
+    });
+    await expect(page.getByText(/real scale|escala real/i)).toBeVisible();
+  });
+
   test("gallery carousel advances on product with multiple images", async ({ page }) => {
     await page.goto("/product/custom-photo-frame");
     await expect(

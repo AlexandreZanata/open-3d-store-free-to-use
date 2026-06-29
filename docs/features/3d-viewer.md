@@ -98,6 +98,8 @@ The API accepts uploads up to **256 MB** for storage and worker analysis. The st
 
 `GET` and `HEAD` `/models/*` responses include `Content-Length` so the viewer can reject oversized files before download.
 
+The storefront `GLTFLoader` registers **DRACOLoader** and **MeshoptDecoder** (same extensions used by the server preview pipeline).
+
 ## File optimization (before upload)
 
 **glTF / GLB:**

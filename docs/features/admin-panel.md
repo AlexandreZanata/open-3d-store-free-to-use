@@ -79,7 +79,7 @@ E2E: `e2e/admin-mobile.spec.ts` (Pixel 5 viewport, requires `admin-setup`).
 | `/categories/:id` | Edit category |
 | `/orders` | Order captures (last 30 days); list query uses a stable start-of-day `from` filter so React Query does not refetch forever |
 | `/orders/:id` | Order detail (read-only) |
-| `/settings` | Read-only shop/API info |
+| `/settings` | Editable shop settings (materials, fulfillment, payments, WhatsApp) |
 
 ## Development
 

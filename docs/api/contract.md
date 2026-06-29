@@ -101,7 +101,7 @@ Returns active categories sorted by `sortOrder`.
 | `page` | integer | 1 | — | 1-indexed |
 | `limit` | integer | 20 | 50 | Page size |
 | `category` | string | — | — | Category slug |
-| `material` | string | — | — | `PLA`, `PETG`, `ABS`, `TPU`, `RESIN` |
+| `material` | string | — | — | `PLA`, `PETG`, `PETG_HF`, `ABS`, `ASA`, `TPU`, `NYLON`, `RESIN` |
 | `status` | string | `active` | — | `active`, `out_of_stock`, `discontinued` |
 | `q` | string | — | — | Full-text search |
 | `minPrice` | integer | — | — | BRL cents |
@@ -205,6 +205,30 @@ Harness: `agent-rules/10-api-design/idempotency.md` — consider `Idempotency-Ke
 | `src/routes/cart.tsx` | POST `/orders/capture` → redirect to WhatsApp |
 
 Web env: `apps/web/.env.example` (`VITE_API_BASE_URL`, `VITE_ASSETS_BASE_URL`).
+
+---
+
+## `GET /shop/config`
+
+Public shop policy for storefront (materials offered, fulfillment, payments, deposit rules). Cache: `public, max-age=300`.
+
+**Response 200:**
+
+```json
+{
+  "data": {
+    "enabledMaterials": ["PLA", "PETG", "PETG_HF"],
+    "offersDelivery": false,
+    "pickupOnly": true,
+    "pickupLocation": "Pickup at the studio — Cuiabá, MT",
+    "paymentMethods": ["pix", "credit_card"],
+    "requiresDeposit": true,
+    "depositPercent": 50
+  }
+}
+```
+
+Admin write: [admin-contract.md](admin-contract.md) — `GET/PATCH /admin/settings`.
 
 ---
 

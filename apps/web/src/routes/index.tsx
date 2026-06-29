@@ -17,12 +17,13 @@ import { getCurrentI18nLocale, default as i18n } from "@/i18n";
 export const Route = createFileRoute("/")({
   loader: async ({ context }) => {
     const locale = getCurrentI18nLocale();
-    await Promise.all([
-      context.queryClient.ensureQueryData({
+    // Do not throw on SSR when the API is down — render shell and let hooks show errors.
+    await Promise.allSettled([
+      context.queryClient.prefetchQuery({
         queryKey: productsQueryKey({ page: 1, limit: 12 }, locale),
         queryFn: () => fetchProducts({ page: 1, limit: 12 }, locale),
       }),
-      context.queryClient.ensureQueryData({
+      context.queryClient.prefetchQuery({
         queryKey: categoriesQueryKey(locale),
         queryFn: () => fetchCategories(locale),
       }),

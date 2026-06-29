@@ -22,7 +22,8 @@ export class CaptureOrder {
   constructor(
     private readonly products: IProductRepository,
     private readonly orders: IOrderCaptureRepository,
-    private readonly whatsappPhoneNumber: string,
+    private readonly shopSettings: import("../../domain/repositories/IShopSettingsRepository.js").IShopSettingsRepository,
+    private readonly fallbackWhatsappPhone: string,
     private readonly events?: IEventPublisher,
   ) {}
 
@@ -60,8 +61,11 @@ export class CaptureOrder {
     }
 
     const orderId = uuidv7();
+    const settings = await this.shopSettings.get();
+    const whatsappPhone =
+      settings?.whatsappPhone.trim() || this.fallbackWhatsappPhone;
     const whatsappLink = generateWhatsAppLink({
-      phoneNumber: this.whatsappPhoneNumber,
+      phoneNumber: whatsappPhone,
       orderId,
       items: lineItems.map((line) => ({
         productName: line.productName,

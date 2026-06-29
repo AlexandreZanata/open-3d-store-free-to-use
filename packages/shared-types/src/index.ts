@@ -40,6 +40,9 @@ export type {
   CreateProductPayload,
   UpdateCategoryPayload,
   UpdateProductPayload,
+  ShopSettings,
+  ShopSettingsResponse,
+  UpdateShopSettingsPayload,
 } from "./admin/index.js";
 export {
   ADMIN_UPLOAD_IMAGE_INPUT_MIMES,
@@ -73,3 +76,6 @@ export type {
   ProductOption,
   ProductOptionType,
 } from "./product.types.js";
+export { MATERIAL_TYPES, PAYMENT_METHODS } from "./material.types.js";
+export type { PaymentMethod } from "./material.types.js";
+export type { ShopConfig, ShopConfigResponse } from "./shop-config.types.js";

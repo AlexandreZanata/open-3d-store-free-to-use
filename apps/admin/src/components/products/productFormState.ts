@@ -33,7 +33,7 @@ export function createEmptyProductForm(): ProductFormState {
     slugManual: false,
     categoryId: "",
     basePriceReais: "",
-    material: "PLA",
+    material: "PETG_HF",
     printTimeHours: "0",
     weightGrams: "0",
     status: "active",

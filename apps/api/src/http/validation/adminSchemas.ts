@@ -1,6 +1,8 @@
+import { MATERIAL_TYPES, PAYMENT_METHODS } from "@print3d/shared-types";
 import { z } from "zod";
 
-const materials = ["PLA", "PETG", "ABS", "TPU", "RESIN"] as const;
+const materials = MATERIAL_TYPES;
+const paymentMethods = PAYMENT_METHODS;
 const statuses = ["active", "out_of_stock", "discontinued"] as const;
 const uploadKinds = ["thumbnail", "gallery", "model"] as const;
 
@@ -91,3 +93,38 @@ export const adminUploadKindSchema = z.enum(uploadKinds);
 export const adminIdParamSchema = z.object({
   id: z.string().uuid(),
 });
+
+export const updateShopSettingsBodySchema = z
+  .object({
+    whatsappPhone: z.string().min(8).max(20),
+    enabledMaterials: z.array(z.enum(materials)).min(1),
+    offersDelivery: z.boolean(),
+    pickupOnly: z.boolean(),
+    pickupLocation: z.string().max(500).nullable(),
+    paymentMethods: z.array(z.enum(paymentMethods)).min(1),
+    requiresDeposit: z.boolean(),
+    depositPercent: z.number().int().min(1).max(100).nullable(),
+  })
+  .superRefine((value, ctx) => {
+    if (value.requiresDeposit && value.depositPercent === null) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "depositPercent is required when requiresDeposit is true",
+        path: ["depositPercent"],
+      });
+    }
+    if (!value.requiresDeposit && value.depositPercent !== null) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "depositPercent must be null when requiresDeposit is false",
+        path: ["depositPercent"],
+      });
+    }
+    if (value.pickupOnly && !value.offersDelivery && !value.pickupLocation?.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "pickupLocation is required when pickup only",
+        path: ["pickupLocation"],
+      });
+    }
+  });

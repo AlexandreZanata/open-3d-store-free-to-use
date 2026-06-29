@@ -23,6 +23,11 @@ import {
 } from "../application/use-cases/admin/OrderAdminUseCases.js";
 import { UpdateProduct } from "../application/use-cases/admin/UpdateProduct.js";
 import { UploadAsset } from "../application/use-cases/admin/UploadAsset.js";
+import {
+  GetShopSettingsAdmin,
+  UpdateShopSettingsAdmin,
+} from "../application/use-cases/admin/ShopSettingsAdminUseCases.js";
+import type { IShopSettingsRepository } from "../domain/repositories/IShopSettingsRepository.js";
 import type { ICatalogEventPublisher } from "../application/ports/ICatalogEventPublisher.js";
 import type { IAssetStorage } from "../application/ports/IAssetStorage.js";
 import type { IPasswordHasher } from "../application/ports/IPasswordHasher.js";
@@ -51,6 +56,8 @@ export type AdminUseCases = {
   listOrderCaptures: ListOrderCaptures;
   getOrderCapture: GetOrderCapture;
   uploadAsset: UploadAsset;
+  getShopSettingsAdmin: GetShopSettingsAdmin;
+  updateShopSettingsAdmin: UpdateShopSettingsAdmin;
 };
 
 type AdminUseCaseDeps = {
@@ -65,6 +72,7 @@ type AdminUseCaseDeps = {
   catalogEvents: ICatalogEventPublisher;
   passwordHasher: IPasswordHasher;
   assetStorage: IAssetStorage;
+  shopSettings: IShopSettingsRepository;
 };
 
 export function createAdminUseCases(deps: AdminUseCaseDeps): AdminUseCases {
@@ -119,5 +127,7 @@ export function createAdminUseCases(deps: AdminUseCaseDeps): AdminUseCases {
     listOrderCaptures: new ListOrderCaptures(deps.orders),
     getOrderCapture: new GetOrderCapture(deps.orders),
     uploadAsset: new UploadAsset(deps.assetStorage, audit),
+    getShopSettingsAdmin: new GetShopSettingsAdmin(deps.shopSettings),
+    updateShopSettingsAdmin: new UpdateShopSettingsAdmin(deps.shopSettings, audit),
   };
 }

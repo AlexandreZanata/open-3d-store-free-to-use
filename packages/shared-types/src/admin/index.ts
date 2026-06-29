@@ -57,3 +57,8 @@ export {
   ADMIN_UPLOAD_MAX_BYTES,
   ADMIN_UPLOAD_MIME_ALLOWLIST,
 } from "./upload.types.js";
+export type {
+  ShopSettings,
+  ShopSettingsResponse,
+  UpdateShopSettingsPayload,
+} from "./shop-settings.types.js";

@@ -345,3 +345,36 @@ export const adminUploadRouteSchema = {
     500: internalErrorResponse,
   },
 } as const;
+
+export const adminSettingsGetRouteSchema = {
+  tags: adminTag,
+  summary: "Get shop settings",
+  response: {
+    200: {
+      description: "Shop configuration",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            required: ["data"],
+            properties: { data: adminObjectSchema },
+          },
+        },
+      },
+    },
+    401: unauthorizedResponse,
+    404: adminProductDetailRouteSchema.response[404],
+    500: internalErrorResponse,
+  },
+} as const;
+
+export const adminSettingsUpdateRouteSchema = {
+  tags: adminTag,
+  summary: "Update shop settings",
+  response: {
+    200: adminSettingsGetRouteSchema.response[200],
+    401: unauthorizedResponse,
+    422: validationErrorResponse,
+    500: internalErrorResponse,
+  },
+} as const;

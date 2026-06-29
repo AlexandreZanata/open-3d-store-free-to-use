@@ -14,6 +14,7 @@ import { registerHealthRoutes } from "./routes/health.routes.js";
 import { registerProductRoutes } from "./routes/products.routes.js";
 import { registerCategoryRoutes } from "./routes/categories.routes.js";
 import { registerOrderRoutes } from "./routes/orders.routes.js";
+import { registerShopConfigRoutes } from "./routes/shop-config.routes.js";
 import { registerAdminRoutes } from "./routes/admin/index.js";
 
 export async function buildServer(
@@ -90,6 +91,7 @@ export async function buildServer(
       await registerCategoryRoutes(api, container);
       await registerOrderRoutes(api, container);
       await registerCatalogEventRoutes(api, container);
+      await registerShopConfigRoutes(api, container);
       await api.register(
         async (admin) => {
           await registerAdminRoutes(admin, container, container.config);

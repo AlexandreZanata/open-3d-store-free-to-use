@@ -1,5 +1,6 @@
 import type { AppConfig } from "./config.js";
 import { CaptureOrder } from "./application/use-cases/CaptureOrder.js";
+import { GetShopConfig } from "./application/use-cases/GetShopConfig.js";
 import { GetCategories } from "./application/use-cases/GetCategories.js";
 import { GetProductBySlug } from "./application/use-cases/GetProductBySlug.js";
 import { ListProducts } from "./application/use-cases/ListProducts.js";
@@ -24,6 +25,7 @@ import { DrizzleAuditLogRepository } from "./infrastructure/repositories/Drizzle
 import { DrizzleCategoryRepository } from "./infrastructure/repositories/DrizzleCategoryRepository.js";
 import { DrizzleOrderCaptureRepository } from "./infrastructure/repositories/DrizzleOrderCaptureRepository.js";
 import { DrizzleProductRepository } from "./infrastructure/repositories/DrizzleProductRepository.js";
+import { DrizzleShopSettingsRepository } from "./infrastructure/repositories/DrizzleShopSettingsRepository.js";
 import { LocalFileStorage } from "./infrastructure/storage/LocalFileStorage.js";
 import type pg from "pg";
 
@@ -38,6 +40,7 @@ export type AppContainer = {
   searchProducts: SearchProducts;
   getCategories: GetCategories;
   captureOrder: CaptureOrder;
+  getShopConfig: GetShopConfig;
   admin: AdminUseCases;
 };
 
@@ -48,6 +51,7 @@ export async function createContainer(
   const redis = await createRedisClient(config.REDIS_URL);
 
   const productRepo = new DrizzleProductRepository(db);
+  const shopSettingsRepo = new DrizzleShopSettingsRepository(db);
   const categoryRepo = new DrizzleCategoryRepository(db);
   const orderRepo = new DrizzleOrderCaptureRepository(db);
   const adminUserRepo = new DrizzleAdminUserRepository(db);
@@ -76,6 +80,7 @@ export async function createContainer(
     catalogEvents,
     passwordHasher,
     assetStorage,
+    shopSettings: shopSettingsRepo,
   });
 
   return {
@@ -91,8 +96,10 @@ export async function createContainer(
     captureOrder: new CaptureOrder(
       productRepo,
       orderRepo,
+      shopSettingsRepo,
       config.WHATSAPP_PHONE_NUMBER,
     ),
+    getShopConfig: new GetShopConfig(shopSettingsRepo),
     admin,
   };
 }

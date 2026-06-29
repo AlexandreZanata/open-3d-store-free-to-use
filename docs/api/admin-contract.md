@@ -469,6 +469,50 @@ Partial update. Setting `isActive: false` soft-deletes (hidden from public catal
 
 ---
 
+## Shop settings
+
+### `GET /settings`
+
+Returns the singleton shop configuration (materials, fulfillment, payments, WhatsApp).
+
+**Response 200:**
+
+```json
+{
+  "data": {
+    "id": "019f…",
+    "whatsappPhone": "5565999999999",
+    "enabledMaterials": ["PLA", "PETG", "PETG_HF", "ABS", "ASA", "TPU", "NYLON", "RESIN"],
+    "offersDelivery": false,
+    "pickupOnly": true,
+    "pickupLocation": "Pickup at the studio — Cuiabá, MT",
+    "paymentMethods": ["pix", "credit_card", "debit_card"],
+    "requiresDeposit": true,
+    "depositPercent": 50,
+    "updatedAt": "2026-06-29T12:00:00.000Z"
+  }
+}
+```
+
+### `PATCH /settings`
+
+Updates shop configuration. All fields required in body.
+
+| Field | Type | Rules |
+|-------|------|-------|
+| `whatsappPhone` | string | Digits, 8–20 chars — used for `wa.me` order links |
+| `enabledMaterials` | `MaterialType[]` | Min 1 — materials the shop offers |
+| `offersDelivery` | boolean | Whether delivery is available |
+| `pickupOnly` | boolean | Products only at pickup location |
+| `pickupLocation` | string \| null | Required when `pickupOnly` and no delivery |
+| `paymentMethods` | `PaymentMethod[]` | Min 1 — `pix`, `credit_card`, `debit_card`, `cash` |
+| `requiresDeposit` | boolean | Upfront deposit before printing |
+| `depositPercent` | number \| null | 1–100 when `requiresDeposit`; else `null` |
+
+Audit: `admin.settings.updated`.
+
+---
+
 ## Uploads
 
 ### `POST /uploads`

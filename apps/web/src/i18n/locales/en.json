@@ -139,8 +139,11 @@
   "material": {
     "PLA": "PLA",
     "PETG": "PETG",
+    "PETG_HF": "PETG HF",
     "ABS": "ABS",
+    "ASA": "ASA",
     "TPU": "TPU",
+    "NYLON": "Nylon",
     "RESIN": "Resin"
   },
   "status": {

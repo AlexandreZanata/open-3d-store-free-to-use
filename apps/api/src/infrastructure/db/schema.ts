@@ -14,8 +14,11 @@ import {
 export const materialTypeEnum = pgEnum("material_type", [
   "PLA",
   "PETG",
+  "PETG_HF",
   "ABS",
+  "ASA",
   "TPU",
+  "NYLON",
   "RESIN",
 ]);
 
@@ -92,6 +95,24 @@ export const products = pgTable(
     index("products_base_price_idx").on(table.basePrice),
   ],
 );
+
+export const shopSettings = pgTable("shop_settings", {
+  id: uuid("id")
+    .primaryKey()
+    .default(sql`uuidv7()`),
+  singletonKey: text("singleton_key").notNull().unique().default("default"),
+  whatsappPhone: text("whatsapp_phone").notNull(),
+  enabledMaterials: jsonb("enabled_materials").notNull().default([]),
+  offersDelivery: boolean("offers_delivery").notNull().default(false),
+  pickupOnly: boolean("pickup_only").notNull().default(true),
+  pickupLocation: text("pickup_location"),
+  paymentMethods: jsonb("payment_methods").notNull().default([]),
+  requiresDeposit: boolean("requires_deposit").notNull().default(false),
+  depositPercent: integer("deposit_percent"),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
 
 export const orderCaptures = pgTable(
   "order_captures",

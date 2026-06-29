@@ -1,13 +1,11 @@
 #!/usr/bin/env node
-/**
- * Builds transparent PNG brand assets from assets/brand/corvo-logo-source.png.
- */
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+const apiRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const repoRoot = path.resolve(apiRoot, "../..");
 const src = path.join(repoRoot, "assets/brand/corvo-logo-source.png");
 const WHITE_THRESHOLD = 245;
 
@@ -22,37 +20,21 @@ function removeWhiteBackground(buffer) {
   }
 }
 
-async function buildLogoPng() {
-  const { data, info } = await sharp(src)
-    .ensureAlpha()
-    .raw()
-    .toBuffer({ resolveWithObject: true });
-  removeWhiteBackground(data);
-  return sharp(data, { raw: info }).trim().png().toBuffer();
-}
+const { data, info } = await sharp(src).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+removeWhiteBackground(data);
+const logo = await sharp(data, { raw: info }).trim().png().toBuffer();
 
-const logo = await buildLogoPng();
-
-const brandTargets = [
-  path.join(repoRoot, "apps/web/public/brand/corvo-logo.png"),
-  path.join(repoRoot, "apps/admin/public/brand/corvo-logo.png"),
-];
-
-for (const target of brandTargets) {
+for (const app of ["web", "admin"]) {
+  const target = path.join(repoRoot, "apps", app, "public/brand/corvo-logo.png");
   fs.mkdirSync(path.dirname(target), { recursive: true });
   await fs.promises.writeFile(target, logo);
 }
 
-const faviconTargets = [
-  path.join(repoRoot, "apps/web/public/favicon.png"),
-  path.join(repoRoot, "apps/admin/public/favicon.png"),
-];
-
-for (const target of faviconTargets) {
+for (const app of ["web", "admin"]) {
   await sharp(logo)
     .resize(192, 192, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
     .png()
-    .toFile(target);
+    .toFile(path.join(repoRoot, "apps", app, "public/favicon.png"));
 }
 
 await sharp(logo)

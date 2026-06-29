@@ -120,6 +120,28 @@ describe("GET /admin/orders/:id — read-only detail", () => {
   });
 });
 
+describe("GET /admin/settings — shop configuration", () => {
+  it("documents shop settings response shape", () => {
+    const response = {
+      data: {
+        id: "01935abc-def0-7890-abcd-ef1234567890",
+        whatsappPhone: "5565999999999",
+        enabledMaterials: ["PLA", "PETG_HF"],
+        offersDelivery: false,
+        pickupOnly: true,
+        pickupLocation: "Studio pickup",
+        paymentMethods: ["pix", "credit_card"],
+        requiresDeposit: true,
+        depositPercent: 50,
+        updatedAt: "2026-06-29T12:00:00.000Z",
+      },
+    };
+
+    expect(response.data.enabledMaterials).toContain("PETG_HF");
+    expect(response.data.paymentMethods).toContain("pix");
+  });
+});
+
 describe("POST /admin/uploads — MIME allowlist (Task 9.7)", () => {
   it("documents stored MIME types for uploads", () => {
     expect(ADMIN_UPLOAD_MIME_ALLOWLIST).toEqual([

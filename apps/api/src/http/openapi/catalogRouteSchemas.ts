@@ -134,3 +134,33 @@ export const productDetailRouteSchema = {
     500: internalErrorResponse,
   },
 } as const;
+
+export const shopConfigRouteSchema = {
+  tags: ["Shop"],
+  summary: "Public shop policy",
+  description: "Materials offered, fulfillment, and payment options. Cache: `public, max-age=300`.",
+  response: {
+    200: {
+      description: "Shop policy for storefront",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            required: ["data"],
+            properties: { data: { type: "object", additionalProperties: true } },
+          },
+        },
+      },
+    },
+    404: {
+      description: "Settings not seeded",
+      content: problemContent({
+        type: "https://yourdomain.com/errors/not-found",
+        title: "Not found",
+        status: 404,
+        detail: "Shop settings are not configured",
+      }),
+    },
+    500: internalErrorResponse,
+  },
+} as const;

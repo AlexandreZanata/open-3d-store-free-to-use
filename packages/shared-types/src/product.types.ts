@@ -1,4 +1,7 @@
-export type MaterialType = "PLA" | "PETG" | "ABS" | "TPU" | "RESIN";
+import type { MaterialType } from "./material.types.js";
+
+export type { MaterialType, PaymentMethod } from "./material.types.js";
+export { MATERIAL_TYPES, PAYMENT_METHODS } from "./material.types.js";
 
 export type PrintStatus = "active" | "out_of_stock" | "discontinued";
 

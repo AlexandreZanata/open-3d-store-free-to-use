@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
-import type { ProductListItem } from "@print3d/shared-types";
+import type { ProductListItem, MaterialType } from "@print3d/shared-types";
+import { MATERIAL_TYPES } from "@print3d/shared-types";
 
 import { AppShell } from "@/components/AppShell";
 import { SearchDesktopView } from "@/components/search/SearchDesktopView";
@@ -41,7 +42,7 @@ export const Route = createFileRoute("/search")({
 
 type MaterialFilter = ProductQueryParams["material"] | undefined;
 
-const MATERIALS = ["PLA", "PETG", "ABS", "TPU", "RESIN"] as const;
+const MATERIALS: readonly MaterialType[] = MATERIAL_TYPES;
 
 function SearchPage() {
   const { t } = useTranslation();

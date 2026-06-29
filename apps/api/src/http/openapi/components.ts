@@ -26,7 +26,7 @@ export const localeSchema = {
 
 export const materialSchema = {
   type: "string",
-  enum: ["PLA", "PETG", "ABS", "TPU", "RESIN"],
+  enum: ["PLA", "PETG", "PETG_HF", "ABS", "ASA", "TPU", "NYLON", "RESIN"],
 } as const;
 
 export const printStatusSchema = {

@@ -1,4 +1,5 @@
 import type { MaterialType, PrintStatus } from "@print3d/shared-types";
+import { MATERIAL_TYPES } from "@print3d/shared-types";
 import { useState, type Dispatch, type SetStateAction } from "react";
 
 import {
@@ -18,7 +19,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { adminTokens } from "@/lib/admin-tokens";
 import { useAdminCategories } from "@/hooks/useAdminCategories";
 
-const materials: MaterialType[] = ["PLA", "PETG", "ABS", "TPU", "RESIN"];
+const materials: MaterialType[] = [...MATERIAL_TYPES];
 const statuses: PrintStatus[] = ["active", "out_of_stock", "discontinued"];
 const localeTabs = [
   { id: "pt-BR", label: "PT-BR" },

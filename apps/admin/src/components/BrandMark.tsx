@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-const ICON_SRC = "/brand/corvo-icon.png";
+const ICON_SRC = "/brand/corvo-logo.png";
 
 const BRAND_MARK_SIZES = {
   sm: "h-8 w-[2.875rem]",

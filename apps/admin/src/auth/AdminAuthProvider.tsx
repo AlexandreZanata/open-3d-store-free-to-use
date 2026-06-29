@@ -69,7 +69,9 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       },
       onSessionExpired: () => {
         setUser(null);
-        void router.navigate({ to: "/login" });
+        if (router.state.location.pathname !== "/login") {
+          void router.navigate({ to: "/login" });
+        }
       },
     });
   }, []);

@@ -15,14 +15,14 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "tsx src/main.ts",
+    "dev": "tsx --env-file=.env src/main.ts",
     "start": "node dist/main.js",
     "test": "vitest run",
     "lint": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:seed": "tsx scripts/seed.ts",
-    "db:seed-assets": "tsx scripts/generateSeedThumbnails.ts && tsx scripts/seedAssets.ts",
+    "db:seed": "tsx --env-file=.env scripts/seed.ts",
+    "db:seed-assets": "tsx --env-file=.env scripts/generateSeedThumbnails.ts && tsx --env-file=.env scripts/seedAssets.ts",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {

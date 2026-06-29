@@ -9,7 +9,10 @@ function resolveDevApiOrigin(env: Record<string, string>): string {
     return env.VITE_DEV_API_ORIGIN.replace(/\/$/, "");
   }
 
-  const apiBase = env.VITE_API_BASE_URL ?? "http://127.0.0.1:3001/api/v1";
+  const apiBase = env.VITE_API_BASE_URL ?? "/api/v1";
+  if (apiBase.startsWith("/")) {
+    return env.VITE_DEV_API_ORIGIN?.replace(/\/$/, "") ?? "http://127.0.0.1:6200";
+  }
   return apiBase.replace(/\/api\/v1\/?$/, "");
 }
 
@@ -25,9 +28,14 @@ export default defineConfig(({ mode }) => {
       viteReact(),
     ],
     server: {
-      port: 5174,
+      host: "127.0.0.1",
+      port: 6202,
       strictPort: true,
       proxy: {
+        "/api": {
+          target: apiOrigin,
+          changeOrigin: true,
+        },
         "/models": {
           target: apiOrigin,
           changeOrigin: true,

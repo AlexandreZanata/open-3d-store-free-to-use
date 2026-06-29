@@ -28,7 +28,7 @@ function resolveWritableModelPath(configured: string, nodeEnv: string): string {
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
-  PORT: z.coerce.number().int().min(1024).max(65535).default(3001),
+  PORT: z.coerce.number().int().min(1024).max(65535).default(6200),
   DATABASE_URL: z.string().url(),
   REDIS_URL: z.string().url(),
   WHATSAPP_PHONE_NUMBER: z.string().min(8),
@@ -39,7 +39,7 @@ const envSchema = z.object({
   ADMIN_SESSION_IDLE_TTL: z.coerce.number().int().positive().default(1800),
   STORE_SESSION_TTL: z.coerce.number().int().positive().default(2_592_000),
   STORE_SESSION_IDLE_TTL: z.coerce.number().int().positive().default(604_800),
-  ADMIN_ORIGIN: z.string().url().default("http://localhost:5174"),
+  ADMIN_ORIGIN: z.string().url().default("http://127.0.0.1:6202"),
   UPLOAD_MAX_BYTES: z.coerce.number().int().positive().default(5_242_880),
 });
 

@@ -7,7 +7,7 @@ import {
   tryRefreshAdminSession,
 } from "./adminSessionCoordinator";
 
-const DEFAULT_API_BASE = "http://localhost:3001/api/v1";
+const DEFAULT_API_BASE = "/api/v1";
 
 export class ApiError extends Error {
   readonly status: number;

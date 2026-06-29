@@ -3,7 +3,7 @@ import type { JsonValue, ProblemDetails, SupportedLocale } from "@print3d/shared
 import { readEnvString } from "../env";
 import { getActiveLocale } from "../locale";
 
-const DEFAULT_API_BASE = "http://localhost:3001/api/v1";
+const DEFAULT_API_BASE = "http://127.0.0.1:6200/api/v1";
 
 export class ApiError extends Error {
   readonly status: number;

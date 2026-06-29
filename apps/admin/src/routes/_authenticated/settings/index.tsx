@@ -5,9 +5,6 @@ import { Card } from "@/components/ui/Card";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { useAdminSettings, useUpdateShopSettings } from "@/hooks/useAdminSettings";
-import { fetchPublicHealth } from "@/lib/api/orders";
-import { getApiBaseUrl } from "@/lib/api/client";
-import { useQuery } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/_authenticated/settings/")({
   component: SettingsPage,
@@ -16,10 +13,6 @@ export const Route = createFileRoute("/_authenticated/settings/")({
 function SettingsPage() {
   const settingsQuery = useAdminSettings();
   const updateMutation = useUpdateShopSettings();
-  const healthQuery = useQuery({
-    queryKey: ["admin", "settings", "health"],
-    queryFn: fetchPublicHealth,
-  });
 
   return (
     <>
@@ -45,34 +38,6 @@ function SettingsPage() {
           }}
         />
       )}
-
-      <Card className="mt-6 border-hairline/60 bg-muted/20">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-          System status
-        </h2>
-        <dl className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 text-sm">
-          <div>
-            <dt className="text-muted-foreground">API base URL</dt>
-            <dd className="mt-1 font-mono text-xs break-all">{getApiBaseUrl()}</dd>
-          </div>
-          <div>
-            <dt className="text-muted-foreground">API version</dt>
-            <dd className="mt-1">REST v1</dd>
-          </div>
-          <div>
-            <dt className="text-muted-foreground">Health</dt>
-            <dd className="mt-1">
-              {healthQuery.isLoading ? (
-                "Checking…"
-              ) : healthQuery.isError ? (
-                "Unreachable"
-              ) : (
-                `${healthQuery.data?.status ?? "unknown"} · ${healthQuery.data?.uptime ?? 0}s uptime`
-              )}
-            </dd>
-          </div>
-        </dl>
-      </Card>
     </>
   );
 }

@@ -37,7 +37,7 @@ export async function registerAdminAuth(
       reply.setCookie(ADMIN_SESSION_COOKIE, token, {
         httpOnly: true,
         path: ADMIN_COOKIE_PATH,
-        sameSite: "strict",
+        sameSite: config.NODE_ENV === "production" ? "strict" : "lax",
         secure: config.NODE_ENV === "production",
         maxAge: config.ADMIN_SESSION_TTL,
       });

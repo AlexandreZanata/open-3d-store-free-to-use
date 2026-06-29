@@ -3,6 +3,7 @@
   "private": true,
   "packageManager": "pnpm@9.15.9",
   "scripts": {
+    "dev": "pnpm --filter \"./apps/*\" --parallel dev",
     "dev:admin": "pnpm --filter @print3d/admin dev",
     "build:admin": "pnpm --filter @print3d/admin build",
     "build": "turbo build",

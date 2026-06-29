@@ -1,11 +1,13 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { STLLoader } from "three/addons/loaders/STLLoader.js";
 import { ThreeMFLoader } from "three/addons/loaders/3MFLoader.js";
 
 import {
   detectModelFormat,
   formatDimensionsMm,
+  usesMillimeterUnits,
   type ModelFormat,
 } from "@/lib/modelFormat";
 
@@ -19,7 +21,7 @@ export type MountOptions = {
 };
 
 function addVirtualDesk(scene: THREE.Scene, format: ModelFormat): void {
-  const isMm = format === "3mf";
+  const isMm = usesMillimeterUnits(format);
   const width = isMm ? 280 : 0.28;
   const depth = isMm ? 200 : 0.2;
 
@@ -62,11 +64,11 @@ function fitCamera(
   size: THREE.Vector3,
   format: ModelFormat,
 ): void {
-  const maxDim = Math.max(size.x, size.y, size.z, format === "3mf" ? 40 : 0.04);
+  const maxDim = Math.max(size.x, size.y, size.z, usesMillimeterUnits(format) ? 40 : 0.04);
   const distance = maxDim * 2.4;
   camera.position.set(distance * 0.65, distance * 0.5, distance * 0.9);
   controls.target.set(0, size.y / 2, 0);
-  camera.near = Math.max(distance / 200, format === "3mf" ? 0.5 : 0.0005);
+  camera.near = Math.max(distance / 200, usesMillimeterUnits(format) ? 0.5 : 0.0005);
   camera.far = distance * 30;
   camera.updateProjectionMatrix();
   controls.minDistance = distance * 0.35;
@@ -80,6 +82,17 @@ async function loadModel(url: string, format: ModelFormat): Promise<THREE.Object
     return new Promise((resolve, reject) => {
       loader.load(url, resolve, undefined, reject);
     });
+  }
+
+  if (format === "stl") {
+    const loader = new STLLoader();
+    const geometry = await loader.loadAsync(url);
+    const material = new THREE.MeshStandardMaterial({
+      color: 0x9ca3af,
+      metalness: 0.12,
+      roughness: 0.62,
+    });
+    return new THREE.Mesh(geometry, material);
   }
 
   const loader = new GLTFLoader();

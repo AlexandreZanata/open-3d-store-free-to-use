@@ -14,14 +14,23 @@ describe("detectModelFormat", () => {
     expect(detectModelFormat("/models/3d/part.gltf")).toBe("gltf");
   });
 
+  it("detects STL from URL extension (Three.js STLLoader)", () => {
+    expect(detectModelFormat("/models/3d/part.stl")).toBe("stl");
+    expect(detectModelFormat("https://cdn.example.com/foo.stl?v=1")).toBe("stl");
+  });
+
   it("returns unknown for unsupported extensions", () => {
-    expect(detectModelFormat("/models/3d/part.stl")).toBe("unknown");
+    expect(detectModelFormat("/models/3d/part.obj")).toBe("unknown");
   });
 });
 
 describe("formatDimensionsMm", () => {
   it("keeps 3MF coordinates in millimeters", () => {
     expect(formatDimensionsMm(80, 120, 25, "3mf")).toBe("80 × 120 × 25 mm");
+  });
+
+  it("keeps STL coordinates in millimeters", () => {
+    expect(formatDimensionsMm(80, 120, 25, "stl")).toBe("80 × 120 × 25 mm");
   });
 
   it("converts glTF meters to millimeters for display", () => {

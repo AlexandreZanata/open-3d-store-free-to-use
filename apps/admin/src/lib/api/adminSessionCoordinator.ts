@@ -25,7 +25,12 @@ export function notifyAdminSessionExpired(): void {
   coordinator?.onSessionExpired();
 }
 
-const SESSION_RETRY_SKIP_PREFIXES = ["/auth/login", "/auth/logout", "/auth/refresh"] as const;
+const SESSION_RETRY_SKIP_PREFIXES = [
+  "/auth/login",
+  "/auth/logout",
+  "/auth/refresh",
+  "/auth/me",
+] as const;
 
 export function shouldRetryAdminSession(path: string): boolean {
   return !SESSION_RETRY_SKIP_PREFIXES.some((prefix) => path.startsWith(prefix));

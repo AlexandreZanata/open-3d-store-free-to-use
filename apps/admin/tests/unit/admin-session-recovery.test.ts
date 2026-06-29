@@ -14,6 +14,7 @@ describe("admin session coordinator", () => {
     expect(shouldRetryAdminSession("/auth/login")).toBe(false);
     expect(shouldRetryAdminSession("/auth/logout")).toBe(false);
     expect(shouldRetryAdminSession("/auth/refresh")).toBe(false);
+    expect(shouldRetryAdminSession("/auth/me")).toBe(false);
     expect(shouldRetryAdminSession("/products")).toBe(true);
     expect(shouldRetryAdminSession("/uploads")).toBe(true);
   });
@@ -89,6 +90,33 @@ describe("admin API client — session recovery", () => {
 
     await expect(adminFetch("/products")).rejects.toMatchObject({ status: 401 });
     expect(onSessionExpired).toHaveBeenCalledOnce();
+  });
+
+  it("does not notify session expiry on unauthenticated /auth/me probe", async () => {
+    const onSessionExpired = vi.fn();
+    unregister = registerAdminSessionCoordinator({
+      tryRefresh: vi.fn().mockResolvedValue(false),
+      onSessionExpired,
+    });
+
+    const problem401 = {
+      type: "https://yourdomain.com/errors/unauthorized",
+      title: "Unauthorized",
+      status: 401,
+      detail: "Missing or expired session",
+    };
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 401,
+        json: async () => problem401,
+      }),
+    );
+
+    await expect(adminFetch("/auth/me")).rejects.toMatchObject({ status: 401 });
+    expect(onSessionExpired).not.toHaveBeenCalled();
   });
 
   it("routes multipart uploads through session recovery", async () => {

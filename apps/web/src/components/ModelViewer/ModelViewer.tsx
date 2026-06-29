@@ -1,37 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-const MODEL_VIEWER_SCRIPT =
-  "https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js";
-
-let scriptPromise: Promise<void> | null = null;
-
-function loadModelViewerScript(): Promise<void> {
-  if (typeof window === "undefined") {
-    return Promise.resolve();
-  }
-  if (customElements.get("model-viewer")) {
-    return Promise.resolve();
-  }
-  if (scriptPromise) {
-    return scriptPromise;
-  }
-  scriptPromise = new Promise((resolve, reject) => {
-    const existing = document.querySelector(`script[src="${MODEL_VIEWER_SCRIPT}"]`);
-    if (existing) {
-      existing.addEventListener("load", () => resolve());
-      return;
-    }
-    const script = document.createElement("script");
-    script.type = "module";
-    script.src = MODEL_VIEWER_SCRIPT;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Failed to load model-viewer"));
-    document.head.appendChild(script);
-  });
-  return scriptPromise;
-}
-
 type ModelViewerProps = {
   modelUrl: string;
   posterUrl: string;
@@ -40,50 +9,100 @@ type ModelViewerProps = {
 
 export function ModelViewer({ modelUrl, posterUrl, productName }: ModelViewerProps) {
   const { t } = useTranslation();
-  const [ready, setReady] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
-  const mounted = useRef(true);
+  const [loading, setLoading] = useState(true);
+  const [dimensions, setDimensions] = useState<string | null>(null);
 
   useEffect(() => {
-    mounted.current = true;
-    loadModelViewerScript()
-      .then(() => {
-        if (mounted.current) {
-          setReady(true);
+    const container = containerRef.current;
+    if (!container) {
+      return;
+    }
+
+    let cleanup: (() => void) | undefined;
+    let cancelled = false;
+    setLoading(true);
+    setFailed(false);
+    setDimensions(null);
+
+    void import("./threeScene")
+      .then(({ mountThreeModelViewer }) => {
+        if (cancelled) {
+          return;
         }
+        cleanup = mountThreeModelViewer(container, {
+          modelUrl,
+          onReady: () => {
+            if (!cancelled) {
+              setLoading(false);
+            }
+          },
+          onError: () => {
+            if (!cancelled) {
+              setFailed(true);
+              setLoading(false);
+            }
+          },
+          onDimensions: (text) => {
+            if (!cancelled) {
+              setDimensions(text);
+            }
+          },
+        });
       })
       .catch(() => {
-        if (mounted.current) {
+        if (!cancelled) {
           setFailed(true);
+          setLoading(false);
         }
       });
+
     return () => {
-      mounted.current = false;
+      cancelled = true;
+      cleanup?.();
     };
-  }, []);
+  }, [modelUrl]);
 
   if (failed) {
     return (
-      <div className="h-[400px] w-full rounded-2xl bg-muted grid place-items-center text-sm text-muted-foreground">
+      <div className="aspect-square w-full rounded-2xl bg-muted ring-1 ring-hairline grid place-items-center text-sm text-muted-foreground px-6 text-center">
         {t("product.viewerUnavailable")}
       </div>
     );
   }
 
-  if (!ready) {
-    return <div className="h-[400px] w-full rounded-2xl bg-muted animate-pulse" aria-hidden />;
-  }
-
   return (
-    <model-viewer
-      src={modelUrl}
-      poster={posterUrl}
-      alt={productName}
-      camera-controls
-      auto-rotate
-      loading="lazy"
-      ar
-      className="h-[400px] w-full rounded-2xl bg-muted"
-    />
+    <div className="relative aspect-square w-full overflow-hidden rounded-2xl ring-1 ring-hairline shadow-soft bg-muted">
+      {loading && posterUrl ? (
+        <img
+          src={posterUrl}
+          alt=""
+          className="absolute inset-0 size-full object-cover"
+          aria-hidden
+        />
+      ) : null}
+      {loading ? (
+        <div className="absolute inset-0 bg-muted/50 animate-pulse" aria-hidden />
+      ) : null}
+      <div
+        ref={containerRef}
+        className="absolute inset-0 touch-pan-y"
+        role="img"
+        aria-label={t("product.viewerLabel", { name: productName })}
+      />
+      <div className="absolute top-3 left-3 pointer-events-none">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-white/90 bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-full">
+          {t("product.viewerScaleHint")}
+        </span>
+      </div>
+      {dimensions ? (
+        <div className="absolute bottom-3 left-3 pointer-events-none">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-white/90 bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-full">
+            {dimensions}
+          </span>
+        </div>
+      ) : null}
+    </div>
   );
 }

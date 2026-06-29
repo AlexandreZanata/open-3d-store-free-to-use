@@ -11,6 +11,7 @@ import {
   productGridCols,
   searchCatalogGridCols,
   railInner,
+  railScroll,
   shellMaxWidth,
   stickyBelowHeader,
 } from "../src/lib/layout";
@@ -19,7 +20,7 @@ describe("responsive layout tokens", () => {
   it("keeps mobile shell width at max-w-2xl", () => {
     expect(shellMaxWidth).toContain("max-w-2xl");
     expect(mainBottomPad).toContain("pb-24");
-    expect(productCardWideWidth).toContain("w-[78vw]");
+    expect(productCardWideWidth).toContain("calc(100vw-2rem)");
   });
 
   it("adds desktop overrides only at lg breakpoint", () => {
@@ -50,5 +51,6 @@ describe("responsive layout tokens", () => {
   it("defines horizontal rail padding on inner track", () => {
     expect(railInner).toContain("px-4");
     expect(railInner).toContain("w-max");
+    expect(railScroll).toContain("scroll-px-4");
   });
 });

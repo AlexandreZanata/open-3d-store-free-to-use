@@ -14,7 +14,10 @@ export const seedProducts: SeedProduct[] = [
     status: "active",
     modelFileUrl: "/models/3d/custom-photo-frame.glb",
     thumbnailUrl: "/models/thumbnails/photo-frame.webp",
-    imageUrls: ["/models/thumbnails/photo-frame.webp"],
+    imageUrls: [
+      "/models/thumbnails/photo-frame.webp",
+      "/models/thumbnails/gifts.webp",
+    ],
     tags: ["gifts", "custom"],
     translations: {
       en: {
@@ -72,7 +75,10 @@ export const seedProducts: SeedProduct[] = [
     status: "active",
     modelFileUrl: null,
     thumbnailUrl: "/models/thumbnails/phone-stand.webp",
-    imageUrls: ["/models/thumbnails/phone-stand.webp"],
+    imageUrls: [
+      "/models/thumbnails/phone-stand.webp",
+      "/models/thumbnails/tools.webp",
+    ],
     tags: ["tools", "desk"],
     translations: {
       en: {

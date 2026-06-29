@@ -20,7 +20,7 @@ export const categoryGridCols =
   "grid grid-cols-2 gap-3 lg:grid-cols-3 lg:gap-4 xl:grid-cols-4";
 
 export const railScroll =
-  "overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory lg:overflow-visible lg:snap-none";
+  "overflow-x-auto pb-2 no-scrollbar snap-x snap-mandatory scroll-px-4 lg:overflow-visible lg:snap-none lg:scroll-px-0";
 
 export const railInner =
   "flex gap-3 px-4 w-max min-w-full lg:grid lg:grid-cols-4 lg:gap-4 lg:w-full lg:px-8 xl:grid-cols-5";
@@ -28,7 +28,9 @@ export const railInner =
 /** @deprecated Use `railScroll` + `railInner` for correct mobile edge padding. */
 export const railTrack = `${railScroll} ${railInner}`;
 
-export const productCardWideWidth = "w-[78vw] max-w-[300px] lg:w-full lg:max-w-none";
+/** Matches `pagePadding` (px-4) gutters on mobile horizontal rails. */
+export const productCardWideWidth =
+  "w-[calc(100vw-2rem)] max-w-[300px] lg:w-full lg:max-w-none";
 
 export const categoryPillsTrack =
   "flex gap-2 overflow-x-auto px-4 pb-2 no-scrollbar lg:flex-wrap lg:overflow-visible lg:px-8";

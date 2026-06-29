@@ -31,9 +31,7 @@ export function AppShellMobileHeader({ showSearch = true, showBack = false, titl
           </Link>
         ) : (
           <Link to="/" className="flex items-center gap-2 shrink-0" aria-label={t("nav.home")}>
-            <span className="flex h-7 w-9 items-center justify-center">
-              <BrandMark className="max-h-7" />
-            </span>
+            <BrandMark size="sm" />
             <span className="text-sm font-semibold tracking-tight">{t("app.name")}</span>
           </Link>
         )}

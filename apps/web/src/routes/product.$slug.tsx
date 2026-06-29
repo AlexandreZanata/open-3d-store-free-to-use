@@ -1,17 +1,16 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { Heart, Share2, ShoppingBag, Box } from "lucide-react";
+import { Heart, Share2, ShoppingBag } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { AppShell } from "@/components/AppShell";
-import { ModelViewer } from "@/components/ModelViewer";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductCardSkeleton, ProductDetailSkeleton } from "@/components/LoadingSkeletons";
+import { ProductMediaPanel } from "@/components/ProductMedia";
 import { productQueryKey, useProduct } from "@/hooks/useProduct";
 import { useProducts } from "@/hooks/useProducts";
 import { ApiError } from "@/lib/api/client";
 import { fetchProductBySlug } from "@/lib/api/products";
-import { resolveAssetUrl } from "@/lib/assets";
 import { addToCart } from "@/lib/cart";
 import { mobileOnly, pagePadding, shellMaxWidth } from "@/lib/layout";
 import { RailTrack } from "@/components/Rail";
@@ -102,7 +101,6 @@ function ProductPage() {
   const product = productQuery.data;
   const { t } = useTranslation();
   const [fav, setFav] = useState(false);
-  const [tab, setTab] = useState<"viewer" | "gallery">("viewer");
   const relatedQuery = useProducts({ limit: 20, page: 1 });
   const related =
     product && relatedQuery.data?.data
@@ -120,8 +118,6 @@ function ProductPage() {
   }
 
   const detail = product;
-  const posterUrl = resolveAssetUrl(detail.thumbnailUrl);
-  const modelUrl = detail.modelFileUrl ? resolveAssetUrl(detail.modelFileUrl) : null;
 
   function handleAddToCart() {
     addToCart(detail);
@@ -129,75 +125,60 @@ function ProductPage() {
 
   return (
     <AppShell showBack showSearch={false} title={detail.name}>
-      <div className="lg:grid lg:grid-cols-2 lg:gap-10 lg:items-start lg:px-8">
-        <section className={`${pagePadding} pt-4 lg:px-0 lg:pt-6`}>
-          {tab === "viewer" && modelUrl ? (
-            <section aria-label={t("product.viewerLabel")}>
-              <ModelViewer modelUrl={modelUrl} posterUrl={posterUrl} productName={detail.name} />
-            </section>
-          ) : (
-            <div className="relative aspect-square rounded-2xl overflow-hidden bg-muted ring-1 ring-hairline">
-              {posterUrl ? (
-                <img
-                  src={posterUrl}
-                  alt={detail.name}
-                  width={800}
-                  height={1000}
-                  className="absolute inset-0 size-full object-cover"
-                />
-              ) : null}
-            </div>
-          )}
-
-          <div className="mt-3 flex gap-2">
-            {modelUrl && (
-              <Tab active={tab === "viewer"} onClick={() => setTab("viewer")}>
-                <Box className="size-3.5" /> {t("product.tabModel")}
-              </Tab>
-            )}
-            {detail.imageUrls.length > 0 && (
-              <Tab active={tab === "gallery"} onClick={() => setTab("gallery")}>
-                {t("product.galleryCount", { count: detail.imageUrls.length })}
-              </Tab>
-            )}
-          </div>
-        </section>
-
-        <div className="lg:sticky lg:top-20">
-          <section className={`${pagePadding} mt-6 lg:mt-0 lg:px-0`}>
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <h1 className="text-xl font-semibold tracking-tight text-balance lg:text-2xl">
-                  {detail.name}
-                </h1>
-                <p className="mt-2 text-sm text-muted-foreground">{detail.shortDescription}</p>
-              </div>
-              <div className="text-right shrink-0">
-                <div className="text-xl font-semibold lg:text-2xl">{detail.basePriceDisplay}</div>
-                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                  {t(`material.${detail.material}`)}
-                </div>
-              </div>
-            </div>
-
-            <p className="mt-4 text-sm text-foreground/80 leading-relaxed lg:text-base">
-              {detail.description}
-            </p>
-
-            <div className="mt-4 flex flex-wrap gap-1.5">
-              {detail.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="px-2.5 h-7 inline-flex items-center rounded-full bg-muted text-[11px] text-muted-foreground"
-                >
-                  #{tag}
-                </span>
-              ))}
-            </div>
+      <div className={`${shellMaxWidth} ${pagePadding} lg:pt-4`}>
+        <div className="lg:grid lg:grid-cols-2 lg:gap-x-12 lg:gap-y-8 lg:items-start">
+          <section className="pt-2 lg:pt-0">
+            <ProductMediaPanel
+              productName={detail.name}
+              thumbnailUrl={detail.thumbnailUrl}
+              imageUrls={detail.imageUrls}
+              modelFileUrl={detail.modelFileUrl}
+            />
           </section>
 
-          <section className={`${pagePadding} mt-6 lg:px-0`}>
-            <div className="bg-surface ring-1 ring-hairline rounded-2xl divide-y divide-hairline shadow-soft overflow-hidden">
+          <div className="mt-8 lg:mt-0 flex flex-col gap-6">
+            <header className="space-y-3">
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0 space-y-2">
+                  <h1 className="text-2xl font-semibold tracking-tight text-balance lg:text-3xl">
+                    {detail.name}
+                  </h1>
+                  <p className="text-sm text-muted-foreground lg:text-base">
+                    {detail.shortDescription}
+                  </p>
+                </div>
+                <div className="text-right shrink-0 pt-0.5">
+                  <div className="text-2xl font-semibold tabular-nums lg:text-3xl">
+                    {detail.basePriceDisplay}
+                  </div>
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground mt-1">
+                    {t(`material.${detail.material}`)}
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-sm text-foreground/85 leading-relaxed lg:text-base">
+                {detail.description}
+              </p>
+
+              {detail.tags.length > 0 ? (
+                <div className="flex flex-wrap gap-1.5">
+                  {detail.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-2.5 h-7 inline-flex items-center rounded-full bg-muted text-[11px] text-muted-foreground"
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
+            </header>
+
+            <section
+              className="bg-surface ring-1 ring-hairline rounded-2xl divide-y divide-hairline shadow-soft overflow-hidden"
+              aria-label={t("product.specsLabel")}
+            >
               <Spec label={t("product.material")} value={t(`material.${detail.material}`)} />
               <Spec
                 label={t("product.printTime")}
@@ -208,51 +189,52 @@ function ProductPage() {
                 value={t("product.weightGrams", { grams: detail.weightGrams })}
               />
               <Spec label={t("product.status")} value={t(`status.${detail.status}`)} />
-            </div>
-          </section>
+            </section>
 
-          <div className="fixed bottom-16 inset-x-0 z-30 border-t border-hairline bg-background/95 backdrop-blur-xl lg:static lg:mt-8 lg:border-t-0 lg:bg-transparent lg:backdrop-blur-none">
-            <div className={`${shellMaxWidth} ${pagePadding} py-3 flex items-center gap-2 lg:px-0`}>
-              <button
-                onClick={() => setFav((v) => !v)}
-                aria-label={t("product.favorite")}
-                className="size-11 grid place-items-center rounded-full ring-1 ring-hairline bg-surface press"
-              >
-                <Heart
-                  className={`size-5 transition-colors ${fav ? "fill-accent text-accent" : ""}`}
-                />
-              </button>
-              <button
-                aria-label={t("product.share")}
-                className="size-11 grid place-items-center rounded-full ring-1 ring-hairline bg-surface press"
-              >
-                <Share2 className="size-5" />
-              </button>
-              <button
-                onClick={handleAddToCart}
-                className="flex-1 h-11 rounded-full border border-hairline bg-surface inline-flex items-center justify-center gap-2 text-sm font-semibold press"
-              >
-                <ShoppingBag className="size-4" />
-                {t("product.addToCart")}
-              </button>
-              <Link
-                to="/cart"
-                className="flex-1 h-11 rounded-full bg-foreground text-background inline-flex items-center justify-center gap-2 text-sm font-semibold press hover:bg-foreground/90"
-              >
-                {t("product.orderWhatsApp")}
-              </Link>
+            <div className="fixed bottom-16 inset-x-0 z-30 border-t border-hairline bg-background/95 backdrop-blur-xl lg:static lg:border-t-0 lg:bg-transparent lg:backdrop-blur-none">
+              <div className="flex items-center gap-2 lg:gap-3">
+                <button
+                  type="button"
+                  onClick={() => setFav((value) => !value)}
+                  aria-label={t("product.favorite")}
+                  className="size-11 shrink-0 grid place-items-center rounded-full ring-1 ring-hairline bg-surface press"
+                >
+                  <Heart
+                    className={`size-5 transition-colors ${fav ? "fill-accent text-accent" : ""}`}
+                  />
+                </button>
+                <button
+                  type="button"
+                  aria-label={t("product.share")}
+                  className="size-11 shrink-0 grid place-items-center rounded-full ring-1 ring-hairline bg-surface press"
+                >
+                  <Share2 className="size-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAddToCart}
+                  className="flex-1 h-11 rounded-full border border-hairline bg-surface inline-flex items-center justify-center gap-2 text-sm font-semibold press"
+                >
+                  <ShoppingBag className="size-4" />
+                  {t("product.addToCart")}
+                </button>
+                <Link
+                  to="/cart"
+                  className="flex-1 h-11 rounded-full bg-foreground text-background inline-flex items-center justify-center gap-2 text-sm font-semibold press hover:bg-foreground/90"
+                >
+                  {t("product.orderWhatsApp")}
+                </Link>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {related.length > 0 && (
-        <section className="mt-10 lg:px-8">
-          <div className={`${pagePadding} lg:px-0 mb-3`}>
-            <h2 className="text-base font-semibold tracking-tight lg:text-lg">
-              {t("product.related")}
-            </h2>
-          </div>
+      {related.length > 0 ? (
+        <section className={`${shellMaxWidth} ${pagePadding} mt-12 lg:mt-16`}>
+          <h2 className="text-base font-semibold tracking-tight lg:text-lg mb-4">
+            {t("product.related")}
+          </h2>
           <RailTrack>
             {relatedQuery.isLoading
               ? Array.from({ length: 2 }).map((_, index) => (
@@ -267,7 +249,7 @@ function ProductPage() {
                 ))}
           </RailTrack>
         </section>
-      )}
+      ) : null}
 
       <div className={mobileOnly}>
         <div className="h-14" />
@@ -278,32 +260,9 @@ function ProductPage() {
 
 function Spec({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-start justify-between gap-4 px-4 py-3">
+    <div className="flex items-start justify-between gap-4 px-4 py-3.5">
       <span className="text-xs uppercase tracking-wider text-muted-foreground">{label}</span>
       <span className="text-sm font-medium text-right">{value}</span>
     </div>
-  );
-}
-
-function Tab({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full text-xs font-semibold press ring-1 ${
-        active
-          ? "bg-foreground text-background ring-foreground"
-          : "bg-surface text-muted-foreground ring-hairline"
-      }`}
-    >
-      {children}
-    </button>
   );
 }

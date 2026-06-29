@@ -487,7 +487,7 @@ Parts may arrive in any order; the server reads the full multipart stream.
 | kind | Accepted upload MIME | Stored as |
 |------|----------------------|-----------|
 | `thumbnail`, `gallery` | `image/webp`, `image/jpeg`, `image/png` | `image/webp` (`.webp`) |
-| `model` | `model/gltf-binary`, `model/gltf+json` | same (`.glb`, `.gltf`) |
+| `model` | `model/gltf-binary`, `model/gltf+json`, `model/3mf` | same (`.glb`, `.gltf`, `.3mf`) |
 
 JPEG and PNG uploads are converted server-side to WebP before storage (catalog asset convention).
 

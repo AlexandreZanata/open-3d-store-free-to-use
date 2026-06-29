@@ -53,9 +53,7 @@ function LoginPage() {
     <div className="flex min-h-dvh items-center justify-center bg-surface-muted px-4">
       <Card className="w-full max-w-md">
         <div className="mb-6">
-          <div className="mb-4 flex h-12 w-16 items-center justify-center">
-            <BrandMark className="max-h-12" />
-          </div>
+          <BrandMark size="lg" className="mb-4" />
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
             {ADMIN_APP_TITLE}
           </p>

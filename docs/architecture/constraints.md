@@ -7,7 +7,7 @@
 | **Hosting** | Single VPS — Hostinger, 16 GB RAM |
 | **No payment gateway** | All transactions handled via WhatsApp |
 | **Frontend exists** | React (TanStack Start). Backend exposes clean REST API |
-| **3D visualization** | Must render `.glb` / `.gltf` files in-browser |
+| **3D visualization** | Must render `.3mf`, `.glb` / `.gltf` in-browser with real-scale virtual desk |
 | **Solo maintainer** | Architecture operable by one developer |
 | **Budget-aware** | Minimize paid services; prefer self-hosted OSS |
 | **Language (developer)** | English in code identifiers, repo docs, commits, logs (harness `english-only.mdc`) |

@@ -126,6 +126,7 @@ describe("POST /admin/uploads — MIME allowlist (Task 9.7)", () => {
       "image/webp",
       "model/gltf-binary",
       "model/gltf+json",
+      "model/3mf",
     ]);
   });
 

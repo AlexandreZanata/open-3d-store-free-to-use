@@ -53,7 +53,7 @@ Product and category forms support **URL text** or **file upload** (`FileUploadF
 | Input | Accepted in file picker | Stored |
 |-------|-------------------------|--------|
 | Thumbnail / gallery | WebP, JPEG, PNG (also `image/jpg` / `application/octet-stream` with valid image bytes) | WebP under `/models/thumbnails/` or `/models/images/` |
-| 3D model | `.glb`, `.gltf` | unchanged under `/models/3d/` |
+| 3D model | `.glb`, `.gltf`, `.3mf` | unchanged under `/models/3d/` |
 
 **Upload** returns a server-generated path such as `/models/thumbnails/019f137e-….webp` (UUID filename). Typed URLs must point at files that exist under `MODEL_FILES_BASE_PATH` — run `pnpm --filter @print3d/api db:seed-assets` after clone so seeded catalog paths resolve.
 

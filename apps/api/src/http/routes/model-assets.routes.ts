@@ -14,6 +14,7 @@ const MIME_BY_EXT: Record<string, string> = {
   ".jpeg": "image/jpeg",
   ".glb": "model/gltf-binary",
   ".gltf": "model/gltf+json",
+  ".3mf": "model/3mf",
 };
 
 function resolveModelFilePath(basePath: string, wildcard: string): string | null {

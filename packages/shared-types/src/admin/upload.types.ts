@@ -2,7 +2,11 @@ import type { AdminDataResponse } from "./admin.types.js";
 
 export type AdminUploadKind = "thumbnail" | "gallery" | "model";
 
-export type AdminUploadMimeType = "image/webp" | "model/gltf-binary" | "model/gltf+json";
+export type AdminUploadMimeType =
+  | "image/webp"
+  | "model/gltf-binary"
+  | "model/gltf+json"
+  | "model/3mf";
 
 /** MIME types accepted on upload for thumbnail/gallery (stored as WebP). */
 export const ADMIN_UPLOAD_IMAGE_INPUT_MIMES = [
@@ -17,6 +21,7 @@ export const ADMIN_UPLOAD_MIME_ALLOWLIST: readonly AdminUploadMimeType[] = [
   "image/webp",
   "model/gltf-binary",
   "model/gltf+json",
+  "model/3mf",
 ] as const;
 
 export const ADMIN_UPLOAD_MAX_BYTES: Readonly<Record<AdminUploadKind, number>> = {

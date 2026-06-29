@@ -39,9 +39,7 @@ export function AdminBrand() {
   return (
     <div className="border-b border-hairline px-5 py-5 md:py-6">
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-12 items-center justify-center">
-          <BrandMark className="max-h-10" />
-        </div>
+        <BrandMark size="md" />
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
             {BRAND_NAME}

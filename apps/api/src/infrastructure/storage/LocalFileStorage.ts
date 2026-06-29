@@ -37,6 +37,7 @@ const EXTENSION_BY_MIME: Record<AdminUploadMimeType, string> = {
   "image/webp": ".webp",
   "model/gltf-binary": ".glb",
   "model/gltf+json": ".gltf",
+  "model/3mf": ".3mf",
 };
 
 export class LocalFileStorage {

@@ -171,7 +171,7 @@ function ProductPage() {
       ) : null}
 
       <div className={mobileOnly}>
-        <div className="h-14" />
+        <div className="h-[7.5rem]" aria-hidden />
       </div>
     </AppShell>
   );

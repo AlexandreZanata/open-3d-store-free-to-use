@@ -27,7 +27,7 @@ function FooterContactLink({ href, ariaLabel, label, icon, external = false }: C
       className="group inline-flex items-center gap-3 press transition-colors"
       {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
     >
-      <span className="grid size-14 place-items-center rounded-full bg-background/10 ring-1 ring-background/15 transition group-hover:bg-background/20 group-hover:ring-background/30 lg:size-11">
+      <span className="grid size-11 place-items-center rounded-full bg-background/10 ring-1 ring-background/15 transition group-hover:bg-background/20 group-hover:ring-background/30 lg:size-11">
         {icon}
       </span>
       <span className="hidden lg:inline text-sm font-medium text-background/75 transition group-hover:text-background">
@@ -42,21 +42,21 @@ export function AppShellFooter() {
   const whatsappDisplay = readWhatsAppPhoneDisplay();
   const whatsappHref = buildWhatsAppContactHref(t("footer.whatsappPrefill"));
 
-  const iconClass = "size-7 lg:size-6 shrink-0";
+  const iconClass = "size-6 lg:size-6 shrink-0";
 
   return (
     <footer
       role="contentinfo"
-      className={`mt-auto bg-foreground text-background shadow-[0_-8px_30px_oklch(0_0_0/0.08)] ${footerBottomPad}`}
+      className={`mt-auto bg-foreground text-background shadow-[0_-4px_20px_oklch(0_0_0/0.06)] ${footerBottomPad}`}
     >
-      <div className={`${shellMaxWidth} ${pagePadding} py-10 lg:py-12`}>
-        <p className="mx-auto max-w-xl text-center text-sm leading-relaxed text-background/70 lg:mx-0 lg:max-w-2xl lg:text-left lg:text-base">
+      <div className={`${shellMaxWidth} ${pagePadding} py-5 lg:py-12`}>
+        <p className="mx-auto max-w-xl text-center text-xs leading-relaxed text-background/65 lg:mx-0 lg:max-w-2xl lg:text-left lg:text-base lg:text-background/70">
           {t("footer.pitch")}
         </p>
 
         <nav
           aria-label={t("footer.contactNav")}
-          className="mt-6 flex flex-wrap items-center justify-center gap-4 lg:justify-start lg:gap-6"
+          className="mt-4 flex flex-wrap items-center justify-center gap-3 lg:mt-6 lg:justify-start lg:gap-6"
         >
           {whatsappHref && whatsappDisplay ? (
             <FooterContactLink

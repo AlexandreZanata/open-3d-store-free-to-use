@@ -15,8 +15,8 @@ Implementation tokens live in `apps/web/src/lib/layout.ts`.
 
 | Element | Detail |
 |---------|--------|
-| **Header** | `AppShellMobileHeader` — frozen markup, no `lg:` classes |
-| **Navigation** | Fixed bottom 5-tab bar |
+| **Header** | `AppShellMobileHeader` — fixed top bar (`h-14`), main content uses `mobileTopPad` |
+| **Navigation** | Fixed bottom 5-tab bar (`h-[3.75rem]`, `z-50`) |
 | **Home** | Hero card + category pills + horizontal product rails |
 | **Shell** | `max-w-2xl`, flex column with site footer above tab bar |
 
@@ -27,8 +27,8 @@ Global footer on every page wrapped by `AppShell`:
 | Element | Detail |
 |---------|--------|
 | **Surface** | Inverted dark bar (`bg-foreground`) — matches desktop header main tier |
-| **Pitch** | Bilingual CTA — “Like this site? Want your own personalized storefront?” |
-| **Contact links** | Large icon buttons on mobile (labels hidden); icon + label on desktop (`lg+`) |
+| **Pitch** | Bilingual CTA — compact `text-xs` on mobile, `text-base` on desktop |
+| **Contact links** | `size-11` icon buttons on mobile; icon + label on desktop (`lg+`) |
 | **WhatsApp** | `VITE_WHATSAPP_PHONE` (same digits as API `WHATSAPP_PHONE_NUMBER`) with brand icon |
 | **GitHub** | [AlexandreZanata](https://github.com/AlexandreZanata) |
 | **Email** | `alexandrezanatavasconcelos@gmail.com` |

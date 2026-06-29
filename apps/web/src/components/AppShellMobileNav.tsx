@@ -11,9 +11,9 @@ export function AppShellMobileNav() {
 
   return (
     <nav
-      className={`${mobileOnly} fixed bottom-0 inset-x-0 z-40 bg-background/95 backdrop-blur-xl border-t border-hairline`}
+      className={`${mobileOnly} fixed bottom-0 inset-x-0 z-50 bg-background/95 backdrop-blur-xl border-t border-hairline pb-[max(0px,env(safe-area-inset-bottom))]`}
     >
-      <div className={`${shellMaxWidth} px-2 h-16 grid grid-cols-5`}>
+      <div className={`${shellMaxWidth} px-1.5 h-[3.75rem] grid grid-cols-5`}>
         <TabItem
           to="/"
           active={pathname === "/"}
@@ -71,7 +71,7 @@ function TabItem({
         {icon}
         {active && <span className="absolute -bottom-1.5 h-1 w-1 rounded-full bg-accent" />}
       </span>
-      <span className="text-[10px] font-medium tracking-tight">{label}</span>
+      <span className="text-[10px] font-medium tracking-tight leading-none">{label}</span>
     </Link>
   );
 }

@@ -46,6 +46,14 @@ describe("orientMeshForPrintPreview", () => {
     const size = bbox(oriented);
     expect(size.minY).toBeCloseTo(0, 5);
   });
+
+  it("preserves upright pose when Y is already the tallest axis", () => {
+    const upright = thinBoxSoup(0.05, 0.12, 0.05);
+    const oriented = orientMeshForPrintPreview(upright);
+    const size = bbox(oriented);
+    expect(size.maxY - size.minY).toBeCloseTo(0.12, 2);
+    expect(size.maxX - size.minX).toBeLessThanOrEqual(0.05 + 0.001);
+  });
 });
 
 describe("symmetricEigen3x3", () => {

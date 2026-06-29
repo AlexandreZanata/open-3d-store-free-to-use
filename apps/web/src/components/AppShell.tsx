@@ -5,7 +5,7 @@ import { AppShellDesktopHeader } from "@/components/AppShellDesktopHeader";
 import { AppShellFooter } from "@/components/AppShellFooter";
 import { AppShellMobileHeader } from "@/components/AppShellMobileHeader";
 import { AppShellMobileNav } from "@/components/AppShellMobileNav";
-import { desktopMainSurface, mainBottomPad, shellMaxWidth } from "@/lib/layout";
+import { desktopMainSurface, mainBottomPad, mobileTopPad, shellMaxWidth } from "@/lib/layout";
 
 type Props = {
   children: ReactNode;
@@ -34,7 +34,9 @@ export function AppShell({
         </>
       )}
 
-      <main className={`flex-1 ${shellMaxWidth} ${mainBottomPad} ${desktopMainSurface}`}>
+      <main
+        className={`flex-1 ${shellMaxWidth} ${showTopBar ? mobileTopPad : ""} ${mainBottomPad} ${desktopMainSurface}`}
+      >
         {children}
       </main>
 

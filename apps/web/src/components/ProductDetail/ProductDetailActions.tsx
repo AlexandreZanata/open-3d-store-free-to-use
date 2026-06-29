@@ -15,7 +15,7 @@ export function ProductDetailActions({ product, onAddToCart }: ProductDetailActi
   const { t } = useTranslation();
 
   return (
-    <div className="fixed inset-x-0 bottom-16 z-30 border-t border-hairline bg-background/95 backdrop-blur-xl lg:static lg:border-t-0 lg:bg-transparent lg:backdrop-blur-none">
+    <div className="fixed inset-x-0 bottom-[3.75rem] z-40 border-t border-hairline bg-background/95 backdrop-blur-xl lg:static lg:border-t-0 lg:bg-transparent lg:backdrop-blur-none">
       <div className="flex items-center gap-2 px-4 py-3 lg:gap-3 lg:px-0 lg:py-0">
         <div className="hidden items-center gap-2 lg:flex lg:gap-3">
           <FavoriteButton

@@ -21,7 +21,7 @@ export function AppShellMobileHeader({ showSearch = true, showBack = false, titl
 
   return (
     <header
-      className={`${mobileOnly} sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-hairline`}
+      className={`${mobileOnly} fixed top-0 inset-x-0 z-40 bg-background/95 backdrop-blur-xl border-b border-hairline`}
     >
       <div className={`${shellMaxWidth} px-4 h-14 flex items-center gap-3`}>
         {showBack ? (

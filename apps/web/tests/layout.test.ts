@@ -7,6 +7,7 @@ import {
   desktopOnly,
   footerBottomPad,
   mainBottomPad,
+  mobileTopPad,
   mobileOnly,
   productCardWideWidth,
   productGridCols,
@@ -55,8 +56,13 @@ describe("responsive layout tokens", () => {
     expect(railScroll).toContain("scroll-px-4");
   });
 
+  it("offsets main below fixed mobile header", () => {
+    expect(mobileTopPad).toContain("pt-14");
+    expect(mobileTopPad).toContain("lg:pt-0");
+  });
+
   it("clears mobile tab bar via footer padding token", () => {
-    expect(footerBottomPad).toContain("pb-20");
+    expect(footerBottomPad).toContain("pb-[4.75rem]");
     expect(footerBottomPad).toContain("lg:pb-0");
   });
 });

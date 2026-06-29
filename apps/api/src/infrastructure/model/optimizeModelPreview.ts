@@ -79,7 +79,7 @@ async function loadDocument(
     if (!positions) {
       return null;
     }
-    const prepared = await preparePreviewMesh(positions);
+    const prepared = await preparePreviewMesh(positions, { source: "stl" });
     return documentFromMesh(prepared);
   }
 
@@ -89,7 +89,7 @@ async function loadDocument(
     if (!positions) {
       return null;
     }
-    const prepared = await preparePreviewMesh(positions);
+    const prepared = await preparePreviewMesh(positions, { source: "3mf" });
     return documentFromMesh(prepared);
   }
 

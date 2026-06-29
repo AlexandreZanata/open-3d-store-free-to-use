@@ -3,7 +3,10 @@ import { useTranslation } from "react-i18next";
 
 import type { ModelPart } from "@print3d/shared-types";
 
-import type { ModelViewerHandle } from "./threeScene";
+type ModelViewerHandle = {
+  dispose: () => void;
+  updatePartColors: (partColors: Record<string, string>) => void;
+};
 
 type ModelViewerProps = {
   modelUrl: string;

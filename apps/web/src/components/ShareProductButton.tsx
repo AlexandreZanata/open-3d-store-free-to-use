@@ -1,6 +1,5 @@
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link2, Mail, Share2 } from "lucide-react";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
@@ -23,13 +22,34 @@ type ShareProductButtonProps = {
   className?: string;
 };
 
+/** TanStack Start SSR: origin is resolved after mount, never during server render. */
+function useClientSharePayload(product: ProductShareInput): ProductSharePayload | null {
+  const [payload, setPayload] = useState<ProductSharePayload | null>(null);
+
+  useEffect(() => {
+    setPayload(buildProductSharePayload(product, window.location.origin));
+  }, [product]);
+
+  return payload;
+}
+
+function resolveSharePayload(
+  product: ProductShareInput,
+  cached: ProductSharePayload | null,
+): ProductSharePayload | null {
+  if (cached !== null) {
+    return cached;
+  }
+  if (typeof window === "undefined") {
+    return null;
+  }
+  return buildProductSharePayload(product, window.location.origin);
+}
+
 export function ShareProductButton({ product, className }: ShareProductButtonProps) {
   const { t } = useTranslation();
   const [menuOpen, setMenuOpen] = useState(false);
-
-  function resolvePayload(): ProductSharePayload {
-    return buildProductSharePayload(product, window.location.origin);
-  }
+  const sharePayload = useClientSharePayload(product);
 
   async function tryNativeShare(payload: ProductSharePayload): Promise<boolean> {
     if (!canUseNativeShare(payload)) {
@@ -52,7 +72,11 @@ export function ShareProductButton({ product, className }: ShareProductButtonPro
   }
 
   async function handleShareClick() {
-    const payload = resolvePayload();
+    const payload = resolveSharePayload(product, sharePayload);
+    if (payload === null) {
+      setMenuOpen(true);
+      return;
+    }
     const shared = await tryNativeShare(payload);
     if (shared) {
       setMenuOpen(false);
@@ -62,7 +86,10 @@ export function ShareProductButton({ product, className }: ShareProductButtonPro
   }
 
   async function handleCopyLink() {
-    const payload = resolvePayload();
+    const payload = resolveSharePayload(product, sharePayload);
+    if (payload === null) {
+      return;
+    }
     const copied = await copyTextToClipboard(formatShareClipboardText(payload));
     if (copied) {
       toast.success(t("product.shareLinkCopied"));
@@ -100,18 +127,22 @@ export function ShareProductButton({ product, className }: ShareProductButtonPro
             void handleCopyLink();
           }}
         />
-        <ShareMenuLink
-          icon={<WhatsAppIcon />}
-          label={t("product.shareWhatsApp")}
-          href={buildWhatsAppShareUrl(resolvePayload())}
-          onNavigate={() => setMenuOpen(false)}
-        />
-        <ShareMenuLink
-          icon={<Mail className="size-4" />}
-          label={t("product.shareEmail")}
-          href={buildEmailShareUrl(resolvePayload())}
-          onNavigate={() => setMenuOpen(false)}
-        />
+        {sharePayload ? (
+          <>
+            <ShareMenuLink
+              icon={<WhatsAppIcon />}
+              label={t("product.shareWhatsApp")}
+              href={buildWhatsAppShareUrl(sharePayload)}
+              onNavigate={() => setMenuOpen(false)}
+            />
+            <ShareMenuLink
+              icon={<Mail className="size-4" />}
+              label={t("product.shareEmail")}
+              href={buildEmailShareUrl(sharePayload)}
+              onNavigate={() => setMenuOpen(false)}
+            />
+          </>
+        ) : null}
       </PopoverContent>
     </Popover>
   );

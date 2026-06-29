@@ -40,12 +40,14 @@ WhatsApp share uses `https://wa.me/?text=…` (user picks the chat). Email uses 
 
 Open Graph tags on the product route include `og:title`, `og:description`, and `og:type=product` for link previews.
 
+**SSR (TanStack Start):** `ShareProductButton` resolves `window.location.origin` in `useEffect` only. Share menu links render after client mount so server render never touches `window`.
+
 ## Tests
 
 | Layer | File |
 |-------|------|
 | Unit | `apps/web/tests/unit/share.test.ts` |
-| E2E | `e2e/product-share.spec.ts` |
+| E2E | `e2e/product-share.spec.ts`, `e2e/product-detail.spec.ts` (3D viewer after SSR) |
 | i18n | `apps/web/tests/i18n-keys.test.ts` (key parity) |
 
 ## Manual check

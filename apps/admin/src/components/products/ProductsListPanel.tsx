@@ -3,8 +3,11 @@ import type { AdminProductListItem, PrintStatus } from "@print3d/shared-types";
 
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
 import { resolveAssetUrl } from "@/lib/assets";
 import { formatBrlCents } from "@/lib/money";
+import { cn } from "@/lib/utils";
 
 type ProductsTableProps = {
   products: AdminProductListItem[];
@@ -87,24 +90,39 @@ export function ProductsFilters({
   onApply,
 }: ProductsFiltersProps) {
   return (
-    <div className="mb-4 grid gap-3 md:grid-cols-4">
-      <InputFilter label="Search" value={draftQ} onChange={onDraftQChange} placeholder="Name or slug" />
-      <select
-        className="h-10 rounded-md border border-input bg-surface px-3 text-sm"
+    <form
+      className={cn(
+        "mb-6 grid gap-4 rounded-lg border border-hairline bg-surface p-4",
+        "sm:grid-cols-2 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_minmax(0,1fr)_auto] xl:items-end",
+      )}
+      onSubmit={(event) => {
+        event.preventDefault();
+        onApply();
+      }}
+    >
+      <Input
+        label="Search"
+        name="q"
+        placeholder="Name or slug"
+        value={draftQ}
+        onChange={(event) => onDraftQChange(event.target.value)}
+      />
+      <Select
+        label="Status"
+        name="status"
         value={status}
         onChange={(event) => onStatusChange(event.target.value as PrintStatus | "")}
-        aria-label="Status filter"
       >
         <option value="">All statuses</option>
         <option value="active">Active</option>
         <option value="out_of_stock">Out of stock</option>
         <option value="discontinued">Discontinued</option>
-      </select>
-      <select
-        className="h-10 rounded-md border border-input bg-surface px-3 text-sm"
+      </Select>
+      <Select
+        label="Category"
+        name="category"
         value={category}
         onChange={(event) => onCategoryChange(event.target.value)}
-        aria-label="Category filter"
       >
         <option value="">All categories</option>
         {categories.map((item) => (
@@ -112,38 +130,10 @@ export function ProductsFilters({
             {item.name}
           </option>
         ))}
-      </select>
-      <div className="flex items-end">
-        <Button variant="secondary" onClick={onApply}>
-          Apply filters
-        </Button>
-      </div>
-    </div>
-  );
-}
-
-function InputFilter({
-  label,
-  value,
-  onChange,
-  placeholder,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-}) {
-  return (
-    <label className="space-y-1.5">
-      <span className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-        {label}
-      </span>
-      <input
-        className="h-10 w-full rounded-md border border-input bg-surface px-3 text-sm"
-        value={value}
-        placeholder={placeholder}
-        onChange={(event) => onChange(event.target.value)}
-      />
-    </label>
+      </Select>
+      <Button type="submit" variant="secondary" className="w-full xl:w-auto">
+        Apply filters
+      </Button>
+    </form>
   );
 }

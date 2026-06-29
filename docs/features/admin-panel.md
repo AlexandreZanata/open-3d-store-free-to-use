@@ -29,6 +29,8 @@ Tokens: `apps/admin/src/styles/admin-theme.css`, `apps/admin/src/lib/admin-token
 
 Touch targets: header menu and nav links use min 40px height. Main content respects `safe-area-inset-bottom` on notched devices.
 
+List pages (e.g. products) use a bordered filter toolbar: labeled `Input` / `Select` fields in a responsive grid with the action button bottom-aligned on desktop (`xl:items-end`).
+
 E2E: `e2e/admin-mobile.spec.ts` (Pixel 5 viewport, requires `admin-setup`).
 
 ## Routes

@@ -15,6 +15,18 @@ test.describe.configure({ mode: "serial" });
 test.describe("admin product CRUD", () => {
   test.skip(!hasDatabase, "Requires DATABASE_URL and seeded catalog + admin");
 
+  test("products filter toolbar has labeled fields and applies search", async ({ page }) => {
+    await page.goto(`${adminBase}/products`);
+    await expect(page.getByLabel("Search")).toBeVisible();
+    await expect(page.getByLabel("Status")).toBeVisible();
+    await expect(page.getByLabel("Category")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Apply filters" })).toBeVisible();
+
+    await page.getByLabel("Search").fill("photo");
+    await page.getByRole("button", { name: "Apply filters" }).click();
+    await expect(page).toHaveURL(/[?&]q=photo/);
+  });
+
   test("creates product and shows it in the list", async ({ page }) => {
     await page.goto(`${adminBase}/products/new`);
     await page.getByLabel("Slug").fill(productSlug);

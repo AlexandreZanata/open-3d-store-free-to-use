@@ -69,6 +69,19 @@ Replaces the previous `@google/model-viewer` CDN approach so `.3mf` print files 
 
 Admin `kind=model` uploads enqueue async mesh extraction (`model_processing_jobs` + RabbitMQ worker). Poll `GET /api/v1/admin/model-jobs/:id` for `parts` (names, estimated volume/weight) used by bulk pre-pricing.
 
+## Browser preview limits
+
+The storefront viewer loads models in the browser via Three.js. Large meshes can freeze or crash the tab.
+
+| Limit | Value | Behavior |
+|-------|-------|----------|
+| Max file size (HEAD `Content-Length`) | 20 MB | Shows poster + message; does not parse the file |
+| Max STL vertices after parse | 600,000 | Disposes geometry and shows the same message |
+
+The API accepts uploads up to **256 MB** for storage and worker analysis; optimize catalog models to **&lt; 20 MB GLB** (Draco) for reliable in-browser preview.
+
+`GET` and `HEAD` `/models/*` responses include `Content-Length` so the viewer can reject oversized files before download.
+
 ## File optimization (before upload)
 
 **glTF / GLB:**
@@ -103,7 +116,7 @@ Serve `/models/` directly — see [../infrastructure/nginx.md](../infrastructure
 
 | Layer | File |
 |-------|------|
-| Web unit | `apps/web/tests/unit/modelFormat.test.ts` |
+| Web unit | `apps/web/tests/unit/modelFormat.test.ts`, `apps/web/tests/unit/modelViewerLimits.test.ts` |
 | E2E | `e2e/product-detail.spec.ts` |
 
 ## Related documents

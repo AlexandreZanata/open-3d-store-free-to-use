@@ -18,7 +18,11 @@ test.describe("product detail", () => {
     ).toBeVisible({
       timeout: 15_000,
     });
-    await expect(page.getByRole("img", { name: /3D preview|Visualização 3D/i })).toBeVisible({
+    await expect(
+      page
+        .getByRole("img", { name: /3D preview|Visualização 3D/i })
+        .or(page.getByText(/too large to preview|grande demais para visualizar/i)),
+    ).toBeVisible({
       timeout: 20_000,
     });
     await expect(page.getByText(/real scale|escala real/i)).toBeVisible();

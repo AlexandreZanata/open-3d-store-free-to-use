@@ -96,7 +96,8 @@
     "loading": "Carregando produto…",
     "errorTitle": "Não foi possível carregar o produto",
     "errorHint": "Verifique sua conexão e tente novamente.",
-    "viewerUnavailable": "Visualização 3D indisponível"
+    "viewerUnavailable": "Visualização 3D indisponível",
+    "viewerTooLarge": "Este arquivo 3D é grande demais para visualizar no navegador. Use um GLB comprimido (menos de 20 MB) ou simplifique a malha antes do upload."
   },
   "cart": {
     "title": "Carrinho",

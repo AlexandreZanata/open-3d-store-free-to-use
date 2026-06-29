@@ -96,7 +96,8 @@
     "loading": "Loading product…",
     "errorTitle": "Could not load product",
     "errorHint": "Check your connection and try again.",
-    "viewerUnavailable": "3D preview unavailable"
+    "viewerUnavailable": "3D preview unavailable",
+    "viewerTooLarge": "This 3D file is too large to preview in the browser. Use a compressed GLB (under 20 MB) or simplify the mesh before upload."
   },
   "cart": {
     "title": "Cart",

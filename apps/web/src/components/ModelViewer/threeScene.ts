@@ -12,6 +12,11 @@ import {
   usesMillimeterUnits,
   type ModelFormat,
 } from "@/lib/modelFormat";
+import {
+  isGeometryTooHeavyForViewer,
+  probeModelAsset,
+  type ModelLoadBlockReason,
+} from "@/lib/modelViewerLimits";
 
 const SCENE_BG = 0xf4f4f5;
 const DEFAULT_MESH_COLOR = 0x9ca3af;
@@ -21,7 +26,7 @@ export type MountOptions = {
   modelParts?: ModelPart[];
   partColors?: Record<string, string>;
   onReady?: () => void;
-  onError?: () => void;
+  onError?: (reason: ModelLoadBlockReason | "load_failed" | "geometry_too_heavy") => void;
   onDimensions?: (text: string) => void;
 };
 
@@ -92,6 +97,11 @@ async function loadModel(url: string, format: ModelFormat): Promise<THREE.Object
   if (format === "stl") {
     const loader = new STLLoader();
     const geometry = await loader.loadAsync(url);
+    const vertexCount = geometry.attributes.position?.count ?? 0;
+    if (isGeometryTooHeavyForViewer(vertexCount)) {
+      geometry.dispose();
+      throw new Error("GEOMETRY_TOO_HEAVY");
+    }
     const material = new THREE.MeshStandardMaterial({
       color: DEFAULT_MESH_COLOR,
       metalness: 0.12,
@@ -103,6 +113,20 @@ async function loadModel(url: string, format: ModelFormat): Promise<THREE.Object
   const loader = new GLTFLoader();
   const gltf = await loader.loadAsync(url);
   return gltf.scene;
+}
+
+function disposeObject3D(root: THREE.Object3D): void {
+  root.traverse((child) => {
+    if (!(child instanceof THREE.Mesh)) {
+      return;
+    }
+    const materials = Array.isArray(child.material) ? child.material : [child.material];
+    for (const material of materials) {
+      if (material instanceof THREE.Material) {
+        material.dispose();
+      }
+    }
+  });
 }
 
 function applyPartColors(
@@ -180,11 +204,22 @@ export function mountThreeModelViewer(
   let modelRoot: THREE.Object3D | null = null;
   let cancelled = false;
 
-  void loadModel(options.modelUrl, format)
-    .then((object) => {
+  void (async () => {
+    try {
+      const probe = await probeModelAsset(options.modelUrl);
       if (cancelled) {
         return;
       }
+      if (!probe.ok) {
+        options.onError?.(probe.reason);
+        return;
+      }
+
+      const object = await loadModel(options.modelUrl, format);
+      if (cancelled) {
+        return;
+      }
+
       modelRoot = object;
       object.traverse((child: THREE.Object3D) => {
         if (child instanceof THREE.Mesh) {
@@ -200,12 +235,17 @@ export function mountThreeModelViewer(
       fitCamera(camera, controls, size, format);
       options.onDimensions?.(formatDimensionsMm(size.x, size.y, size.z, format));
       options.onReady?.();
-    })
-    .catch(() => {
-      if (!cancelled) {
-        options.onError?.();
+    } catch (error) {
+      if (cancelled) {
+        return;
       }
-    });
+      if (error instanceof Error && error.message === "GEOMETRY_TOO_HEAVY") {
+        options.onError?.("geometry_too_heavy");
+        return;
+      }
+      options.onError?.("load_failed");
+    }
+  })();
 
   const resizeObserver = new ResizeObserver(() => {
     const width = container.clientWidth;
@@ -230,7 +270,9 @@ export function mountThreeModelViewer(
       cancelAnimationFrame(frameId);
       resizeObserver.disconnect();
       if (modelRoot) {
+        disposeObject3D(modelRoot);
         scene.remove(modelRoot);
+        modelRoot = null;
       }
       controls.dispose();
       renderer.dispose();

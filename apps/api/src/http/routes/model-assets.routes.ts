@@ -1,5 +1,5 @@
 import { createReadStream } from "node:fs";
-import { access } from "node:fs/promises";
+import { access, stat } from "node:fs/promises";
 import path from "node:path";
 
 import type { FastifyInstance, FastifyRequest } from "fastify";
@@ -15,6 +15,7 @@ const MIME_BY_EXT: Record<string, string> = {
   ".glb": "model/gltf-binary",
   ".gltf": "model/gltf+json",
   ".3mf": "model/3mf",
+  ".stl": "model/stl",
 };
 
 function resolveModelFilePath(basePath: string, wildcard: string): string | null {
@@ -90,9 +91,12 @@ export async function registerModelAssetRoutes(
       });
     }
 
+    const fileStat = await stat(filePath);
+    reply.header("Content-Length", String(fileStat.size));
     reply.header("Cache-Control", "public, max-age=3600");
     reply.type(contentTypeFor(filePath));
     applyAssetCorsHeaders(request, reply, container);
+
     return reply.send(createReadStream(filePath));
   });
 }

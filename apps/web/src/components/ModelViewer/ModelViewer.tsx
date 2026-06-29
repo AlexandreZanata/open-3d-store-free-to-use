@@ -24,6 +24,7 @@ export function ModelViewer({
   const containerRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<ModelViewerHandle | null>(null);
   const [failed, setFailed] = useState(false);
+  const [tooLarge, setTooLarge] = useState(false);
   const [loading, setLoading] = useState(true);
   const [dimensions, setDimensions] = useState<string | null>(null);
 
@@ -36,6 +37,7 @@ export function ModelViewer({
     let cancelled = false;
     setLoading(true);
     setFailed(false);
+    setTooLarge(false);
     setDimensions(null);
     viewerRef.current?.dispose();
     viewerRef.current = null;
@@ -54,9 +56,13 @@ export function ModelViewer({
               setLoading(false);
             }
           },
-          onError: () => {
+          onError: (reason) => {
             if (!cancelled) {
-              setFailed(true);
+              if (reason === "too_large" || reason === "geometry_too_heavy") {
+                setTooLarge(true);
+              } else {
+                setFailed(true);
+              }
               setLoading(false);
             }
           },
@@ -87,6 +93,24 @@ export function ModelViewer({
   useEffect(() => {
     viewerRef.current?.updatePartColors(partColors);
   }, [partColors]);
+
+  if (tooLarge) {
+    return (
+      <div className="relative aspect-square w-full rounded-2xl bg-muted ring-1 ring-hairline overflow-hidden">
+        {posterUrl ? (
+          <img
+            src={posterUrl}
+            alt=""
+            className="absolute inset-0 size-full object-cover opacity-90"
+            aria-hidden
+          />
+        ) : null}
+        <div className="absolute inset-0 grid place-items-center bg-background/70 px-6 text-center">
+          <p className="text-sm text-muted-foreground">{t("product.viewerTooLarge")}</p>
+        </div>
+      </div>
+    );
+  }
 
   if (failed) {
     return (

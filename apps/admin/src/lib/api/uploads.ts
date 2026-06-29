@@ -1,6 +1,6 @@
 import type { AdminUploadKind, AdminUploadResponse } from "@print3d/shared-types";
 
-import { ApiError, getApiBaseUrl } from "./client";
+import { ApiError, adminRequest } from "./client";
 
 export async function uploadAdminFile(
   file: File,
@@ -10,9 +10,8 @@ export async function uploadAdminFile(
   formData.append("kind", kind);
   formData.append("file", file);
 
-  const response = await fetch(`${getApiBaseUrl()}/admin/uploads`, {
+  const response = await adminRequest("/uploads", {
     method: "POST",
-    credentials: "include",
     body: formData,
   });
 

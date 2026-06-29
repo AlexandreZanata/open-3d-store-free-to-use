@@ -158,6 +158,8 @@ Extends the sliding session idle window (ADR 001: `ADMIN_SESSION_IDLE_TTL`, capp
 
 Not counted toward the global API rate limit.
 
+**Admin SPA client behavior:** All authenticated requests (including `POST /uploads`) go through `adminRequest` in `apps/admin/src/lib/api/client.ts`. On **401**, the client calls `POST /auth/refresh` once and retries the original request. If refresh fails or the retry is still **401**, the SPA clears local auth state and navigates to `/login`. Auth routes (`/auth/login`, `/auth/logout`, `/auth/refresh`) do not trigger this retry loop.
+
 ---
 
 ## Products

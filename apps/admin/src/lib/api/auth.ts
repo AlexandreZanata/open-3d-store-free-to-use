@@ -8,11 +8,11 @@ import type {
 import { adminFetch, adminPost } from "./client";
 
 export async function loginAdmin(credentials: AdminLoginRequest): Promise<AdminLoginResponse> {
-  return adminPost<AdminLoginResponse>("/auth/login", credentials);
+  return adminPost<AdminLoginResponse>("/auth/login", credentials, { skipSessionRetry: true });
 }
 
 export async function logoutAdmin(): Promise<void> {
-  await adminPost<void>("/auth/logout", {});
+  await adminPost<void>("/auth/logout", {}, { skipSessionRetry: true });
 }
 
 export async function fetchAdminMe(): Promise<AdminMeResponse> {
@@ -20,5 +20,5 @@ export async function fetchAdminMe(): Promise<AdminMeResponse> {
 }
 
 export async function refreshAdminSession(): Promise<AdminRefreshResponse> {
-  return adminPost<AdminRefreshResponse>("/auth/refresh", {});
+  return adminPost<AdminRefreshResponse>("/auth/refresh", {}, { skipSessionRetry: true });
 }

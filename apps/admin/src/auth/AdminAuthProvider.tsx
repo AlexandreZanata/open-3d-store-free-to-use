@@ -1,8 +1,10 @@
 import type { AdminLoginRequest, AdminUserSummary } from "@print3d/shared-types";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
+import { registerAdminSessionCoordinator } from "@/lib/api/adminSessionCoordinator";
 import { ApiError } from "@/lib/api/client";
 import { fetchAdminMe, loginAdmin, logoutAdmin, refreshAdminSession } from "@/lib/api/auth";
+import { router } from "@/router";
 
 import { AdminAuthContext, type AdminAuthContextValue } from "./useAdminAuth";
 
@@ -53,6 +55,24 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     void ensureSession();
   }, [ensureSession]);
+
+  useEffect(() => {
+    return registerAdminSessionCoordinator({
+      tryRefresh: async () => {
+        try {
+          const response = await refreshAdminSession();
+          setUser(response.data);
+          return true;
+        } catch {
+          return false;
+        }
+      },
+      onSessionExpired: () => {
+        setUser(null);
+        void router.navigate({ to: "/login" });
+      },
+    });
+  }, []);
 
   useEffect(() => {
     if (!user) {

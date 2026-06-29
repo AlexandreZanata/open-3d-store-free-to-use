@@ -1,6 +1,11 @@
 import type { ProblemDetails } from "@print3d/shared-types";
 
 import { readEnvString } from "../env";
+import {
+  notifyAdminSessionExpired,
+  shouldRetryAdminSession,
+  tryRefreshAdminSession,
+} from "./adminSessionCoordinator";
 
 const DEFAULT_API_BASE = "http://localhost:3001/api/v1";
 
@@ -16,6 +21,10 @@ export class ApiError extends Error {
   }
 }
 
+export type AdminRequestOptions = RequestInit & {
+  skipSessionRetry?: boolean;
+};
+
 export function getApiBaseUrl(): string {
   return readEnvString("VITE_API_BASE_URL") ?? DEFAULT_API_BASE;
 }
@@ -28,31 +37,66 @@ function adminUrl(path: string): string {
 function buildHeaders(init?: RequestInit): HeadersInit {
   return {
     Accept: "application/json",
-    "Accept-Language": "en",
+    "Accept-Language": "pt-BR",
     ...init?.headers,
   };
 }
 
-export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(adminUrl(path), {
-    ...init,
+async function parseProblem(response: Response): Promise<ProblemDetails> {
+  try {
+    return (await response.json()) as ProblemDetails;
+  } catch {
+    return {
+      type: "https://yourdomain.com/errors/unknown",
+      title: response.statusText || "Request failed",
+      status: response.status,
+      detail: `HTTP ${response.status}`,
+    };
+  }
+}
+
+async function throwApiError(response: Response): Promise<never> {
+  const problem = await parseProblem(response);
+  throw new ApiError(response.status, problem);
+}
+
+export async function adminRequest(
+  path: string,
+  init?: AdminRequestOptions,
+): Promise<Response> {
+  const { skipSessionRetry = false, ...requestInit } = init ?? {};
+  let response = await fetch(adminUrl(path), {
+    ...requestInit,
     credentials: "include",
-    headers: buildHeaders(init),
+    headers: buildHeaders(requestInit),
   });
 
-  if (!response.ok) {
-    let problem: ProblemDetails;
-    try {
-      problem = (await response.json()) as ProblemDetails;
-    } catch {
-      problem = {
-        type: "https://yourdomain.com/errors/unknown",
-        title: response.statusText || "Request failed",
-        status: response.status,
-        detail: `HTTP ${response.status}`,
-      };
+  if (
+    response.status === 401 &&
+    !skipSessionRetry &&
+    shouldRetryAdminSession(path)
+  ) {
+    const refreshed = await tryRefreshAdminSession();
+    if (refreshed) {
+      response = await fetch(adminUrl(path), {
+        ...requestInit,
+        credentials: "include",
+        headers: buildHeaders(requestInit),
+      });
     }
-    throw new ApiError(response.status, problem);
+    if (response.status === 401) {
+      notifyAdminSessionExpired();
+    }
+  }
+
+  return response;
+}
+
+export async function adminFetch<T>(path: string, init?: AdminRequestOptions): Promise<T> {
+  const response = await adminRequest(path, init);
+
+  if (!response.ok) {
+    await throwApiError(response);
   }
 
   if (response.status === 204) {
@@ -62,7 +106,7 @@ export async function adminFetch<T>(path: string, init?: RequestInit): Promise<T
   return (await response.json()) as T;
 }
 
-export async function adminPost<T>(path: string, body: object, init?: RequestInit): Promise<T> {
+export async function adminPost<T>(path: string, body: object, init?: AdminRequestOptions): Promise<T> {
   return adminFetch<T>(path, {
     ...init,
     method: "POST",
@@ -74,7 +118,7 @@ export async function adminPost<T>(path: string, body: object, init?: RequestIni
   });
 }
 
-export async function adminPatch<T>(path: string, body: object, init?: RequestInit): Promise<T> {
+export async function adminPatch<T>(path: string, body: object, init?: AdminRequestOptions): Promise<T> {
   return adminFetch<T>(path, {
     ...init,
     method: "PATCH",
@@ -86,7 +130,7 @@ export async function adminPatch<T>(path: string, body: object, init?: RequestIn
   });
 }
 
-export async function adminDelete(path: string, init?: RequestInit): Promise<void> {
+export async function adminDelete(path: string, init?: AdminRequestOptions): Promise<void> {
   await adminFetch<void>(path, { ...init, method: "DELETE" });
 }
 

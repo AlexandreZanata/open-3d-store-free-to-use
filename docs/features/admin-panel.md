@@ -84,6 +84,12 @@ pnpm dev:admin   # http://localhost:5174
 
 `ADMIN_ORIGIN` in `apps/api/.env` must match the admin dev URL.
 
+## Session recovery
+
+The admin SPA keeps a sliding session via `POST /auth/refresh` every 15 minutes while the user is signed in. Any API call that returns **401** (including file uploads) also triggers a single refresh attempt and retries the request. If refresh fails, the user is signed out and redirected to `/login` instead of showing a stale “logged in” shell with auth errors.
+
+Implementation: `apps/admin/src/lib/api/adminSessionCoordinator.ts`, `AdminAuthProvider`, and `adminRequest` in `apps/admin/src/lib/api/client.ts`.
+
 Bootstrap admin (valid email required):
 
 ```bash
@@ -97,6 +103,8 @@ ADMIN_BOOTSTRAP_EMAIL=admin@test.local ADMIN_BOOTSTRAP_PASSWORD=test-password-12
 |-------|----------|
 | Unit | `apps/admin/tests/unit/` |
 | E2E | `e2e/admin-auth.spec.ts`, `e2e/admin-orders.spec.ts`, `e2e/admin-product-crud.spec.ts`, `e2e/admin-mobile.spec.ts` |
+
+Unit: `apps/admin/tests/unit/admin-session-recovery.test.ts` (401 → refresh → retry / logout).
 
 ```bash
 pnpm --filter @print3d/admin test

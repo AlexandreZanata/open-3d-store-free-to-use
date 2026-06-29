@@ -21,6 +21,7 @@ Open [http://localhost:5173](http://localhost:5173).
 | **API contract v1** | [docs/api/contract.md](docs/api/contract.md) |
 | **Domain model** | [docs/architecture/domain-model.md](docs/architecture/domain-model.md) |
 | **i18n (en + pt-BR)** | [docs/features/i18n.md](docs/features/i18n.md) |
+| **Storefront accounts** | [docs/features/store-user-accounts.md](docs/features/store-user-accounts.md) |
 | **Testing policy** | [docs/testing/contract-first-testing.md](docs/testing/contract-first-testing.md) |
 | **Commit conventions** | [docs/governance/commit-conventions.md](docs/governance/commit-conventions.md) |
 | **Glossary** | [docs/GLOSSARY.md](docs/GLOSSARY.md) |

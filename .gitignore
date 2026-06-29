@@ -31,7 +31,9 @@ apps/api/storage/
 # Production module — real VPS secrets never in git (see production/README.md)
 production/**
 !production/README.md
+!production/DNS-CUTOVER.md
 !production/deploy-to-vps.sh
+!production/switch-to-domain.sh
 !production/env/
 production/env/**
 !production/env/README.md
@@ -40,6 +42,7 @@ production/env/**
 production/ssh/**
 !production/ssh/README.md
 !production/vps.env.example
+!production/vps.env.domain.example
 production/vps.env
 production/ssh/id_*
 production/ssh/*.pem

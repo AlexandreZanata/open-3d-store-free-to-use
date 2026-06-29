@@ -26,6 +26,8 @@
 
 Registro.br does **not** host your A records once NS point to Cloudflare. All DNS is managed in Cloudflare.
 
+**Production cutover checklist (when NS are active):** [../../production/DNS-CUTOVER.md](../../production/DNS-CUTOVER.md)
+
 ## 3. DNS records in Cloudflare
 
 **DNS** → **Records**:

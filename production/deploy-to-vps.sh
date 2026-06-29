@@ -194,6 +194,8 @@ export NGINX_HTTP_PORT="${NGINX_HTTP_PORT}"
 export VPS_APP_DIR="${VPS_APP_DIR}"
 if [[ "${VPS_USE_HTTPS}" == "0" ]]; then
   ./infra/scripts/install-nginx-ip.sh
+else
+  ./infra/scripts/install-nginx-domain.sh || true
 fi
 export SKIP_GIT_PULL=1
 export DOMAIN="${DOMAIN}"

@@ -18,8 +18,8 @@ export const adminProductFixture: CreateProductPayload = {
     },
   ],
   modelFileUrl: null,
-  thumbnailUrl: "/models/thumbnails/admin-test.webp",
-  imageUrls: ["/models/images/admin-test-1.webp"],
+  thumbnailUrl: "/models/thumbnails/photo-frame.webp",
+  imageUrls: [],
   tags: ["gifts"],
   translations: {
     en: {

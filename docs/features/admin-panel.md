@@ -55,6 +55,8 @@ Product and category forms support **URL text** or **file upload** (`FileUploadF
 | Thumbnail / gallery | WebP, JPEG, PNG (also `image/jpg` / `application/octet-stream` with valid image bytes) | WebP under `/models/thumbnails/` or `/models/images/` |
 | 3D model | `.glb`, `.gltf` | unchanged under `/models/3d/` |
 
+**Upload** returns a server-generated path such as `/models/thumbnails/019f137e-….webp` (UUID filename). Typed URLs must point at files that exist under `MODEL_FILES_BASE_PATH` — run `pnpm --filter @print3d/api db:seed-assets` after clone so seeded catalog paths resolve.
+
 After upload or when a URL is set, a **128×128 preview box** (`data-testid="upload-preview-{kind}"`) shows the image. In dev, asset paths resolve to same-origin `/models/...` (Vite proxies to the API); set `VITE_ASSETS_BASE_URL` for production. The API serves files from `MODEL_FILES_BASE_PATH` at `GET /models/*` (development and test); production may use nginx for the same paths — see [../infrastructure/nginx.md](../infrastructure/nginx.md).
 
 Edit forms load server data once per entity id and keep unsaved media URLs while you upload; **Save changes** persists `thumbnailUrl` / `imageUrl` via `PATCH` and then refreshes the form from the API response.

@@ -13,4 +13,6 @@ export const seedThumbnailSpecs: SeedThumbnailSpec[] = [
   { fileName: "miniatures.webp", label: "Miniatures", colors: ["#581C87", "#A855F7"] },
   { fileName: "gifts.webp", label: "Gifts", colors: ["#9D174D", "#F472B6"] },
   { fileName: "tools.webp", label: "Tools", colors: ["#9A3412", "#FB923C"] },
+  // Referenced by legacy integration-test rows in dev DB (adminFixtures used to point here)
+  { fileName: "admin-test.webp", label: "Admin Test", colors: ["#374151", "#9CA3AF"] },
 ];

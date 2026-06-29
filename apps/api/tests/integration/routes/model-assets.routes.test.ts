@@ -99,6 +99,17 @@ describe("Model asset routes (contract)", () => {
     expect(response.rawPayload.length).toBeGreaterThan(100);
   });
 
+  it("serves legacy admin-test thumbnail used by integration fixtures", async () => {
+    const response = await app.inject({
+      method: "GET",
+      url: "/models/thumbnails/admin-test.webp",
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.headers["content-type"]).toMatch(/image\/webp/);
+    expect(response.rawPayload.length).toBeGreaterThan(100);
+  });
+
   it.skipIf(!hasDatabase)("returns 404 for missing asset path", async () => {
     const response = await app.inject({
       method: "GET",

@@ -163,5 +163,14 @@ describe("Admin product routes (contract)", () => {
     );
     expect(second.statusCode).toBe(409);
     expect(second.json().status).toBe(409);
+
+    const createdId = first.json().data.id as string;
+    const cleanup = await app.inject(
+      withAdminCookie(sessionCookie, {
+        method: "DELETE",
+        url: `/api/v1/admin/products/${createdId}`,
+      }),
+    );
+    expect(cleanup.statusCode).toBe(204);
   });
 });

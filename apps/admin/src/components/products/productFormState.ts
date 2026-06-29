@@ -8,6 +8,7 @@ import type {
 } from "@print3d/shared-types";
 
 import { centsToReaisInput, reaisToCents } from "@/lib/money";
+import { storedHoursToMinutes, minutesToStoredHours } from "@/lib/prepriceCalculator";
 import { slugify } from "@/lib/slugify";
 import { validateProductOptions } from "@/components/products/productOptionValidation";
 
@@ -17,7 +18,7 @@ export type ProductFormState = {
   categoryId: string;
   basePriceReais: string;
   material: MaterialType;
-  printTimeHours: string;
+  printTimeMinutes: string;
   weightGrams: string;
   status: PrintStatus;
   options: ProductOption[];
@@ -36,7 +37,7 @@ export function createEmptyProductForm(): ProductFormState {
     categoryId: "",
     basePriceReais: "",
     material: "PETG_HF",
-    printTimeHours: "0",
+    printTimeMinutes: "0",
     weightGrams: "0",
     status: "active",
     options: [],
@@ -59,7 +60,7 @@ export function productToFormState(product: AdminProductDetail): ProductFormStat
     categoryId: product.categoryId,
     basePriceReais: centsToReaisInput(product.basePrice),
     material: product.material,
-    printTimeHours: String(product.printTimeHours),
+    printTimeMinutes: String(storedHoursToMinutes(product.printTimeHours)),
     weightGrams: String(product.weightGrams),
     status: product.status,
     options: product.options,
@@ -110,7 +111,7 @@ export function productFormToPayload(state: ProductFormState): CreateProductPayl
     categoryId: state.categoryId,
     basePrice: cents,
     material: state.material,
-    printTimeHours: Number(state.printTimeHours) || 0,
+    printTimeHours: minutesToStoredHours(Number(state.printTimeMinutes) || 0),
     weightGrams: Number(state.weightGrams) || 0,
     status: state.status,
     options: cleanedOptions,
@@ -129,4 +130,15 @@ export function productFormToPayload(state: ProductFormState): CreateProductPayl
 export function applySlugFromPtBrName(state: ProductFormState): ProductFormState {
   if (state.slugManual) return state;
   return { ...state, slug: slugify(state.translations["pt-BR"].name) };
+}
+
+/** Form weight field, or sum of detected model part weights when empty. */
+export function resolveWeightGrams(state: ProductFormState): number {
+  const fromField = Number(state.weightGrams) || 0;
+  if (fromField > 0) {
+    return fromField;
+  }
+  return Math.round(
+    state.modelParts.reduce((sum, part) => sum + (part.weightGrams ?? 0), 0),
+  );
 }

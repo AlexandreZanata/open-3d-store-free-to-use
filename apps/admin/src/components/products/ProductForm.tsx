@@ -9,6 +9,7 @@ import {
   applySlugFromPtBrName,
   type ProductFormState,
 } from "@/components/products/productFormState";
+import { ProductPricingSection } from "@/components/products/ProductPricingSection";
 import { ModelUploadField } from "@/components/uploads/ModelUploadField";
 import { FileUploadField } from "@/components/uploads/FileUploadField";
 import { Button } from "@/components/ui/Button";
@@ -110,15 +111,11 @@ export function ProductForm({
         </div>
       </Card>
 
-      <Card className="space-y-4">
-        <h2 className={adminTokens.sectionTitle}>Pricing & specs</h2>
-        <div className="grid gap-4 md:grid-cols-3">
-          <Input label="Price (BRL)" value={state.basePriceReais} onChange={(event) => patch({ basePriceReais: event.target.value })} error={errors.basePriceReais} />
-          <Input label="Print time (hours)" type="number" min={0} value={state.printTimeHours} onChange={(event) => patch({ printTimeHours: event.target.value })} />
-          <Input label="Weight (grams)" type="number" min={0} value={state.weightGrams} onChange={(event) => patch({ weightGrams: event.target.value })} />
-        </div>
-        <Input label="Tags (comma separated)" value={state.tags} onChange={(event) => patch({ tags: event.target.value })} />
-      </Card>
+      <ProductPricingSection
+        state={state}
+        errors={errors}
+        onPatch={(patchValue) => patch(patchValue)}
+      />
 
       <Card className="space-y-4">
         <h2 className={adminTokens.sectionTitle}>Media</h2>

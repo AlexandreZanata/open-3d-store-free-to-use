@@ -47,7 +47,7 @@ RABBITMQ_URL=amqp://guest:guest@127.0.0.1:5672
 pnpm --filter @print3d/api worker:model-processing
 ```
 
-Features: React Query hooks, slug preview (`slugify.ts`), BRL price input → cents, file uploads (`FileUploadField`, `ModelUploadField`), product options editor.
+Features: React Query hooks, slug preview (`slugify.ts`), BRL price input → cents, file uploads (`FileUploadField`, `ModelUploadField`), product options editor, **pre-calculated price** on product form (minutes + grams + material).
 
 ## Design tokens
 

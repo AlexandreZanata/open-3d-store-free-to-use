@@ -105,7 +105,7 @@ export default defineConfig({
             env: sharedServerEnv,
           },
           {
-            command: `VITE_API_BASE_URL=${apiBase}/api/v1 VITE_ASSETS_BASE_URL=${apiBase} VITE_WHATSAPP_PHONE=${process.env.WHATSAPP_PHONE_NUMBER ?? "5565999999999"} pnpm --filter @print3d/admin dev -- --host 127.0.0.1 --port 5174`,
+            command: `VITE_API_BASE_URL=${apiBase}/api/v1 VITE_WHATSAPP_PHONE=${process.env.WHATSAPP_PHONE_NUMBER ?? "5565999999999"} pnpm --filter @print3d/admin dev -- --host 127.0.0.1 --port 5174`,
             url: adminBaseURL,
             reuseExistingServer: !process.env.CI,
             timeout: 180_000,

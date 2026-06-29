@@ -12,6 +12,18 @@ pnpm --filter @print3d/api dev                    # API + Swagger UI at /docs
 curl http://127.0.0.1:3001/api/v1/health               # Smoke: { "status": "ok", ... }
 ```
 
+### Storefront dev
+
+Storefront SPA runs on **port 5173** (default) or a custom port. Copy `apps/web/.env.example` to `apps/web/.env` and set `VITE_API_BASE_URL` to your API. **Do not** set `VITE_ASSETS_BASE_URL` to the API host — omit it so thumbnails load as same-origin `/models/...` (Vite proxies to the API).
+
+```bash
+cp apps/web/.env.example apps/web/.env
+# Custom port example:
+pnpm --filter @print3d/web exec vite dev --host 127.0.0.1 --port 5176
+```
+
+`CORS_ORIGIN` in `apps/api/.env` must match the storefront browser URL when testing SSE ([../features/catalog-realtime.md](../features/catalog-realtime.md)).
+
 ### Admin API smoke (Phase 12)
 
 Requires `pnpm --filter @print3d/api db:migrate`, seeded catalog, and bootstrap admin (`ADMIN_BOOTSTRAP_*` in `.env`).

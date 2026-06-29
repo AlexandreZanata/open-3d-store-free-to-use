@@ -49,13 +49,17 @@ TanStack Query refetches visible pages automatically. The storefront API client 
 ## Development
 
 ```bash
-# API — set CORS_ORIGIN to the storefront URL
+# API — set CORS_ORIGIN to the storefront URL (match host: 127.0.0.1 vs localhost)
 export CORS_ORIGIN=http://127.0.0.1:5176
-pnpm --filter @print3d/api dev
+set -a && source apps/api/.env && set +a
+PORT=3025 pnpm --filter @print3d/api dev
 
-# Storefront on port 5176 (also http://localhost:5176/)
-VITE_API_BASE_URL=http://127.0.0.1:3025/api/v1 pnpm --filter @print3d/web exec vite dev --host 127.0.0.1 --port 5176
+# Storefront — omit VITE_ASSETS_BASE_URL; Vite proxies /models to the API
+cp apps/web/.env.example apps/web/.env   # set VITE_API_BASE_URL to your API port
+pnpm --filter @print3d/web exec vite dev --host 127.0.0.1 --port 5176
 ```
+
+Do **not** set `VITE_ASSETS_BASE_URL` to the API host in dev — the browser blocks cross-origin image loads (`OpaqueResponseBlocking`). Use same-origin `/models/...` via the Vite proxy instead.
 
 Manual check:
 

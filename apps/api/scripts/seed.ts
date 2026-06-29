@@ -1,6 +1,7 @@
 import { seedCatalog } from "./seedCatalog.js";
 import { seedAdminUser } from "./seedAdmin.js";
 import { seedAssets } from "./seedAssets.js";
+import { seedHeroLogo } from "./seedHeroLogo.js";
 import { seedModels } from "./seedModels.js";
 import { seedShopSettings } from "./seedShopSettings.js";
 
@@ -13,6 +14,7 @@ if (connectionString.length === 0) {
 }
 
 await seedAssets(process.env);
+await seedHeroLogo(process.env);
 const modelOverrides = await seedModels(process.env);
 await seedCatalog(connectionString, modelOverrides);
 await seedShopSettings(connectionString, process.env);

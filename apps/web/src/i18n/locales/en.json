@@ -31,7 +31,7 @@
   },
   "home": {
     "featuredLabel": "Featured",
-    "featuredTitle": "Custom 3D prints — browse and order via WhatsApp",
+    "featuredTitle": "Custom 3D prints. Browse and order via WhatsApp",
     "featuredTitleMobile": "3D prints on WhatsApp",
     "featuredSubtitleMobile": "Browse models and order in seconds",
     "featuredCta": "Browse catalog",
@@ -39,7 +39,8 @@
     "viewAll": "View all",
     "railAll": "All",
     "featuredProducts": "Featured products",
-    "allProducts": "All products"
+    "allProducts": "All products",
+    "heroLogoLabel": "Corvo 3D logo"
   },
   "categories": {
     "title": "Categories",

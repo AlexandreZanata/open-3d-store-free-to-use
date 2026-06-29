@@ -3,9 +3,9 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import type { TFunction } from "i18next";
 import type { CategoryResponse, ProductListItem } from "@print3d/shared-types";
 
-import { BrandMark } from "@/components/BrandMark";
-import { ProductCard } from "@/components/ProductCard";
 import { CategoryCard } from "@/components/CategoryCard";
+import { HeroLogoViewer } from "@/components/home/HeroLogoViewer";
+import { ProductCard } from "@/components/ProductCard";
 import { ProductCardSkeleton } from "@/components/LoadingSkeletons";
 import { categoryGridCols, desktopHeroSurface, productGridCols } from "@/lib/layout";
 
@@ -53,12 +53,12 @@ export function HomeDesktopView({ products, categories, isLoading, t }: Props) {
             </div>
           </div>
           <div className="hidden xl:grid place-items-center p-10">
-            <div className="relative grid place-items-center rounded-3xl bg-background p-10 shadow-soft ring-1 ring-background/20">
+            <div className="relative grid place-items-center rounded-3xl bg-background p-8 shadow-soft ring-1 ring-background/20 min-h-[17.5rem] min-w-[17.5rem]">
               <div
-                className="pointer-events-none absolute inset-0 rounded-3xl bg-[radial-gradient(circle_at_50%_40%,oklch(0.68_0.18_45/0.12),transparent_65%)]"
+                className="pointer-events-none absolute inset-0 rounded-3xl bg-[radial-gradient(circle_at_50%_42%,oklch(0.68_0.18_45/0.14),transparent_68%)]"
                 aria-hidden
               />
-              <BrandMark className="relative h-32 w-32 object-contain" />
+              <HeroLogoViewer />
             </div>
           </div>
         </div>

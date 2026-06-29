@@ -31,7 +31,7 @@
   },
   "home": {
     "featuredLabel": "Destaque",
-    "featuredTitle": "Impressões 3D personalizadas — navegue e peça pelo WhatsApp",
+    "featuredTitle": "Impressões 3D personalizadas. Navegue e peça pelo WhatsApp",
     "featuredTitleMobile": "Impressões 3D no WhatsApp",
     "featuredSubtitleMobile": "Veja modelos e peça em segundos",
     "featuredCta": "Ver catálogo",
@@ -39,7 +39,8 @@
     "viewAll": "Ver todas",
     "railAll": "Todos",
     "featuredProducts": "Produtos em destaque",
-    "allProducts": "Todos os produtos"
+    "allProducts": "Todos os produtos",
+    "heroLogoLabel": "Logo 3D Corvo"
   },
   "categories": {
     "title": "Categorias",

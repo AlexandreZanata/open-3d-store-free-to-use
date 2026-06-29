@@ -54,7 +54,7 @@ The API also serves that directory at **`GET /models/*`** (no auth) so admin and
 
 | Variable | Example | Notes |
 |----------|---------|-------|
-| `SEED_MODELS_SOURCE_DIR` | `/data/downloads` | Local folder with Bambu-tested `.stl` / `.3mf` files for catalog seed |
+| `SEED_MODELS_SOURCE_DIR` | `/data/downloads` | Local folder with Bambu-tested `.stl` / `.3mf` files for catalog seed and desktop hero logo (`16cc56c8094335eec1baddcd7a39f5b5(1).stl`) |
 
 Harness: `agent-rules/03-security/secrets-and-credentials.md`
 

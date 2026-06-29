@@ -52,7 +52,7 @@ Separate desktop-only home — mobile home is wrapped in `lg:hidden`:
 
 | Section | Desktop |
 |---------|---------|
-| **Hero** | Full-width split layout, subtitle, dual CTAs, decorative 3D motif |
+| **Hero** | Full-width split layout, subtitle, dual CTAs, **rotating 3D Corvo logo** (`HeroLogoViewer` + `/models/3d/corvo-logo-preview.glb`) |
 | **Categories** | Card grid (not pills) |
 | **Products** | Multi-column grids with section headers |
 
@@ -77,6 +77,7 @@ Separate desktop-only home — mobile home is wrapped in `lg:hidden`:
 | `apps/web/src/components/AppShellMobileNav.tsx` | Mobile bottom tabs |
 | `apps/web/src/components/AppShellFooter.tsx` | Site footer (contact CTA) |
 | `apps/web/src/components/home/HomeDesktopView.tsx` | Desktop-only home |
+| `apps/web/src/components/home/HeroLogoViewer.tsx` | Desktop hero 3D Corvo logo |
 | `apps/web/src/components/SearchFiltersPanel.tsx` | Search filters (mobile chips / desktop list) |
 | `apps/web/src/components/search/SearchDesktopView.tsx` | Desktop-only search layout |
 | `apps/web/src/components/search/SearchMobileView.tsx` | **Frozen** mobile search UI |

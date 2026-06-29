@@ -27,6 +27,10 @@ test.describe("desktop layout", () => {
       timeout: 20_000,
     });
     await expect(page.getByText(/preview models in 3d|visualize modelos em 3d/i)).toBeVisible();
+    await expect(
+      page.getByRole("img", { name: /corvo 3d logo|logo 3d corvo/i }),
+    ).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByText(/custom 3d prints —|impressões 3d personalizadas —/i)).toHaveCount(0);
   });
 
   test("search page exposes desktop filter sidebar", async ({ page }) => {

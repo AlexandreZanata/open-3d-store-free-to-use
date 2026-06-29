@@ -21,3 +21,17 @@ export function daysAgoIso(days: number): string {
   date.setDate(date.getDate() - days);
   return date.toISOString();
 }
+
+/** Start of local day N days ago — stable for React Query keys and API date filters. */
+export function daysAgoStartOfDayIso(days: number): string {
+  const date = new Date();
+  date.setHours(0, 0, 0, 0);
+  date.setDate(date.getDate() - days);
+  return date.toISOString();
+}
+
+export const ORDERS_LIST_LOOKBACK_DAYS = 30;
+
+export function ordersListLookbackFrom(): string {
+  return daysAgoStartOfDayIso(ORDERS_LIST_LOOKBACK_DAYS);
+}

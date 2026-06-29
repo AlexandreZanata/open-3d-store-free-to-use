@@ -66,6 +66,16 @@ export default defineConfig({
       testMatch: ["admin-product-crud.spec.ts"],
     },
     {
+      name: "admin-orders-chromium",
+      dependencies: ["admin-setup"],
+      use: {
+        ...devices["Desktop Chrome"],
+        baseURL: adminBaseURL,
+        storageState: adminAuthFile,
+      },
+      testMatch: ["admin-orders.spec.ts"],
+    },
+    {
       name: "admin-mobile-chromium",
       dependencies: ["admin-setup"],
       use: {

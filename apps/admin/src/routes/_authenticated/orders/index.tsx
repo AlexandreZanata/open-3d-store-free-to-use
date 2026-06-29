@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/Button";
@@ -6,7 +7,11 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { useAdminOrders } from "@/hooks/useAdminOrders";
-import { formatOrderDate, formatOrderDisplayId, daysAgoIso } from "@/lib/orderDisplay";
+import {
+  formatOrderDate,
+  formatOrderDisplayId,
+  ordersListLookbackFrom,
+} from "@/lib/orderDisplay";
 import { toTablePagination } from "@/lib/tablePagination";
 import type { AdminOrderListItem } from "@print3d/shared-types";
 
@@ -64,7 +69,7 @@ export const Route = createFileRoute("/_authenticated/orders/")({
 function OrdersListPage() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
-  const from = daysAgoIso(30);
+  const from = useMemo(() => ordersListLookbackFrom(), []);
 
   const ordersQuery = useAdminOrders({
     page: search.page,
@@ -88,7 +93,13 @@ function OrdersListPage() {
 
       {ordersQuery.isLoading ? <LoadingSpinner className="py-12" /> : null}
 
-      {!ordersQuery.isLoading && orders.length === 0 ? (
+      {ordersQuery.isError ? (
+        <p className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+          Could not load orders. Check the API connection and try again.
+        </p>
+      ) : null}
+
+      {!ordersQuery.isLoading && !ordersQuery.isError && orders.length === 0 ? (
         <EmptyState
           title="No orders yet"
           description="Captured orders appear here after customers complete the WhatsApp checkout."

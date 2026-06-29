@@ -71,7 +71,7 @@ E2E: `e2e/admin-mobile.spec.ts` (Pixel 5 viewport, requires `admin-setup`).
 | `/categories` | Category list |
 | `/categories/new` | Create category |
 | `/categories/:id` | Edit category |
-| `/orders` | Order captures (last 30 days) |
+| `/orders` | Order captures (last 30 days); list query uses a stable start-of-day `from` filter so React Query does not refetch forever |
 | `/orders/:id` | Order detail (read-only) |
 | `/settings` | Read-only shop/API info |
 
@@ -96,7 +96,7 @@ ADMIN_BOOTSTRAP_EMAIL=admin@test.local ADMIN_BOOTSTRAP_PASSWORD=test-password-12
 | Layer | Location |
 |-------|----------|
 | Unit | `apps/admin/tests/unit/` |
-| E2E | `e2e/admin-auth.spec.ts`, `e2e/admin-product-crud.spec.ts`, `e2e/admin-mobile.spec.ts` |
+| E2E | `e2e/admin-auth.spec.ts`, `e2e/admin-orders.spec.ts`, `e2e/admin-product-crud.spec.ts`, `e2e/admin-mobile.spec.ts` |
 
 ```bash
 pnpm --filter @print3d/admin test

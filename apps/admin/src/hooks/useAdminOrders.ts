@@ -2,8 +2,17 @@ import { useQuery } from "@tanstack/react-query";
 
 import { fetchAdminOrder, fetchAdminOrders, type AdminOrderQuery } from "@/lib/api/orders";
 
+function stableOrderQueryKey(params: AdminOrderQuery = {}) {
+  return {
+    page: params.page ?? 1,
+    limit: params.limit ?? 20,
+    from: params.from ?? "",
+    to: params.to ?? "",
+  } as const;
+}
+
 export const adminOrdersQueryKey = (params: AdminOrderQuery = {}) =>
-  ["admin", "orders", params] as const;
+  ["admin", "orders", stableOrderQueryKey(params)] as const;
 
 export const adminOrderQueryKey = (id: string) => ["admin", "order", id] as const;
 

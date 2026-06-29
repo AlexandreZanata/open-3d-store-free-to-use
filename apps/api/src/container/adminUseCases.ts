@@ -23,6 +23,7 @@ import {
 } from "../application/use-cases/admin/OrderAdminUseCases.js";
 import { UpdateProduct } from "../application/use-cases/admin/UpdateProduct.js";
 import { UploadAsset } from "../application/use-cases/admin/UploadAsset.js";
+import type { ICatalogEventPublisher } from "../application/ports/ICatalogEventPublisher.js";
 import type { IAssetStorage } from "../application/ports/IAssetStorage.js";
 import type { IPasswordHasher } from "../application/ports/IPasswordHasher.js";
 import type { ICacheService } from "../application/ports/ICacheService.js";
@@ -61,13 +62,14 @@ type AdminUseCaseDeps = {
   categories: ICategoryRepository;
   orders: IOrderCaptureRepository;
   cache: ICacheService;
+  catalogEvents: ICatalogEventPublisher;
   passwordHasher: IPasswordHasher;
   assetStorage: IAssetStorage;
 };
 
 export function createAdminUseCases(deps: AdminUseCaseDeps): AdminUseCases {
   const audit = new AuditLogger(deps.auditLogs);
-  const cacheInvalidator = new CatalogCacheInvalidator(deps.cache);
+  const cacheInvalidator = new CatalogCacheInvalidator(deps.cache, deps.catalogEvents);
 
   return {
     loginAdmin: new LoginAdmin(

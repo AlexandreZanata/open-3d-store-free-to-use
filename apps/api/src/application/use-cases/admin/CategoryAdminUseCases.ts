@@ -72,7 +72,7 @@ export class CreateCategory {
       resourceId: category.id,
       metadata: {},
     });
-    await this.cacheInvalidator.invalidateCatalog();
+    await this.cacheInvalidator.invalidateCatalog("created", category.id);
 
     return toAdminCategoryDto(category);
   }
@@ -123,7 +123,7 @@ export class UpdateCategory {
       resourceId: category.id,
       metadata: {},
     });
-    await this.cacheInvalidator.invalidateCatalog();
+    await this.cacheInvalidator.invalidateCatalog("updated", category.id);
 
     return toAdminCategoryDto(category);
   }
@@ -161,7 +161,7 @@ export class DeleteCategory {
       resourceId: existing.id,
       metadata: {},
     });
-    await this.cacheInvalidator.invalidateCatalog();
+    await this.cacheInvalidator.invalidateCatalog("deleted", existing.id);
   }
 }
 

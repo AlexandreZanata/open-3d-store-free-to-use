@@ -63,9 +63,9 @@ export class UpdateProduct {
       resourceId: product.id,
       metadata: {},
     });
-    await this.cacheInvalidator.invalidateProduct(existing.slug);
+    await this.cacheInvalidator.invalidateProduct(existing.slug, "updated", product.id);
     if (product.slug !== existing.slug) {
-      await this.cacheInvalidator.invalidateProduct(product.slug);
+      await this.cacheInvalidator.invalidateProduct(product.slug, "updated", product.id);
     }
 
     return toAdminProductDto(product);

@@ -41,6 +41,7 @@ Open [http://127.0.0.1:3001/docs](http://127.0.0.1:3001/docs).
 | `GET` | `/categories` | 200 | 429, 500 |
 | `GET` | `/products` | 200 | 422, 429, 500 |
 | `GET` | `/products/:slug` | 200 | 404, 429, 500 |
+| `GET` | `/catalog/events` | 200 (SSE) | — |
 | `POST` | `/orders/capture` | 201 | 404, 422, 429, 500 |
 
 ### Admin (`/admin/*`, session cookie)

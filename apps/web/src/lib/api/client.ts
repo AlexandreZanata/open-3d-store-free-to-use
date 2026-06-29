@@ -39,7 +39,7 @@ export async function apiFetch<T>(
     ...requestInit.headers,
   };
 
-  const response = await fetch(url, { ...requestInit, headers });
+  const response = await fetch(url, { ...requestInit, headers, cache: "no-store" });
 
   if (!response.ok) {
     let problem: ProblemDetails;

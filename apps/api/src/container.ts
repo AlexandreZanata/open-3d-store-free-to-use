@@ -11,6 +11,8 @@ import {
 import { createDb, type Database } from "./infrastructure/db/client.js";
 import { Argon2PasswordHasher } from "./infrastructure/auth/Argon2PasswordHasher.js";
 import { CacheService } from "./infrastructure/cache/CacheService.js";
+import { CatalogEventHub } from "./infrastructure/realtime/CatalogEventHub.js";
+import { RedisCatalogEventPublisher } from "./infrastructure/realtime/RedisCatalogEventPublisher.js";
 import {
   createRedisClient,
   disconnectRedis,
@@ -30,6 +32,7 @@ export type AppContainer = {
   db: Database;
   pool: pg.Pool;
   redis: RedisConnection;
+  catalogEventHub: CatalogEventHub;
   getProductBySlug: GetProductBySlug;
   listProducts: ListProducts;
   searchProducts: SearchProducts;
@@ -51,6 +54,9 @@ export async function createContainer(
   const adminSessionRepo = new DrizzleAdminSessionRepository(db);
   const auditLogRepo = new DrizzleAuditLogRepository(db);
   const cache = new CacheService(redis);
+  const catalogEvents = new RedisCatalogEventPublisher(redis);
+  const catalogEventHub = new CatalogEventHub(redis);
+  await catalogEventHub.start();
   const passwordHasher = new Argon2PasswordHasher();
   const assetStorage = new LocalFileStorage(
     config.MODEL_FILES_BASE_PATH,
@@ -67,6 +73,7 @@ export async function createContainer(
     categories: categoryRepo,
     orders: orderRepo,
     cache,
+    catalogEvents,
     passwordHasher,
     assetStorage,
   });
@@ -76,6 +83,7 @@ export async function createContainer(
     db,
     pool,
     redis,
+    catalogEventHub,
     getProductBySlug: new GetProductBySlug(productRepo, cache),
     listProducts: new ListProducts(productRepo, cache),
     searchProducts: new SearchProducts(productRepo, cache),
@@ -90,6 +98,7 @@ export async function createContainer(
 }
 
 export async function destroyContainer(container: AppContainer): Promise<void> {
+  await container.catalogEventHub.stop();
   await container.pool.end();
   await disconnectRedis(container.redis);
 }

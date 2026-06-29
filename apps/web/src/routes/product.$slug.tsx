@@ -7,7 +7,7 @@ import { AppShell } from "@/components/AppShell";
 import { ModelViewer } from "@/components/ModelViewer";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductCardSkeleton, ProductDetailSkeleton } from "@/components/LoadingSkeletons";
-import { productQueryKey } from "@/hooks/useProduct";
+import { productQueryKey, useProduct } from "@/hooks/useProduct";
 import { useProducts } from "@/hooks/useProducts";
 import { ApiError } from "@/lib/api/client";
 import { fetchProductBySlug } from "@/lib/api/products";
@@ -95,37 +95,50 @@ function ProductError({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 function ProductPage() {
-  const product = Route.useLoaderData();
+  const { slug } = Route.useParams();
+  const productQuery = useProduct(slug);
+  const product = productQuery.data;
   const { t } = useTranslation();
   const [fav, setFav] = useState(false);
   const [tab, setTab] = useState<"viewer" | "gallery">("viewer");
   const relatedQuery = useProducts({ limit: 20, page: 1 });
   const related =
-    relatedQuery.data?.data
-      .filter((item) => item.categoryId === product.categoryId && item.slug !== product.slug)
-      .slice(0, 4) ?? [];
+    product && relatedQuery.data?.data
+      ? relatedQuery.data.data
+          .filter((item) => item.categoryId === product.categoryId && item.slug !== product.slug)
+          .slice(0, 4)
+      : [];
 
-  const posterUrl = resolveAssetUrl(product.thumbnailUrl);
-  const modelUrl = product.modelFileUrl ? resolveAssetUrl(product.modelFileUrl) : null;
+  if (!product) {
+    return (
+      <AppShell showBack showSearch={false}>
+        <ProductDetailSkeleton />
+      </AppShell>
+    );
+  }
+
+  const detail = product;
+  const posterUrl = resolveAssetUrl(detail.thumbnailUrl);
+  const modelUrl = detail.modelFileUrl ? resolveAssetUrl(detail.modelFileUrl) : null;
 
   function handleAddToCart() {
-    addToCart(product);
+    addToCart(detail);
   }
 
   return (
-    <AppShell showBack showSearch={false} title={product.name}>
+    <AppShell showBack showSearch={false} title={detail.name}>
       <div className="lg:grid lg:grid-cols-2 lg:gap-10 lg:items-start lg:px-8">
         <section className={`${pagePadding} pt-4 lg:px-0 lg:pt-6`}>
           {tab === "viewer" && modelUrl ? (
             <section aria-label={t("product.viewerLabel")}>
-              <ModelViewer modelUrl={modelUrl} posterUrl={posterUrl} productName={product.name} />
+              <ModelViewer modelUrl={modelUrl} posterUrl={posterUrl} productName={detail.name} />
             </section>
           ) : (
             <div className="relative aspect-square rounded-2xl overflow-hidden bg-muted ring-1 ring-hairline">
               {posterUrl ? (
                 <img
                   src={posterUrl}
-                  alt={product.name}
+                  alt={detail.name}
                   width={800}
                   height={1000}
                   className="absolute inset-0 size-full object-cover"
@@ -140,9 +153,9 @@ function ProductPage() {
                 <Box className="size-3.5" /> {t("product.tabModel")}
               </Tab>
             )}
-            {product.imageUrls.length > 0 && (
+            {detail.imageUrls.length > 0 && (
               <Tab active={tab === "gallery"} onClick={() => setTab("gallery")}>
-                {t("product.galleryCount", { count: product.imageUrls.length })}
+                {t("product.galleryCount", { count: detail.imageUrls.length })}
               </Tab>
             )}
           </div>
@@ -153,24 +166,24 @@ function ProductPage() {
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <h1 className="text-xl font-semibold tracking-tight text-balance lg:text-2xl">
-                  {product.name}
+                  {detail.name}
                 </h1>
-                <p className="mt-2 text-sm text-muted-foreground">{product.shortDescription}</p>
+                <p className="mt-2 text-sm text-muted-foreground">{detail.shortDescription}</p>
               </div>
               <div className="text-right shrink-0">
-                <div className="text-xl font-semibold lg:text-2xl">{product.basePriceDisplay}</div>
+                <div className="text-xl font-semibold lg:text-2xl">{detail.basePriceDisplay}</div>
                 <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                  {t(`material.${product.material}`)}
+                  {t(`material.${detail.material}`)}
                 </div>
               </div>
             </div>
 
             <p className="mt-4 text-sm text-foreground/80 leading-relaxed lg:text-base">
-              {product.description}
+              {detail.description}
             </p>
 
             <div className="mt-4 flex flex-wrap gap-1.5">
-              {product.tags.map((tag) => (
+              {detail.tags.map((tag) => (
                 <span
                   key={tag}
                   className="px-2.5 h-7 inline-flex items-center rounded-full bg-muted text-[11px] text-muted-foreground"
@@ -183,16 +196,16 @@ function ProductPage() {
 
           <section className={`${pagePadding} mt-6 lg:px-0`}>
             <div className="bg-surface ring-1 ring-hairline rounded-2xl divide-y divide-hairline shadow-soft overflow-hidden">
-              <Spec label={t("product.material")} value={t(`material.${product.material}`)} />
+              <Spec label={t("product.material")} value={t(`material.${detail.material}`)} />
               <Spec
                 label={t("product.printTime")}
-                value={t("product.printTimeHours", { hours: product.printTimeHours })}
+                value={t("product.printTimeHours", { hours: detail.printTimeHours })}
               />
               <Spec
                 label={t("product.weight")}
-                value={t("product.weightGrams", { grams: product.weightGrams })}
+                value={t("product.weightGrams", { grams: detail.weightGrams })}
               />
-              <Spec label={t("product.status")} value={t(`status.${product.status}`)} />
+              <Spec label={t("product.status")} value={t(`status.${detail.status}`)} />
             </div>
           </section>
 

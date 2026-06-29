@@ -38,6 +38,6 @@ export class DeleteProduct {
       resourceId: existing.id,
       metadata: {},
     });
-    await this.cacheInvalidator.invalidateProduct(existing.slug);
+    await this.cacheInvalidator.invalidateProduct(existing.slug, "deleted", existing.id);
   }
 }

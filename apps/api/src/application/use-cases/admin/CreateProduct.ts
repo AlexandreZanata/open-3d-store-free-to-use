@@ -48,7 +48,7 @@ export class CreateProduct {
       resourceId: product.id,
       metadata: {},
     });
-    await this.cacheInvalidator.invalidateCatalog();
+    await this.cacheInvalidator.invalidateCatalog("created", product.id);
 
     return toAdminProductDto(product);
   }

@@ -1,4 +1,9 @@
 export type {
+  CatalogChangedAction,
+  CatalogChangedEvent,
+  CatalogChangedResource,
+} from "./catalog-events.types.js";
+export type {
   CaptureOrderInput,
   CaptureOrderItemInput,
   CaptureOrderResult,

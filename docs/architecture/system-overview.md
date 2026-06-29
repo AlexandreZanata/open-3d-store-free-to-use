@@ -25,7 +25,7 @@ User lands on site
 |----------------|--------|
 | Target load | Thousands of concurrent users, spike-tolerant |
 | Workload | Read-heavy (catalog browsing >> order actions) |
-| Real-time | Not required — no WebSockets |
+| Real-time | Optional SSE on `GET /catalog/events` — storefront invalidates React Query on admin catalog writes ([catalog-realtime.md](../features/catalog-realtime.md)) |
 | Caching | Most pages are cacheable |
 
 ## Bounded context

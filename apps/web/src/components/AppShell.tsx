@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { CatalogRealtimeListener } from "@/components/CatalogRealtimeListener";
 import { AppShellDesktopHeader } from "@/components/AppShellDesktopHeader";
 import { AppShellMobileHeader } from "@/components/AppShellMobileHeader";
 import { AppShellMobileNav } from "@/components/AppShellMobileNav";
@@ -24,6 +25,7 @@ export function AppShell({
 
   return (
     <div className="min-h-dvh bg-background text-foreground lg:bg-surface-muted/40">
+      <CatalogRealtimeListener />
       {showTopBar && (
         <>
           <AppShellMobileHeader {...headerProps} />

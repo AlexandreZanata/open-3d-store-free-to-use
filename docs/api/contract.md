@@ -206,6 +206,25 @@ Harness: `agent-rules/10-api-design/idempotency.md` — consider `Idempotency-Ke
 
 Web env: `apps/web/.env.example` (`VITE_API_BASE_URL`, `VITE_ASSETS_BASE_URL`).
 
+---
+
+## `GET /catalog/events` (SSE)
+
+Public Server-Sent Events stream for catalog changes after admin writes. Full spec: [../features/catalog-realtime.md](../features/catalog-realtime.md).
+
+| Property | Value |
+|----------|-------|
+| Auth | None |
+| Response | `text/event-stream` |
+| Event | `catalog.changed` |
+
+**Example:**
+
+```text
+event: catalog.changed
+data: {"type":"catalog.changed","resource":"product","action":"updated","slug":"photo-frame","at":"2026-06-29T12:00:00.000Z"}
+```
+
 Phase 7: `.local/phases/07-frontend-integration.md`
 
 ## Related documents

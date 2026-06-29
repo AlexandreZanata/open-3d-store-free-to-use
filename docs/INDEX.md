@@ -15,6 +15,7 @@
 | **API consumer** | [api/contract.md](api/contract.md) |
 | **Admin API** | [api/admin-contract.md](api/admin-contract.md) → [api/axis-print3d-store-api.md](api/axis-print3d-store-api.md) |
 | **Admin panel** | [features/admin-panel.md](features/admin-panel.md) |
+| **Catalog realtime (SSE)** | [features/catalog-realtime.md](features/catalog-realtime.md) |
 | **DevOps** | [infrastructure/deployment.md](infrastructure/deployment.md) → [operations/ci-cd.md](operations/ci-cd.md) |
 
 ---

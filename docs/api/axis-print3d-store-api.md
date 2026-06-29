@@ -25,8 +25,9 @@ Admin routes: `/api/v1/admin/*` — session cookie `print3d_admin_session` (`cre
 | `GET` | `/products` | Paginated product list + filters |
 | `GET` | `/products/:slug` | Product detail by slug |
 | `POST` | `/orders/capture` | WhatsApp order capture |
+| `GET` | `/catalog/events` | SSE catalog change stream (admin writes) |
 
-Details: [contract.md](contract.md).
+Details: [contract.md](contract.md). Realtime: [../features/catalog-realtime.md](../features/catalog-realtime.md).
 
 ---
 

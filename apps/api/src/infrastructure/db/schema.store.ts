@@ -77,6 +77,7 @@ export const storeUserState = pgTable("store_user_state", {
     .primaryKey()
     .references(() => storeUsers.id, { onDelete: "cascade" }),
   cartItems: jsonb("cart_items").notNull().default([]),
+  checkoutNote: text("checkout_note"),
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),

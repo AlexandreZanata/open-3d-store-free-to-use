@@ -9,6 +9,7 @@ declare module "fastify" {
     adminUser?: AdminAuthDto;
     storeUser?: StoreUserProfile;
     storeCart?: StoreCartItem[];
+    storeCheckoutNote?: string | null;
   }
 
   interface FastifyInstance {

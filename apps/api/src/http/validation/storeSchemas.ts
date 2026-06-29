@@ -15,17 +15,25 @@ export const storeRegisterBodySchema = z.object({
   password: z.string().min(8),
   displayName: z.string().trim().min(1).max(80),
   cart: z.array(storeCartItemSchema).optional(),
+  checkoutNote: z.string().max(500).nullable().optional(),
 });
 
 export const storeLoginBodySchema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
   cart: z.array(storeCartItemSchema).optional(),
+  checkoutNote: z.string().max(500).nullable().optional(),
 });
 
-export const storeUpdateProfileBodySchema = z.object({
-  displayName: z.string().trim().min(1).max(80),
-});
+export const storeUpdateProfileBodySchema = z
+  .object({
+    displayName: z.string().trim().min(1).max(80).optional(),
+    checkoutNote: z.string().max(500).nullable().optional(),
+  })
+  .refine(
+    (value) => value.displayName !== undefined || value.checkoutNote !== undefined,
+    { message: "At least one field is required" },
+  );
 
 export const storeSaveCartBodySchema = z.object({
   cart: z.array(storeCartItemSchema),

@@ -53,10 +53,11 @@ export async function registerStoreAuthRoutes(
           maxAccountsPerDevice: STORE_MAX_ACCOUNTS_PER_DEVICE,
           visitorId: readVisitorIdHeader(request.headers["x-visitor-id"]) ?? undefined,
           localCart: parsed.data.cart,
+          checkoutNote: parsed.data.checkoutNote,
         });
         app.setStoreSessionCookie(reply, result.sessionToken);
         return reply.status(201).send({
-          data: { ...result.user, cart: result.cart },
+          data: { ...result.user, cart: result.cart, checkoutNote: result.checkoutNote },
         });
       } catch (error) {
         if (handleStoreAuthError(error, request, reply)) {
@@ -90,9 +91,12 @@ export async function registerStoreAuthRoutes(
           sessionTtlSeconds: container.config.STORE_SESSION_TTL,
           visitorId: readVisitorIdHeader(request.headers["x-visitor-id"]) ?? undefined,
           localCart: parsed.data.cart,
+          checkoutNote: parsed.data.checkoutNote,
         });
         app.setStoreSessionCookie(reply, result.sessionToken);
-        return reply.send({ data: { ...result.user, cart: result.cart } });
+        return reply.send({
+          data: { ...result.user, cart: result.cart, checkoutNote: result.checkoutNote },
+        });
       } catch (error) {
         if (handleStoreAuthError(error, request, reply)) {
           return;

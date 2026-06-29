@@ -52,6 +52,8 @@ export interface IStoreRegistrationRepository {
 export interface IStoreUserStateRepository {
   getCart(userId: string): Promise<StoreCartItem[]>;
   saveCart(userId: string, cart: StoreCartItem[]): Promise<StoreCartItem[]>;
+  getCheckoutNote(userId: string): Promise<string | null>;
+  saveCheckoutNote(userId: string, note: string | null): Promise<string | null>;
 }
 
 export interface IStoreUserFavoriteRepository {

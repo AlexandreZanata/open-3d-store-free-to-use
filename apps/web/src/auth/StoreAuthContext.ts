@@ -2,6 +2,7 @@ import { createContext } from "react";
 
 export type StoreAuthContextValue = {
   user: { id: string; email: string; displayName: string } | null;
+  checkoutNote: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;

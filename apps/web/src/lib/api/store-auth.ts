@@ -12,9 +12,14 @@ import { apiFetch, apiPatch, apiPost } from "@/lib/api/client";
 import { deviceHeaders } from "@/lib/device";
 import { visitorHeaders } from "@/lib/visitor";
 import { readCart, type CartItem } from "@/lib/cart";
+import { readGuestCheckoutNoteForAuth } from "@/lib/checkoutPreferences";
 
 function authHeaders(): HeadersInit {
   return { ...deviceHeaders(), ...visitorHeaders() };
+}
+
+function withCheckoutContext<T extends StoreLoginRequest | StoreRegisterRequest>(body: T): T {
+  return { ...body, cart: body.cart ?? readCart(), checkoutNote: readGuestCheckoutNoteForAuth() };
 }
 
 export async function fetchStoreMe(): Promise<StoreMeResponse> {
@@ -22,12 +27,12 @@ export async function fetchStoreMe(): Promise<StoreMeResponse> {
 }
 
 export async function registerStoreUser(payload: StoreRegisterRequest): Promise<StoreMeResponse> {
-  const body: StoreRegisterRequest = { ...payload, cart: payload.cart ?? readCart() };
+  const body = withCheckoutContext(payload);
   return apiPost<StoreMeResponse>("/auth/register", body, { headers: authHeaders() });
 }
 
 export async function loginStoreUser(payload: StoreLoginRequest): Promise<StoreMeResponse> {
-  const body: StoreLoginRequest = { ...payload, cart: payload.cart ?? readCart() };
+  const body = withCheckoutContext(payload);
   return apiPost<StoreMeResponse>("/auth/login", body, { headers: authHeaders() });
 }
 

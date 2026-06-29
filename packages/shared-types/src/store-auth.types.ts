@@ -18,6 +18,7 @@ export type StoreUserProfile = {
 export type StoreMeResponse = {
   data: StoreUserProfile & {
     cart: StoreCartItem[];
+    checkoutNote: string | null;
   };
 };
 
@@ -26,16 +27,19 @@ export type StoreRegisterRequest = {
   password: string;
   displayName: string;
   cart?: StoreCartItem[];
+  checkoutNote?: string | null;
 };
 
 export type StoreLoginRequest = {
   email: string;
   password: string;
   cart?: StoreCartItem[];
+  checkoutNote?: string | null;
 };
 
 export type StoreUpdateProfileRequest = {
-  displayName: string;
+  displayName?: string;
+  checkoutNote?: string | null;
 };
 
 export type StoreCartResponse = {

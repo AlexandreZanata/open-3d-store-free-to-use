@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { AppShell } from "@/components/AppShell";
+import { CartCheckoutPanel } from "@/components/CartCheckoutPanel";
+import { useCheckoutForm } from "@/hooks/useCheckoutForm";
 import { captureOrder } from "@/lib/api/orders";
 import { resolveAssetUrl } from "@/lib/assets";
 import {
@@ -17,7 +19,7 @@ import {
 } from "@/lib/cart";
 import { default as i18n } from "@/i18n";
 import { brandPageTitle } from "@/lib/brand";
-import { desktopOnly, mobileOnly, pagePadding, stickyBelowHeader } from "@/lib/layout";
+import { desktopOnly, mobileOnly, pagePadding } from "@/lib/layout";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({
@@ -29,10 +31,9 @@ export const Route = createFileRoute("/cart")({
 function CartPage() {
   const { t } = useTranslation();
   const [items, setItems] = useState<CartItem[]>([]);
-  const [customerName, setCustomerName] = useState("");
-  const [customerNote, setCustomerNote] = useState("");
   const [ordering, setOrdering] = useState(false);
   const [orderError, setOrderError] = useState<string | null>(null);
+  const checkout = useCheckoutForm();
 
   const itemCount = useMemo(() => cartItemCount(items), [items]);
 
@@ -46,20 +47,21 @@ function CartPage() {
   }
 
   async function handleOrder() {
-    if (items.length === 0 || ordering) {
+    if (items.length === 0 || ordering || !checkout.validateBeforeOrder()) {
       return;
     }
     setOrdering(true);
     setOrderError(null);
     try {
+      const customerName = checkout.resolveCustomerName();
       const result = await captureOrder({
         items: items.map((item) => ({
           productId: item.productId,
           quantity: item.quantity,
           selectedOptions: item.selectedOptions,
         })),
-        customerName: customerName.trim() || undefined,
-        customerNote: customerNote.trim() || undefined,
+        customerName: customerName ?? undefined,
+        customerNote: checkout.customerNote.trim() || undefined,
       });
       clearCart();
       setItems([]);
@@ -91,53 +93,19 @@ function CartPage() {
               ))}
             </ul>
 
-            <aside className={`mt-6 lg:mt-0 lg:sticky ${stickyBelowHeader}`}>
-              <div className="bg-surface ring-1 ring-hairline rounded-2xl shadow-soft p-5 lg:p-6 space-y-4">
-                <div className={`${mobileOnly} flex items-center justify-between`}>
-                  <span className="text-sm font-semibold">{t("cart.summary")}</span>
-                  <span className="text-sm text-muted-foreground">
-                    {t("cart.items", { count: itemCount })}
-                  </span>
-                </div>
-                <div className={`${desktopOnly} pb-4 border-b border-hairline`}>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                    {t("cart.summary")}
-                  </p>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    {t("cart.items", { count: itemCount })}
-                  </p>
-                </div>
-
-                <input
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                  placeholder={t("cart.customerName")}
-                  className="w-full h-12 bg-background ring-1 ring-hairline rounded-full px-4 text-sm outline-none focus:ring-foreground/20"
-                />
-                <textarea
-                  value={customerNote}
-                  onChange={(e) => setCustomerNote(e.target.value)}
-                  placeholder={t("cart.customerNote")}
-                  rows={3}
-                  className="w-full bg-background ring-1 ring-hairline rounded-2xl px-4 py-3 text-sm outline-none resize-none focus:ring-foreground/20"
-                />
-
-                {orderError && (
-                  <p className="text-sm text-destructive text-center" role="alert">
-                    {orderError}
-                  </p>
-                )}
-
-                <button
-                  onClick={() => void handleOrder()}
-                  disabled={ordering}
-                  className="w-full h-12 rounded-full bg-foreground text-background text-sm font-semibold press hover:bg-foreground/90 disabled:opacity-60"
-                >
-                  {ordering ? t("cart.ordering") : t("cart.orderWhatsApp")}
-                </button>
-                <p className="text-center text-[11px] text-muted-foreground">{t("cart.orderHint")}</p>
-              </div>
-            </aside>
+            <CartCheckoutPanel
+              itemCount={itemCount}
+              customerName={checkout.customerName}
+              customerNote={checkout.customerNote}
+              nameError={checkout.nameError}
+              nameReadOnly={checkout.nameReadOnly}
+              isAuthenticated={checkout.isAuthenticated}
+              ordering={ordering}
+              orderError={orderError}
+              onNameChange={checkout.onNameChange}
+              onNoteChange={checkout.onNoteChange}
+              onOrder={() => void handleOrder()}
+            />
           </div>
         </div>
       )}

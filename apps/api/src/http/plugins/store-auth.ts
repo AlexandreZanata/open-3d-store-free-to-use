@@ -59,8 +59,10 @@ async function attachStoreUser(
     });
     request.storeUser = result.user;
     request.storeCart = result.cart;
+    request.storeCheckoutNote = result.checkoutNote;
   } catch {
     delete request.storeUser;
     delete request.storeCart;
+    delete request.storeCheckoutNote;
   }
 }

@@ -24,6 +24,7 @@ export class RefreshStoreSession {
   async execute(input: RefreshStoreSessionInput): Promise<{
     user: ReturnType<typeof toStoreUserProfile>;
     cart: StoreCartItem[];
+    checkoutNote: string | null;
   }> {
     const session = await this.sessions.findByTokenHash(input.tokenHash);
     if (session === null) {
@@ -47,7 +48,8 @@ export class RefreshStoreSession {
     }
 
     const cart = await this.state.getCart(user.id);
-    return { user: toStoreUserProfile(user), cart };
+    const checkoutNote = await this.state.getCheckoutNote(user.id);
+    return { user: toStoreUserProfile(user), cart, checkoutNote };
   }
 }
 
@@ -60,11 +62,33 @@ export class LogoutStoreUser {
 }
 
 export class UpdateStoreProfile {
-  constructor(private readonly users: IStoreUserRepository) {}
+  constructor(
+    private readonly users: IStoreUserRepository,
+    private readonly state: IStoreUserStateRepository,
+  ) {}
 
-  async execute(userId: string, displayName: string) {
-    const user = await this.users.updateProfile(userId, displayName);
-    return toStoreUserProfile(user);
+  async execute(
+    userId: string,
+    input: { displayName?: string | undefined; checkoutNote?: string | null | undefined },
+  ): Promise<{
+    user: ReturnType<typeof toStoreUserProfile>;
+    checkoutNote: string | null;
+  }> {
+    const current = await this.users.findById(userId);
+    if (current === null) {
+      throw new UnauthorizedError();
+    }
+
+    const user =
+      input.displayName !== undefined
+        ? await this.users.updateProfile(userId, input.displayName)
+        : current;
+    const checkoutNote =
+      input.checkoutNote !== undefined
+        ? await this.state.saveCheckoutNote(userId, input.checkoutNote)
+        : await this.state.getCheckoutNote(userId);
+
+    return { user: toStoreUserProfile(user), checkoutNote };
   }
 }
 

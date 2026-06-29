@@ -32,4 +32,26 @@ export class DrizzleStoreUserStateRepository implements IStoreUserStateRepositor
       });
     return cart;
   }
+
+  async getCheckoutNote(userId: string): Promise<string | null> {
+    const rows = await this.db
+      .select({ checkoutNote: storeUserState.checkoutNote })
+      .from(storeUserState)
+      .where(eq(storeUserState.storeUserId, userId))
+      .limit(1);
+    return rows[0]?.checkoutNote ?? null;
+  }
+
+  async saveCheckoutNote(userId: string, note: string | null): Promise<string | null> {
+    const trimmed = note?.trim() ?? "";
+    const value = trimmed.length > 0 ? trimmed : null;
+    await this.db
+      .insert(storeUserState)
+      .values({ storeUserId: userId, checkoutNote: value, updatedAt: new Date() })
+      .onConflictDoUpdate({
+        target: storeUserState.storeUserId,
+        set: { checkoutNote: value, updatedAt: new Date() },
+      });
+    return value;
+  }
 }

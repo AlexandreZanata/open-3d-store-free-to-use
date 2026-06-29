@@ -13,6 +13,7 @@ import {
 } from "@/lib/api/store-auth";
 import { ApiError } from "@/lib/api/client";
 import { writeCart } from "@/lib/cart";
+import { clearGuestCheckoutPreferences } from "@/lib/checkoutPreferences";
 
 export function StoreAuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
@@ -34,6 +35,7 @@ export function StoreAuthProvider({ children }: { children: ReactNode }) {
     (data: Awaited<ReturnType<typeof fetchStoreMe>>) => {
       queryClient.setQueryData(storeMeQueryKey, data);
       writeCart(data.data.cart);
+      clearGuestCheckoutPreferences();
       window.dispatchEvent(new CustomEvent("print3d-cart-change"));
       void queryClient.invalidateQueries({ queryKey: favoritesQueryKey });
     },
@@ -85,6 +87,7 @@ export function StoreAuthProvider({ children }: { children: ReactNode }) {
       user: user
         ? { id: user.id, email: user.email, displayName: user.displayName }
         : null,
+      checkoutNote: user?.checkoutNote ?? null,
       isLoading: query.isLoading,
       isAuthenticated: user !== null,
       login,

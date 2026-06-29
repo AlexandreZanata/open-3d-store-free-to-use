@@ -28,12 +28,14 @@ export type RegisterStoreUserInput = {
   maxAccountsPerDevice: number;
   visitorId?: string | undefined;
   localCart?: StoreCartItem[] | undefined;
+  checkoutNote?: string | null | undefined;
 };
 
 export type StoreAuthResult = {
   user: ReturnType<typeof toStoreUserProfile>;
   sessionToken: string;
   cart: StoreCartItem[];
+  checkoutNote: string | null;
 };
 
 export class RegisterStoreUser {
@@ -79,9 +81,10 @@ export class RegisterStoreUser {
 
     const mergedCart = mergeStoreCarts([], input.localCart ?? []);
     const cart = await this.state.saveCart(user.id, mergedCart);
+    const checkoutNote = await this.state.saveCheckoutNote(user.id, input.checkoutNote ?? null);
     const session = await this.createSession(user.id, input);
 
-    return { user: toStoreUserProfile(user), sessionToken: session.raw, cart };
+    return { user: toStoreUserProfile(user), sessionToken: session.raw, cart, checkoutNote };
   }
 
   private async createSession(
@@ -108,6 +111,7 @@ export type LoginStoreUserInput = {
   sessionTtlSeconds: number;
   visitorId?: string | undefined;
   localCart?: StoreCartItem[] | undefined;
+  checkoutNote?: string | null | undefined;
 };
 
 export class LoginStoreUser {
@@ -138,6 +142,10 @@ export class LoginStoreUser {
       user.id,
       mergeStoreCarts(serverCart, input.localCart ?? []),
     );
+    const checkoutNote =
+      input.checkoutNote !== undefined
+        ? await this.state.saveCheckoutNote(user.id, input.checkoutNote)
+        : await this.state.getCheckoutNote(user.id);
 
     const { raw, hash } = createSessionToken();
     await this.sessions.create({
@@ -148,6 +156,6 @@ export class LoginStoreUser {
       userAgent: input.userAgent,
     });
 
-    return { user: toStoreUserProfile(user), sessionToken: raw, cart };
+    return { user: toStoreUserProfile(user), sessionToken: raw, cart, checkoutNote };
   }
 }

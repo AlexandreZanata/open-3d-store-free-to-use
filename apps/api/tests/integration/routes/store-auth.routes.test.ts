@@ -82,6 +82,16 @@ describe("Store user auth (contract)", () => {
     expect(me.statusCode).toBe(200);
     expect(me.json().data.displayName).toBe("Maria");
     expect(me.json().data.cart[0].quantity).toBe(2);
+    expect(me.json().data.checkoutNote).toBeNull();
+
+    const patchNote = await app.inject({
+      method: "PATCH",
+      url: "/api/v1/me",
+      headers: { cookie: `print3d_store_session=${cookie!.value}` },
+      payload: { checkoutNote: "Please call before delivery" },
+    });
+    expect(patchNote.statusCode).toBe(200);
+    expect(patchNote.json().data.checkoutNote).toBe("Please call before delivery");
 
     const logout = await app.inject({
       method: "POST",

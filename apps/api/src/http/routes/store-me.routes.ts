@@ -1,4 +1,4 @@
-import type { FastifyInstance } from "fastify";
+import type { FastifyInstance, FastifyRequest } from "fastify";
 
 import type { AppContainer } from "../../container.js";
 import { sendProblem } from "../errors/problemDetails.js";
@@ -7,17 +7,20 @@ import {
   storeUpdateProfileBodySchema,
 } from "../validation/storeSchemas.js";
 
+function buildMePayload(request: FastifyRequest) {
+  return {
+    ...request.storeUser!,
+    cart: request.storeCart ?? [],
+    checkoutNote: request.storeCheckoutNote ?? null,
+  };
+}
+
 export async function registerStoreMeRoutes(
   app: FastifyInstance,
   container: AppContainer,
 ): Promise<void> {
   app.get("/me", { preHandler: app.requireStoreUser }, async (request, reply) => {
-    return reply.send({
-      data: {
-        ...request.storeUser!,
-        cart: request.storeCart ?? [],
-      },
-    });
+    return reply.send({ data: buildMePayload(request) });
   });
 
   app.patch("/me", { preHandler: app.requireStoreUser }, async (request, reply) => {
@@ -27,14 +30,15 @@ export async function registerStoreMeRoutes(
       return;
     }
 
-    const user = await container.store.updateStoreProfile.execute(
+    const updated = await container.store.updateStoreProfile.execute(
       request.storeUser!.id,
-      parsed.data.displayName,
+      parsed.data,
     );
     return reply.send({
       data: {
-        ...user,
+        ...updated.user,
         cart: request.storeCart ?? [],
+        checkoutNote: updated.checkoutNote,
       },
     });
   });

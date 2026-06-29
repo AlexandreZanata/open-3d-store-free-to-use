@@ -51,7 +51,7 @@ export function createStoreUseCases(deps: {
     ),
     refreshStoreSession: new RefreshStoreSession(deps.sessions, deps.users, deps.state),
     logoutStoreUser: new LogoutStoreUser(deps.sessions),
-    updateStoreProfile: new UpdateStoreProfile(deps.users),
+    updateStoreProfile: new UpdateStoreProfile(deps.users, deps.state),
     saveStoreCart: new SaveStoreCart(deps.state),
   };
 }

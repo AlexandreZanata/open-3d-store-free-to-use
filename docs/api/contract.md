@@ -175,7 +175,7 @@ Anonymous. No auth header.
 }
 ```
 
-Validation: Zod at HTTP boundary. Required product options MUST be present.
+Validation: Zod at HTTP boundary. Required product options MUST be present. **No auth required** — guests and signed-in shoppers use the same endpoint. The web UI requires `customerName` for guests; signed-in shoppers send profile `displayName` automatically.
 
 ### Response 201
 
@@ -257,12 +257,13 @@ Optional shopper accounts for cart and favorites persistence. Full guide: [../fe
     "id": "01935...",
     "email": "maria@example.com",
     "displayName": "Maria",
-    "cart": []
+    "cart": [],
+    "checkoutNote": null
   }
 }
 ```
 
-Sets session cookie. Optional body `cart[]` merges with server cart.
+Sets session cookie. Optional body `cart[]` merges with server cart. Optional `checkoutNote` persists default shop note.
 
 ### `POST /auth/login`
 
@@ -282,14 +283,15 @@ Sets session cookie. Optional body `cart[]` merges with server cart.
     "id": "01935...",
     "email": "maria@example.com",
     "displayName": "Maria",
-    "cart": []
+    "cart": [],
+    "checkoutNote": "Please call before delivery"
   }
 }
 ```
 
 ### `PATCH /me`
 
-Body: `{ "displayName": "Maria" }` — **Response 200:** same as `GET /me`.
+Body: `{ "displayName"?: "Maria", "checkoutNote"?: "..." | null }` — at least one field required. **Response 200:** same as `GET /me`.
 
 ### `PUT /me/cart`
 

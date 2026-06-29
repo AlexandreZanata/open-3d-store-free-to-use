@@ -64,6 +64,13 @@
       "when": 1782754000000,
       "tag": "0009_store_users",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1782758000000,
+      "tag": "0010_store_user_checkout_note",
+      "breakpoints": true
     }
   ]
 }

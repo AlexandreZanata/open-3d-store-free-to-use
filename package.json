@@ -1,5 +1,6 @@
 {
   "name": "open-3d-store-free-to-use",
+  "version": "1.0.1",
   "private": true,
   "packageManager": "pnpm@9.15.9",
   "scripts": {
@@ -19,6 +20,7 @@
     "e2e:ui": "playwright test --ui",
     "test:infra": "node --test scripts/infra-contract.test.mjs",
     "brand:icons": "pnpm --filter @print3d/api exec node scripts/generateBrandIcons.mjs",
+    "version:bump": "node scripts/bump-version.mjs",
     "prepare": "husky"
   },
   "lint-staged": {

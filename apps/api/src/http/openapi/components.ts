@@ -187,10 +187,11 @@ export const captureOrderResultSchema = {
 
 export const healthResponseSchema = {
   type: "object",
-  required: ["status", "uptime", "timestamp"],
+  required: ["status", "uptime", "timestamp", "version"],
   properties: {
     status: { type: "string", enum: ["ok"] },
     uptime: { type: "integer", description: "Process uptime in seconds" },
     timestamp: { type: "string", format: "date-time" },
+    version: { type: "string", description: "Release semver", example: "1.0.0" },
   },
 } as const;

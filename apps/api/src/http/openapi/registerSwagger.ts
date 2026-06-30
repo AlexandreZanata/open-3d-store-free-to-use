@@ -3,6 +3,7 @@ import fastifySwaggerUi from "@fastify/swagger-ui";
 import type { FastifyInstance } from "fastify";
 
 import type { AppConfig } from "../../config.js";
+import { APP_VERSION } from "../../appVersion.js";
 import * as components from "./components.js";
 
 export async function registerSwagger(
@@ -20,7 +21,7 @@ export async function registerSwagger(
           "REST API v1 for the Corvo 3D print catalog, WhatsApp order capture, and admin panel. " +
           "Public contract: docs/api/contract.md. Admin contract: docs/api/admin-contract.md. " +
           "Route index: docs/api/axis-print3d-store-api.md. Errors: RFC 7807.",
-        version: "1.0.0",
+        version: APP_VERSION,
         contact: {
           name: "API Support",
           url: "https://github.com/AlexandreZanata/open-3d-store-free-to-use",

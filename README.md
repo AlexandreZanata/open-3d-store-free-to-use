@@ -18,7 +18,7 @@ This VPS also hosts **another site on a different domain**. Print3d uses its own
 
 ```bash
 cp production/vps.env.domain.example production/vps.env
-# Edit VPS_HOST to your VPS IP; keep DOMAIN=corvo3d.com.br and VPS_USE_HTTPS=1
+# REQUIRED: edit production/vps.env — VPS_HOST=YOUR_VPS_IP, DOMAIN=corvo3d.com.br, VPS_USE_HTTPS=1
 
 ./production/deploy-to-vps.sh --env-only
 ./production/deploy-to-vps.sh
@@ -26,8 +26,10 @@ cp production/vps.env.domain.example production/vps.env
 # SSH — SSL if certbot not run yet:
 ssh -i production/ssh/id_ed25519_print3d root@YOUR_VPS_IP
 cd /var/www/print3d
-certbot --nginx -d corvo3d.com.br -d www.corvo3d.com.br -d admin.corvo3d.com.br
+./infra/scripts/complete-print3d-domain-ssl.sh
 ```
+
+If **corvo3d.com.br** shows another site, see [shared-vps-multi-domain.md](docs/infrastructure/shared-vps-multi-domain.md#why-corvo3dcombr-shows-the-other-site).
 
 Full checklist (multi-site VPS, Cloudflare, manual QA): [docs/infrastructure/shared-vps-multi-domain.md](docs/infrastructure/shared-vps-multi-domain.md)
 

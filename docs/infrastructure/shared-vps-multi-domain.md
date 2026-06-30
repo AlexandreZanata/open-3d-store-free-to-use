@@ -14,6 +14,29 @@ Print3d API listens on **127.0.0.1:3101** (not 3001) to avoid clashing with othe
 
 ---
 
+## Why corvo3d.com.br shows the other site
+
+| Layer | Symptom | Cause |
+|-------|---------|-------|
+| Cloudflare → origin **:443** | Wedding HTML on `corvo3d.com.br` | Print3d has **no HTTPS vhost** yet; the other site's `server` block is `default_server` on 443 |
+| Origin **:80** | `Blocked request… allowedHosts` | Nginx routes to print3d, but Vite preview rejected `corvo3d.com.br` until `preview.allowedHosts` is set |
+
+**Fix (does not touch the wedding config):**
+
+1. `./production/deploy-to-vps.sh` — ships Vite host fix + nginx bootstrap
+2. On VPS: `./infra/scripts/complete-print3d-domain-ssl.sh` — certbot + HTTPS `print3d.conf`
+3. Cloudflare → **Full (strict)**
+
+The wedding site keeps `server_name casamentovitoriaejoao.net.br` only. If it still catches unknown hosts, on the VPS remove `default_server` from the wedding `listen 443` line (edit that site's conf only).
+
+Diagnose on VPS:
+
+```bash
+./infra/scripts/diagnose-nginx-vhosts.sh
+```
+
+---
+
 ## Cloudflare — corvo3d.com.br
 
 DNS → Records (Proxied / orange cloud):
@@ -62,16 +85,8 @@ cd /var/www/print3d
 # Confirm both sites are enabled (do NOT delete the other site's .conf)
 ls -la /etc/nginx/sites-enabled/
 
-# Domain vhost (safe — only touches print3d-* files)
-./infra/scripts/install-nginx-domain.sh
-
-# Let's Encrypt (all three hostnames)
-certbot --nginx \
-  -d corvo3d.com.br \
-  -d www.corvo3d.com.br \
-  -d admin.corvo3d.com.br
-
-nginx -t && systemctl reload nginx
+# Domain vhost (HTTP bootstrap if certs missing — safe for other sites on :80/:443)
+./infra/scripts/complete-print3d-domain-ssl.sh
 pm2 status
 ```
 

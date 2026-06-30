@@ -38,6 +38,19 @@ application/wasm model/gltf-binary model/gltf+json
 | `/models/` (filesystem, `^~` prefix) | 30 days |
 | `/api/` | Set by API (Cache-Control from Fastify) |
 
+## SSL bootstrap (first domain deploy)
+
+`install-nginx-domain.sh` installs `nginx.domain-bootstrap.conf` (HTTP only) when
+`/etc/letsencrypt/live/<domain>/fullchain.pem` is missing. Run
+`complete-print3d-domain-ssl.sh` on the VPS (certbot + HTTPS template).
+
+On a **shared VPS**, Cloudflare connects to origin port **443**. Until print3d has
+its own SSL `server_name`, the other site's `default_server` block answers for
+`corvo3d.com.br`. See [shared-vps-multi-domain.md](shared-vps-multi-domain.md).
+
+Vite preview must allow the production hostname (`preview.allowedHosts` in
+`apps/web/vite.config.ts`, derived from `VITE_ASSETS_BASE_URL`).
+
 ## API proxy headers
 
 ```

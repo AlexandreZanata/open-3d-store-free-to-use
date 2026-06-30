@@ -185,6 +185,18 @@ describe("VPS rsync deploy — docs/infrastructure/deployment.md", () => {
     assert.match(script, /install-nginx-ip\.sh/);
   });
 
+  test("install-nginx-domain.sh uses HTTP bootstrap when certs are missing", () => {
+    const script = readRepo("infra/scripts/install-nginx-domain.sh");
+    assert.match(script, /nginx\.domain-bootstrap\.conf/);
+    assert.match(script, /letsencrypt\/live/);
+  });
+
+  test("complete-print3d-domain-ssl.sh runs certbot then HTTPS template", () => {
+    const script = readRepo("infra/scripts/complete-print3d-domain-ssl.sh");
+    assert.match(script, /certbot --nginx/);
+    assert.match(script, /install-nginx-domain\.sh/);
+  });
+
   test("deploy-to-vps.sh sets VITE_INSTAGRAM_URL for storefront build", () => {
     const script = readRepo("production/deploy-to-vps.sh");
     assert.match(script, /VITE_INSTAGRAM_URL/);

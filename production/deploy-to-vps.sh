@@ -52,6 +52,10 @@ prepare_production_env() {
   source "${VPS_ENV}"
 
   : "${VPS_HOST:?set VPS_HOST in production/vps.env}"
+  if [[ "${VPS_HOST}" == "YOUR_VPS_IP" || "${VPS_HOST}" == "your_vps_ip" ]]; then
+    echo "deploy-to-vps.sh: edit production/vps.env — set VPS_HOST to your VPS IPv4 (e.g. 72.60.147.2)" >&2
+    exit 1
+  fi
   DOMAIN="${DOMAIN:-${VPS_HOST}}"
   VPS_USE_HTTPS="${VPS_USE_HTTPS:-0}"
   NGINX_HTTP_PORT="${NGINX_HTTP_PORT:-80}"

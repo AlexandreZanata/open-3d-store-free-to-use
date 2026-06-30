@@ -31,6 +31,8 @@ apps/api/storage/
 
 # Production module — secrets and VPS deploy tooling stay local (see production/env/README.md)
 production/**
+!production/README.md
+!production/deploy-to-vps.sh
 !production/env/
 production/env/**
 !production/env/README.md
@@ -42,6 +44,8 @@ production/ssh/**
 # VPS / production ops (local or server only — never push to GitHub)
 infra/pm2.ecosystem.config.js
 infra/scripts/vps-*.sh
+!infra/scripts/vps-full-deploy.sh
+!infra/scripts/vps-seed.sh
 infra/scripts/repair-api-port.sh
 infra/scripts/sync-to-vps.sh
 infra/scripts/bootstrap-vps.sh

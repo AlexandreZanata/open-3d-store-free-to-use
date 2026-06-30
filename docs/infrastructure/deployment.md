@@ -58,6 +58,18 @@ Build reads `CORS_ORIGIN` from `apps/api/.env` to derive `VITE_*` URLs when `app
 
 Sources `apps/api/.env`, then runs `drizzle-kit migrate` in `apps/api/`.
 
+## Manual VPS deploy (`production/deploy-to-vps.sh`)
+
+Rsync deploy from your machine (see [../../production/README.md](../../production/README.md)):
+
+| Command | Seed |
+|---------|------|
+| `./production/deploy-to-vps.sh` | **No** — migrate + build + PM2 + nginx only |
+| `./production/deploy-to-vps.sh --seed` | **Yes** — runs `infra/scripts/vps-seed.sh` (`pnpm db:seed`, hero GLB, thumbnails) |
+| `./production/deploy-to-vps.sh --env-only` | No — regenerates `production/env/*.env` locally |
+
+On the VPS, `vps-full-deploy.sh` runs seed only when `RUN_VPS_SEED=1` (set by `--seed` on the deploy script).
+
 ## First deploy (VPS checklist)
 
 Full walkthrough: [vps-provisioning.md](vps-provisioning.md) · DNS: [cloudflare-dns.md](cloudflare-dns.md)

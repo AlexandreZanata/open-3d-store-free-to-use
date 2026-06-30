@@ -149,6 +149,23 @@ describe("vps provisioning scripts — docs/infrastructure/vps-provisioning.md",
   });
 });
 
+describe("VPS rsync deploy — docs/infrastructure/deployment.md", () => {
+  test("deploy-to-vps.sh seeds only with --seed", () => {
+    const script = readRepo("production/deploy-to-vps.sh");
+    assert.match(script, /--seed/);
+    assert.match(script, /RUN_VPS_SEED/);
+    assert.match(script, /export RUN_VPS_SEED=\$\{RUN_VPS_SEED\}/);
+    assert.doesNotMatch(script, /SKIP_VPS_SEED/);
+  });
+
+  test("vps-full-deploy.sh runs vps-seed.sh only when RUN_VPS_SEED=1", () => {
+    const script = readRepo("infra/scripts/vps-full-deploy.sh");
+    assert.match(script, /RUN_VPS_SEED/);
+    assert.match(script, /vps-seed\.sh/);
+    assert.doesNotMatch(script, /SKIP_VPS_SEED/);
+  });
+});
+
 describe("ci.yml contract — docs/operations/ci-cd.md", () => {
   const workflow = readRepo(".github/workflows/ci.yml");
 

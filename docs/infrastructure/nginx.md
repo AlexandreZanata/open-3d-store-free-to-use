@@ -20,7 +20,7 @@
 | `print3d_web` | `127.0.0.1:4173` | TanStack Start SSR (`pnpm --filter @print3d/web start`) |
 | `print3d_admin` | `127.0.0.1:4174` | Admin SPA (`pnpm --filter @print3d/admin preview`) |
 
-Replace `yourdomain.com` in the template before enabling the site. Admin subdomain: `admin.yourdomain.com`.
+Replace `yourdomain.com` in the template before enabling the site. Admin subdomain: `admin.yourdomain.com` — base path `/` (not `/admin/`). Nginx serves `admin.<domain>` `/assets/` from `apps/admin/dist/assets/`.
 
 ## Gzip types
 

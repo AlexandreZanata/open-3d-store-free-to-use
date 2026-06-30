@@ -72,6 +72,7 @@ describe("nginx.conf contract — docs/infrastructure/nginx.md", () => {
     assert.match(config, /alias \/var\/www\/print3d\/models\//);
     assert.match(config, /location \^~ \/assets\//);
     assert.match(config, /apps\/web\/dist\/client\/assets\//);
+    assert.match(config, /apps\/admin\/dist\/assets\//);
     assert.match(config, /location \/api\//);
     assert.match(config, /127\.0\.0\.1:3101/);
     assert.match(config, /127\.0\.0\.1:4173/);

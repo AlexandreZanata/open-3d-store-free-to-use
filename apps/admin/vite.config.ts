@@ -22,7 +22,11 @@ function resolveDevApiOrigin(env: Record<string, string>): string {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const apiOrigin = resolveDevApiOrigin(env);
-  const adminBase = env.VITE_ADMIN_BASE_PATH?.replace(/\/$/, "") ?? "";
+  // Subdomain deploy (admin.corvo3d.com.br): base must be /, not /admin/
+  const isSubdomainDeploy = Boolean(env.VITE_ADMIN_PUBLIC_HOST);
+  const adminBase = isSubdomainDeploy
+    ? ""
+    : (env.VITE_ADMIN_BASE_PATH?.replace(/\/$/, "") ?? "");
   const base = adminBase ? `${adminBase}/` : "/";
 
   return {

@@ -145,6 +145,9 @@ VITE_WHATSAPP_PHONE=${WHATSAPP_PHONE}
 ${admin_base_path:+VITE_ADMIN_BASE_PATH=${admin_base_path}}
 ${VPS_USE_HTTPS:+VITE_ADMIN_PUBLIC_HOST=admin.${DOMAIN}}
 EOF
+  if [[ "${VPS_USE_HTTPS}" == "1" ]]; then
+    echo "deploy-to-vps.sh: admin subdomain mode — no VITE_ADMIN_BASE_PATH (use https://admin.${DOMAIN}/)"
+  fi
 
   chmod 600 "${ENV_DIR}/"*.env
   echo "deploy-to-vps.sh: env ready (${base}, WhatsApp ${WHATSAPP_PHONE})"

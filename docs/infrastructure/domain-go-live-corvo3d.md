@@ -169,7 +169,7 @@ Do **not** leave **Flexible** once origin has Let's Encrypt — causes redirect 
 |-------|----------------|
 | API JSON | `curl -sS https://corvo3d.com.br/api/v1/categories \| head -c 200` |
 | Storefront | Open **https://corvo3d.com.br** (mobile: thumbnails after navigation) |
-| Admin | **https://admin.corvo3d.com.br/login** |
+| Admin | **https://admin.corvo3d.com.br/login** (not `/admin/` on subdomain) |
 | Other site | Open existing domain — must be unchanged |
 | VPS diagnose | `./infra/scripts/diagnose-nginx-vhosts.sh` |
 
@@ -187,6 +187,7 @@ Success: API returns JSON (`[{"id":…`), not `Cannot GET` or wedding HTML.
 | `cannot load certificate … fullchain.pem` | HTTPS nginx before certbot | Re-run `./infra/scripts/complete-print3d-domain-ssl.sh` (uses HTTP bootstrap first) |
 | **corvo3d.com.br** shows **another site** | No print3d HTTPS vhost; other site is `default_server` on `:443` | Finish Step 4 (certbot + `install-nginx-domain.sh`) |
 | `Blocked request… admin.corvo3d.com.br is not allowed` | Vite admin preview host check | Set `VITE_ADMIN_PUBLIC_HOST` in `admin.env`; redeploy; `pm2 reload print3d-admin` |
+| JS `text/plain` / MIME blocked on admin | Stale `VITE_ADMIN_BASE_PATH=/admin` with subdomain URL | Use **https://admin.corvo3d.com.br/** (not `/admin/`); redeploy; nginx serves `/assets/` from `apps/admin/dist` |
 | `Cannot GET /api/v1/categories` | Request hits wrong vhost (not print3d API) | Complete SSL + nginx; check `diagnose-nginx-vhosts.sh` |
 | Wedding site broke | Removed other site's `sites-enabled` | Re-enable their vhost only; print3d uses `print3d.conf` |
 | certbot port 80 busy | Another vhost owns default HTTP | Use `certbot certonly --webroot` or coordinate with other site — [cloudflare-dns.md#7-troubleshooting](cloudflare-dns.md#7-troubleshooting) |

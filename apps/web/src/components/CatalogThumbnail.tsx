@@ -1,9 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
-import {
-  isCatalogThumbnailWarm,
-  markCatalogThumbnailWarm,
-} from "@/lib/catalogThumbnailCache";
+import { markCatalogThumbnailWarm } from "@/lib/catalogThumbnailCache";
 import { cn } from "@/lib/utils";
 
 type CatalogThumbnailProps = {
@@ -15,6 +12,10 @@ type CatalogThumbnailProps = {
   className?: string;
 };
 
+function isImgDecoded(img: HTMLImageElement | null): boolean {
+  return Boolean(img?.complete && img.naturalWidth > 0);
+}
+
 /** Product/category thumbnail — avoids blank tiles when returning to cached catalog views. */
 export function CatalogThumbnail({
   src,
@@ -25,18 +26,14 @@ export function CatalogThumbnail({
   className,
 }: CatalogThumbnailProps) {
   const imgRef = useRef<HTMLImageElement>(null);
-  const [loaded, setLoaded] = useState(() => isCatalogThumbnailWarm(src));
+  const [loaded, setLoaded] = useState(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!src) {
       return;
     }
-    if (isCatalogThumbnailWarm(src)) {
-      setLoaded(true);
-      return;
-    }
     const img = imgRef.current;
-    if (img?.complete && img.naturalWidth > 0) {
+    if (isImgDecoded(img)) {
       markCatalogThumbnailWarm(src);
       setLoaded(true);
     }
@@ -49,6 +46,7 @@ export function CatalogThumbnail({
   return (
     <img
       ref={imgRef}
+      data-testid="catalog-thumbnail"
       src={src}
       alt={alt}
       width={width}

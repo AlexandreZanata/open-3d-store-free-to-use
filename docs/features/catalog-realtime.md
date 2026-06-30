@@ -55,9 +55,23 @@ TanStack Query refetches visible pages automatically. The storefront API client 
 | `placeholderData: keepPreviousData` | products, categories, product detail | SSE refetch keeps last data on screen |
 | SSE `refetchType` | `active` | Refetch only mounted views; stale cache still updates on return |
 | Skeleton gate | `isCatalogQueryPending` | Blank skeleton only when `data === undefined` |
-| Thumbnails | `CatalogThumbnail` + `warmHomeCatalogImages` | Session image pool + eager home tiles survive route remount |
+| Thumbnails | `CatalogThumbnail` + `warmHomeCatalogImages` | Session image pool keeps **decoded** bitmaps; tiles must not show `opacity-100` until decode is confirmed |
 
 When `catalog.changed` fires, queries are **invalidated** (marked stale) and active observers refetch in the background — the UI must not flash empty lists while refetching.
+
+### Thumbnail warm cache
+
+`catalogThumbnailCache` preloads home/category thumbnail URLs into an in-memory `Image` pool (`warmHomeCatalogImages` on home loader + data updates).
+
+| Rule | Requirement |
+|------|-------------|
+| Warm definition | A URL is warm only after its pool `Image` fires `onload` with `naturalWidth > 0` |
+| Failed preload | `onerror` must **not** mark the URL warm (retry on next navigation) |
+| Remounted tiles | `CatalogThumbnail` must detect browser-cached decode (`img.complete`) **before paint** (`useLayoutEffect`) |
+| Visibility gate | Never render `opacity-100` on an `<img>` that has not decoded yet |
+| Return navigation | Home → product (or any page) → home within `gcTime`: thumbnails visible within **300 ms** — no multi-second blank or gray tiles |
+
+Changed thumbnail URLs after SSE still reload normally; unchanged URLs must reuse the session pool or HTTP cache without a blank flash.
 
 ## Development
 
@@ -85,8 +99,8 @@ Manual check:
 | Layer | File |
 |-------|------|
 | API integration | `apps/api/tests/integration/routes/catalog-events.routes.test.ts` |
-| Web unit | `apps/web/tests/unit/useCatalogRealtime.test.ts`, `apps/web/tests/unit/catalogQuery.test.ts`, `apps/web/tests/unit/catalogThumbnailCache.test.ts` |
-| E2E | `e2e/catalog-realtime.spec.ts` |
+| Web unit | `apps/web/tests/unit/useCatalogRealtime.test.ts`, `apps/web/tests/unit/catalogQuery.test.ts`, `apps/web/tests/unit/catalogThumbnailCache.test.ts`, `apps/web/tests/unit/CatalogThumbnail.test.tsx` |
+| E2E | `e2e/catalog-realtime.spec.ts`, `e2e/catalog-navigation.spec.ts` |
 
 **Note:** SSE responses set `Access-Control-Allow-Origin` manually (`buildSseCorsHeaders`) because `reply.hijack()` bypasses `@fastify/cors`.
 

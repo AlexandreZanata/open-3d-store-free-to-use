@@ -17,7 +17,7 @@ Implementation tokens live in `apps/web/src/lib/layout.ts`.
 |---------|--------|
 | **Header** | `AppShellMobileHeader` — fixed top bar (`h-14`), main content uses `mobileTopPad` |
 | **Navigation** | Fixed bottom 5-tab bar (`h-[3.75rem]`, `z-50`); active tab uses **filled black icon** (no accent dot) |
-| **Home** | Hero card + category pills + horizontal product rails; mobile hero tile shows rotating **3D Corvo logo** (`HeroLogoViewer` compact) |
+| **Home** | Hero card + category pills + horizontal product rails; mobile hero tile shows rotating **3D Corvo logo** (`HeroLogoViewer` compact); product thumbnails stay visible when returning via bottom nav (no multi-second blank flash — see [catalog-realtime.md](catalog-realtime.md) thumbnail warm cache) |
 | **Shell** | `max-w-2xl`, flex column with site footer above tab bar |
 
 ### Site footer (`AppShellFooter`)
@@ -103,6 +103,7 @@ Separate desktop-only home — mobile home is wrapped in `lg:hidden`:
 | E2E product | `e2e/product-detail.spec.ts` — 3D viewer + gallery carousel |
 | E2E mobile | `e2e/desktop-layout.spec.ts` — 390×844 preserved UI |
 | E2E mobile UX | `e2e/mobile-ux.spec.ts` — guest favorites, sticky bar vs footer, favorites empty state |
+| E2E catalog nav | `e2e/catalog-navigation.spec.ts` — home → product → home thumbnail persistence (mobile) |
 
 ```bash
 PLAYWRIGHT_SKIP_WEBSERVER=1 PLAYWRIGHT_BASE_URL=http://localhost:5173 pnpm e2e e2e/desktop-layout.spec.ts
@@ -114,8 +115,9 @@ PLAYWRIGHT_SKIP_WEBSERVER=1 PLAYWRIGHT_BASE_URL=http://localhost:5173 pnpm e2e e
 2. **Desktop (≥1280px)** — dark inverted header, labeled Cart, desktop hero, category cards, product grids, no bottom tabs.
 3. **Resize** — crossing 1024px toggles layouts without breaking either experience.
 4. **Product cards** — home rails and search grid show **square** image tiles (same width, 1:1 aspect) on mobile and desktop.
-5. **Product detail** — `/product/phone-stand`: gallery tab shows carousel with multiple images; `/product/custom-photo-frame`: 3D tab shows virtual desk viewer (drag to rotate, scroll to zoom). On mobile (390px), favorite and share appear below material; cart actions stay in the sticky bar.
-6. **Footer** — dark inverted bar, pitch text, icon-only contact buttons on mobile, labeled links on desktop.
+5. **Home return navigation (mobile)** — open home, tap a product, wait 5s, bottom-nav back to home: product thumbnails visible within 1s (no gray/white tiles for 3s).
+6. **Product detail** — `/product/phone-stand`: gallery tab shows carousel with multiple images; `/product/custom-photo-frame`: 3D tab shows virtual desk viewer (drag to rotate, scroll to zoom). On mobile (390px), favorite and share appear below material; cart actions stay in the sticky bar.
+7. **Footer** — dark inverted bar, pitch text, icon-only contact buttons on mobile, labeled links on desktop.
 
 ## Related
 

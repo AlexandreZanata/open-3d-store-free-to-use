@@ -55,11 +55,10 @@ try {
       .set({ passwordHash })
       .where(eq(adminUsers.id, existing[0]!.id));
     console.log(`createAdminUser: password reset for ${email}`);
-    return;
+  } else {
+    await db.insert(adminUsers).values({ email, passwordHash });
+    console.log(`createAdminUser: created admin ${email}`);
   }
-
-  await db.insert(adminUsers).values({ email, passwordHash });
-  console.log(`createAdminUser: created admin ${email}`);
 } finally {
   await pool.end();
 }

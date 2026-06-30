@@ -30,16 +30,22 @@ load_vite_env() {
 }
 
 load_vite_env "${WEB_ENV}"
-load_vite_env "${ADMIN_ENV}"
 
 export VITE_API_BASE_URL="${VITE_API_BASE_URL:-${CORS_ORIGIN:-}/api/v1}"
 export VITE_ASSETS_BASE_URL="${VITE_ASSETS_BASE_URL:-${CORS_ORIGIN:-}}"
 export VITE_WHATSAPP_PHONE="${VITE_WHATSAPP_PHONE:-${WHATSAPP_PHONE_NUMBER:-}}"
 
-if [[ -z "${VITE_API_BASE_URL}" || "${VITE_API_BASE_URL}" == "/api/v1" ]]; then
-  echo "deploy.sh: set CORS_ORIGIN or VITE_API_BASE_URL in apps/api/.env" >&2
+if [[ -z "${CORS_ORIGIN:-}" ]]; then
+  echo "deploy.sh: set CORS_ORIGIN in apps/api/.env" >&2
   exit 1
 fi
+
+if [[ "${VITE_API_BASE_URL}" == "/api/v1" || ! "${VITE_API_BASE_URL}" =~ ^https?:// ]]; then
+  echo "deploy.sh: storefront needs absolute VITE_API_BASE_URL (apps/web/.env.production or CORS_ORIGIN)" >&2
+  exit 1
+fi
+
+# Admin build reads apps/admin/.env.production (may use relative /api/v1 on admin subdomain).
 
 if [[ "${SKIP_GIT_PULL:-}" == "1" ]] || [[ ! -d "${ROOT}/.git" ]]; then
   echo "deploy.sh: skipping git pull (rsync deploy or SKIP_GIT_PULL=1)"

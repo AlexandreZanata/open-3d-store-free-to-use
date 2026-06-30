@@ -38,6 +38,12 @@ describe("deploy.sh contract — docs/infrastructure/deployment.md", () => {
     assert.match(script, /install-env\.sh/);
   });
 
+  test("validates storefront VITE_API_BASE_URL without admin relative /api/v1", () => {
+    assert.doesNotMatch(script, /load_vite_env "\$\{ADMIN_ENV\}"/);
+    assert.match(script, /CORS_ORIGIN/);
+    assert.match(script, /storefront needs absolute VITE_API_BASE_URL/);
+  });
+
   test("skips git pull for rsync deploy without .git", () => {
     assert.match(script, /SKIP_GIT_PULL/);
     assert.match(script, /\.git/);

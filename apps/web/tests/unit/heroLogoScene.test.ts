@@ -7,6 +7,7 @@ import {
   HERO_LOGO_COLOR,
   HERO_LOGO_COLOR_HEX,
   HERO_LOGO_FIT_PADDING,
+  HERO_LOGO_PLACEHOLDER_SCALE,
   HERO_LOGO_REFERENCE_SPHERE_RADIUS,
   HERO_LOGO_TURN_SPEED,
   HERO_LOGO_VIEW_SCALE,
@@ -16,6 +17,10 @@ import * as THREE from "three";
 describe("heroLogoScene constants", () => {
   it("renders the logo 30% larger while keeping the fitted center", () => {
     expect(HERO_LOGO_VIEW_SCALE).toBe(1.3);
+  });
+
+  it("shows the black PNG fallback 25% smaller than the fitted GLB", () => {
+    expect(HERO_LOGO_PLACEHOLDER_SCALE).toBe(0.75);
   });
 
   it("keeps viewport padding so the mesh is not clipped by the tile", () => {

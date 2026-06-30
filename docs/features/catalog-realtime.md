@@ -46,6 +46,19 @@ Published via Redis channel `v1:catalog:events` after `CatalogCacheInvalidator` 
 
 TanStack Query refetches visible pages automatically. The storefront API client uses `cache: "no-store"` on `fetch` so browser HTTP cache (API `Cache-Control` up to 600s on product detail) does not block realtime updates.
 
+### Client cache policy
+
+| Setting | Value | Purpose |
+|---------|-------|---------|
+| `staleTime` | 5 min | Avoid refetch on home ↔ product navigation |
+| `gcTime` | 30 min | Keep catalog in memory while browsing |
+| `placeholderData: keepPreviousData` | products, categories, product detail | SSE refetch keeps last data on screen |
+| SSE `refetchType` | `active` | Refetch only mounted views; stale cache still updates on return |
+| Skeleton gate | `isCatalogQueryPending` | Blank skeleton only when `data === undefined` |
+| Thumbnails | `CatalogThumbnail` + `warmHomeCatalogImages` | Session image pool + eager home tiles survive route remount |
+
+When `catalog.changed` fires, queries are **invalidated** (marked stale) and active observers refetch in the background — the UI must not flash empty lists while refetching.
+
 ## Development
 
 ```bash
@@ -72,7 +85,7 @@ Manual check:
 | Layer | File |
 |-------|------|
 | API integration | `apps/api/tests/integration/routes/catalog-events.routes.test.ts` |
-| Web unit | `apps/web/tests/unit/useCatalogRealtime.test.ts` |
+| Web unit | `apps/web/tests/unit/useCatalogRealtime.test.ts`, `apps/web/tests/unit/catalogQuery.test.ts`, `apps/web/tests/unit/catalogThumbnailCache.test.ts` |
 | E2E | `e2e/catalog-realtime.spec.ts` |
 
 **Note:** SSE responses set `Access-Control-Allow-Origin` manually (`buildSseCorsHeaders`) because `reply.hijack()` bypasses `@fastify/cors`.

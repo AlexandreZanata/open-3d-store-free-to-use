@@ -82,7 +82,7 @@ export function HomeDesktopView({ products, categories, isLoading, t }: Props) {
           </div>
           <div className={categoryGridCols}>
             {categories.map((category) => (
-              <CategoryCard key={category.slug} category={category} />
+              <CategoryCard key={category.slug} category={category} priority />
             ))}
           </div>
         </section>
@@ -93,6 +93,7 @@ export function HomeDesktopView({ products, categories, isLoading, t }: Props) {
         actionLabel={t("home.railAll")}
         isLoading={isLoading}
         products={featured}
+        priorityImages
       />
 
       <ProductSection
@@ -100,6 +101,7 @@ export function HomeDesktopView({ products, categories, isLoading, t }: Props) {
         actionLabel={t("home.railAll")}
         isLoading={isLoading}
         products={catalog}
+        priorityImages
       />
     </div>
   );
@@ -110,11 +112,13 @@ function ProductSection({
   actionLabel,
   isLoading,
   products,
+  priorityImages = false,
 }: {
   title: string;
   actionLabel: string;
   isLoading: boolean;
   products: ProductListItem[];
+  priorityImages?: boolean;
 }) {
   return (
     <section>
@@ -133,7 +137,13 @@ function ProductSection({
           ? Array.from({ length: 8 }).map((_, index) => (
               <ProductCardSkeleton key={index} variant="default" />
             ))
-          : products.map((product) => <ProductCard key={product.id} product={product} />)}
+          : products.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                priority={priorityImages}
+              />
+            ))}
       </div>
     </section>
   );

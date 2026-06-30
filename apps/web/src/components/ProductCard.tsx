@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import type { ProductListItem } from "@print3d/shared-types";
 
+import { CatalogThumbnail } from "@/components/CatalogThumbnail";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { resolveAssetUrl } from "@/lib/assets";
 import { productCardImageAspect, productCardWideWidth } from "@/lib/layout";
@@ -9,9 +10,11 @@ import { productCardImageAspect, productCardWideWidth } from "@/lib/layout";
 export function ProductCard({
   product,
   variant = "default",
+  priority = false,
 }: {
   product: ProductListItem;
   variant?: "default" | "wide";
+  priority?: boolean;
 }) {
   const { t } = useTranslation();
   const width = variant === "wide" ? productCardWideWidth : "w-full";
@@ -26,13 +29,12 @@ export function ProductCard({
           className={`block relative ${productCardImageAspect} bg-muted`}
         >
           {imageUrl ? (
-            <img
+            <CatalogThumbnail
               src={imageUrl}
               alt={product.name}
-              loading="lazy"
+              priority={priority}
               width={800}
               height={800}
-              className="absolute inset-0 size-full object-cover"
             />
           ) : (
             <div className="absolute inset-0 bg-muted" />

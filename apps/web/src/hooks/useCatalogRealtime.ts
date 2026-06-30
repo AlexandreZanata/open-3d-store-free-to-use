@@ -6,9 +6,9 @@ import { getApiBaseUrl } from "@/lib/api/client";
 const CATALOG_SSE_EVENT = "catalog.changed";
 
 export function invalidateCatalogQueries(queryClient: QueryClient): void {
-  void queryClient.invalidateQueries({ queryKey: ["products"], refetchType: "all" });
-  void queryClient.invalidateQueries({ queryKey: ["categories"], refetchType: "all" });
-  void queryClient.invalidateQueries({ queryKey: ["product"], refetchType: "all" });
+  void queryClient.invalidateQueries({ queryKey: ["products"], refetchType: "active" });
+  void queryClient.invalidateQueries({ queryKey: ["categories"], refetchType: "active" });
+  void queryClient.invalidateQueries({ queryKey: ["product"], refetchType: "active" });
 }
 
 export function useCatalogRealtime(queryClient: QueryClient): void {

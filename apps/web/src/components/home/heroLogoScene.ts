@@ -15,6 +15,8 @@ export const HERO_LOGO_REFERENCE_SPHERE_RADIUS = 0.52;
 export const HERO_LOGO_FIT_PADDING = 1.28;
 /** Zoom factor on top of the fitted frame (1.30 = 30% larger than fit, still centered). */
 export const HERO_LOGO_VIEW_SCALE = 1.3;
+/** Black PNG fallback — 25% smaller than the fitted GLB footprint. */
+export const HERO_LOGO_PLACEHOLDER_SCALE = 0.75;
 /** Turntable spin on the Y axis (radians per second). */
 export const HERO_LOGO_TURN_SPEED = 0.22;
 

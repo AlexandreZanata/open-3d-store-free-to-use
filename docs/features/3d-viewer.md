@@ -50,7 +50,7 @@ This project uses **Three.js**, not `@google/model-viewer`. Do not add `<model-v
 |-------|----------------|
 | **Upload / worker** | `orientSlicerExportForPreview()` — Z-up build plate → Y-up when `minZ ≈ 0` and height is not already on +Y; thin plates use PCA fallback |
 | **Storefront** | `threeScene.ts` — `placeOnDesk()` sets `y = 0` on virtual desk + grid; OrbitControls orbit upright |
-| **Hero logo** | `orientHeroLogoMesh()` in preview pipeline; mesh color `#141414` in `heroLogoScene.ts` |
+| **Hero logo** | `orientHeroLogoMesh()` in preview pipeline; mesh color `#141414` in `heroLogoScene.ts`; black PNG fallback at `HERO_LOGO_PLACEHOLDER_SCALE` (0.75) until GLB loads |
 
 Storefront serves **`-preview.glb`** siblings (≤ 20 MB). Raw `.3mf` / `.stl` are never loaded in the browser.
 

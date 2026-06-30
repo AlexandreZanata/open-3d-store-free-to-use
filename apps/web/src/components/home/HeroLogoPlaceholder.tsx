@@ -1,4 +1,4 @@
-import { heroLogoPlaceholderDiameterRatio } from "@/components/home/heroLogoScene";
+import { heroLogoPlaceholderDiameterRatio, HERO_LOGO_PLACEHOLDER_SCALE } from "@/components/home/heroLogoScene";
 import { BRAND_MARK_FALLBACK_CLASS, BRAND_MARK_ICON_SRC } from "@/lib/brandMark";
 
 type HeroLogoPlaceholderProps = {
@@ -7,7 +7,7 @@ type HeroLogoPlaceholderProps = {
 
 /** Solid black corvo icon — same footprint as the fitted hero GLB until WebGL is ready. */
 export function HeroLogoPlaceholder({ aspect }: HeroLogoPlaceholderProps) {
-  const fitPercent = heroLogoPlaceholderDiameterRatio(aspect) * 100;
+  const fitPercent = heroLogoPlaceholderDiameterRatio(aspect) * HERO_LOGO_PLACEHOLDER_SCALE * 100;
 
   return (
     <div

@@ -4,14 +4,16 @@ import type { CategoryResponse } from "@print3d/shared-types";
 
 import { resolveAssetUrl } from "@/lib/assets";
 import { cn } from "@/lib/utils";
+import { CatalogThumbnail } from "@/components/CatalogThumbnail";
 
 type CategoryCardProps = {
   category: Pick<CategoryResponse, "slug" | "name" | "imageUrl">;
   productCount?: number;
   className?: string;
+  priority?: boolean;
 };
 
-export function CategoryCard({ category, productCount, className }: CategoryCardProps) {
+export function CategoryCard({ category, productCount, className, priority = false }: CategoryCardProps) {
   const { t } = useTranslation();
   const imageUrl = resolveAssetUrl(category.imageUrl);
 
@@ -25,13 +27,13 @@ export function CategoryCard({ category, productCount, className }: CategoryCard
       )}
     >
       {imageUrl ? (
-        <img
+        <CatalogThumbnail
           src={imageUrl}
           alt=""
-          loading="lazy"
+          priority={priority}
           width={480}
           height={480}
-          className="absolute inset-0 size-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+          className="transition-transform duration-300 group-hover:scale-[1.03]"
         />
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-muted via-surface to-muted" />

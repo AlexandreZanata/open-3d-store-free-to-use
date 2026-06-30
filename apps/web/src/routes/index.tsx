@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 import { AppShell } from "@/components/AppShell";
@@ -9,9 +11,10 @@ import { ProductCard } from "@/components/ProductCard";
 import { ProductCardSkeleton } from "@/components/LoadingSkeletons";
 import { Rail } from "@/components/Rail";
 import { categoriesQueryKey, useCategories } from "@/hooks/useCategories";
-import { productsQueryKey, useProducts } from "@/hooks/useProducts";
+import { productsQueryKey, useProducts, resolveQueryLocale } from "@/hooks/useProducts";
 import { fetchCategories } from "@/lib/api/categories";
 import { fetchProducts } from "@/lib/api/products";
+import { isCatalogQueryPending, warmHomeCatalogImages } from "@/lib/catalogQuery";
 import { categoryPillsTrack, mobileOnly } from "@/lib/layout";
 import { preloadHeroLogo } from "@/lib/heroLogo";
 import { getCurrentI18nLocale, default as i18n } from "@/i18n";
@@ -31,6 +34,7 @@ export const Route = createFileRoute("/")({
       }),
       preloadHeroLogo(),
     ]);
+    warmHomeCatalogImages(context.queryClient, locale);
   },
   head: () => ({
     meta: [{ title: i18n.t("app.metaTitle") }],
@@ -39,11 +43,18 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const queryClient = useQueryClient();
+  const locale = resolveQueryLocale(i18n.language);
   const productsQuery = useProducts({ page: 1, limit: 12 });
   const categoriesQuery = useCategories();
   const products = productsQuery.data?.data ?? [];
   const categories = categoriesQuery.data ?? [];
+  const showCatalogSkeleton = isCatalogQueryPending(productsQuery);
+
+  useEffect(() => {
+    warmHomeCatalogImages(queryClient, locale);
+  }, [queryClient, locale, productsQuery.dataUpdatedAt, categoriesQuery.dataUpdatedAt]);
 
   return (
     <AppShell>
@@ -77,7 +88,7 @@ function HomePage() {
         )}
 
         <Rail title={t("home.featuredProducts")} action={<RailAction label={t("home.railAll")} />}>
-          {productsQuery.isLoading
+          {showCatalogSkeleton
             ? Array.from({ length: 4 }).map((_, index) => (
                 <div key={index} className="snap-start">
                   <ProductCardSkeleton variant="wide" />
@@ -85,13 +96,13 @@ function HomePage() {
               ))
             : products.slice(0, 6).map((product) => (
                 <div key={product.id} className="snap-start">
-                  <ProductCard product={product} variant="wide" />
+                  <ProductCard product={product} variant="wide" priority />
                 </div>
               ))}
         </Rail>
 
         <Rail title={t("home.allProducts")} action={<RailAction label={t("home.railAll")} />}>
-          {productsQuery.isLoading
+          {showCatalogSkeleton
             ? Array.from({ length: 4 }).map((_, index) => (
                 <div key={`all-${index}`} className="snap-start">
                   <ProductCardSkeleton variant="wide" />
@@ -99,7 +110,7 @@ function HomePage() {
               ))
             : products.map((product) => (
                 <div key={`all-${product.id}`} className="snap-start">
-                  <ProductCard product={product} variant="wide" />
+                  <ProductCard product={product} variant="wide" priority />
                 </div>
               ))}
         </Rail>
@@ -109,7 +120,7 @@ function HomePage() {
         <HomeDesktopView
           products={products}
           categories={categories}
-          isLoading={productsQuery.isLoading}
+          isLoading={showCatalogSkeleton}
           t={t}
         />
       </div>

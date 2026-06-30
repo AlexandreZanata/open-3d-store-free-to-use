@@ -46,9 +46,12 @@ Each `ModelPart` may include optional `defaultColorHex` (`#RRGGBB`) from Bambu f
 
 This project uses **Three.js**, not `@google/model-viewer`. Do not add `<model-viewer>` or HTML `orientation` attributes.
 
+**Bambu Studio fidelity:** Bambu Lab / 3MF uses a **Z-up build plate** ([3MF production spec](https://3mf.io/specification/)). The slicer stores the user’s pose in `<build>` item transforms, nested `<component>` matrices, and part metadata. The storefront preview **must not** re-orient with PCA, yaw snap, or face heuristics for 3MF uploads — only the axis swap below.
+
 | Layer | Responsibility |
 |-------|----------------|
-| **Upload / worker** | `orientSlicerExportForPreview()` — Z-up build plate → Y-up when `minZ ≈ 0` and height is not already on +Y; **thin bed plates** (signs, PIX plates) stay **flat face-up** on the virtual desk; tall figurines use tallest-axis alignment |
+| **Upload / worker (3MF)** | `orientBambuBuildPlateForPreview()` — `-90°` about X (Z-up → Y-up), then `centerOnBuildPlate()`; pose matches Bambu Studio Prepare view |
+| **Upload / worker (STL)** | `orientSlicerExportForPreview()` — same Bambu path when `minZ ≈ 0`; PCA / tallest-axis heuristics only for meshes not on a slicer bed |
 | **Storefront** | `threeScene.ts` — `placeOnDesk()` sets `y = 0` on virtual desk + grid; OrbitControls orbit upright |
 | **Hero logo** | `orientHeroLogoMesh()` in preview pipeline; mesh color `#141414` in `heroLogoScene.ts`; black PNG fallback at `HERO_LOGO_PLACEHOLDER_SCALE` (0.75) until GLB loads |
 
@@ -92,7 +95,7 @@ Any catalog upload (`STL`, `GLB`, `GLTF`, `3MF`) is converted automatically to a
 
 1. Worker ingests the source mesh (STL triangle soup, 3MF XML zip, or glTF)
 2. **Unit detection** — millimeter vs meter coordinates (heuristic on bounding box)
-3. **Print orientation** — explicit Z-up → Y-up rotation (-90° about X, same as glTF convention); thin Bambu bed plates remain flat face-up (matches Bambu Studio top view); yaw snap for compact footprint; build-plate centering baked into the GLB
+3. **Print orientation** — **3MF:** `orientBambuBuildPlateForPreview()` only (Z-up bed → Y-up web, center on plate; preserves Bambu Studio pose from build/component transforms). **STL:** same when `minZ ≈ 0`; otherwise PCA / tallest-axis fallback
 4. **Multi-part 3MF (Bambu Studio)** — each printable volume stays a separate glTF mesh with its own PBR material; Bambu `filament_colour` + per-part `extruder` metadata populate `modelParts[].defaultColorHex` and the preview GLB base colours; only the **first printable plate** is used when a project ships multiple plates
 5. **Single-mesh Bambu paint (`paint_color`)** — when a model uses brush painting on one mesh (no separate STL bodies), triangles are split by filament slot using Bambu `paint_color` codes (`4` = slot 1, `8` = slot 2, `0C` = slot 3, …); unpainted triangles use the object base extruder from `model_settings.config`
 6. **glTF encoding** — indexed `TRIANGLES` primitive + PBR material per part; `weld` → `dedup` → `meshopt simplify` (ratio **0.95** when multi-part, **0.25** for single-body) → `normals` → **Draco**
@@ -178,7 +181,7 @@ Serve `/models/` directly — see [../infrastructure/nginx.md](../infrastructure
 | Layer | File |
 |-------|------|
 | Web unit | `apps/web/tests/unit/modelFormat.test.ts`, `apps/web/tests/unit/modelViewerLimits.test.ts`, `apps/web/tests/unit/modelViewerLoading.test.ts` |
-| API unit | `apps/api/tests/unit/infrastructure/orientMeshForPrintPreview.test.ts`, `bambuPaintColor.test.ts`, `splitMeshByBambuPaint.test.ts`, `documentFromMesh.test.ts`, `documentFromPartMeshes.test.ts`, `read3mfMesh.test.ts`, `read3mfPartMeshes.test.ts` |
+| API unit | `orientBambuBuildPlate.test.ts`, `orientMeshForPrintPreview.test.ts`, `bambuPaintColor.test.ts`, `splitMeshByBambuPaint.test.ts`, `documentFromMesh.test.ts`, `documentFromPartMeshes.test.ts`, `read3mfMesh.test.ts`, `read3mfPartMeshes.test.ts` |
 | E2E | `e2e/product-detail.spec.ts` |
 
 ## Related documents

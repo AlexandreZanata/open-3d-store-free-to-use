@@ -9,7 +9,7 @@ import {
   type Mat3,
 } from "./meshOrientationMath.js";
 import { computeCovariance3D, principalAxesRotation } from "./meshPrincipalAxes.js";
-import { isThinOnYAxis, orientFlatBedPlateFaceUp } from "./orientBambuBedPlate.js";
+import { orientBambuBuildPlateForPreview } from "./orientBambuBuildPlate.js";
 
 const YAW_CANDIDATES = [0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2] as const;
 const PLATE_HEIGHT_RATIO = 0.2;
@@ -155,14 +155,7 @@ export function orientSlicerExportForPreview(positions: Float32Array): Float32Ar
     return alignTallestAxisToY(positions);
   }
 
-  const yUp = applyMat3(positions, ROT_Z_TO_Y);
-  if (isThinOnYAxis(yUp)) {
-    return orientFlatBedPlateFaceUp(yUp);
-  }
-  if (looksLikeThinPlate(yUp)) {
-    return orientThinPlateWithPca(yUp);
-  }
-  return snapYawOnPlate(yUp);
+  return orientBambuBuildPlateForPreview(positions);
 }
 
 /** @deprecated — use orientSlicerExportForPreview */

@@ -1,5 +1,5 @@
 import { positionsToMeters } from "./documentFromMesh.js";
-import { orientSlicerExportForPreview } from "./orientMeshForPrintPreview.js";
+import { orientBambuBuildPlateForPreview } from "./orientBambuBuildPlate.js";
 import type { RawPartMesh } from "./read3mfPartMeshes.js";
 
 /** Unit-normalize and orient a multi-body assembly without merging meshes. */
@@ -14,7 +14,7 @@ export function preparePreviewAssembly(parts: RawPartMesh[]): RawPartMesh[] {
   }));
   const lengths = meters.map((part) => part.positions.length);
   const combined = concatPositions(meters.map((part) => part.positions));
-  const oriented = orientSlicerExportForPreview(combined);
+  const oriented = orientBambuBuildPlateForPreview(combined);
 
   let offset = 0;
   return meters.map((part, index) => {

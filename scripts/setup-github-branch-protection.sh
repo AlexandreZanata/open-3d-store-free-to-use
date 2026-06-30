@@ -9,34 +9,59 @@ if ! command -v gh >/dev/null 2>&1; then
   exit 1
 fi
 
-echo "==> Protecting main (require Quality gate + E2E, PR only)"
-gh api \
+payload_main() {
+  cat <<'JSON'
+{
+  "required_status_checks": {
+    "strict": true,
+    "contexts": ["Quality gate", "E2E"]
+  },
+  "enforce_admins": false,
+  "required_pull_request_reviews": {
+    "required_approving_review_count": 0,
+    "dismiss_stale_reviews": false
+  },
+  "restrictions": null,
+  "allow_force_pushes": false,
+  "allow_deletions": false
+}
+JSON
+}
+
+payload_developing() {
+  cat <<'JSON'
+{
+  "required_status_checks": {
+    "strict": false,
+    "contexts": ["Quality gate", "E2E"]
+  },
+  "enforce_admins": false,
+  "required_pull_request_reviews": null,
+  "restrictions": null,
+  "allow_force_pushes": false,
+  "allow_deletions": false
+}
+JSON
+}
+
+echo "==> Protecting main (require Quality gate + E2E before merge)"
+payload_main | gh api \
   --method PUT \
   -H "Accept: application/vnd.github+json" \
   "/repos/${REPO}/branches/main/protection" \
-  -f required_status_checks[strict]=true \
-  -F 'required_status_checks[contexts][]=Quality gate' \
-  -F 'required_status_checks[contexts][]=E2E' \
-  -f enforce_admins=false \
-  -f required_pull_request_reviews[required_approving_review_count]=0 \
-  -f restrictions=null \
-  -f allow_force_pushes=false \
-  -f allow_deletions=false
+  --input -
 
-echo "==> Optional: protect developing (CI must pass before push — use PR to main)"
-gh api \
+echo "==> Protecting developing (CI must pass)"
+if payload_developing | gh api \
   --method PUT \
   -H "Accept: application/vnd.github+json" \
   "/repos/${REPO}/branches/developing/protection" \
-  -f required_status_checks[strict]=false \
-  -F 'required_status_checks[contexts][]=Quality gate' \
-  -F 'required_status_checks[contexts][]=E2E' \
-  -f enforce_admins=false \
-  -f restrictions=null \
-  -f allow_force_pushes=false \
-  -f allow_deletions=false \
-  2>/dev/null || echo "developing branch not on remote yet — re-run after first push"
+  --input - 2>/dev/null; then
+  echo "developing protected"
+else
+  echo "developing protection skipped (branch may not exist yet)"
+fi
 
 echo "==> Done. Workflow:"
-echo "  git checkout developing && git push -u origin developing"
+echo "  git checkout developing && git push origin developing"
 echo "  Open PR developing → main; merge when CI green"

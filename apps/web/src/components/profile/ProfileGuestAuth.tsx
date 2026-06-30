@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { useStoreAuth } from "@/auth/useStoreAuth";
 import { ProfileAuthField } from "@/components/profile/ProfileAuthField";
+import { APP_VERSION } from "@/lib/appVersion";
 
 export function ProfileGuestAuth() {
   const { t } = useTranslation();
@@ -115,7 +116,7 @@ export function ProfileGuestAuth() {
       </form>
 
       <p className="mt-6 text-center text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-        {t("profile.version")}
+        {t("profile.version", { version: APP_VERSION })}
       </p>
     </section>
   );

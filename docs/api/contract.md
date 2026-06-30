@@ -59,10 +59,22 @@ Interactive docs (development only): [swagger.md](swagger.md) — UI at `http://
 **Response 200:**
 
 ```json
-{ "status": "ok", "uptime": 12345, "timestamp": "2025-01-01T00:00:00.000Z" }
+{
+  "status": "ok",
+  "uptime": 12345,
+  "timestamp": "2025-01-01T00:00:00.000Z",
+  "version": "1.0.0"
+}
 ```
 
-No cache. Used by CI/CD and uptime monitors.
+| Field | Type | Description |
+|-------|------|-------------|
+| `status` | `"ok"` | Process is healthy |
+| `uptime` | integer | Seconds since API start |
+| `timestamp` | ISO 8601 | Server time at response |
+| `version` | semver string | Release version (root `package.json` `version`) |
+
+No cache. Used by CI/CD, uptime monitors, and post-deploy verification.
 
 ---
 

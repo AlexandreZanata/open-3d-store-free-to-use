@@ -8,6 +8,7 @@ import { AppShell } from "@/components/AppShell";
 import { ProfileGuestAuth } from "@/components/profile/ProfileGuestAuth";
 import { default as i18n } from "@/i18n";
 import { brandPageTitle } from "@/lib/brand";
+import { APP_VERSION } from "@/lib/appVersion";
 import { pagePadding } from "@/lib/layout";
 
 export const Route = createFileRoute("/profile")({
@@ -107,7 +108,7 @@ function AuthenticatedProfile() {
       </button>
 
       <p className="text-center text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-        {t("profile.version")}
+        {t("profile.version", { version: APP_VERSION })}
       </p>
     </section>
   );

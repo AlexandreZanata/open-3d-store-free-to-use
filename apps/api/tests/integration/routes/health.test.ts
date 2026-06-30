@@ -3,6 +3,7 @@ import type { FastifyInstance } from "fastify";
 
 import { closeTestApp, createTestApp } from "./testApp.js";
 import type { AppContainer } from "../../../src/container.js";
+import rootPackage from "../../../../../package.json";
 
 const hasDatabase = (process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL ?? "").length > 0;
 
@@ -34,5 +35,6 @@ describe("GET /api/v1/health (contract)", () => {
     expect(body.status).toBe("ok");
     expect(typeof body.uptime).toBe("number");
     expect(body.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    expect(body.version).toBe(rootPackage.version);
   });
 });

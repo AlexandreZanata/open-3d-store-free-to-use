@@ -1,9 +1,19 @@
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import tailwindcss from "@tailwindcss/vite";
 import viteReact from "@vitejs/plugin-react";
+import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { defineConfig, loadEnv } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { resolvePreviewAllowedHosts } from "./vitePreviewHosts";
+
+const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
+const appVersion = (
+  JSON.parse(readFileSync(resolve(repoRoot, "package.json"), "utf8")) as {
+    version: string;
+  }
+).version;
 
 function resolveDevApiOrigin(env: Record<string, string>): string {
   if (env.VITE_DEV_API_ORIGIN) {
@@ -19,6 +29,9 @@ export default defineConfig(({ mode }) => {
   const apiOrigin = resolveDevApiOrigin(env);
 
   return {
+    define: {
+      "import.meta.env.VITE_APP_VERSION": JSON.stringify(appVersion),
+    },
     plugins: [
       tsconfigPaths(),
       tailwindcss(),

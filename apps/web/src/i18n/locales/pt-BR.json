@@ -161,7 +161,7 @@
     "saving": "Salvando…",
     "saved": "Perfil atualizado.",
     "logout": "Sair",
-    "version": "Corvo 3D v1.0"
+    "version": "Corvo 3D v{{version}}"
   },
   "errors": {
     "pageNotFoundTitle": "Página não encontrada",

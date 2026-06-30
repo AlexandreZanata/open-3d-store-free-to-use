@@ -1,5 +1,6 @@
 import type { FastifyInstance } from "fastify";
 
+import { APP_VERSION } from "../../appVersion.js";
 import type { AppContainer } from "../../container.js";
 import { healthRouteSchema } from "../openapi/routeSchemas.js";
 
@@ -14,6 +15,7 @@ export async function registerHealthRoutes(
       status: "ok",
       uptime: Math.floor((Date.now() - startTime) / 1000),
       timestamp: new Date().toISOString(),
+      version: APP_VERSION,
     });
   });
 }

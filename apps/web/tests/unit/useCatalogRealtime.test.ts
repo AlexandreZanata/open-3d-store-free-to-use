@@ -11,15 +11,15 @@ describe("useCatalogRealtime — docs/features/catalog-realtime.md", () => {
 
     expect(invalidateQueries).toHaveBeenCalledWith({
       queryKey: ["products"],
-      refetchType: "all",
+      refetchType: "active",
     });
     expect(invalidateQueries).toHaveBeenCalledWith({
       queryKey: ["categories"],
-      refetchType: "all",
+      refetchType: "active",
     });
     expect(invalidateQueries).toHaveBeenCalledWith({
       queryKey: ["product"],
-      refetchType: "all",
+      refetchType: "active",
     });
   });
 });

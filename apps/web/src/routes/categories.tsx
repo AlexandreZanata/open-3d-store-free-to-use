@@ -9,6 +9,7 @@ import { useCategories } from "@/hooks/useCategories";
 import { useProducts } from "@/hooks/useProducts";
 import { fetchCategories } from "@/lib/api/categories";
 import { fetchProducts } from "@/lib/api/products";
+import { isCatalogQueryPending } from "@/lib/catalogQuery";
 import { categoryGridCols, desktopOnly, pagePadding } from "@/lib/layout";
 import { getCurrentI18nLocale, default as i18n } from "@/i18n";
 import { brandPageTitle } from "@/lib/brand";
@@ -42,7 +43,7 @@ function CategoriesPage() {
 
   return (
     <AppShell showSearch={false} title={t("categories.title")}>
-      {categoriesQuery.isLoading ? (
+      {isCatalogQueryPending(categoriesQuery) ? (
         <div className={`${pagePadding} py-4 lg:py-8`}>
           <div className={categoryGridCols}>
             {Array.from({ length: 4 }).map((_, index) => (

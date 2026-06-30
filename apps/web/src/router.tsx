@@ -2,13 +2,17 @@ import { QueryClient } from "@tanstack/react-query";
 import { createRouter } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
 
+import { CATALOG_QUERY_GC_MS, CATALOG_QUERY_STALE_MS } from "@/lib/catalogQuery";
+
 import { routeTree } from "./routeTree.gen";
 
 export const getRouter = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 30_000,
+        staleTime: CATALOG_QUERY_STALE_MS,
+        gcTime: CATALOG_QUERY_GC_MS,
+        refetchOnWindowFocus: false,
       },
     },
   });
@@ -17,7 +21,7 @@ export const getRouter = () => {
     routeTree,
     context: { queryClient },
     scrollRestoration: true,
-    defaultPreloadStaleTime: 0,
+    defaultPreloadStaleTime: CATALOG_QUERY_STALE_MS,
   });
 
   setupRouterSsrQueryIntegration({

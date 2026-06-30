@@ -117,26 +117,81 @@ function orientThinPlateWithPca(positions: Float32Array): Float32Array {
   return largestHeight > middleHeight ? largestOriented : middleOriented;
 }
 
+const Z_PLATE_TOL = 0.01;
+/** When Y span exceeds Z by more than this factor, mesh transforms already define up. */
+const Y_DOMINANCE_RATIO = 1.05;
+
+function sitsOnZBuildPlate(positions: Float32Array): boolean {
+  const plate = bboxFromPositions(positions, 1);
+  return plate.minZ >= -0.001 && plate.minZ < Z_PLATE_TOL;
+}
+
+/** Bambu 3MF / STL sit on Z=0; rotate only when height is not already on +Y. */
+function shouldApplyZUpToYUp(positions: Float32Array): boolean {
+  if (!sitsOnZBuildPlate(positions)) {
+    return false;
+  }
+  const [dx, dy, dz] = bboxDimensions(positions);
+  if (looksLikeThinPlate(positions)) {
+    return true;
+  }
+  return dy <= dz * Y_DOMINANCE_RATIO;
+}
+
 /**
- * Storefront preview pose: figurines stand on the desk; thin plates use PCA fallback.
- * Preserves slicer build-plate orientation when the mesh is already upright.
+ * Bambu / Prusa STL and 3MF exports use a Z-up build plate; glTF and Three.js are Y-up.
+ * Apply -90° about X when the mesh sits on Z=0 and height is not already on +Y.
  */
-export function orientMeshForPrintPreview(positions: Float32Array): Float32Array {
+export function orientSlicerExportForPreview(positions: Float32Array): Float32Array {
   if (positions.length < 9) {
     return positions;
   }
 
-  if (looksLikeThinPlate(positions)) {
-    return orientThinPlateWithPca(positions);
+  if (!shouldApplyZUpToYUp(positions)) {
+    if (looksLikeThinPlate(positions)) {
+      return orientThinPlateWithPca(positions);
+    }
+    return alignTallestAxisToY(positions);
+  }
+
+  const yUp = applyMat3(positions, ROT_Z_TO_Y);
+  if (looksLikeThinPlate(yUp)) {
+    return orientThinPlateWithPca(yUp);
+  }
+  return snapYawOnPlate(yUp);
+}
+
+/** @deprecated alias — use orientSlicerExportForPreview */
+export function orientMeshForPrintPreview(positions: Float32Array): Float32Array {
+  return orientSlicerExportForPreview(positions);
+}
+
+/** Rotate flat logo (thin Y, spread in XZ) to stand on the build-plate edge. */
+const ROT_FLAT_Y_TO_STAND: Mat3 = [1, 0, 0, 0, 0, -1, 0, 1, 0];
+
+/** Head-up correction after standing (Corvo STL exports inverted on Y). */
+const ROT_FLIP_X: Mat3 = [1, 0, 0, 0, -1, 0, 0, 0, -1];
+
+/**
+ * Hero Corvo STL: flat on the print bed (thin Y). Stand on edge so height is the
+ * former Z axis, not the wingspan X axis (alignTallestAxisToY would lay it sideways).
+ */
+export function orientHeroLogoMesh(positions: Float32Array): Float32Array {
+  if (positions.length < 9) {
+    return positions;
+  }
+
+  const [dx, dy, dz] = bboxDimensions(positions);
+  const thinIdx = [dx, dy, dz].indexOf(Math.min(dx, dy, dz));
+
+  if (thinIdx === 1) {
+    return snapYawOnPlate(applyMat3(positions, mulMat3(ROT_FLIP_X, ROT_FLAT_Y_TO_STAND)));
   }
 
   return alignTallestAxisToY(positions);
 }
 
-/** 3MF / Bambu meshes already include build transforms — only stand tall and center. */
+/** 3MF build items carry plate transforms but remain Z-up — same pipeline as STL. */
 export function orientPrintPlateMesh(positions: Float32Array): Float32Array {
-  if (positions.length < 9) {
-    return positions;
-  }
-  return alignTallestAxisToY(positions);
+  return orientSlicerExportForPreview(positions);
 }

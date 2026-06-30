@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 
 import { symmetricEigen3x3 } from "../../../src/infrastructure/model/meshPrincipalAxes.js";
 import {
+  orientHeroLogoMesh,
   orientMeshForPrintPreview,
+  orientSlicerExportForPreview,
 } from "../../../src/infrastructure/model/orientMeshForPrintPreview.js";
 
 function bbox(positions: Float32Array) {
@@ -31,9 +33,9 @@ function thinBoxSoup(width: number, height: number, depth: number): Float32Array
 }
 
 describe("orientMeshForPrintPreview", () => {
-  it("stands a thin box on its tallest principal axis", () => {
-    const lying = thinBoxSoup(0.08, 0.01, 0.07);
-    const oriented = orientMeshForPrintPreview(lying);
+  it("stands a thin Z-up plate on edge for storefront preview", () => {
+    const flatOnPlate = thinBoxSoup(0.08, 0.07, 0.01);
+    const oriented = orientMeshForPrintPreview(flatOnPlate);
     const size = bbox(oriented);
     expect(size.minY).toBeCloseTo(0, 5);
     expect(size.maxY - size.minY).toBeGreaterThan(0.05);
@@ -41,18 +43,37 @@ describe("orientMeshForPrintPreview", () => {
   });
 
   it("centers mesh on the virtual build plate", () => {
-    const zUp = thinBoxSoup(0.05, 0.12, 0.05);
+    const zUp = thinBoxSoup(0.05, 0.05, 0.12);
     const oriented = orientMeshForPrintPreview(zUp);
     const size = bbox(oriented);
     expect(size.minY).toBeCloseTo(0, 5);
   });
 
-  it("preserves upright pose when Y is already the tallest axis", () => {
-    const upright = thinBoxSoup(0.05, 0.12, 0.05);
-    const oriented = orientMeshForPrintPreview(upright);
+  it("stands a Z-up box when height is on Z", () => {
+    const zUp = thinBoxSoup(0.05, 0.05, 0.12);
+    const oriented = orientSlicerExportForPreview(zUp);
     const size = bbox(oriented);
+    expect(size.minY).toBeCloseTo(0, 5);
     expect(size.maxY - size.minY).toBeCloseTo(0.12, 2);
     expect(size.maxX - size.minX).toBeLessThanOrEqual(0.05 + 0.001);
+  });
+
+  it("stands a Z-up figurine when Y and Z spans are similar (3MF build plate)", () => {
+    const zUpFigurine = thinBoxSoup(0.014, 0.025, 0.024);
+    const oriented = orientSlicerExportForPreview(zUpFigurine);
+    const size = bbox(oriented);
+    expect(size.minY).toBeCloseTo(0, 5);
+    expect(size.maxY - size.minY).toBeCloseTo(0.024, 3);
+    expect(size.maxY - size.minY).toBeGreaterThan(size.maxX - size.minX);
+  });
+
+  it("stands a flat logo (thin Y) on edge with Z as height", () => {
+    const flatLogo = thinBoxSoup(0.898, 0.116, 0.8);
+    const oriented = orientHeroLogoMesh(flatLogo);
+    const size = bbox(oriented);
+    expect(size.minY).toBeCloseTo(0, 5);
+    expect(size.maxY - size.minY).toBeCloseTo(0.8, 2);
+    expect(size.maxZ - size.minZ).toBeLessThan(0.2);
   });
 });
 

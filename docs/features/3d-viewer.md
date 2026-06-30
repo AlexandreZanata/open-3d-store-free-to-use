@@ -46,7 +46,7 @@ This project uses **Three.js**, not `@google/model-viewer`. Do not add `<model-v
 
 | Layer | Responsibility |
 |-------|----------------|
-| **Upload / worker** | `orientMeshForPrintPreview.ts` — Bambu Z-up → Three.js Y-up; base on build plate; Draco GLB preview |
+| **Upload / worker** | `orientSlicerExportForPreview()` — Z-up build plate → Y-up when `minZ ≈ 0` and height is not already on +Y; thin plates use PCA fallback |
 | **Storefront** | `threeScene.ts` — `placeOnDesk()` sets `y = 0` on virtual desk + grid; OrbitControls orbit upright |
 | **Hero logo** | `orientHeroLogoMesh()` in preview pipeline; mesh color `#141414` in `heroLogoScene.ts` |
 
@@ -90,7 +90,7 @@ Any catalog upload (`STL`, `GLB`, `GLTF`, `3MF`) is converted automatically to a
 
 1. Worker ingests the source mesh (STL triangle soup, 3MF XML zip, or glTF)
 2. **Unit detection** — millimeter vs meter coordinates (heuristic on bounding box)
-3. **Print orientation** — tallest bbox axis → Y-up (figurine standing); thin plates use PCA fallback; 3MF preserves Bambu build-plate pose; yaw snap for compact footprint; build-plate centering baked into the GLB
+3. **Print orientation** — explicit Z-up → Y-up rotation (-90° about X, same as glTF convention); thin plates use PCA fallback; yaw snap for compact footprint; build-plate centering baked into the GLB
 4. **glTF encoding** — indexed `TRIANGLES` primitive + PBR material; `weld` → `dedup` → `meshopt simplify` → `normals` → **Draco**
 5. Upload worker passes the on-disk buffer once (`sourceData`) and runs part analysis + preview optimization **in parallel**
 6. **Draco** compression for web streaming

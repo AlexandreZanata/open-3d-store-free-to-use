@@ -135,6 +135,9 @@ jobs:
 
       - run: pnpm --filter @print3d/api exec drizzle-kit migrate
 
+      - name: Build workspace packages for db:seed and API dev
+        run: pnpm turbo build --filter=@print3d/shared-types --filter=@print3d/whatsapp
+
       - run: pnpm --filter @print3d/api db:seed
         env:
           ADMIN_BOOTSTRAP_EMAIL: admin@test.local

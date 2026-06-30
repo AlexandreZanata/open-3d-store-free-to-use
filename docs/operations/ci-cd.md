@@ -32,10 +32,11 @@ Runs after `test` job passes.
 Steps:
 1. `pnpm --filter @print3d/api exec drizzle-kit migrate`
 2. Write `apps/api/.env` from workflow env (required by `tsx --env-file=.env` for `db:seed` and API `dev` in Playwright webServer)
-3. `pnpm --filter @print3d/api db:seed`
-4. Install Playwright browsers: `pnpm exec playwright install chromium --with-deps`
-5. **`pnpm e2e`**
-6. Upload Playwright report on failure
+3. `pnpm turbo build --filter=@print3d/shared-types --filter=@print3d/whatsapp` (E2E job is a fresh checkout — seed scripts import compiled workspace packages)
+4. `pnpm --filter @print3d/api db:seed`
+5. Install Playwright browsers: `pnpm exec playwright install chromium --with-deps`
+6. **`pnpm e2e`**
+7. Upload Playwright report on failure
 
 Minimum suites: catalog browse, product detail, WhatsApp redirect, i18n locale switch — see [../testing/tdd-strategy.md](../testing/tdd-strategy.md).
 

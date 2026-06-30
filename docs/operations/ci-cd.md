@@ -2,10 +2,32 @@
 
 **File:** `.github/workflows/ci.yml`
 
+## Branch workflow
+
+| Branch | Purpose |
+|--------|---------|
+| **`developing`** | Day-to-day commits and pushes |
+| **`main`** | Production; merge only via PR when CI is green |
+
+```bash
+git checkout developing
+git pull origin developing
+# … work …
+git push origin developing
+# Open PR: developing → main on GitHub
+```
+
+Protect `main` after the first `developing` push:
+
+```bash
+chmod +x scripts/setup-github-branch-protection.sh
+./scripts/setup-github-branch-protection.sh
+```
+
 ## Triggers
 
-- Push to `main`, `develop`
-- Pull requests to `main`
+- Push to `main`, `developing`
+- Pull requests to `main`, `developing`
 
 ## Job: test (unit + integration + infra contract)
 
@@ -19,50 +41,30 @@ Steps:
 5. `pnpm --filter @print3d/api exec drizzle-kit migrate`
 6. **`./scripts/quality-gate.sh ci`** — typecheck, ESLint (no `any`/`unknown`), size/complexity, infra contract, build, **migrations** (when `DATABASE_URL` is set), tests
 
-Vitest also runs Drizzle migrations in `apps/api/tests/globalSetup.ts` before integration tests so the schema matches the migration journal even if an earlier migrate step was skipped.
-
-> **Quality Gate:** typecheck, ESLint strict types, size/complexity, build, and tests are **paired gates** — all must pass. Harness rule: `agent-rules/00-core/size-and-complexity-limits.md`.
-
-> Tests MUST follow [../testing/contract-first-testing.md](../testing/contract-first-testing.md). Failing contract tests block merge.
-
 ## Job: e2e
 
-Runs after `test` job passes.
-
-Steps:
-1. `pnpm --filter @print3d/api exec drizzle-kit migrate`
-2. Write `apps/api/.env` from workflow env (required by `tsx --env-file=.env` for `db:seed` and API `dev` in Playwright webServer)
-3. `pnpm turbo build --filter=@print3d/shared-types --filter=@print3d/whatsapp` (E2E job is a fresh checkout — seed scripts import compiled workspace packages)
-4. `NODE_ENV=production pnpm turbo build --force --filter=@print3d/web --filter=@print3d/admin` (CI uses **vite preview** on 4173/4174 — TanStack `vite dev` cold start exceeds the webServer timeout)
-5. `pnpm --filter @print3d/api db:seed` (flushes Redis catalog cache after upsert so product `modelFileUrl` is not stale; bundled GLB fallback for `custom-photo-frame` / `dragon-figurine` when `SEED_MODELS_SOURCE_DIR` is absent)
-6. Install Playwright browsers: `pnpm exec playwright install chromium --with-deps`
-7. **`pnpm e2e`** with `PLAYWRIGHT_BASE_URL=http://localhost:4173`, `CORS_ORIGIN` matching preview port
-8. Upload Playwright report on failure
-
-Minimum suites: catalog browse, product detail, WhatsApp redirect, i18n locale switch — see [../testing/tdd-strategy.md](../testing/tdd-strategy.md).
+Runs after `test` job passes. See workflow file for build/seed/playwright steps.
 
 ## Job: deploy
 
-- Runs only on push to `main`
-- Needs: **test** and **e2e** jobs pass
-- SSH to VPS → run `infra/scripts/deploy.sh`
+- Runs only on **push to `main`** after **test** and **e2e** pass
+- **Skipped (green)** when `VPS_HOST` / `VPS_USER` / `VPS_SSH_KEY` are not configured — CI does not fail
+- SSH to VPS → `git pull` + `infra/scripts/deploy.sh` (same end state as manual deploy on server)
 
-## GitHub Secrets
+## GitHub Secrets (Settings → Secrets and variables → Actions)
 
 | Secret | Purpose |
 |--------|---------|
 | `VPS_HOST` | Server IP/hostname |
 | `VPS_USER` | SSH user |
-| `VPS_SSH_KEY` | Private key |
+| `VPS_SSH_KEY` | Private key PEM (no passphrase) |
 
-## Harness rules
+Never store these in git. Local plaintext: `production/vault/` + `./scripts/production-vault.sh` — see [../../production/vault/README.md](../../production/vault/README.md).
 
-- `agent-rules/08-devops-and-delivery/ci-cd-gates.md`
-- `agent-rules/08-devops-and-delivery/rollback-readiness.md`
+Before push: `./scripts/verify-no-production-secrets.sh`
 
 ## Related documents
 
 - [../testing/contract-first-testing.md](../testing/contract-first-testing.md)
-- [../testing/tdd-strategy.md](../testing/tdd-strategy.md)
 - [deployment.md](../infrastructure/deployment.md)
-- `.local/phases/08-production-deployment.md`
+- [../../production/vault/README.md](../../production/vault/README.md)

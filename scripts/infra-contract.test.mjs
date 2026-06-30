@@ -267,5 +267,7 @@ describe("ci.yml contract — docs/operations/ci-cd.md", () => {
     assert.match(workflow, /deploy:/);
     assert.match(workflow, /VPS_HOST/);
     assert.match(workflow, /deploy\.sh/);
+    assert.match(workflow, /developing/);
+    assert.match(workflow, /configured=false/);
   });
 });

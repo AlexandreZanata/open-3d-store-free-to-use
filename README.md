@@ -16,6 +16,8 @@ This VPS also hosts **another site on a different domain**. Print3d uses its own
 
 **Deploy commands (local machine only — secrets never go to GitHub):**
 
+Day-to-day: push to branch **`developing`**; merge to **`main`** via PR when CI is green ([ci-cd.md](docs/operations/ci-cd.md)). Encrypt local env files: [production/vault/README.md](production/vault/README.md).
+
 ```bash
 cp production/vps.env.domain.example production/vps.env
 # REQUIRED: edit production/vps.env — VPS_HOST=YOUR_VPS_IP, DOMAIN=corvo3d.com.br, VPS_USE_HTTPS=1

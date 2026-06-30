@@ -42,6 +42,9 @@ production/env/**
 !production/ssh/
 production/ssh/**
 !production/ssh/README.md
+!production/vault/
+production/vault/**
+!production/vault/README.md
 
 # VPS / production ops (local or server only — never push to GitHub)
 infra/pm2.ecosystem.config.js

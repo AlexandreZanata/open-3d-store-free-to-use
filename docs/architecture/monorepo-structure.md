@@ -80,7 +80,7 @@ packages:
 | Task | dependsOn | outputs |
 |------|-----------|---------|
 | `build` | `^build` | `dist/**` |
-| `test` | `^build` | — (cache: false) |
+| `test` | `^build` | — (cache: false; passes `DATABASE_URL`, `REDIS_URL`, … to tasks) |
 | `dev` | — | persistent, no cache |
 | `lint` | `^build` | — |
 

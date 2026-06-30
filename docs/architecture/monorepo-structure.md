@@ -82,7 +82,13 @@ packages:
 | `build` | `^build` | `dist/**` |
 | `test` | `^build` | — (cache: false) |
 | `dev` | — | persistent, no cache |
-| `lint` | — | — |
+| `lint` | `^build` | — |
+
+## CI build artifacts
+
+Workspace packages (`@print3d/shared-types`, `@print3d/whatsapp`, `@print3d/cep`) expose `dist/**` via `package.json` `exports`. Turbo `lint` and `test` depend on `^build`, so a fresh checkout must emit those folders on CI.
+
+- **Never commit** `*.tsbuildinfo` or `dist/` — both are gitignored. A stale tracked `tsconfig.tsbuildinfo` can make `tsc` skip emitting `dist/` on CI while Turbo marks the build task complete.
 
 ## tsconfig.base.json highlights
 

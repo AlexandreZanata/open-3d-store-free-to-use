@@ -30,6 +30,7 @@ load_vite_env() {
 }
 
 load_vite_env "${WEB_ENV}"
+load_vite_env "${ADMIN_ENV}"
 
 export VITE_API_BASE_URL="${VITE_API_BASE_URL:-${CORS_ORIGIN:-}/api/v1}"
 export VITE_ASSETS_BASE_URL="${VITE_ASSETS_BASE_URL:-${CORS_ORIGIN:-}}"

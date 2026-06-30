@@ -34,16 +34,13 @@ export async function registerCors(
   config: AppConfig,
 ): Promise<void> {
   await app.register(cors, {
-    origin:
-      config.NODE_ENV === "development"
-        ? (origin, callback) => {
-            if (!origin || isAllowedCorsOrigin(origin, config)) {
-              callback(null, true);
-              return;
-            }
-            callback(null, false);
-          }
-        : [config.CORS_ORIGIN, config.ADMIN_ORIGIN],
+    origin: (origin, callback) => {
+      if (!origin || isAllowedCorsOrigin(origin, config)) {
+        callback(null, true);
+        return;
+      }
+      callback(null, false);
+    },
     credentials: true,
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
   });

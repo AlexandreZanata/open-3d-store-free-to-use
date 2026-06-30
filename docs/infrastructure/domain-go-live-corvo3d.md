@@ -192,7 +192,7 @@ Success: API returns JSON (`[{"id":…`), not `Cannot GET` or wedding HTML.
 | Wedding site broke | Removed other site's `sites-enabled` | Re-enable their vhost only; print3d uses `print3d.conf` |
 | certbot port 80 busy | Another vhost owns default HTTP | Use `certbot certonly --webroot` or coordinate with other site — [cloudflare-dns.md#7-troubleshooting](cloudflare-dns.md#7-troubleshooting) |
 | Cloudflare 522 | UFW / nginx down | `ufw allow 80,443`; `systemctl status nginx` |
-| Admin CORS errors | `ADMIN_ORIGIN` mismatch | `./production/deploy-to-vps.sh --env-only`; redeploy |
+| Admin CORS errors | Admin called apex API cross-origin | Redeploy — admin uses same-origin `/api/v1` on `admin.<domain>`; verify `ADMIN_ORIGIN=https://admin.corvo3d.com.br` in `api.env` |
 
 ---
 

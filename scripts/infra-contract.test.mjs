@@ -207,6 +207,7 @@ describe("VPS rsync deploy — docs/infrastructure/deployment.md", () => {
   test("deploy-to-vps.sh sets VITE_ADMIN_PUBLIC_HOST in domain HTTPS mode", () => {
     const script = readRepo("production/deploy-to-vps.sh");
     assert.match(script, /VITE_ADMIN_PUBLIC_HOST=admin\.\$\{DOMAIN\}/);
+    assert.match(script, /admin_api_base="\/api\/v1"/);
   });
 });
 

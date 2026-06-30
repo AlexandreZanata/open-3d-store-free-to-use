@@ -138,15 +138,20 @@ VITE_WHATSAPP_PHONE=${WHATSAPP_PHONE}
 VITE_INSTAGRAM_URL=https://www.instagram.com/corvo_3d?igsh=YjkzNXl3NWd1cGJt
 EOF
 
+  local admin_api_base="${base}/api/v1"
+  if [[ "${VPS_USE_HTTPS}" == "1" ]]; then
+    admin_api_base="/api/v1"
+  fi
+
   cat > "${ENV_DIR}/admin.env" <<EOF
-VITE_API_BASE_URL=${base}/api/v1
+VITE_API_BASE_URL=${admin_api_base}
 VITE_ASSETS_BASE_URL=${base}
 VITE_WHATSAPP_PHONE=${WHATSAPP_PHONE}
 ${admin_base_path:+VITE_ADMIN_BASE_PATH=${admin_base_path}}
 ${VPS_USE_HTTPS:+VITE_ADMIN_PUBLIC_HOST=admin.${DOMAIN}}
 EOF
   if [[ "${VPS_USE_HTTPS}" == "1" ]]; then
-    echo "deploy-to-vps.sh: admin subdomain mode — no VITE_ADMIN_BASE_PATH (use https://admin.${DOMAIN}/)"
+    echo "deploy-to-vps.sh: admin same-origin API /api/v1 on https://admin.${DOMAIN}"
   fi
 
   chmod 600 "${ENV_DIR}/"*.env

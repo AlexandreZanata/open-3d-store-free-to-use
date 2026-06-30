@@ -9,6 +9,7 @@ import { MeshoptSimplifier } from "meshoptimizer";
 
 import { createGltfIo } from "./createGltfIo.js";
 import { documentFromMesh } from "./documentFromMesh.js";
+import { extractDocumentPositions } from "./extractDocumentPositions.js";
 import { preparePreviewMesh } from "./preparePreviewMesh.js";
 import { read3mfMesh } from "./read3mfMesh.js";
 import { readStlPositions } from "./readStlPositions.js";
@@ -94,7 +95,13 @@ async function loadDocument(
   }
 
   if (input.mimeType === "model/gltf-binary" || input.mimeType === "model/gltf+json") {
-    return io.read(input.sourcePath);
+    const source = await io.read(input.sourcePath);
+    const positions = extractDocumentPositions(source);
+    if (!positions) {
+      return null;
+    }
+    const prepared = await preparePreviewMesh(positions, { source: "glb" });
+    return documentFromMesh(prepared);
   }
 
   return null;

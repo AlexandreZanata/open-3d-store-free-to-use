@@ -25,9 +25,11 @@
     "db:seed-assets": "tsx --env-file=.env scripts/generateSeedThumbnails.ts && tsx --env-file=.env scripts/seedAssets.ts",
     "db:seed-models": "tsx --env-file=.env scripts/seedModels.ts",
     "db:seed-hero-logo": "tsx --env-file=.env scripts/seedHeroLogo.ts",
+    "db:create-admin": "tsx --env-file=.env scripts/createAdminUser.ts",
     "db:studio": "drizzle-kit studio",
     "worker:model-processing": "tsx --env-file=.env scripts/workerModelProcessing.ts",
-    "reoptimize-model": "tsx --env-file=.env scripts/reoptimizeModel.ts"
+    "reoptimize-model": "tsx --env-file=.env scripts/reoptimizeModel.ts",
+    "reoptimize-all-previews": "tsx --env-file=.env scripts/reoptimizeAllPreviews.ts"
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.2",

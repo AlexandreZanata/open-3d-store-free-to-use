@@ -71,6 +71,11 @@ NODE_ENV=development pnpm turbo build \
 echo "==> Running database migrations"
 "${ROOT}/infra/scripts/migrate.sh"
 
+if [[ "${SKIP_REOPTIMIZE_MODELS:-}" != "1" ]]; then
+  echo "==> Regenerating storefront preview GLBs (upload orientation pipeline)"
+  (cd "${ROOT}/apps/api" && pnpm run reoptimize-all-previews)
+fi
+
 echo "==> Reloading PM2 processes"
 if pm2 describe print3d-api >/dev/null 2>&1; then
   pm2 reload "${ROOT}/infra/pm2.ecosystem.config.js" --env production --update-env

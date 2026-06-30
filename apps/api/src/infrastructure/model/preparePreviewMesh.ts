@@ -2,8 +2,8 @@ import { positionsToMeters } from "./documentFromMesh.js";
 import { orientSlicerExportForPreview } from "./orientMeshForPrintPreview.js";
 
 export type PreparePreviewMeshOptions = {
-  /** Bambu / 3MF build items already carry plate orientation. */
-  source?: "stl" | "3mf";
+  /** Hint for unit normalization — glTF is already meters. */
+  source?: "stl" | "3mf" | "glb";
 };
 
 /** Unit normalize and slicer-style upright orientation for web preview. */

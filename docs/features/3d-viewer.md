@@ -97,6 +97,8 @@ Any catalog upload (`STL`, `GLB`, `GLTF`, `3MF`) is converted automatically to a
 7. Admin upload response `url` is the preview when ready; `sourceUrl` keeps the original for print
 8. Public product API resolves `modelFileUrl` to the preview sibling on disk when present (no manual re-link)
 
+**Automatic orientation:** every admin `kind=model` upload runs `ProcessModelUpload` → `optimizeModelPreview` → `orientSlicerExportForPreview` (STL, 3MF, GLB, GLTF). The admin UI sets `modelFileUrl` to `previewUrl` when the job completes. Re-deploy runs `pnpm --filter @print3d/api reoptimize-all-previews` (see `infra/scripts/deploy.sh`) to refresh existing `-preview.glb` files without re-uploading.
+
 **3MF (Bambu Studio):** the reader resolves `<build>` items, nested `<components>`, external `3D/Objects/*.model` files, and 3×4 transform matrices per the [3MF specification](https://3mf.io/specification/).
 
 ## Seed catalog models

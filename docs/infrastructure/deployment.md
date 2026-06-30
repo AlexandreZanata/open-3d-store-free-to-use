@@ -48,7 +48,9 @@ pm2 startup && pm2 save
 
 **File:** `infra/scripts/deploy.sh`
 
-Steps: `git pull --ff-only` → `pnpm install --frozen-lockfile` → turbo build (`shared-types`, `whatsapp`, `api`, `web`, `admin`) → `migrate.sh` → `pm2 reload` (API + web + admin)
+Steps: `git pull --ff-only` → `pnpm install --frozen-lockfile` → turbo build (`shared-types`, `whatsapp`, `api`, `web`, `admin`) → `migrate.sh` → **`reoptimize-all-previews`** (refreshes every `-preview.glb` orientation) → `pm2 reload` (API + web + admin)
+
+Set `SKIP_REOPTIMIZE_MODELS=1` to skip preview regeneration on a deploy (large catalogs).
 
 Build reads `CORS_ORIGIN` from `apps/api/.env` to derive `VITE_*` URLs when `apps/web/.env.production` is absent.
 

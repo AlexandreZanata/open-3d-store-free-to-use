@@ -118,6 +118,13 @@ CREATE_ADMIN_EMAIL=you@example.com CREATE_ADMIN_PASSWORD='your-secure-password-1
   pnpm run db:create-admin
 ```
 
+Password reset (user already exists):
+
+```bash
+CREATE_ADMIN_FORCE=1 CREATE_ADMIN_EMAIL=you@example.com CREATE_ADMIN_PASSWORD='new-password-12+' \
+  pnpm run db:create-admin
+```
+
 Then log in at `/admin/login`. Do not use dev credentials (`admin@test.local`) unless you created that user with the command above.
 
 ## Ongoing deploys

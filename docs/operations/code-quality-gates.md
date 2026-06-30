@@ -83,7 +83,7 @@ Function length and cyclomatic complexity: enforce via ESLint when configured; o
 
 ## CI alignment
 
-GitHub Actions (`.github/workflows/ci.yml`) runs `./scripts/quality-gate.sh ci` on push/PR to `main`/`develop`. See [ci-cd.md](ci-cd.md).
+GitHub Actions (`.github/workflows/ci.yml`) runs `./scripts/quality-gate.sh ci` on push/PR to `main`/`develop`. Checkout uses `submodules: recursive` so `agent-harness` (symlink to `.agent-harness/harness`) resolves on CI. See [ci-cd.md](ci-cd.md).
 
 When bootstrapping ESLint for a package, use harness-recommended rules from `agent-rules/00-core/size-and-complexity-limits.md`:
 

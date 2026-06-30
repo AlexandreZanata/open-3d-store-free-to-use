@@ -50,6 +50,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Rewrite git SSH URLs to HTTPS
+        run: git config --global url."https://github.com/".insteadOf "git@github.com:"
 
       - uses: pnpm/action-setup@v4
 
@@ -93,6 +98,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Rewrite git SSH URLs to HTTPS
+        run: git config --global url."https://github.com/".insteadOf "git@github.com:"
 
       - uses: pnpm/action-setup@v4
 

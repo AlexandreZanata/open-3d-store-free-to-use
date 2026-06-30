@@ -33,13 +33,14 @@ function thinBoxSoup(width: number, height: number, depth: number): Float32Array
 }
 
 describe("orientMeshForPrintPreview", () => {
-  it("stands a thin Z-up plate on edge for storefront preview", () => {
-    const flatOnPlate = thinBoxSoup(0.08, 0.07, 0.01);
+  it("lays a thin Bambu Z-up bed plate flat face-up for storefront preview", () => {
+    const flatOnPlate = thinBoxSoup(0.102, 0.134, 0.011);
     const oriented = orientMeshForPrintPreview(flatOnPlate);
     const size = bbox(oriented);
     expect(size.minY).toBeCloseTo(0, 5);
-    expect(size.maxY - size.minY).toBeGreaterThan(0.05);
-    expect(size.maxY - size.minY).toBeGreaterThanOrEqual(0.07);
+    expect(size.maxY - size.minY).toBeLessThan(0.02);
+    expect(size.maxX - size.minX).toBeGreaterThan(0.08);
+    expect(size.maxZ - size.minZ).toBeGreaterThan(0.08);
   });
 
   it("centers mesh on the virtual build plate", () => {

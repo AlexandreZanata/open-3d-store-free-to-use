@@ -8,6 +8,7 @@ import {
 export type MeshDef = {
   vertices: Float32Array;
   triangleIndices: Uint32Array;
+  paintCodes?: string[];
 };
 
 export type ComponentDef = {
@@ -100,11 +101,16 @@ export function appendMesh(mesh: MeshDef, transform: Mat4, positions: number[]):
 
 function parseMeshBlock(block: string): MeshDef | null {
   const vertices = parseVertices(block);
-  const triangleIndices = parseTriangles(block);
-  if (!vertices || !triangleIndices) {
+  const triangles = parseTriangles(block);
+  if (!vertices || !triangles) {
     return null;
   }
-  return { vertices, triangleIndices };
+  const hasPaint = triangles.paintCodes.some((code) => code.length > 0);
+  return {
+    vertices,
+    triangleIndices: triangles.indices,
+    ...(hasPaint ? { paintCodes: triangles.paintCodes } : {}),
+  };
 }
 
 function parseVertices(block: string): Float32Array | null {
@@ -121,18 +127,20 @@ function parseVertices(block: string): Float32Array | null {
   return coords.length > 0 ? new Float32Array(coords) : null;
 }
 
-function parseTriangles(block: string): Uint32Array | null {
+function parseTriangles(block: string): { indices: Uint32Array; paintCodes: string[] } | null {
   const indices: number[] = [];
+  const paintCodes: string[] = [];
   const tag = /<triangle\b[^>]*>/gi;
   let match = tag.exec(block);
   while (match !== null) {
     const tri = parseTriangleIndices(match[0]);
     if (tri) {
       indices.push(tri[0], tri[1], tri[2]);
+      paintCodes.push(readAttrString(match[0], "paint_color") ?? "");
     }
     match = tag.exec(block);
   }
-  return indices.length > 0 ? new Uint32Array(indices) : null;
+  return indices.length > 0 ? { indices: new Uint32Array(indices), paintCodes } : null;
 }
 
 function parseComponents(block: string): ComponentDef[] {
@@ -187,7 +195,6 @@ function readAttr(tag: string, name: string): number | null {
   const value = Number(raw);
   return Number.isFinite(value) ? value : null;
 }
-
 function readAttrString(tag: string, name: string): string | null {
   const match = tag.match(new RegExp(`\\b${name}="([^"]+)"`, "i"));
   return match?.[1] ?? null;

@@ -32,6 +32,22 @@ export function readBambuFilamentColours(data: Buffer): string[] {
   }
 }
 
+/** Object-level base extruder when triangles lack `paint_color`. */
+export function readBambuObjectBaseExtruder(data: Buffer, objectId: number): number {
+  const entries = unzipSync(new Uint8Array(data));
+  const xml = readEntryText(entries, "Metadata/model_settings.config");
+  if (!xml) {
+    return 1;
+  }
+  const objectBlock = xml.match(new RegExp(`<object\\s+id="${objectId}"[\\s\\S]*?</object>`, "i"));
+  if (!objectBlock) {
+    return 1;
+  }
+  const raw = readMetaValue(objectBlock[0]!, "extruder");
+  const extruder = raw ? Number(raw) : NaN;
+  return Number.isFinite(extruder) && extruder > 0 ? extruder : 1;
+}
+
 /** Part names + extruder slots for a build object id (`Metadata/model_settings.config`). */
 export function readBambuObjectParts(data: Buffer, objectId: number): BambuPartMeta[] {
   const entries = unzipSync(new Uint8Array(data));

@@ -48,7 +48,7 @@ This project uses **Three.js**, not `@google/model-viewer`. Do not add `<model-v
 
 | Layer | Responsibility |
 |-------|----------------|
-| **Upload / worker** | `orientSlicerExportForPreview()` — Z-up build plate → Y-up when `minZ ≈ 0` and height is not already on +Y; thin plates use PCA fallback |
+| **Upload / worker** | `orientSlicerExportForPreview()` — Z-up build plate → Y-up when `minZ ≈ 0` and height is not already on +Y; **thin bed plates** (signs, PIX plates) stay **flat face-up** on the virtual desk; tall figurines use tallest-axis alignment |
 | **Storefront** | `threeScene.ts` — `placeOnDesk()` sets `y = 0` on virtual desk + grid; OrbitControls orbit upright |
 | **Hero logo** | `orientHeroLogoMesh()` in preview pipeline; mesh color `#141414` in `heroLogoScene.ts`; black PNG fallback at `HERO_LOGO_PLACEHOLDER_SCALE` (0.75) until GLB loads |
 
@@ -92,13 +92,14 @@ Any catalog upload (`STL`, `GLB`, `GLTF`, `3MF`) is converted automatically to a
 
 1. Worker ingests the source mesh (STL triangle soup, 3MF XML zip, or glTF)
 2. **Unit detection** — millimeter vs meter coordinates (heuristic on bounding box)
-3. **Print orientation** — explicit Z-up → Y-up rotation (-90° about X, same as glTF convention); thin plates use PCA fallback; yaw snap for compact footprint; build-plate centering baked into the GLB
+3. **Print orientation** — explicit Z-up → Y-up rotation (-90° about X, same as glTF convention); thin Bambu bed plates remain flat face-up (matches Bambu Studio top view); yaw snap for compact footprint; build-plate centering baked into the GLB
 4. **Multi-part 3MF (Bambu Studio)** — each printable volume stays a separate glTF mesh with its own PBR material; Bambu `filament_colour` + per-part `extruder` metadata populate `modelParts[].defaultColorHex` and the preview GLB base colours; only the **first printable plate** is used when a project ships multiple plates
-5. **glTF encoding** — indexed `TRIANGLES` primitive + PBR material per part; `weld` → `dedup` → `meshopt simplify` (ratio **0.95** when multi-part, **0.25** for single-body) → `normals` → **Draco**
-6. Upload worker passes the on-disk buffer once (`sourceData`) and runs part analysis + preview optimization **in parallel**
-7. **Draco** compression for web streaming
-8. Admin upload response `url` is the preview when ready; `sourceUrl` keeps the original for print
-9. Public product API resolves `modelFileUrl` to the preview sibling on disk when present (no manual re-link)
+5. **Single-mesh Bambu paint (`paint_color`)** — when a model uses brush painting on one mesh (no separate STL bodies), triangles are split by filament slot using Bambu `paint_color` codes (`4` = slot 1, `8` = slot 2, `0C` = slot 3, …); unpainted triangles use the object base extruder from `model_settings.config`
+6. **glTF encoding** — indexed `TRIANGLES` primitive + PBR material per part; `weld` → `dedup` → `meshopt simplify` (ratio **0.95** when multi-part, **0.25** for single-body) → `normals` → **Draco**
+7. Upload worker passes the on-disk buffer once (`sourceData`) and runs part analysis + preview optimization **in parallel**
+8. **Draco** compression for web streaming
+9. Admin upload response `url` is the preview when ready; `sourceUrl` keeps the original for print
+10. Public product API resolves `modelFileUrl` to the preview sibling on disk when present (no manual re-link)
 
 **Automatic orientation:** every admin `kind=model` upload runs `ProcessModelUpload` → `optimizeModelPreview` → `orientSlicerExportForPreview` (STL, 3MF, GLB, GLTF). The admin UI sets `modelFileUrl` to `previewUrl` when the job completes. Re-deploy runs `pnpm --filter @print3d/api reoptimize-all-previews` (see `infra/scripts/deploy.sh`) to refresh existing `-preview.glb` files without re-uploading.
 
@@ -177,7 +178,7 @@ Serve `/models/` directly — see [../infrastructure/nginx.md](../infrastructure
 | Layer | File |
 |-------|------|
 | Web unit | `apps/web/tests/unit/modelFormat.test.ts`, `apps/web/tests/unit/modelViewerLimits.test.ts`, `apps/web/tests/unit/modelViewerLoading.test.ts` |
-| API unit | `apps/api/tests/unit/infrastructure/orientMeshForPrintPreview.test.ts`, `documentFromMesh.test.ts`, `documentFromPartMeshes.test.ts`, `read3mfMesh.test.ts`, `read3mfPartMeshes.test.ts` |
+| API unit | `apps/api/tests/unit/infrastructure/orientMeshForPrintPreview.test.ts`, `bambuPaintColor.test.ts`, `splitMeshByBambuPaint.test.ts`, `documentFromMesh.test.ts`, `documentFromPartMeshes.test.ts`, `read3mfMesh.test.ts`, `read3mfPartMeshes.test.ts` |
 | E2E | `e2e/product-detail.spec.ts` |
 
 ## Related documents

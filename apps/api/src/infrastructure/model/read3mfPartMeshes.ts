@@ -1,15 +1,23 @@
 import { unzipSync } from "fflate";
 
 import { formatModelPartName } from "../../domain/services/formatModelPartName.js";
-import { readBambuFilamentColours, readBambuObjectParts } from "./readBambu3mfMetadata.js";
 import {
-  appendMesh,
+  readBambuFilamentColours,
+  readBambuObjectBaseExtruder,
+  readBambuObjectParts,
+} from "./readBambu3mfMetadata.js";
+import {
   emitAllRootMeshes,
   parseBuildItems,
   parseObjects,
   type MeshDef,
   type ObjectDef,
 } from "./read3mfXml.js";
+import {
+  appendMeshPositions,
+  meshHasBambuPaint,
+  splitMeshByBambuPaint,
+} from "./splitMeshByBambuPaint.js";
 import { multiplyMat4, type Mat4 } from "./threeMfTransform.js";
 
 export type RawPartMesh = {
@@ -42,6 +50,7 @@ export function read3mfPartMeshes(data: Buffer): RawPartMesh[] | null {
 
   for (const item of activeItems) {
     const metaParts = readBambuObjectParts(data, item.objectId);
+    const baseExtruder = readBambuObjectBaseExtruder(data, item.objectId);
     let metaIndex = 0;
     collectObjectMeshes(
       modelFiles,
@@ -50,22 +59,34 @@ export function read3mfPartMeshes(data: Buffer): RawPartMesh[] | null {
       item.objectId,
       item.transform,
       (mesh, transform, nameHint) => {
-        const positions: number[] = [];
-        appendMesh(mesh, transform, positions);
+        if (meshHasBambuPaint(mesh)) {
+          const painted = splitMeshByBambuPaint(
+            mesh,
+            transform,
+            filamentColours,
+            baseExtruder,
+            nameHint,
+            parts.length,
+          );
+          parts.push(...painted);
+          return;
+        }
+
+        const positions = appendMeshPositions(mesh, transform);
         if (positions.length < 9) {
           return;
         }
         const meta = metaParts[metaIndex];
         metaIndex += 1;
         const rawName = meta?.name ?? nameHint ?? `Part ${parts.length + 1}`;
-        const extruder = meta?.extruder;
+        const extruder = meta?.extruder ?? baseExtruder;
         const defaultColorHex =
           extruder && filamentColours[extruder - 1]
             ? filamentColours[extruder - 1]!.toUpperCase()
             : undefined;
         parts.push({
           name: formatModelPartName(rawName, parts.length),
-          positions: new Float32Array(positions),
+          positions,
           ...(defaultColorHex ? { defaultColorHex } : {}),
         });
       },

@@ -9,6 +9,7 @@ import {
   type Mat3,
 } from "./meshOrientationMath.js";
 import { computeCovariance3D, principalAxesRotation } from "./meshPrincipalAxes.js";
+import { isThinOnYAxis, orientFlatBedPlateFaceUp } from "./orientBambuBedPlate.js";
 
 const YAW_CANDIDATES = [0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2] as const;
 const PLATE_HEIGHT_RATIO = 0.2;
@@ -155,27 +156,26 @@ export function orientSlicerExportForPreview(positions: Float32Array): Float32Ar
   }
 
   const yUp = applyMat3(positions, ROT_Z_TO_Y);
+  if (isThinOnYAxis(yUp)) {
+    return orientFlatBedPlateFaceUp(yUp);
+  }
   if (looksLikeThinPlate(yUp)) {
     return orientThinPlateWithPca(yUp);
   }
   return snapYawOnPlate(yUp);
 }
 
-/** @deprecated alias — use orientSlicerExportForPreview */
+/** @deprecated — use orientSlicerExportForPreview */
 export function orientMeshForPrintPreview(positions: Float32Array): Float32Array {
   return orientSlicerExportForPreview(positions);
 }
-
 /** Rotate flat logo (thin Y, spread in XZ) to stand on the build-plate edge. */
 const ROT_FLAT_Y_TO_STAND: Mat3 = [1, 0, 0, 0, 0, -1, 0, 1, 0];
 
 /** Head-up correction after standing (Corvo STL exports inverted on Y). */
 const ROT_FLIP_X: Mat3 = [1, 0, 0, 0, -1, 0, 0, 0, -1];
 
-/**
- * Hero Corvo STL: flat on the print bed (thin Y). Stand on edge so height is the
- * former Z axis, not the wingspan X axis (alignTallestAxisToY would lay it sideways).
- */
+/** Hero Corvo STL: flat on bed (thin Y) — stand on edge with Z as height. */
 export function orientHeroLogoMesh(positions: Float32Array): Float32Array {
   if (positions.length < 9) {
     return positions;

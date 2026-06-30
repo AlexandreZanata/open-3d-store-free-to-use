@@ -12,12 +12,12 @@
 Services: PostgreSQL 18.4, Redis 8.8
 
 Steps:
-1. checkout
-2. pnpm setup (v9)
+1. checkout (with harness submodule)
+2. pnpm setup (from `packageManager` in root `package.json`)
 3. Node 22
 4. `pnpm install --frozen-lockfile`
-5. **`node --test scripts/infra-contract.test.mjs`** — deployment/nginx/PM2/CI contract
-6. **`./scripts/quality-gate.sh ci`** — typecheck, ESLint (no `any`/`unknown`), size/complexity, build, tests
+5. `pnpm --filter @print3d/api exec drizzle-kit migrate`
+6. **`./scripts/quality-gate.sh ci`** — typecheck, ESLint (no `any`/`unknown`), size/complexity, infra contract, build, tests
 
 > **Quality Gate:** typecheck, ESLint strict types, size/complexity, build, and tests are **paired gates** — all must pass. Harness rule: `agent-rules/00-core/size-and-complexity-limits.md`.
 

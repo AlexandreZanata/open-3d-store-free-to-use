@@ -65,6 +65,8 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - run: pnpm --filter @print3d/api exec drizzle-kit migrate
+
       - run: ./scripts/quality-gate.sh ci
 
   e2e:

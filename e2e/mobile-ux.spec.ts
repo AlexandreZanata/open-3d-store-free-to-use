@@ -83,7 +83,7 @@ test.describe("mobile storefront UX", () => {
 
     const tabBar = page.getByTestId("mobile-tab-bar");
     const insetPx = 48;
-    const visualBottomPx = 844 - insetPx;
+    const layoutHeight = 844;
 
     await page.evaluate((vvHeight) => {
       Object.defineProperty(window, "visualViewport", {
@@ -100,30 +100,33 @@ test.describe("mobile storefront UX", () => {
         },
       });
       window.dispatchEvent(new Event("resize"));
-    }, 844 - insetPx);
+    }, layoutHeight - insetPx);
 
     await page.waitForTimeout(100);
 
-    await expect(tabBar).toHaveCSS("bottom", `${insetPx}px`);
+    await expect(tabBar).toHaveCSS("bottom", "0px");
+    await expect(tabBar).toHaveCSS("padding-bottom", `${insetPx}px`);
 
     const transform = await tabBar.evaluate((el) => getComputedStyle(el).transform);
     expect(transform === "none" || transform === "matrix(1, 0, 0, 1, 0, 0)").toBe(true);
 
-    const assertFlush = async () => {
+    const assertShellFlush = async () => {
+      const innerHeight = await page.evaluate(() => window.innerHeight);
       const box = await tabBar.boundingBox();
       expect(box).not.toBeNull();
       if (box) {
-        expect(Math.abs(box.y + box.height - visualBottomPx)).toBeLessThanOrEqual(2);
+        expect(Math.abs(box.y + box.height - innerHeight)).toBeLessThanOrEqual(2);
       }
     };
 
-    await assertFlush();
+    await assertShellFlush();
 
     await page.getByRole("contentinfo").scrollIntoViewIfNeeded();
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(300);
 
-    await expect(tabBar).toHaveCSS("bottom", `${insetPx}px`);
-    await assertFlush();
+    await expect(tabBar).toHaveCSS("bottom", "0px");
+    await expect(tabBar).toHaveCSS("padding-bottom", `${insetPx}px`);
+    await assertShellFlush();
   });
 });

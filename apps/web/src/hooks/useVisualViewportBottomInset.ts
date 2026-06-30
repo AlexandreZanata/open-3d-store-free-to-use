@@ -43,9 +43,9 @@ export function useVisualViewportBottomInset(): void {
     syncNow();
     mq.addEventListener("change", onMqChange);
     window.visualViewport?.addEventListener("resize", scheduleSync);
-    window.visualViewport?.addEventListener("scroll", scheduleSync);
+    window.visualViewport?.addEventListener("scroll", syncNow);
     window.addEventListener("resize", scheduleSync);
-    window.addEventListener("scroll", scheduleSync, { passive: true });
+    window.addEventListener("scroll", syncNow, { passive: true });
 
     return () => {
       if (rafId !== 0) {
@@ -53,9 +53,9 @@ export function useVisualViewportBottomInset(): void {
       }
       mq.removeEventListener("change", onMqChange);
       window.visualViewport?.removeEventListener("resize", scheduleSync);
-      window.visualViewport?.removeEventListener("scroll", scheduleSync);
+      window.visualViewport?.removeEventListener("scroll", syncNow);
       window.removeEventListener("resize", scheduleSync);
-      window.removeEventListener("scroll", scheduleSync);
+      window.removeEventListener("scroll", syncNow);
       root.style.removeProperty(CSS_VAR);
     };
   }, []);

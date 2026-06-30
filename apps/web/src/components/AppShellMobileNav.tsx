@@ -45,7 +45,6 @@ export function AppShellMobileNav() {
           ))}
         </div>
       </div>
-      <div className="mobile-tab-bar-safe-area" aria-hidden />
     </nav>
   );
 }

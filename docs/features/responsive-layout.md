@@ -44,12 +44,11 @@ On Android Chrome, scrolling **up** can resize the browser toolbar so the **visu
 |-------|----------|
 | **CSS variable** | `--vv-bottom-inset` on `document.documentElement` |
 | **Formula** | `max(0, round(innerHeight - visualViewport.height - visualViewport.offsetTop))` |
-| **Tab bar anchor** | `bottom: var(--vv-bottom-inset)` on `mobile-tab-bar-shell` — **not** `transform` |
-| **Opaque bleed** | `::after` pseudo below the shell (`height: 100vh`) hides overscroll gaps |
-| **Safe area** | `mobile-tab-bar-safe-area` div with `env(safe-area-inset-bottom)` |
+| **Tab bar anchor** | `bottom: 0` on `mobile-tab-bar-shell` — **never** lift via `bottom: var(--vv-bottom-inset)` |
+| **Chrome + safe area** | `padding-bottom: calc(env(safe-area-inset-bottom, 0px) + var(--vv-bottom-inset, 0px))` on the shell — opaque `bg-background` fills the strip |
 | **Stacked UI** | `mobileStackAboveTabBar`, `footerBottomPad`, and `mobileProductScrollSpacer` MUST include `var(--vv-bottom-inset, 0px)` |
 
-When `--vv-bottom-inset > 0`, the tab bar’s visual bottom edge MUST equal `window.innerHeight` (±1px) with fully opaque `bg-background`.
+When `--vv-bottom-inset > 0`, the shell’s **outer** bottom edge MUST equal `window.innerHeight` (±2px) with fully opaque `bg-background`; tab icons sit above the padding.
 
 Sync runs only below `lg` (`max-width: 1023px`) via `useVisualViewportBottomInset` mounted in `AppShell`.
 
@@ -139,7 +138,7 @@ PLAYWRIGHT_SKIP_WEBSERVER=1 PLAYWRIGHT_BASE_URL=http://localhost:5173 pnpm e2e e
 5. **Home return navigation (mobile)** — open home, tap a product, wait 5s, bottom-nav back to home: product thumbnails visible within 1s (no gray/white tiles for 3s).
 6. **Product detail** — `/product/phone-stand`: gallery tab shows carousel with multiple images; `/product/custom-photo-frame`: 3D tab shows virtual desk viewer (drag to rotate, scroll to zoom). On mobile (390px), favorite and share appear below material; **Pedir pelo WhatsApp** opens WhatsApp directly (green button) without visiting cart first.
 7. **Footer** — dark inverted bar, pitch text, WhatsApp + Instagram + GitHub + email; icon-only on mobile, labeled on desktop.
-8. **Tab bar viewport (Android)** — on a product page, scroll down then scroll up aggressively: no page content (e.g. green WhatsApp button) visible in a strip below the bottom tab bar; tab bar stays fixed and opaque.
+8. **Tab bar viewport (Android)** — on a product page, scroll down then scroll up aggressively near the footer: no page content (e.g. green WhatsApp button or dark footer) visible in a strip below the bottom tab bar; shell outer edge stays flush with the screen bottom and opaque.
 
 ## Related
 

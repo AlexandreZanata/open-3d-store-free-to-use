@@ -40,8 +40,14 @@ describe("deploy.sh contract — docs/infrastructure/deployment.md", () => {
 
   test("validates storefront VITE_API_BASE_URL without admin relative /api/v1", () => {
     assert.doesNotMatch(script, /load_vite_env "\$\{ADMIN_ENV\}"/);
+    assert.match(script, /load_vite_env "\$\{WEB_ENV\}"/);
     assert.match(script, /CORS_ORIGIN/);
     assert.match(script, /storefront needs absolute VITE_API_BASE_URL/);
+  });
+
+  test("admin build reads apps/admin/.env.production via Vite (not shell export)", () => {
+    assert.match(script, /Admin build reads apps\/admin\/\.env\.production/);
+    assert.match(script, /@print3d\/admin/);
   });
 
   test("skips git pull for rsync deploy without .git", () => {
@@ -247,6 +253,7 @@ describe("ci.yml contract — docs/operations/ci-cd.md", () => {
     assert.match(workflow, /postgres:18\.4/);
     assert.match(workflow, /redis:8\.8/);
     assert.match(workflow, /quality-gate\.sh ci/);
+    assert.match(workflow, /drizzle-kit migrate|db:migrate/);
   });
 
   test("runs e2e after tests and deploys on main push", () => {

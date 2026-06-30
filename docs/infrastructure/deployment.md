@@ -52,7 +52,7 @@ Steps: `git pull --ff-only` → `pnpm install --frozen-lockfile` → turbo build
 
 Set `SKIP_REOPTIMIZE_MODELS=1` to skip preview regeneration on a deploy (large catalogs).
 
-Build reads `CORS_ORIGIN` from `apps/api/.env` to derive `VITE_*` URLs when `apps/web/.env.production` is absent.
+Build reads `CORS_ORIGIN` from `apps/api/.env` to derive storefront `VITE_*` URLs when `apps/web/.env.production` is absent. **Do not** `source` `apps/admin/.env.production` in the same shell — its relative `/api/v1` would overwrite storefront `VITE_API_BASE_URL`. The admin app reads `apps/admin/.env.production` at Vite build time.
 
 ## Migrate script
 

@@ -5,7 +5,6 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 ENV_FILE="${ROOT}/apps/api/.env"
 WEB_ENV="${ROOT}/apps/web/.env.production"
-ADMIN_ENV="${ROOT}/apps/admin/.env.production"
 
 cd "${ROOT}"
 
@@ -30,7 +29,6 @@ load_vite_env() {
 }
 
 load_vite_env "${WEB_ENV}"
-load_vite_env "${ADMIN_ENV}"
 
 export VITE_API_BASE_URL="${VITE_API_BASE_URL:-${CORS_ORIGIN:-}/api/v1}"
 export VITE_ASSETS_BASE_URL="${VITE_ASSETS_BASE_URL:-${CORS_ORIGIN:-}}"

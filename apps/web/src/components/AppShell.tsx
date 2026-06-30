@@ -5,6 +5,7 @@ import { AppShellDesktopHeader } from "@/components/AppShellDesktopHeader";
 import { AppShellFooter } from "@/components/AppShellFooter";
 import { AppShellMobileHeader } from "@/components/AppShellMobileHeader";
 import { AppShellMobileNav } from "@/components/AppShellMobileNav";
+import { useVisualViewportBottomInset } from "@/hooks/useVisualViewportBottomInset";
 import { desktopMainSurface, mainBottomPad, mobileTopPad, shellMaxWidth } from "@/lib/layout";
 
 type Props = {
@@ -23,6 +24,7 @@ export function AppShell({
   title,
 }: Props) {
   const headerProps = { showSearch, showBack, title };
+  useVisualViewportBottomInset();
 
   return (
     <div className="flex min-h-dvh flex-col bg-background text-foreground lg:bg-surface-muted/40">

@@ -23,7 +23,7 @@ test.describe("mobile storefront UX", () => {
     });
 
     await page.goto("/");
-    await expect(page.locator("nav.fixed.bottom-0")).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByTestId("mobile-tab-bar")).toBeVisible({ timeout: 20_000 });
     await page.waitForTimeout(1_500);
 
     expect(meCalls).toHaveLength(0);
@@ -32,7 +32,7 @@ test.describe("mobile storefront UX", () => {
 
   test("mobile hero tile shows rotating corvo 3d logo", async ({ page }) => {
     await page.goto("/");
-    const placeholder = page.getByTestId("hero-logo-placeholder");
+    const placeholder = page.getByTestId("hero-logo-placeholder").first();
     await expect(placeholder).toBeVisible({ timeout: 5_000 });
     await expect(placeholder.locator('img[src="/brand/corvo-logo.png"].brightness-0')).toBeVisible();
     await expect(
@@ -43,7 +43,7 @@ test.describe("mobile storefront UX", () => {
 
   test("guest can favorite a product from the card heart", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator("nav.fixed.bottom-0")).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByTestId("mobile-tab-bar")).toBeVisible({ timeout: 20_000 });
 
     const heart = page.getByRole("button", { name: /favorite|favorito/i }).first();
     await expect(heart).toBeVisible();
@@ -71,9 +71,59 @@ test.describe("mobile storefront UX", () => {
     await expect(stickyBar.getByRole("button", { name: /add to cart|adicionar ao carrinho/i })).toBeVisible();
 
     const footer = page.getByRole("contentinfo");
-    await footer.scrollIntoViewIfNeeded();
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await expect(footer.getByRole("link", { name: /github profile|perfil no github/i })).toBeVisible();
 
     await expect(stickyBar).toHaveCSS("opacity", "0");
+  });
+
+  test("mobile tab bar stays flush when viewport bottom inset is applied", async ({ page }) => {
+    await page.goto("/product/dragon-figurine");
+    await expect(page.getByTestId("mobile-tab-bar")).toBeVisible({ timeout: 15_000 });
+
+    const tabBar = page.getByTestId("mobile-tab-bar");
+    const insetPx = 48;
+    const visualBottomPx = 844 - insetPx;
+
+    await page.evaluate((vvHeight) => {
+      Object.defineProperty(window, "visualViewport", {
+        configurable: true,
+        value: {
+          height: vvHeight,
+          offsetTop: 0,
+          addEventListener: (type: string, listener: EventListener) => {
+            window.addEventListener(type, listener);
+          },
+          removeEventListener: (type: string, listener: EventListener) => {
+            window.removeEventListener(type, listener);
+          },
+        },
+      });
+      window.dispatchEvent(new Event("resize"));
+    }, 844 - insetPx);
+
+    await page.waitForTimeout(100);
+
+    await expect(tabBar).toHaveCSS("bottom", `${insetPx}px`);
+
+    const transform = await tabBar.evaluate((el) => getComputedStyle(el).transform);
+    expect(transform === "none" || transform === "matrix(1, 0, 0, 1, 0, 0)").toBe(true);
+
+    const assertFlush = async () => {
+      const box = await tabBar.boundingBox();
+      expect(box).not.toBeNull();
+      if (box) {
+        expect(Math.abs(box.y + box.height - visualBottomPx)).toBeLessThanOrEqual(2);
+      }
+    };
+
+    await assertFlush();
+
+    await page.getByRole("contentinfo").scrollIntoViewIfNeeded();
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(300);
+
+    await expect(tabBar).toHaveCSS("bottom", `${insetPx}px`);
+    await assertFlush();
   });
 });

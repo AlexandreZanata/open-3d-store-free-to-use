@@ -2,7 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { Heart, Home, LayoutGrid, Search, User, type LucideIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { mobileOnly, shellMaxWidth } from "@/lib/layout";
+import { mobileOnly, mobileTabBarHeightClass, shellMaxWidth } from "@/lib/layout";
 import { cn } from "@/lib/utils";
 
 const TABS: Array<{ to: string; labelKey: string; icon: LucideIcon; match: (path: string) => boolean }> = [
@@ -29,19 +29,23 @@ export function AppShellMobileNav() {
 
   return (
     <nav
-      className={`${mobileOnly} fixed bottom-0 inset-x-0 z-50 bg-background/95 backdrop-blur-xl border-t border-hairline pb-[max(0px,env(safe-area-inset-bottom))]`}
+      data-testid="mobile-tab-bar"
+      className={`${mobileOnly} mobile-tab-bar-shell fixed inset-x-0 z-50 bg-background`}
     >
-      <div className={`${shellMaxWidth} px-1.5 h-[3.75rem] grid grid-cols-5`}>
-        {TABS.map(({ to, labelKey, icon: Icon, match }) => (
-          <TabItem
-            key={to}
-            to={to}
-            active={match(pathname)}
-            icon={Icon}
-            label={t(labelKey)}
-          />
-        ))}
+      <div className="relative border-t border-hairline">
+        <div className={`${shellMaxWidth} px-1.5 ${mobileTabBarHeightClass} grid grid-cols-5`}>
+          {TABS.map(({ to, labelKey, icon: Icon, match }) => (
+            <TabItem
+              key={to}
+              to={to}
+              active={match(pathname)}
+              icon={Icon}
+              label={t(labelKey)}
+            />
+          ))}
+        </div>
       </div>
+      <div className="mobile-tab-bar-safe-area" aria-hidden />
     </nav>
   );
 }

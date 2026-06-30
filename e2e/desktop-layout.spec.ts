@@ -17,7 +17,7 @@ test.describe("desktop layout", () => {
       timeout: 20_000,
     });
     await expect(page.getByRole("link", { name: /cart|carrinho/i })).toBeVisible();
-    await expect(page.locator("nav.fixed.bottom-0")).toHaveCount(0);
+    await expect(page.getByTestId("mobile-tab-bar")).toBeHidden();
   });
 
   test("home desktop hero uses separate layout from mobile", async ({ page }) => {
@@ -80,7 +80,7 @@ test.describe("mobile layout preserved", () => {
   test("keeps bottom tab bar and compact mobile header", async ({ page }) => {
     await page.goto("/");
 
-    await expect(page.locator("nav.fixed.bottom-0")).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByTestId("mobile-tab-bar")).toBeVisible({ timeout: 20_000 });
     await expect(page.getByRole("link", { name: /home|início/i })).toBeVisible();
     await expect(page.getByRole("navigation", { name: /main navigation|navegação principal/i })).toHaveCount(0);
   });
@@ -88,7 +88,7 @@ test.describe("mobile layout preserved", () => {
   test("active tab uses filled icon without accent dot", async ({ page }) => {
     await page.goto("/");
 
-    const bottomNav = page.locator("nav.fixed.bottom-0");
+    const bottomNav = page.getByTestId("mobile-tab-bar");
     const homeTab = bottomNav.getByRole("link", { name: /home|início/i });
     await expect(homeTab).toBeVisible({ timeout: 20_000 });
     await expect(homeTab.locator(".bg-accent")).toHaveCount(0);

@@ -16,7 +16,7 @@ Implementation tokens live in `apps/web/src/lib/layout.ts`.
 | Element | Detail |
 |---------|--------|
 | **Header** | `AppShellMobileHeader` — fixed top bar (`h-14`), main content uses `mobileTopPad` |
-| **Navigation** | Fixed bottom 5-tab bar (`h-[3.75rem]`, `z-50`); active tab uses **filled black icon** (no accent dot) |
+| **Navigation** | Fixed bottom 5-tab bar (`h-[3.75rem]`, `z-50`, `data-testid="mobile-tab-bar"`); active tab uses **filled black icon** (no accent dot) |
 | **Home** | Hero card + category pills + horizontal product rails; mobile hero tile shows rotating **3D Corvo logo** (`HeroLogoViewer` compact); product thumbnails stay visible when returning via bottom nav (no multi-second blank flash — see [catalog-realtime.md](catalog-realtime.md) thumbnail warm cache); **PETG HF** material pill on cards uses **solid orange** (`bg-orange-500`, white text) for contrast on dark thumbnails |
 | **Shell** | `max-w-2xl`, flex column with site footer above tab bar |
 
@@ -35,6 +35,23 @@ Global footer on every page wrapped by `AppShell`:
 | **Email** | `alexandrezanatavasconcelos@gmail.com` |
 
 Mobile footer uses `footerBottomPad` so content clears the fixed bottom tab bar.
+
+### Mobile tab bar — visual viewport pinning
+
+On Android Chrome, scrolling **up** can resize the browser toolbar so the **visual viewport** bottom no longer matches `position: fixed; bottom: 0`. Without compensation, page content bleeds through a thin strip below the tab bar.
+
+| Piece | Contract |
+|-------|----------|
+| **CSS variable** | `--vv-bottom-inset` on `document.documentElement` |
+| **Formula** | `max(0, round(innerHeight - visualViewport.height - visualViewport.offsetTop))` |
+| **Tab bar anchor** | `bottom: var(--vv-bottom-inset)` on `mobile-tab-bar-shell` — **not** `transform` |
+| **Opaque bleed** | `::after` pseudo below the shell (`height: 100vh`) hides overscroll gaps |
+| **Safe area** | `mobile-tab-bar-safe-area` div with `env(safe-area-inset-bottom)` |
+| **Stacked UI** | `mobileStackAboveTabBar`, `footerBottomPad`, and `mobileProductScrollSpacer` MUST include `var(--vv-bottom-inset, 0px)` |
+
+When `--vv-bottom-inset > 0`, the tab bar’s visual bottom edge MUST equal `window.innerHeight` (±1px) with fully opaque `bg-background`.
+
+Sync runs only below `lg` (`max-width: 1023px`) via `useVisualViewportBottomInset` mounted in `AppShell`.
 
 ## Desktop design (lg+)
 
@@ -84,7 +101,9 @@ Separate desktop-only home — mobile home is wrapped in `lg:hidden`:
 | `apps/web/src/components/home/HeroLogoPlaceholder.tsx` | Solid black corvo PNG fallback (`brightness-0`) — same fit ratio as hero GLB |
 | `apps/web/src/lib/heroLogo.ts` | Hero GLB URL + `preloadHeroLogo()` |
 | `apps/web/src/lib/favoriteCache.ts` | Visitor favorite-id cache for instant empty state |
-| `apps/web/src/hooks/useFooterInView.ts` | Hides mobile sticky product actions when footer intersects |
+| `apps/web/src/lib/visualViewportInset.ts` | Pure inset calculator for `--vv-bottom-inset` |
+| `apps/web/src/hooks/useVisualViewportBottomInset.ts` | Syncs visual viewport gap to CSS variable (mobile only) |
+| `apps/web/src/hooks/useFooterInView.ts` | Hides mobile sticky product actions when footer intersects sticky zone |
 | `apps/web/src/components/SearchFiltersPanel.tsx` | Search filters (mobile chips / desktop list) |
 | `apps/web/src/components/search/SearchDesktopView.tsx` | Desktop-only search layout |
 | `apps/web/src/components/search/SearchMobileView.tsx` | **Frozen** mobile search UI |
@@ -99,11 +118,12 @@ Separate desktop-only home — mobile home is wrapped in `lg:hidden`:
 | Layer | File |
 |-------|------|
 | Unit | `apps/web/tests/layout.test.ts` |
+| Unit | `apps/web/tests/unit/visualViewportInset.test.ts` — inset formula from this doc |
 | Unit | `apps/web/tests/unit/contact.test.ts` |
 | E2E desktop | `e2e/desktop-layout.spec.ts` — 1280×800 |
 | E2E product | `e2e/product-detail.spec.ts` — 3D viewer + gallery carousel |
 | E2E mobile | `e2e/desktop-layout.spec.ts` — 390×844 preserved UI |
-| E2E mobile UX | `e2e/mobile-ux.spec.ts` — guest favorites, sticky bar vs footer, favorites empty state |
+| E2E mobile UX | `e2e/mobile-ux.spec.ts` — guest favorites, sticky bar vs footer, tab bar viewport pinning |
 | E2E catalog nav | `e2e/catalog-navigation.spec.ts` — home → product → home thumbnail persistence (mobile) |
 
 ```bash
@@ -119,6 +139,7 @@ PLAYWRIGHT_SKIP_WEBSERVER=1 PLAYWRIGHT_BASE_URL=http://localhost:5173 pnpm e2e e
 5. **Home return navigation (mobile)** — open home, tap a product, wait 5s, bottom-nav back to home: product thumbnails visible within 1s (no gray/white tiles for 3s).
 6. **Product detail** — `/product/phone-stand`: gallery tab shows carousel with multiple images; `/product/custom-photo-frame`: 3D tab shows virtual desk viewer (drag to rotate, scroll to zoom). On mobile (390px), favorite and share appear below material; **Pedir pelo WhatsApp** opens WhatsApp directly (green button) without visiting cart first.
 7. **Footer** — dark inverted bar, pitch text, WhatsApp + Instagram + GitHub + email; icon-only on mobile, labeled on desktop.
+8. **Tab bar viewport (Android)** — on a product page, scroll down then scroll up aggressively: no page content (e.g. green WhatsApp button) visible in a strip below the bottom tab bar; tab bar stays fixed and opaque.
 
 ## Related
 

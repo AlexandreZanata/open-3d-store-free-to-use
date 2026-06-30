@@ -28,7 +28,7 @@ test.describe("catalog navigation thumbnails", () => {
 
   test("home thumbnails stay visible after product detail and bottom-nav return", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator("nav.fixed.bottom-0")).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByTestId("mobile-tab-bar")).toBeVisible({ timeout: 20_000 });
     await expectThumbnailDecoded(page, 20_000);
 
     const productLink = page

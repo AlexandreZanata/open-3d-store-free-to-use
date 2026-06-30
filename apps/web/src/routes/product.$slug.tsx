@@ -14,7 +14,13 @@ import { ApiError } from "@/lib/api/client";
 import { fetchProductBySlug } from "@/lib/api/products";
 import { captureOrder } from "@/lib/api/orders";
 import { addToCart } from "@/lib/cart";
-import { mobileOnly, pagePadding, productGridCols, railScroll } from "@/lib/layout";
+import {
+  mobileOnly,
+  mobileProductScrollSpacer,
+  pagePadding,
+  productGridCols,
+  railScroll,
+} from "@/lib/layout";
 import { getCurrentI18nLocale, default as i18n } from "@/i18n";
 import { brandPageTitle } from "@/lib/brand";
 import type { ProductDetail } from "@print3d/shared-types";
@@ -200,7 +206,7 @@ function ProductPage() {
       ) : null}
 
       <div className={mobileOnly}>
-        <div className="h-[7.5rem]" aria-hidden />
+        <div className={mobileProductScrollSpacer} aria-hidden />
       </div>
     </AppShell>
   );

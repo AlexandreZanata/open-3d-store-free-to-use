@@ -33,6 +33,8 @@ apps/api/storage/
 production/**
 !production/README.md
 !production/deploy-to-vps.sh
+!production/vps.env.example
+!production/vps.env.domain.example
 !production/env/
 production/env/**
 !production/env/README.md

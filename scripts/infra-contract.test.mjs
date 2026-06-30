@@ -70,7 +70,8 @@ describe("nginx.conf contract — docs/infrastructure/nginx.md", () => {
   test("serves models from filesystem and proxies API, web, and admin", () => {
     assert.match(config, /location \^~ \/models\//);
     assert.match(config, /alias \/var\/www\/print3d\/models\//);
-    assert.match(config, /location ~\* \^\/assets\//);
+    assert.match(config, /location \^~ \/assets\//);
+    assert.match(config, /apps\/web\/dist\/client\/assets\//);
     assert.match(config, /location \/api\//);
     assert.match(config, /127\.0\.0\.1:3101/);
     assert.match(config, /127\.0\.0\.1:4173/);
@@ -163,12 +164,30 @@ describe("VPS rsync deploy — docs/infrastructure/deployment.md", () => {
     assert.match(script, /--exclude models/);
   });
 
+  test("nginx.ip.conf serves hashed web assets from dist/client", () => {
+    const conf = readRepo("infra/nginx/nginx.ip.conf");
+    assert.match(conf, /location \^~ \/assets\//);
+    assert.match(conf, /apps\/web\/dist\/client\/assets\//);
+  });
+
   test("vps-full-deploy.sh runs vps-seed.sh only when RUN_VPS_SEED=1", () => {
     const script = readRepo("infra/scripts/vps-full-deploy.sh");
     assert.match(script, /RUN_VPS_SEED/);
     assert.match(script, /vps-seed\.sh/);
     assert.match(script, /install-hero-logo-glb\.sh/);
     assert.doesNotMatch(script, /SKIP_VPS_SEED/);
+  });
+
+  test("vps-full-deploy.sh uses domain nginx when VPS_USE_HTTPS=1", () => {
+    const script = readRepo("infra/scripts/vps-full-deploy.sh");
+    assert.match(script, /VPS_USE_HTTPS/);
+    assert.match(script, /install-nginx-domain\.sh/);
+    assert.match(script, /install-nginx-ip\.sh/);
+  });
+
+  test("deploy-to-vps.sh sets VITE_INSTAGRAM_URL for storefront build", () => {
+    const script = readRepo("production/deploy-to-vps.sh");
+    assert.match(script, /VITE_INSTAGRAM_URL/);
   });
 });
 

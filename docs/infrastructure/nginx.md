@@ -6,7 +6,8 @@
 
 - HTTP → HTTPS redirect
 - SSL termination (Let's Encrypt)
-- Proxy TanStack Start SSR (`127.0.0.1:4173`) for storefront routes and hashed assets
+- Proxy TanStack Start SSR (`127.0.0.1:4173`) for HTML document requests
+- Serve `/assets/` and `/brand/` from `apps/web/dist/client/` (correct JS/WASM MIME; avoids SSR HTML fallback)
 - Serve `/models/` directly from filesystem (no Node proxy)
 - Proxy `/api/` to `127.0.0.1:3001`
 - Long-cache immutable headers for proxied static assets (`*.js`, `*.css`, fonts, images)
@@ -32,7 +33,8 @@ application/wasm model/gltf-binary model/gltf+json
 
 | Location | TTL |
 |----------|-----|
-| Proxied `/assets/*` (`*.js`, `*.css`, fonts) | 1 year, immutable |
+| `/assets/*` (filesystem under `apps/web/dist/client/assets/`) | 1 year, immutable |
+| `/brand/*` (filesystem) | 7 days |
 | `/models/` (filesystem, `^~` prefix) | 30 days |
 | `/api/` | Set by API (Cache-Control from Fastify) |
 

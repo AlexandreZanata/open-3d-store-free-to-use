@@ -1,17 +1,19 @@
 # Cloudflare + Registro.br DNS
 
 > Publish the VPS (`YOUR_VPS_IP`) behind Cloudflare proxy with HTTPS.
+>
+> **Example domain:** `corvo3d.com.br` — live storefront for this project.
 
 ## Prerequisites
 
-- Domain registered at [Registro.br](https://registro.br)
+- Domain registered at [Registro.br](https://registro.br) (e.g. **corvo3d.com.br**)
 - VPS running Nginx on ports 80/443 (see [vps-provisioning.md](vps-provisioning.md))
-- Replace `yourdomain.com.br` with your real domain everywhere
+- Shared VPS: [shared-vps-multi-domain.md](shared-vps-multi-domain.md)
 
 ## 1. Add domain to Cloudflare
 
 1. Sign up / log in at [dash.cloudflare.com](https://dash.cloudflare.com)
-2. **Add a site** → enter `yourdomain.com.br`
+2. **Add a site** → enter `corvo3d.com.br` (or your domain)
 3. Select **Free** plan
 4. Cloudflare scans existing DNS (optional) → continue
 5. Copy the **two nameservers** shown (e.g. `ada.ns.cloudflare.com`, `bob.ns.cloudflare.com`)
@@ -37,6 +39,8 @@ Registro.br does **not** host your A records once NS point to Cloudflare. All DN
 | A | `@` | `YOUR_VPS_IP` | Proxied (orange cloud) |
 | A | `www` | `YOUR_VPS_IP` | Proxied |
 | A | `admin` | `YOUR_VPS_IP` | Proxied |
+
+**corvo3d.com.br:** admin panel is `https://admin.corvo3d.com.br` — the `admin` A record is required.
 
 Optional (email — only if you use Google Workspace etc.):
 
@@ -72,16 +76,16 @@ Example cache rule: **Bypass** cache for URI Path starts with `/api/`.
 ## 6. Verify DNS
 
 ```bash
-dig +short yourdomain.com.br
-dig +short www.yourdomain.com.br
-dig +short admin.yourdomain.com.br
+dig +short corvo3d.com.br
+dig +short www.corvo3d.com.br
+dig +short admin.corvo3d.com.br
 ```
 
 Proxied records often return Cloudflare anycast IPs (not `YOUR_VPS_IP`) — that is expected.
 
 ```bash
-curl -I https://yourdomain.com.br
-curl -sS https://yourdomain.com.br/api/v1/categories | head
+curl -I https://corvo3d.com.br
+curl -sS https://corvo3d.com.br/api/v1/categories | head
 ```
 
 ## 7. Troubleshooting

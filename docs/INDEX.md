@@ -65,6 +65,7 @@
 | [infrastructure/deployment.md](infrastructure/deployment.md) | VPS layout, PM2, deploy script |
 | [infrastructure/vps-provisioning.md](infrastructure/vps-provisioning.md) | **End-to-end VPS + Cloudflare setup** |
 | [infrastructure/cloudflare-dns.md](infrastructure/cloudflare-dns.md) | Cloudflare + Registro.br DNS |
+| [infrastructure/shared-vps-multi-domain.md](infrastructure/shared-vps-multi-domain.md) | **corvo3d.com.br** on shared VPS |
 | [infrastructure/kubernetes.md](infrastructure/kubernetes.md) | Why K8s is not used on single VPS |
 | [infrastructure/nginx.md](infrastructure/nginx.md) | Reverse proxy, static files, SSL |
 | [infrastructure/docker-compose.md](infrastructure/docker-compose.md) | Local Postgres 18.4 + Redis 8.8 |

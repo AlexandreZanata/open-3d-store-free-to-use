@@ -131,6 +131,7 @@ EOF
 VITE_API_BASE_URL=${base}/api/v1
 VITE_ASSETS_BASE_URL=${base}
 VITE_WHATSAPP_PHONE=${WHATSAPP_PHONE}
+VITE_INSTAGRAM_URL=https://www.instagram.com/corvo_3d?igsh=YjkzNXl3NWd1cGJt
 EOF
 
   cat > "${ENV_DIR}/admin.env" <<EOF
@@ -185,9 +186,15 @@ chmod +x infra/scripts/*.sh production/*.sh 2>/dev/null || true
 REMOTE_SCRIPT
 
   local open_url="http://${DOMAIN}"
-  [[ "${VPS_USE_HTTPS}" == "1" ]] && open_url="https://${DOMAIN}"
-  [[ "${NGINX_HTTP_PORT:-80}" != "80" && "${VPS_USE_HTTPS}" == "0" ]] && open_url="${open_url}:${NGINX_HTTP_PORT}"
-  echo "deploy-to-vps.sh: done — open ${open_url} (admin ${open_url}/admin/)"
+  local admin_url
+  if [[ "${VPS_USE_HTTPS}" == "1" ]]; then
+    open_url="https://${DOMAIN}"
+    admin_url="https://admin.${DOMAIN}"
+  else
+    admin_url="${open_url}/admin/"
+    [[ "${NGINX_HTTP_PORT:-80}" != "80" ]] && open_url="${open_url}:${NGINX_HTTP_PORT}"
+  fi
+  echo "deploy-to-vps.sh: done — open ${open_url} (admin ${admin_url})"
 }
 
 main() {

@@ -2,12 +2,21 @@
 
 This folder holds **production-only** configuration. Real values never belong in git.
 
+## Live site
+
+| | URL |
+|---|-----|
+| **Storefront** | **https://corvo3d.com.br** |
+| **Admin** | **https://admin.corvo3d.com.br** |
+
+Multi-site VPS (other domain unchanged): [../docs/infrastructure/shared-vps-multi-domain.md](../docs/infrastructure/shared-vps-multi-domain.md)
+
 ## Deployment phases
 
 | Phase | When | Doc | Command |
 |-------|------|-----|---------|
-| **1 — IP (now)** | DNS not ready; other site uses the domain | below | `./production/deploy-to-vps.sh` |
-| **2 — Domain** | Cloudflare NS active at Registro.br | [DNS-CUTOVER.md](DNS-CUTOVER.md) | `./production/switch-to-domain.sh yourdomain.com.br` |
+| **1 — IP** | DNS not ready | below | `./production/deploy-to-vps.sh` |
+| **2 — Domain** | Cloudflare active for **corvo3d.com.br** | [DNS-CUTOVER.md](DNS-CUTOVER.md) (local) | `./production/deploy-to-vps.sh` after `vps.env` domain mode |
 
 ---
 
@@ -61,17 +70,18 @@ Create the **admin user** manually in production (bootstrap env vars are disable
 
 ---
 
-## Phase 2 — Real domain (after Cloudflare DNS)
+## Phase 2 — corvo3d.com.br (after Cloudflare DNS)
 
-**Start here:** [DNS-CUTOVER.md](DNS-CUTOVER.md)
+**Start here:** [DNS-CUTOVER.md](DNS-CUTOVER.md) (local) · [shared-vps-multi-domain.md](../docs/infrastructure/shared-vps-multi-domain.md) (in git)
 
 Quick summary:
 
-1. Cloudflare A records → `72.60.147.2` (`@`, `www`, `admin`)
-2. `cp production/vps.env.domain.example production/vps.env` → set `DOMAIN`
-3. `./production/switch-to-domain.sh yourdomain.com.br`
-4. SSH → `certbot --nginx` (three hostnames)
+1. Cloudflare A records → your VPS IP (`@`, `www`, **`admin`**)
+2. `cp production/vps.env.domain.example production/vps.env` → `DOMAIN=corvo3d.com.br`, `VPS_USE_HTTPS=1`
+3. `./production/deploy-to-vps.sh`
+4. SSH → `certbot --nginx -d corvo3d.com.br -d www.corvo3d.com.br -d admin.corvo3d.com.br`
 5. Cloudflare → SSL **Full (strict)**
+6. Verify **corvo3d.com.br** and the **other site** still work
 
 ---
 
@@ -79,10 +89,10 @@ Quick summary:
 
 | Path | Purpose | In git? |
 |------|---------|---------|
-| `DNS-CUTOVER.md` | Go-live checklist when DNS is active | Yes |
+| `DNS-CUTOVER.md` | Go-live checklist when DNS is active | **No** (local) |
 | `deploy-to-vps.sh` | Sync + build on VPS | Yes |
 | `sync-models-to-vps.sh` | Push `models/` from dev to VPS | Yes |
-| `switch-to-domain.sh` | IP → domain transition | Yes |
+| `switch-to-domain.sh` | IP → domain transition | **No** (local) |
 | `env/*.example` | Placeholder templates | Yes |
 | `env/api.env` | API secrets for VPS | **No** |
 | `env/web.env.production` | Storefront build-time URLs | **No** |

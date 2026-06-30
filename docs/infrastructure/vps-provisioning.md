@@ -51,7 +51,7 @@ Mirror URLs in `web.env.production` and `admin.env`.
 
 ## Phase 2 — Cloudflare
 
-Full steps: [cloudflare-dns.md](cloudflare-dns.md).
+Full steps: [cloudflare-dns.md](cloudflare-dns.md). **Live example:** [corvo3d.com.br](https://corvo3d.com.br) — [shared-vps-multi-domain.md](shared-vps-multi-domain.md) when the VPS already hosts another domain.
 
 Summary:
 
@@ -110,7 +110,15 @@ certbot --nginx -d yourdomain.com.br -d www.yourdomain.com.br -d admin.yourdomai
 | PM2 | `pm2 status` — `print3d-api`, `print3d-web`, `print3d-admin` online |
 | Docker data | `docker compose -f infra/docker-compose.prod.yml ps` |
 
-**Production admin:** bootstrap env vars are disabled when `NODE_ENV=production` ([ADR 001](../adr/001-admin-authentication.md)). Create the first admin via a secure one-time DB insert or future invite flow.
+**Production admin:** bootstrap env vars are disabled when `NODE_ENV=production` ([ADR 001](../adr/001-admin-authentication.md)). Create the first admin on the VPS:
+
+```bash
+cd /var/www/print3d/apps/api
+CREATE_ADMIN_EMAIL=you@example.com CREATE_ADMIN_PASSWORD='your-secure-password-12+' \
+  pnpm run db:create-admin
+```
+
+Then log in at `/admin/login`. Do not use dev credentials (`admin@test.local`) unless you created that user with the command above.
 
 ## Ongoing deploys
 

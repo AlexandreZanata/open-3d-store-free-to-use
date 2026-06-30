@@ -2,6 +2,37 @@
 
 Product catalog and order-capture platform for a 3D printing shop — browse models, preview in 3D, order via WhatsApp.
 
+---
+
+## Live production site — corvo3d.com.br
+
+| | URL |
+|---|-----|
+| **Storefront** | **https://corvo3d.com.br** |
+| **Admin panel** | **https://admin.corvo3d.com.br** |
+| **API** | `https://corvo3d.com.br/api/v1` |
+
+This VPS also hosts **another site on a different domain**. Print3d uses its own Nginx vhost and port **3101** — the other site is not modified.
+
+**Deploy commands (local machine only — secrets never go to GitHub):**
+
+```bash
+cp production/vps.env.domain.example production/vps.env
+# Edit VPS_HOST to your VPS IP; keep DOMAIN=corvo3d.com.br and VPS_USE_HTTPS=1
+
+./production/deploy-to-vps.sh --env-only
+./production/deploy-to-vps.sh
+
+# SSH — SSL if certbot not run yet:
+ssh -i production/ssh/id_ed25519_print3d root@YOUR_VPS_IP
+cd /var/www/print3d
+certbot --nginx -d corvo3d.com.br -d www.corvo3d.com.br -d admin.corvo3d.com.br
+```
+
+Full checklist (multi-site VPS, Cloudflare, manual QA): [docs/infrastructure/shared-vps-multi-domain.md](docs/infrastructure/shared-vps-multi-domain.md)
+
+---
+
 ## Quick start
 
 ```bash
@@ -85,7 +116,9 @@ agent-rules/           # Harness rules
 
 ## Production deploy
 
-See [docs/infrastructure/vps-provisioning.md](docs/infrastructure/vps-provisioning.md) and [production/README.md](production/README.md).
+**Domain:** **corvo3d.com.br** — see [shared-vps-multi-domain.md](docs/infrastructure/shared-vps-multi-domain.md).
+
+Also: [vps-provisioning.md](docs/infrastructure/vps-provisioning.md) and [production/README.md](production/README.md) (local secrets).
 
 ## License
 

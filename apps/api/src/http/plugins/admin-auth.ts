@@ -8,6 +8,10 @@ import {
   ADMIN_SESSION_COOKIE,
 } from "../admin/constants.js";
 import { sendAdminProblem } from "../errors/handleAdminError.js";
+import {
+  sessionCookieSameSite,
+  sessionCookieSecureForRequest,
+} from "../sessionCookieOptions.js";
 
 export async function registerAdminAuth(
   app: FastifyInstance,
@@ -37,8 +41,8 @@ export async function registerAdminAuth(
       reply.setCookie(ADMIN_SESSION_COOKIE, token, {
         httpOnly: true,
         path: ADMIN_COOKIE_PATH,
-        sameSite: config.NODE_ENV === "production" ? "strict" : "lax",
-        secure: config.NODE_ENV === "production",
+        sameSite: sessionCookieSameSite(config),
+        secure: sessionCookieSecureForRequest(reply.request, config),
         maxAge: config.ADMIN_SESSION_TTL,
       });
     },

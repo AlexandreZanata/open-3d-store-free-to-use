@@ -54,6 +54,8 @@ export function HeroLogoViewer({ compact = false }: HeroLogoViewerProps) {
         });
     };
 
+    mountViewer();
+
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries.some((entry) => entry.isIntersecting);

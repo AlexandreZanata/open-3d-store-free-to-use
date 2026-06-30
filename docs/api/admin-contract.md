@@ -34,7 +34,8 @@ Counters use Redis (`@fastify/rate-limit`). Response **429** includes `Retry-Aft
 
 | Scope | Environment | Limit | Key |
 |-------|-------------|-------|-----|
-| **Global API** | Production | 100 req / IP / minute | `{PORT}:global:{ip}` |
+| **Global API (storefront)** | Production | 100 req / IP / minute | `{PORT}:global:{ip}` |
+| **`/admin/*` (except login)** | Production | 600 req / IP / minute | per-route override |
 | **Global API** | Development | **Disabled** | — |
 | **`POST /auth/login`** | All | 5 req / IP / minute | `admin-login:{ip}` |
 | **`GET /auth/me`**, **`POST /auth/refresh`** | All | **Excluded** | — |
@@ -42,7 +43,7 @@ Counters use Redis (`@fastify/rate-limit`). Response **429** includes `Retry-Aft
 
 Development disables the global bucket so local admin navigation (dashboard queries + session checks) does not hit 429. **Restart the API** after pulling changes — an old process keeps the previous limits.
 
-Login remains limited in all environments. Production storefront + admin traffic share the global bucket per IP.
+Login remains limited in all environments. Production admin traffic uses a **separate 600/min bucket** so model-job polling does not exhaust the storefront cap.
 
 ## Internationalization
 
@@ -643,7 +644,7 @@ Plain-text **Request Entity Too Large** (no JSON body) means **nginx** rejected 
 
 Poll async mesh extraction after `kind=model` upload.
 
-**Queue behaviour:** When `RABBITMQ_URL` is set, the API publishes to `MODEL_PROCESSING_QUEUE` (default `model.processing`). If RabbitMQ is unreachable or rejects credentials, the API **falls back to in-process extraction** so the upload still returns **201** (no 500). Without `RABBITMQ_URL`, processing runs inline on upload. For heavy production traffic, run `pnpm --filter @print3d/api worker:model-processing` with valid broker credentials.
+**Queue behaviour:** When `RABBITMQ_URL` is set, the API publishes to `MODEL_PROCESSING_QUEUE` (default `model.processing`). If RabbitMQ is unreachable or rejects credentials, the API **falls back to in-process extraction** so the upload still returns **201** (no 500). If the message is queued but the job is still **`pending`** when the upload handler finishes (no worker consumer), the API **runs the same processor inline once** before responding — so IP-only VPS deploys work without a separate worker. Without `RABBITMQ_URL`, processing always runs inline on upload. For heavy production traffic, run `pnpm --filter @print3d/api worker:model-processing` with valid broker credentials.
 
 **Response 200:**
 

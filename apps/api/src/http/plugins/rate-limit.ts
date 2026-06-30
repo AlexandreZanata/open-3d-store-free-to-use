@@ -14,6 +14,12 @@ export function resolveGlobalRateLimitMax(config: AppConfig): number {
   return 100;
 }
 
+/** Admin SPA + model-job polling — separate bucket from storefront. */
+export const ADMIN_RATE_LIMIT = {
+  max: 600,
+  timeWindow: "1 minute",
+} as const;
+
 export function isGlobalRateLimitEnabled(config: AppConfig): boolean {
   return config.NODE_ENV === "production";
 }

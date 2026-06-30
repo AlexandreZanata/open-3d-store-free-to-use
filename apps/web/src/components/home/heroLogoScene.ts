@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { mergeVertices } from "three/addons/utils/BufferGeometryUtils.js";
 
-import { loadGltfScene } from "@/components/ModelViewer/createGltfLoader.js";
+import { loadHeroGltfCached } from "@/lib/heroLogoGltfCache.js";
 import { probeModelAsset } from "@/lib/modelViewerLimits";
 
 /** Solid black — readable on the white hero card. */
@@ -96,7 +96,7 @@ export function mountHeroLogoViewer(
     }
 
     try {
-      const object = await loadGltfScene(resolved.modelUrl);
+      const object = await loadHeroGltfCached(resolved.modelUrl);
       if (cancelled) {
         return;
       }

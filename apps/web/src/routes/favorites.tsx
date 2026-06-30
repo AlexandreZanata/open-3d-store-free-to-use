@@ -31,7 +31,7 @@ function FavoritesPage() {
       {isHydratingList ? (
         <ProductGridSkeleton count={Math.min(cachedCount, 4)} />
       ) : favorites.length === 0 ? (
-        <EmptyState loading={favoritesQuery.isFetching} />
+        <EmptyState loading={favoritesQuery.isFetching && cachedCount > 0} />
       ) : (
         <div className={`${pagePadding} py-4 lg:py-8`}>
           <div className={`${mobileOnly} mb-4`}>

@@ -51,7 +51,6 @@ export function SearchMobileView({
           <div className="flex-1 flex items-center gap-2 bg-muted rounded-full h-10 px-3.5">
             <SearchIcon className="size-4 text-muted-foreground" />
             <input
-              autoFocus
               value={query}
               onChange={(e) => onQueryChange(e.target.value)}
               placeholder={t("search.placeholder")}

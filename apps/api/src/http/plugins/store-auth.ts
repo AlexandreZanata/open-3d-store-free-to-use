@@ -5,6 +5,10 @@ import type { AppConfig } from "../../config.js";
 import type { AppContainer } from "../../container.js";
 import { STORE_COOKIE_PATH, STORE_SESSION_COOKIE } from "../store/constants.js";
 import { sendProblem } from "../errors/problemDetails.js";
+import {
+  sessionCookieSameSite,
+  sessionCookieSecureForRequest,
+} from "../sessionCookieOptions.js";
 
 export async function registerStoreAuth(
   app: FastifyInstance,
@@ -26,8 +30,8 @@ export async function registerStoreAuth(
     reply.setCookie(STORE_SESSION_COOKIE, token, {
       httpOnly: true,
       path: STORE_COOKIE_PATH,
-      sameSite: "lax",
-      secure: config.NODE_ENV === "production",
+      sameSite: sessionCookieSameSite(config),
+      secure: sessionCookieSecureForRequest(reply.request, config),
       maxAge: config.STORE_SESSION_TTL,
     });
   });

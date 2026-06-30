@@ -51,6 +51,7 @@ random_page_cost = 1.1
 | Endpoint class | Limit |
 |----------------|-------|
 | General API | 100 req/min/IP |
+| Admin `/api/v1/admin/*` | 600 req/min/IP |
 | POST /orders/capture | 10 req/min/IP |
 
 **File:** `apps/api/src/http/plugins/rate-limit.ts`

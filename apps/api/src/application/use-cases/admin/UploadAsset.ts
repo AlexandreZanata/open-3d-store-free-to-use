@@ -5,6 +5,8 @@ import type { IModelProcessingQueue } from "../../ports/IModelProcessingQueue.js
 import type { IModelProcessingJobRepository } from "../../../domain/repositories/IModelProcessingJobRepository.js";
 import type { AuditLogger } from "../../services/AuditLogger.js";
 
+import type { ProcessModelUpload } from "./ProcessModelUpload.js";
+
 export type UploadAssetInput = {
   adminId: string;
   kind: AdminUploadKind;
@@ -30,6 +32,7 @@ export class UploadAsset {
     private readonly audit: AuditLogger,
     private readonly modelJobs: IModelProcessingJobRepository,
     private readonly modelQueue: IModelProcessingQueue,
+    private readonly syncModelProcessor: ProcessModelUpload,
   ) {}
 
   async execute(input: UploadAssetInput): Promise<UploadAssetResult> {
@@ -49,6 +52,7 @@ export class UploadAsset {
       });
       await this.modelQueue.publish(job.id);
       jobId = job.id;
+      await this.runSyncFallbackIfPending(job.id);
       const completed = await this.modelJobs.findById(job.id);
       previewUrl = completed?.previewUrl ?? null;
     }
@@ -73,5 +77,14 @@ export class UploadAsset {
       ...(jobId !== undefined ? { jobId } : {}),
       ...(input.kind === "model" ? { previewUrl } : {}),
     };
+  }
+
+  /** When RabbitMQ accepts the job but no worker runs, process in-process before returning. */
+  private async runSyncFallbackIfPending(jobId: string): Promise<void> {
+    const job = await this.modelJobs.findById(jobId);
+    if (job?.status !== "pending") {
+      return;
+    }
+    await this.syncModelProcessor.execute({ jobId });
   }
 }

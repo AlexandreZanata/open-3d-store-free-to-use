@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import type { SupportedLocale } from "@print3d/shared-types";
 
@@ -24,6 +24,8 @@ export function useProducts(params: ProductQueryParams = {}) {
   return useQuery({
     queryKey: productsQueryKey(params, locale),
     queryFn: () => fetchProducts(params, locale),
+    placeholderData: keepPreviousData,
+    staleTime: 15_000,
   });
 }
 

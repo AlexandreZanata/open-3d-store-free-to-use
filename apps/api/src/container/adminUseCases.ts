@@ -102,6 +102,11 @@ type AdminUseCaseDeps = {
 export function createAdminUseCases(deps: AdminUseCaseDeps): AdminUseCases {
   const audit = new AuditLogger(deps.auditLogs);
   const cacheInvalidator = new CatalogCacheInvalidator(deps.cache, deps.catalogEvents);
+  const processModelUpload = new ProcessModelUpload(
+    deps.modelJobs,
+    deps.shopSettings,
+    deps.config.MODEL_FILES_BASE_PATH,
+  );
 
   return {
     loginAdmin: new LoginAdmin(
@@ -155,6 +160,7 @@ export function createAdminUseCases(deps: AdminUseCaseDeps): AdminUseCases {
       audit,
       deps.modelJobs,
       deps.modelQueue,
+      processModelUpload,
     ),
     getShopSettingsAdmin: new GetShopSettingsAdmin(deps.shopSettings),
     updateShopSettingsAdmin: new UpdateShopSettingsAdmin(deps.shopSettings, audit),
@@ -163,10 +169,6 @@ export function createAdminUseCases(deps: AdminUseCaseDeps): AdminUseCases {
     updateStoreUserAdmin: new UpdateStoreUserAdmin(deps.storeUsers, deps.storeSessions),
     getModelProcessingJob: new GetModelProcessingJob(deps.modelJobs),
     bulkPrepriceProducts: new BulkPrepriceProducts(deps.products, deps.shopSettings, audit),
-    processModelUpload: new ProcessModelUpload(
-      deps.modelJobs,
-      deps.shopSettings,
-      deps.config.MODEL_FILES_BASE_PATH,
-    ),
+    processModelUpload,
   };
 }

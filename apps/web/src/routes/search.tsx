@@ -9,6 +9,7 @@ import { AppShell } from "@/components/AppShell";
 import { SearchDesktopView } from "@/components/search/SearchDesktopView";
 import { SearchMobileView } from "@/components/search/SearchMobileView";
 import { productsQueryKey } from "@/hooks/useProducts";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useCategories } from "@/hooks/useCategories";
 import { useProducts } from "@/hooks/useProducts";
 import { fetchProducts } from "@/lib/api/products";
@@ -28,7 +29,7 @@ export const Route = createFileRoute("/search")({
     const locale = getCurrentI18nLocale();
     const search = searchSchema.parse(location.search);
     const q = search.q?.trim();
-    const params = { page: 1, limit: 50, q: q || undefined };
+    const params = { page: 1, limit: 24, q: q || undefined };
     await context.queryClient.ensureQueryData({
       queryKey: productsQueryKey(params, locale),
       queryFn: () => fetchProducts(params, locale),
@@ -48,6 +49,7 @@ function SearchPage() {
   const { t } = useTranslation();
   const { q: initialQ, category: initialCategory } = Route.useSearch();
   const [query, setQuery] = useState(initialQ ?? "");
+  const debouncedQuery = useDebouncedValue(query, 300);
   const [category, setCategory] = useState<string | null>(initialCategory ?? null);
   const [material, setMaterial] = useState<MaterialFilter>(undefined);
   const [openFilters, setOpenFilters] = useState(Boolean(initialCategory));
@@ -55,12 +57,12 @@ function SearchPage() {
   const params = useMemo(
     () => ({
       page: 1,
-      limit: 50,
-      q: query.trim() || undefined,
+      limit: 24,
+      q: debouncedQuery.trim() || undefined,
       category: category ?? undefined,
       material,
     }),
-    [query, category, material],
+    [debouncedQuery, category, material],
   );
 
   const productsQuery = useProducts(params);
@@ -88,7 +90,7 @@ function SearchPage() {
           openFilters={openFilters}
           onToggleFilters={() => setOpenFilters((v) => !v)}
           results={results}
-          isLoading={productsQuery.isLoading}
+          isLoading={productsQuery.isFetching && !productsQuery.data}
           filterProps={filterProps}
         />
       </div>
@@ -99,7 +101,7 @@ function SearchPage() {
           onQueryChange={setQuery}
           onQueryClear={() => setQuery("")}
           results={results}
-          isLoading={productsQuery.isLoading}
+          isLoading={productsQuery.isFetching && !productsQuery.data}
           {...filterProps}
         />
       </div>

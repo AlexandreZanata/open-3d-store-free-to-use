@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  ADMIN_RATE_LIMIT,
   isGlobalRateLimitEnabled,
   resolveGlobalRateLimitMax,
 } from "../../../src/http/plugins/rate-limit.js";
@@ -32,5 +33,10 @@ describe("rate limit policy", () => {
   it("enables global rate limit in production", () => {
     expect(isGlobalRateLimitEnabled(config("production"))).toBe(true);
     expect(resolveGlobalRateLimitMax(config("production"))).toBe(100);
+  });
+
+  it("documents admin bucket separate from storefront global cap", () => {
+    expect(ADMIN_RATE_LIMIT.max).toBe(600);
+    expect(ADMIN_RATE_LIMIT.timeWindow).toBe("1 minute");
   });
 });

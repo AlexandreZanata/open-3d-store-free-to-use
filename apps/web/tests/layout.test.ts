@@ -7,6 +7,9 @@ import {
   desktopOnly,
   footerBottomPad,
   mainBottomPad,
+  mobileProductScrollSpacer,
+  mobileStackAboveTabBar,
+  mobileTabBarHeight,
   mobileTopPad,
   mobileOnly,
   productCardWideWidth,
@@ -67,7 +70,15 @@ describe("responsive layout tokens", () => {
   });
 
   it("clears mobile tab bar via footer padding token", () => {
-    expect(footerBottomPad).toContain("pb-[4.75rem]");
+    expect(footerBottomPad).toContain("3.75rem");
+    expect(footerBottomPad).toContain("safe-area-inset-bottom");
     expect(footerBottomPad).toContain("lg:pb-0");
+  });
+
+  it("defines mobile tab bar stack tokens", () => {
+    expect(mobileTabBarHeight).toBe("3.75rem");
+    expect(mobileStackAboveTabBar).toContain("3.75rem");
+    expect(mobileStackAboveTabBar).toContain("safe-area-inset-bottom");
+    expect(mobileProductScrollSpacer).toContain("7.5rem");
   });
 });

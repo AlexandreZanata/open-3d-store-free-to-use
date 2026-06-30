@@ -149,6 +149,7 @@ describe("POST /admin/uploads — MIME allowlist (Task 9.7)", () => {
     const response = {
       data: {
         url: "/models/thumbnails/upload-01935.webp",
+        sourceUrl: "/models/thumbnails/upload-01935.webp",
         mimeType: "image/webp",
         sizeBytes: 42000,
         kind: "thumbnail",
@@ -156,5 +157,23 @@ describe("POST /admin/uploads — MIME allowlist (Task 9.7)", () => {
     } satisfies AdminUploadResponse;
 
     expect(response.data.kind).toBe("thumbnail");
+  });
+
+  it("documents model upload response with preview GLB and STL source", () => {
+    const response = {
+      data: {
+        url: "/models/3d/019f-preview.glb",
+        sourceUrl: "/models/3d/019f.stl",
+        previewUrl: "/models/3d/019f-preview.glb",
+        mimeType: "model/stl",
+        sizeBytes: 74888384,
+        kind: "model",
+        jobId: "01935abc-def0-7890-abcd-ef1234567890",
+      },
+    } satisfies AdminUploadResponse;
+
+    expect(response.data.url).toContain("-preview.glb");
+    expect(response.data.sourceUrl).toMatch(/\.stl$/);
+    expect(response.data.previewUrl).toBe(response.data.url);
   });
 });

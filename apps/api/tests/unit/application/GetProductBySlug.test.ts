@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import { GetProductBySlug } from "../../../src/application/use-cases/GetProductBySlug.js";
+import { toProductDetailDto } from "../../../src/application/dtos/ProductResponseDto.js";
 import { CACHE_TTL, productCacheKey } from "../../../src/application/cache/cacheKeys.js";
 import {
   createMockCache,
@@ -48,6 +49,28 @@ describe("GetProductBySlug", () => {
       expect.objectContaining({ slug: "custom-photo-frame" }),
       CACHE_TTL.productDetail,
     );
+  });
+
+  it("re-resolves cached modelFileUrl using modelsBasePath", async () => {
+    const modelsBase = "/tmp/print3d-gps-models";
+    const { mkdir, writeFile, rm } = await import("node:fs/promises");
+    await mkdir(`${modelsBase}/3d`, { recursive: true });
+    await writeFile(`${modelsBase}/3d/custom-photo-frame-preview.glb`, "glb");
+
+    const cached = toProductDetailDto(sampleProduct, "en");
+    cached.modelFileUrl = "/models/3d/custom-photo-frame.stl";
+    const cache = createMockCache({
+      [productCacheKey("custom-photo-frame", "en")]: cached,
+    });
+    const products = createMockProductRepository();
+    const useCase = new GetProductBySlug(products, cache, modelsBase);
+
+    const result = await useCase.execute("custom-photo-frame", "en");
+
+    expect(products.findBySlug).not.toHaveBeenCalled();
+    expect(result?.modelFileUrl).toBe("/models/3d/custom-photo-frame-preview.glb");
+
+    await rm(modelsBase, { recursive: true, force: true });
   });
 
   it("returns null when product slug does not exist", async () => {

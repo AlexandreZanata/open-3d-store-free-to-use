@@ -52,7 +52,10 @@ export default defineConfig(({ mode }) => {
       host: "127.0.0.1",
       port: 4174,
       strictPort: true,
-      allowedHosts: resolveAdminPreviewAllowedHosts(env.VITE_API_BASE_URL),
+      allowedHosts: resolveAdminPreviewAllowedHosts(
+        env.VITE_API_BASE_URL,
+        env.VITE_ADMIN_PUBLIC_HOST,
+      ),
     },
   };
 });

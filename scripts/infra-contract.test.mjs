@@ -202,6 +202,11 @@ describe("VPS rsync deploy — docs/infrastructure/deployment.md", () => {
     const script = readRepo("production/deploy-to-vps.sh");
     assert.match(script, /VITE_INSTAGRAM_URL/);
   });
+
+  test("deploy-to-vps.sh sets VITE_ADMIN_PUBLIC_HOST in domain HTTPS mode", () => {
+    const script = readRepo("production/deploy-to-vps.sh");
+    assert.match(script, /VITE_ADMIN_PUBLIC_HOST=admin\.\$\{DOMAIN\}/);
+  });
 });
 
 describe("domain go-live docs — docs/infrastructure/domain-go-live-corvo3d.md", () => {
@@ -216,7 +221,8 @@ describe("domain go-live docs — docs/infrastructure/domain-go-live-corvo3d.md"
   test("documents common multi-site and VPS_HOST mistakes", () => {
     assert.match(guide, /YOUR_VPS_IP/);
     assert.match(guide, /default_server/);
-    assert.match(guide, /allowedHosts/);
+    assert.match(guide, /VITE_ADMIN_PUBLIC_HOST/);
+    assert.match(guide, /admin\.corvo3d\.com\.br is not allowed/);
   });
 });
 

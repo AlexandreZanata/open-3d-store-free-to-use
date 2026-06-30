@@ -17,7 +17,13 @@ export function resolvePreviewAllowedHosts(
 
 export function resolveAdminPreviewAllowedHosts(
   apiBaseUrl: string | undefined,
+  adminPublicHost?: string,
 ): true | string[] {
+  if (adminPublicHost) {
+    const apex = adminPublicHost.replace(/^admin\./, "").replace(/^www\./, "");
+    return [...new Set([adminPublicHost, apex, `www.${apex}`, `admin.${apex}`])];
+  }
+
   if (!apiBaseUrl) return true;
 
   try {

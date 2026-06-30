@@ -186,7 +186,7 @@ Success: API returns JSON (`[{"id":…`), not `Cannot GET` or wedding HTML.
 | `NXDOMAIN … admin.corvo3d.com.br` | No Cloudflare **A** record for `admin` | Add `admin` → `YOUR_VPS_IP` (Proxied); wait 2–5 min; retry certbot |
 | `cannot load certificate … fullchain.pem` | HTTPS nginx before certbot | Re-run `./infra/scripts/complete-print3d-domain-ssl.sh` (uses HTTP bootstrap first) |
 | **corvo3d.com.br** shows **another site** | No print3d HTTPS vhost; other site is `default_server` on `:443` | Finish Step 4 (certbot + `install-nginx-domain.sh`) |
-| `Blocked request… corvo3d.com.br is not allowed` | Vite `preview.allowedHosts` | Redeploy latest code (`./production/deploy-to-vps.sh`) |
+| `Blocked request… admin.corvo3d.com.br is not allowed` | Vite admin preview host check | Set `VITE_ADMIN_PUBLIC_HOST` in `admin.env`; redeploy; `pm2 reload print3d-admin` |
 | `Cannot GET /api/v1/categories` | Request hits wrong vhost (not print3d API) | Complete SSL + nginx; check `diagnose-nginx-vhosts.sh` |
 | Wedding site broke | Removed other site's `sites-enabled` | Re-enable their vhost only; print3d uses `print3d.conf` |
 | certbot port 80 busy | Another vhost owns default HTTP | Use `certbot certonly --webroot` or coordinate with other site — [cloudflare-dns.md#7-troubleshooting](cloudflare-dns.md#7-troubleshooting) |

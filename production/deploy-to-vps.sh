@@ -143,6 +143,7 @@ VITE_API_BASE_URL=${base}/api/v1
 VITE_ASSETS_BASE_URL=${base}
 VITE_WHATSAPP_PHONE=${WHATSAPP_PHONE}
 ${admin_base_path:+VITE_ADMIN_BASE_PATH=${admin_base_path}}
+${VPS_USE_HTTPS:+VITE_ADMIN_PUBLIC_HOST=admin.${DOMAIN}}
 EOF
 
   chmod 600 "${ENV_DIR}/"*.env

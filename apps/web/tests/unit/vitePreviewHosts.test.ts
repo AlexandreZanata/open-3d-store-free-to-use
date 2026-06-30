@@ -25,4 +25,10 @@ describe("resolveAdminPreviewAllowedHosts", () => {
       "admin.corvo3d.com.br",
     ]);
   });
+
+  it("prefers VITE_ADMIN_PUBLIC_HOST when set", () => {
+    expect(
+      resolveAdminPreviewAllowedHosts("http://72.60.147.2/api/v1", "admin.corvo3d.com.br"),
+    ).toEqual(["admin.corvo3d.com.br", "corvo3d.com.br", "www.corvo3d.com.br"]);
+  });
 });

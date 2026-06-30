@@ -41,9 +41,10 @@ export function AppShellMobileNav() {
   return (
     <nav
       data-testid="mobile-tab-bar"
-      className={`${mobileOnly} mobile-tab-bar-shell fixed inset-x-0 z-50 bg-background`}
+      className={`${mobileOnly} mobile-tab-bar-shell fixed inset-x-0 z-50`}
     >
-      <div className="relative border-t border-hairline">
+      <div className="mobile-tab-bar-fill" aria-hidden />
+      <div className="mobile-tab-bar-row border-t border-hairline">
         <div className={`${shellMaxWidth} px-1.5 ${mobileTabBarHeightClass} grid grid-cols-5`}>
           {TABS.map(({ to, labelKey, icon: Icon, match }) => (
             <TabItem

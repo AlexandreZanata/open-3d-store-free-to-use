@@ -28,13 +28,13 @@ export const mobileStackAboveTabBar =
 /** Offset main content below fixed mobile header (`h-14`). */
 export const mobileTopPad = "pt-14 lg:pt-0";
 
-/** Clears fixed mobile tab bar + safe-area + browser chrome when footer is last block. */
+/** Clears fixed mobile tab bar + safe-area (vv-inset is on fixed chrome only — not document flow). */
 export const footerBottomPad =
-  "pb-[calc(3.75rem+env(safe-area-inset-bottom,0px)+var(--vv-bottom-inset,0px))] lg:pb-0";
+  "pb-[calc(3.75rem+env(safe-area-inset-bottom,0px))] lg:pb-0";
 
 /** Spacer on product detail so scroll content clears sticky actions + tab bar. */
 export const mobileProductScrollSpacer =
-  "h-[calc(7.5rem+env(safe-area-inset-bottom,0px)+var(--vv-bottom-inset,0px))]";
+  "h-[calc(7.5rem+env(safe-area-inset-bottom,0px))]";
 
 export const productGridCols =
   "grid grid-cols-2 gap-3 lg:grid-cols-3 lg:gap-4 xl:grid-cols-4";

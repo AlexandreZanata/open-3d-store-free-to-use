@@ -82,6 +82,8 @@ test.describe("mobile storefront UX", () => {
     await expect(page.getByTestId("mobile-tab-bar")).toBeVisible({ timeout: 15_000 });
 
     const tabBar = page.getByTestId("mobile-tab-bar");
+    const tabRow = tabBar.locator(".mobile-tab-bar-row");
+    const tabFill = tabBar.locator(".mobile-tab-bar-fill");
     const insetPx = 48;
     const layoutHeight = 844;
 
@@ -102,13 +104,11 @@ test.describe("mobile storefront UX", () => {
       window.dispatchEvent(new Event("resize"));
     }, layoutHeight - insetPx);
 
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(200);
 
     await expect(tabBar).toHaveCSS("bottom", "0px");
-    await expect(tabBar).toHaveCSS("padding-bottom", `${insetPx}px`);
-
-    const transform = await tabBar.evaluate((el) => getComputedStyle(el).transform);
-    expect(transform === "none" || transform === "matrix(1, 0, 0, 1, 0, 0)").toBe(true);
+    await expect(tabRow).toHaveCSS("margin-bottom", `${insetPx}px`);
+    await expect(tabFill).toHaveCSS("height", `${insetPx}px`);
 
     const assertShellFlush = async () => {
       const innerHeight = await page.evaluate(() => window.innerHeight);
@@ -126,7 +126,53 @@ test.describe("mobile storefront UX", () => {
     await page.waitForTimeout(300);
 
     await expect(tabBar).toHaveCSS("bottom", "0px");
-    await expect(tabBar).toHaveCSS("padding-bottom", `${insetPx}px`);
+    await expect(tabRow).toHaveCSS("margin-bottom", `${insetPx}px`);
     await assertShellFlush();
+  });
+
+  test("mobile tab bar holds inset during transient viewport readings", async ({ page }) => {
+    await page.goto("/product/dragon-figurine");
+    await expect(page.getByTestId("mobile-tab-bar")).toBeVisible({ timeout: 15_000 });
+
+    const tabBar = page.getByTestId("mobile-tab-bar");
+    const tabRow = tabBar.locator(".mobile-tab-bar-row");
+    const insetPx = 48;
+    const layoutHeight = 844;
+
+    await page.evaluate((vvHeight) => {
+      let height = vvHeight;
+      Object.defineProperty(window, "visualViewport", {
+        configurable: true,
+        value: {
+          get height() {
+            return height;
+          },
+          offsetTop: 0,
+          addEventListener: (type: string, listener: EventListener) => {
+            window.addEventListener(type, listener);
+          },
+          removeEventListener: (type: string, listener: EventListener) => {
+            window.removeEventListener(type, listener);
+          },
+        },
+      });
+      (window as Window & { __setVvHeight?: (next: number) => void }).__setVvHeight = (next) => {
+        height = next;
+        window.dispatchEvent(new Event("resize"));
+      };
+      window.dispatchEvent(new Event("resize"));
+    }, layoutHeight - insetPx);
+
+    await page.waitForTimeout(200);
+    await expect(tabRow).toHaveCSS("margin-bottom", `${insetPx}px`);
+
+    await page.evaluate((fullHeight) => {
+      (window as Window & { __setVvHeight?: (next: number) => void }).__setVvHeight?.(fullHeight);
+    }, layoutHeight);
+    await page.waitForTimeout(50);
+    await expect(tabRow).toHaveCSS("margin-bottom", `${insetPx}px`);
+
+    await page.waitForTimeout(150);
+    await expect(tabRow).toHaveCSS("margin-bottom", "0px");
   });
 });

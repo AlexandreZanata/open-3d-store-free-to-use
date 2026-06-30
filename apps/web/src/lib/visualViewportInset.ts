@@ -13,3 +13,8 @@ export function readVisualViewportBottomInsetPx(
   }
   return Math.max(0, Math.round(innerHeight - vv.height - vv.offsetTop));
 }
+
+/** Ignore transient lower readings while the toolbar animates (scroll-up flash fix). */
+export function pickStableBottomInsetPx(currentPx: number, measuredPx: number): number {
+  return Math.max(currentPx, measuredPx);
+}

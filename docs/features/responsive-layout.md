@@ -45,12 +45,15 @@ On Android Chrome, scrolling **up** can resize the browser toolbar so the **visu
 | **CSS variable** | `--vv-bottom-inset` on `document.documentElement` |
 | **Formula** | `max(0, round(innerHeight - visualViewport.height - visualViewport.offsetTop))` |
 | **Tab bar anchor** | `bottom: 0` on `mobile-tab-bar-shell` — **never** lift via `bottom: var(--vv-bottom-inset)` |
-| **Chrome + safe area** | `padding-bottom: calc(env(safe-area-inset-bottom, 0px) + var(--vv-bottom-inset, 0px))` on the shell — opaque `bg-background` fills the strip |
-| **Stacked UI** | `mobileStackAboveTabBar`, `footerBottomPad`, and `mobileProductScrollSpacer` MUST include `var(--vv-bottom-inset, 0px)` |
+| **Chrome + safe area** | `mobile-tab-bar-fill` (absolute, `height: safe-area + vv-inset`) + `mobile-tab-bar-row` (`margin-bottom` same) — icon row sits flush above filler; opaque `bg-background` reaches layout viewport bottom |
+| **Document flow** | `footerBottomPad` and `mobileProductScrollSpacer` use tab bar height + safe-area only — **no** `vv-bottom-inset` (prevents scroll-height churn) |
+| **Stacked fixed UI** | `mobileStackAboveTabBar` MUST include `var(--vv-bottom-inset, 0px)` |
 
-When `--vv-bottom-inset > 0`, the shell’s **outer** bottom edge MUST equal `window.innerHeight` (±2px) with fully opaque `bg-background`; tab icons sit above the padding.
+When `--vv-bottom-inset > 0`, the shell’s **outer** bottom edge MUST equal `window.innerHeight` (±2px) with fully opaque `bg-background`; tab icons sit directly above the filler (no dead padding inside the icon row).
 
-**Inset stabilization:** while scrolling, transient `visualViewport` readings MUST NOT drop `--vv-bottom-inset` below the current value; after **120ms** idle, commit the live measured inset. `window` scroll syncs via `requestAnimationFrame` (not synchronous) to avoid stale reads.
+**Inset stabilization:** while scrolling, transient `visualViewport` readings MUST NOT drop `--vv-bottom-inset` below the current value; after **120ms** idle, commit the live measured inset. Sync coalesces via `requestAnimationFrame` on `visualViewport` + `window` resize (no `window` scroll listener — avoids scroll jank).
+
+`html, body` use `overscroll-behavior-y: none` on mobile to reduce rubber-band fighting fixed chrome.
 
 Sync runs only below `lg` (`max-width: 1023px`) via `useVisualViewportBottomInset` mounted in `AppShell`.
 

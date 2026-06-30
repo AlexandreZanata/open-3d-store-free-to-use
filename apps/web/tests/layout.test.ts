@@ -72,7 +72,7 @@ describe("responsive layout tokens", () => {
   it("clears mobile tab bar via footer padding token", () => {
     expect(footerBottomPad).toContain("3.75rem");
     expect(footerBottomPad).toContain("safe-area-inset-bottom");
-    expect(footerBottomPad).toContain("vv-bottom-inset");
+    expect(footerBottomPad).not.toContain("vv-bottom-inset");
     expect(footerBottomPad).toContain("lg:pb-0");
   });
 
@@ -80,7 +80,7 @@ describe("responsive layout tokens", () => {
     expect(mobileTabBarHeight).toBe("3.75rem");
     expect(mobileStackAboveTabBar).toContain("3.75rem");
     expect(mobileStackAboveTabBar).toContain("vv-bottom-inset");
-    expect(mobileProductScrollSpacer).toContain("vv-bottom-inset");
+    expect(mobileProductScrollSpacer).not.toContain("vv-bottom-inset");
     expect(mobileProductScrollSpacer).toContain("7.5rem");
   });
 });

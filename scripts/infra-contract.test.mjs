@@ -47,6 +47,7 @@ describe("deploy.sh contract — docs/infrastructure/deployment.md", () => {
 
   test("admin build reads apps/admin/.env.production via Vite (not shell export)", () => {
     assert.match(script, /Admin build reads apps\/admin\/\.env\.production/);
+    assert.match(script, /unset VITE_API_BASE_URL/);
     assert.match(script, /@print3d\/admin/);
   });
 

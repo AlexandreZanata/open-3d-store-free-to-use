@@ -192,7 +192,7 @@ Success: API returns JSON (`[{"id":…`), not `Cannot GET` or wedding HTML.
 | Wedding site broke | Removed other site's `sites-enabled` | Re-enable their vhost only; print3d uses `print3d.conf` |
 | certbot port 80 busy | Another vhost owns default HTTP | Use `certbot certonly --webroot` or coordinate with other site — [cloudflare-dns.md#7-troubleshooting](cloudflare-dns.md#7-troubleshooting) |
 | Cloudflare 522 | UFW / nginx down | `ufw allow 80,443`; `systemctl status nginx` |
-| Admin CORS errors | Stale admin bundle still calls apex API (`https://corvo3d.com.br/api/v1`) — often **Turbo cache hit** after `install-env` | `grep VITE_API apps/admin/.env.production` → `/api/v1`; force rebuild: `pnpm turbo build --force --filter=@print3d/admin`; `pm2 reload print3d-admin`; hard-refresh browser |
+| Admin CORS errors | Stale admin bundle still calls apex API (`https://corvo3d.com.br/api/v1`) — **storefront `VITE_API_BASE_URL` exported before admin turbo build** (Vite prefers `process.env` over `.env.production`) | `grep VITE_API apps/admin/.env.production` → `/api/v1`; rebuild admin only: `unset VITE_API_BASE_URL VITE_ASSETS_BASE_URL VITE_WHATSAPP_PHONE && NODE_ENV=production pnpm turbo build --force --filter=@print3d/admin`; `pm2 reload print3d-admin`; hard-refresh browser |
 
 ---
 

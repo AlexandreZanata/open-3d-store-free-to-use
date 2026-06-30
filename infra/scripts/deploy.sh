@@ -44,7 +44,8 @@ if [[ "${VITE_API_BASE_URL}" == "/api/v1" || ! "${VITE_API_BASE_URL}" =~ ^https?
   exit 1
 fi
 
-# Admin build reads apps/admin/.env.production (may use relative /api/v1 on admin subdomain).
+# Admin build reads apps/admin/.env.production (relative /api/v1 on admin subdomain).
+# Vite prefers process.env over .env files — build web and admin separately.
 
 if [[ "${SKIP_GIT_PULL:-}" == "1" ]] || [[ ! -d "${ROOT}/.git" ]]; then
   echo "deploy.sh: skipping git pull (rsync deploy or SKIP_GIT_PULL=1)"
@@ -73,9 +74,13 @@ NODE_ENV=development pnpm turbo build \
 
 # Vite bakes VITE_* at build time; install-env may have just changed .env.production.
 # NODE_ENV=production — required so SSR bundle uses jsx() not jsxDEV (avoids HTTP 500).
-echo "==> Building Vite apps (no turbo cache — env-driven bundles)"
+echo "==> Building storefront (absolute VITE_* from web env)"
 NODE_ENV=production pnpm turbo build --force \
-  --filter=@print3d/web \
+  --filter=@print3d/web
+
+echo "==> Building admin (unset storefront VITE_* — Vite prefers process.env)"
+unset VITE_API_BASE_URL VITE_ASSETS_BASE_URL VITE_WHATSAPP_PHONE
+NODE_ENV=production pnpm turbo build --force \
   --filter=@print3d/admin
 
 echo "==> Running database migrations"

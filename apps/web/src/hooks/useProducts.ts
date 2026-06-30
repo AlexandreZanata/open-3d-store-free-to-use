@@ -4,6 +4,7 @@ import type { SupportedLocale } from "@print3d/shared-types";
 
 import { fetchProducts, searchProducts } from "@/lib/api/products";
 import type { ProductQueryParams } from "@/lib/api/types";
+import { catalogQueryDefaults } from "@/lib/catalogQuery";
 import { getActiveLocale } from "@/lib/locale";
 
 export function resolveQueryLocale(language: string): SupportedLocale {
@@ -25,7 +26,7 @@ export function useProducts(params: ProductQueryParams = {}) {
     queryKey: productsQueryKey(params, locale),
     queryFn: () => fetchProducts(params, locale),
     placeholderData: keepPreviousData,
-    staleTime: 15_000,
+    ...catalogQueryDefaults,
   });
 }
 

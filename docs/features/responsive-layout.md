@@ -51,7 +51,7 @@ On Android Chrome, scrolling **up** can resize the browser toolbar so the **visu
 
 When `--vv-bottom-inset > 0`, the shell’s **outer** bottom edge MUST equal `window.innerHeight` (±2px) with fully opaque `bg-background`; tab icons sit directly above the filler (no dead padding inside the icon row).
 
-**Inset stabilization:** while scrolling, transient `visualViewport` readings MUST NOT drop `--vv-bottom-inset` below the current value; after **120ms** idle, commit the live measured inset. Sync coalesces via `requestAnimationFrame` on `visualViewport` + `window` resize (no `window` scroll listener — avoids scroll jank).
+**Inset stabilization:** `--vv-bottom-inset` MUST NOT change during active `visualViewport` scroll/resize (or coalesced `window` resize) — only after **120ms** idle, commit the live measured inset. This prevents the tab bar from jumping up then down mid-gesture on Android. `matchMedia` breakpoint changes apply immediately.
 
 `html, body` use `overscroll-behavior-y: none` on mobile to reduce rubber-band fighting fixed chrome.
 

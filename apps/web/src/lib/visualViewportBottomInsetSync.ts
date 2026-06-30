@@ -1,7 +1,4 @@
-import {
-  pickStableBottomInsetPx,
-  readVisualViewportBottomInsetPx,
-} from "@/lib/visualViewportInset";
+import { readVisualViewportBottomInsetPx } from "@/lib/visualViewportInset";
 
 const CSS_VAR = "--vv-bottom-inset";
 const SETTLE_MS = 120;
@@ -13,10 +10,8 @@ export function attachVisualViewportBottomInsetSync(
 ): () => void {
   let rafId = 0;
   let settleId = 0;
-  let displayedInset = 0;
 
   const applyInset = (px: number) => {
-    displayedInset = px;
     root.style.setProperty(CSS_VAR, `${px}px`);
   };
 
@@ -39,30 +34,38 @@ export function attachVisualViewportBottomInsetSync(
     settleId = window.setTimeout(settleToMeasured, SETTLE_MS);
   };
 
-  const syncNow = () => {
+  const syncImmediate = () => {
     if (!mq.matches) {
       applyInset(0);
       return;
     }
-    applyInset(pickStableBottomInsetPx(displayedInset, readMeasured()));
+    applyInset(readMeasured());
     scheduleSettle();
   };
 
-  const scheduleSync = () => {
+  /** Defer inset changes while the toolbar animates — prevents tab bar jump mid-scroll. */
+  const deferInsetUntilIdle = () => {
+    if (!mq.matches) {
+      return;
+    }
+    scheduleSettle();
+  };
+
+  const scheduleDefer = () => {
     if (rafId !== 0) {
       return;
     }
     rafId = window.requestAnimationFrame(() => {
       rafId = 0;
-      syncNow();
+      deferInsetUntilIdle();
     });
   };
 
-  syncNow();
-  mq.addEventListener("change", scheduleSync);
-  window.addEventListener("resize", scheduleSync);
-  window.visualViewport?.addEventListener("resize", scheduleSync);
-  window.visualViewport?.addEventListener("scroll", scheduleSync);
+  syncImmediate();
+  mq.addEventListener("change", syncImmediate);
+  window.addEventListener("resize", scheduleDefer);
+  window.visualViewport?.addEventListener("resize", scheduleDefer);
+  window.visualViewport?.addEventListener("scroll", scheduleDefer);
 
   return () => {
     if (rafId !== 0) {
@@ -71,10 +74,10 @@ export function attachVisualViewportBottomInsetSync(
     if (settleId !== 0) {
       window.clearTimeout(settleId);
     }
-    mq.removeEventListener("change", scheduleSync);
-    window.removeEventListener("resize", scheduleSync);
-    window.visualViewport?.removeEventListener("resize", scheduleSync);
-    window.visualViewport?.removeEventListener("scroll", scheduleSync);
+    mq.removeEventListener("change", syncImmediate);
+    window.removeEventListener("resize", scheduleDefer);
+    window.visualViewport?.removeEventListener("resize", scheduleDefer);
+    window.visualViewport?.removeEventListener("scroll", scheduleDefer);
     root.style.removeProperty(CSS_VAR);
   };
 }

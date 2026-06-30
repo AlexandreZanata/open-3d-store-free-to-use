@@ -1,4 +1,4 @@
-import { randomId } from "@/lib/randomId";
+import { randomId, isValidUuid } from "@/lib/randomId";
 
 const VISITOR_STORAGE_KEY = "print3d-visitor-id";
 
@@ -7,7 +7,7 @@ export function getOrCreateVisitorId(): string {
     return "00000000-0000-4000-8000-000000000000";
   }
   const existing = localStorage.getItem(VISITOR_STORAGE_KEY);
-  if (existing) {
+  if (existing && isValidUuid(existing)) {
     return existing;
   }
   const id = randomId();

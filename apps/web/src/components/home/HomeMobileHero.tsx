@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { BrandMark } from "@/components/BrandMark";
+import { HeroLogoViewer } from "@/components/home/HeroLogoViewer";
 import { pagePadding } from "@/lib/layout";
 
 export function HomeMobileHero() {
@@ -14,8 +14,8 @@ export function HomeMobileHero() {
         to="/search"
         className="group flex items-center gap-3.5 overflow-hidden rounded-2xl bg-foreground p-3.5 text-background shadow-card press lift"
       >
-        <div className="grid size-14 shrink-0 place-items-center rounded-xl bg-background shadow-soft">
-          <BrandMark className="h-10 w-10" />
+        <div className="pointer-events-none relative size-[4.75rem] shrink-0 overflow-hidden rounded-xl bg-background shadow-soft">
+          <HeroLogoViewer compact />
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-background/55">

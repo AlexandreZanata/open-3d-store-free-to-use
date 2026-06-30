@@ -278,7 +278,9 @@ Sets session cookie. Optional body `cart[]` merges with server cart. Optional `c
 
 ### `GET /me`
 
-Requires session cookie (`print3d_store_session`). **Response 401:** not signed in (guest storefront — normal on first visit).
+Requires session cookie (`print3d_store_session`). **Response 401:** not signed in.
+
+The web app **does not call** `GET /me` for anonymous visitors (no `print3d-store-session-hint` in localStorage). The hint is set after login/register and cleared on logout. Shoppers with an existing HttpOnly session from before this behavior may need to sign in once to restore client state.
 
 **Response 200:**
 
@@ -307,6 +309,8 @@ Body: `{ "cart": [ /* StoreCartItem[] */ ] }` — **Response 200:** `{ "data": {
 ## Favorites (visitor or account)
 
 Anonymous favorites keyed by **`X-Visitor-Id`** (UUID v4) **or** session cookie when signed in.
+
+The web app **does not call** `GET /favorites` for guests with an empty local cache. After the first favorite (or when signed in), it syncs with the API. Invalid legacy visitor ids (non-UUID) are replaced client-side on next access.
 
 | Header | Required | Detail |
 |--------|----------|--------|

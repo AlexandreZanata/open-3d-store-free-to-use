@@ -38,6 +38,9 @@ export function HeroLogoViewer({ compact = false }: HeroLogoViewerProps) {
       if (cancelled || viewerRef.current) {
         return;
       }
+      if (container.clientWidth === 0 || container.clientHeight === 0) {
+        return;
+      }
 
       void import("./heroLogoScene")
         .then(({ mountHeroLogoViewer }) => {
@@ -55,6 +58,13 @@ export function HeroLogoViewer({ compact = false }: HeroLogoViewerProps) {
     };
 
     mountViewer();
+
+    const sizeObserver = new ResizeObserver(() => {
+      if (!cancelled && !viewerRef.current) {
+        mountViewer();
+      }
+    });
+    sizeObserver.observe(container);
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -75,6 +85,7 @@ export function HeroLogoViewer({ compact = false }: HeroLogoViewerProps) {
 
     return () => {
       cancelled = true;
+      sizeObserver.disconnect();
       observer.disconnect();
       disposeViewer();
     };

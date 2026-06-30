@@ -71,6 +71,7 @@
     "metaFallback": "Produto — Corvo 3D",
     "viewerLabel": "Visualização 3D de {{name}}",
     "viewerScaleHint": "Escala real · mesa virtual",
+    "viewerLoading": "Carregando modelo 3D…",
     "viewerBadge": "Visualizador 3D",
     "tabModel": "Modelo 3D",
     "studioColors": "Cores do estúdio",

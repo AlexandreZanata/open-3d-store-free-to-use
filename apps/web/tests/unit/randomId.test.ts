@@ -19,3 +19,9 @@ describe("randomId", () => {
     expect(isValidUuid(id)).toBe(true);
   });
 });
+
+describe("isValidUuid", () => {
+  it("rejects legacy non-uuid visitor ids", () => {
+    expect(isValidUuid("mqzwbp0i-ujozahlk")).toBe(false);
+  });
+});

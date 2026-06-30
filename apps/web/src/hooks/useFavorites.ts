@@ -2,22 +2,29 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { FavoriteListResponse } from "@print3d/shared-types";
 import { useMemo } from "react";
 
+import { useStoreAuth } from "@/auth/useStoreAuth";
 import { addFavorite, fetchFavorites, removeFavorite } from "@/lib/api/favorites";
 import {
   buildPlaceholderFavorites,
   readCachedFavoriteIds,
   writeCachedFavoriteIds,
 } from "@/lib/favoriteCache";
+import { shouldSyncFavorites } from "@/lib/favoritesSync";
 
 export const favoritesQueryKey = ["favorites"] as const;
 
 export function useFavorites() {
   const queryClient = useQueryClient();
+  const { isAuthenticated } = useStoreAuth();
+  const cachedFavoriteIds = readCachedFavoriteIds();
+  const syncEnabled = shouldSyncFavorites(isAuthenticated, cachedFavoriteIds.length);
+
   const query = useQuery({
     queryKey: favoritesQueryKey,
     queryFn: fetchFavorites,
     staleTime: 30_000,
-    placeholderData: () => buildPlaceholderFavorites(readCachedFavoriteIds()),
+    enabled: syncEnabled,
+    placeholderData: () => buildPlaceholderFavorites(cachedFavoriteIds),
   });
 
   const favoriteIds = useMemo(

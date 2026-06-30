@@ -74,13 +74,9 @@ export function mountHeroLogoViewer(
 
   const animate = (now: number) => {
     frameId = requestAnimationFrame(animate);
-    if (paused) {
-      lastFrameMs = now;
-      return;
-    }
     const delta = (now - lastFrameMs) / 1000;
     lastFrameMs = now;
-    if (modelRoot) {
+    if (!paused && modelRoot) {
       modelRoot.rotation.y += HERO_LOGO_TURN_SPEED * delta;
     }
     renderer.render(scene, camera);

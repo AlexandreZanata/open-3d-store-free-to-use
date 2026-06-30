@@ -14,7 +14,8 @@ Replaces the previous `@google/model-viewer` CDN approach so `.3mf` print files 
 
 | File | Role |
 |------|------|
-| `apps/web/src/components/ModelViewer/ModelViewer.tsx` | React shell, poster fallback, dimension badge |
+| `apps/web/src/components/ModelViewer/ModelViewer.tsx` | React shell, loading overlay, dimension badge |
+| `apps/web/src/components/ModelViewer/ModelViewerLoadingOverlay.tsx` | Black loading state with i18n label |
 | `apps/web/src/components/ModelViewer/threeScene.ts` | Scene, desk, loaders, OrbitControls |
 | `apps/web/src/components/ProductMedia/ProductMediaPanel.tsx` | 3D / gallery tabs on product page |
 | `apps/web/src/components/ProductMedia/ProductImageCarousel.tsx` | Embla carousel for multiple photos |
@@ -36,6 +37,8 @@ Replaces the previous `@google/model-viewer` CDN approach so `.3mf` print files 
 - Model sits on desk (`y = 0`); bounding box dimensions shown in mm
 - OrbitControls: left-drag rotate, wheel zoom, right-drag pan
 - Fixed `aspect-square` container; responsive width 100%
+- While the GLB/3MF loads, a **black overlay** (`bg-foreground`) covers the canvas with bilingual status text (`product.viewerLoading`). Scale badge and dimensions appear only after `onReady`.
+- Hero logo (`HeroLogoViewer`): keeps rendering when off-screen (rotation pauses only); mounts after the tile has non-zero size
 
 ## Gallery carousel
 
@@ -98,7 +101,7 @@ Any catalog upload (`STL`, `GLB`, `GLTF`, `3MF`) is converted automatically to a
 
 If a source file is missing, that product keeps its catalog metadata without a model URL.
 
-**Desktop hero logo:** `pnpm --filter @print3d/api db:seed-hero-logo` copies `16cc56c8094335eec1baddcd7a39f5b5(1).stl` from `SEED_MODELS_SOURCE_DIR` to `corvo-logo-preview.glb` using a high-density read (600k triangles) + meshopt weld/simplify so the mesh stays solid (catalog previews use a lighter stride cap).
+**Desktop hero logo:** `pnpm --filter @print3d/api db:seed-hero-logo` prefers STL from `SEED_MODELS_SOURCE_DIR` (`16cc56c8094335eec1baddcd7a39f5b5(1).stl`). If missing, copies **`apps/api/seed-assets/hero/corvo-logo-preview.glb`** (committed) to `models/3d/` so VPS seed works without Bambu downloads.
 
 Re-run optimization for an existing product:
 
@@ -156,7 +159,7 @@ Serve `/models/` directly — see [../infrastructure/nginx.md](../infrastructure
 
 | Layer | File |
 |-------|------|
-| Web unit | `apps/web/tests/unit/modelFormat.test.ts`, `apps/web/tests/unit/modelViewerLimits.test.ts` |
+| Web unit | `apps/web/tests/unit/modelFormat.test.ts`, `apps/web/tests/unit/modelViewerLimits.test.ts`, `apps/web/tests/unit/modelViewerLoading.test.ts` |
 | API unit | `apps/api/tests/unit/infrastructure/orientMeshForPrintPreview.test.ts`, `documentFromMesh.test.ts`, `read3mfMesh.test.ts` |
 | E2E | `e2e/product-detail.spec.ts` |
 

@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 
 import type { ModelPart } from "@print3d/shared-types";
 
+import { ModelViewerLoadingOverlay } from "./ModelViewerLoadingOverlay";
+
 type ModelViewerHandle = {
   dispose: () => void;
   updatePartColors: (partColors: Record<string, string>) => void;
@@ -124,30 +126,22 @@ export function ModelViewer({
   }
 
   return (
-    <div className="relative aspect-square w-full overflow-hidden rounded-2xl ring-1 ring-hairline shadow-soft bg-muted">
-      {loading && posterUrl ? (
-        <img
-          src={posterUrl}
-          alt=""
-          className="absolute inset-0 size-full object-cover"
-          aria-hidden
-        />
-      ) : null}
-      {loading ? (
-        <div className="absolute inset-0 bg-muted/50 animate-pulse" aria-hidden />
-      ) : null}
+    <div className="relative aspect-square w-full overflow-hidden rounded-2xl ring-1 ring-hairline shadow-soft bg-foreground">
+      {loading ? <ModelViewerLoadingOverlay label={t("product.viewerLoading")} /> : null}
       <div
         ref={containerRef}
         className="absolute inset-0 touch-pan-y"
         role="img"
         aria-label={t("product.viewerLabel", { name: productName })}
       />
-      <div className="absolute top-3 left-3 pointer-events-none">
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-white/90 bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-full">
-          {t("product.viewerScaleHint")}
-        </span>
-      </div>
-      {dimensions ? (
+      {!loading ? (
+        <div className="absolute top-3 left-3 pointer-events-none">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-white/90 bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-full">
+            {t("product.viewerScaleHint")}
+          </span>
+        </div>
+      ) : null}
+      {!loading && dimensions ? (
         <div className="absolute bottom-3 left-3 pointer-events-none">
           <span className="text-[10px] font-semibold uppercase tracking-wider text-white/90 bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-full">
             {dimensions}

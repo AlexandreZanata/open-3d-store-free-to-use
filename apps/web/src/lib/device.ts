@@ -1,4 +1,4 @@
-import { randomId } from "@/lib/randomId";
+import { randomId, isValidUuid } from "@/lib/randomId";
 
 const DEVICE_STORAGE_KEY = "print3d-device-id";
 
@@ -7,7 +7,7 @@ export function getOrCreateDeviceId(): string {
     return randomId();
   }
   const existing = localStorage.getItem(DEVICE_STORAGE_KEY);
-  if (existing) {
+  if (existing && isValidUuid(existing)) {
     return existing;
   }
   const created = randomId();

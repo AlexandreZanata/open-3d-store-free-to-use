@@ -53,7 +53,7 @@ export function HomeDesktopView({ products, categories, isLoading, t }: Props) {
             </div>
           </div>
           <div className="hidden xl:grid place-items-center p-10">
-            <div className="relative grid place-items-center rounded-3xl bg-background p-8 shadow-soft ring-1 ring-background/20 min-h-[17.5rem] min-w-[17.5rem]">
+            <div className="relative grid place-items-center rounded-3xl bg-background p-5 shadow-soft ring-1 ring-background/20 min-h-[17.5rem] min-w-[17.5rem]">
               <div
                 className="pointer-events-none absolute inset-0 rounded-3xl bg-[radial-gradient(circle_at_50%_42%,oklch(0.68_0.18_45/0.14),transparent_68%)]"
                 aria-hidden

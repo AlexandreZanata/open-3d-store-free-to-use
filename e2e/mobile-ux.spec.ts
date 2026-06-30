@@ -10,6 +10,33 @@ test.describe("mobile storefront UX", () => {
 
   test.use({ viewport: { width: 390, height: 844 } });
 
+  test("guest home does not call /me or /favorites", async ({ page }) => {
+    const meCalls: string[] = [];
+    const favoriteCalls: string[] = [];
+    await page.route("**/api/v1/me", (route) => {
+      meCalls.push(route.request().url());
+      void route.continue();
+    });
+    await page.route("**/api/v1/favorites", (route) => {
+      favoriteCalls.push(route.request().url());
+      void route.continue();
+    });
+
+    await page.goto("/");
+    await expect(page.locator("nav.fixed.bottom-0")).toBeVisible({ timeout: 20_000 });
+    await page.waitForTimeout(1_500);
+
+    expect(meCalls).toHaveLength(0);
+    expect(favoriteCalls).toHaveLength(0);
+  });
+
+  test("mobile hero tile shows rotating corvo 3d logo", async ({ page }) => {
+    await page.goto("/");
+    await expect(
+      page.getByRole("img", { name: /corvo 3d logo|logo 3d corvo/i }),
+    ).toBeVisible({ timeout: 25_000 });
+  });
+
   test("guest can favorite a product from the card heart", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator("nav.fixed.bottom-0")).toBeVisible({ timeout: 20_000 });

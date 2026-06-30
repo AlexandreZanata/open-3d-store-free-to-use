@@ -14,6 +14,11 @@ import {
 import { ApiError } from "@/lib/api/client";
 import { writeCart } from "@/lib/cart";
 import { clearGuestCheckoutPreferences } from "@/lib/checkoutPreferences";
+import {
+  clearStoreSessionHint,
+  hasStoreSessionHint,
+  markStoreSessionHint,
+} from "@/lib/storeSessionHint";
 
 export function StoreAuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
@@ -24,6 +29,7 @@ export function StoreAuthProvider({ children }: { children: ReactNode }) {
     queryFn: fetchStoreMe,
     retry: false,
     staleTime: 60_000,
+    enabled: hasStoreSessionHint(),
   });
 
   const user =
@@ -33,6 +39,7 @@ export function StoreAuthProvider({ children }: { children: ReactNode }) {
 
   const applySession = useCallback(
     (data: Awaited<ReturnType<typeof fetchStoreMe>>) => {
+      markStoreSessionHint();
       queryClient.setQueryData(storeMeQueryKey, data);
       writeCart(data.data.cart);
       clearGuestCheckoutPreferences();
@@ -70,6 +77,7 @@ export function StoreAuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     await logoutStoreUser();
+    clearStoreSessionHint();
     queryClient.removeQueries({ queryKey: storeMeQueryKey });
     setAuthError(null);
   }, [queryClient]);

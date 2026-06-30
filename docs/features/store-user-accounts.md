@@ -27,7 +27,8 @@
 | Key | Purpose |
 |-----|---------|
 | `print3d-device-id` | Stable device UUID for registration limits |
-| `print3d-visitor-id` | Anonymous favorites before sign-in |
+| `print3d-visitor-id` | Anonymous favorites before sign-in (UUID v4; regenerated if invalid) |
+| `print3d-store-session-hint` | Set after login/register so the SPA may call `GET /me` (HttpOnly cookie is not readable in JS) |
 | `print3d-cart` | Local cart; synced to server when authenticated |
 | `print3d-checkout-name` | Guest checkout name (local only) |
 | `print3d-checkout-note` | Guest checkout note until sign-in |
@@ -46,5 +47,7 @@ See [../api/contract.md](../api/contract.md) — section **Storefront accounts**
 6. Try creating a 3rd account on same browser/IP → `403 registrationLimit`
 7. Cart as guest → name required; reload keeps name/note in localStorage
 8. Cart while signed in → name from profile; note persists via `PATCH /me`
+9. Guest home (no session hint, empty favorites cache) → **no** `GET /me` or `GET /favorites` in network tab
+10. Guest taps heart → favorite saves; subsequent loads sync favorites when cache is non-empty
 
 Contract tests: `apps/api/tests/integration/routes/store-auth.routes.test.ts`

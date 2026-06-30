@@ -17,7 +17,7 @@ Implementation tokens live in `apps/web/src/lib/layout.ts`.
 |---------|--------|
 | **Header** | `AppShellMobileHeader` — fixed top bar (`h-14`), main content uses `mobileTopPad` |
 | **Navigation** | Fixed bottom 5-tab bar (`h-[3.75rem]`, `z-50`); active tab uses **filled black icon** (no accent dot) |
-| **Home** | Hero card + category pills + horizontal product rails; hero tile shows rotating **3D Corvo logo** |
+| **Home** | Hero card + category pills + horizontal product rails; mobile hero tile shows rotating **3D Corvo logo** (`HeroLogoViewer` compact) |
 | **Shell** | `max-w-2xl`, flex column with site footer above tab bar |
 
 ### Site footer (`AppShellFooter`)

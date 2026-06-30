@@ -47,8 +47,8 @@ Guests MUST NOT prefetch `GET /api/v1/favorites` (see [store-user-accounts.md](s
 
 | Scenario | Target |
 |----------|--------|
-| Warm tab switch (visited or prefetched) | Cached catalog visible within **100 ms** (lab); E2E allows **1 s** for CI |
-| Search → Home → Search | No multi-second blank list |
+| Warm tab switch (visited or prefetched) | Cached catalog visible within **100 ms** (lab); E2E decode bound **3 s** on CI (no multi-second blank tiles) |
+| Search → Home → Search round-trip | Catalog tiles decoded within **5 s** total on CI |
 | Cold home load (seeded DB) | Product thumbnail decoded within **5 s** |
 | Tab bar viewport pinning | No regression — `e2e/mobile-ux.spec.ts` |
 

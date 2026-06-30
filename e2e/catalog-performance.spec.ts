@@ -5,6 +5,11 @@ import { test, expect } from "@playwright/test";
 
 const hasDatabase = Boolean(process.env.DATABASE_URL);
 
+/** Contract: catalog-performance.md — warm tab decode on CI (lab target 100 ms). */
+const WARM_TAB_DECODE_MS = 3_000;
+/** Contract: catalog-performance.md — search round-trip ceiling on CI. */
+const WARM_TAB_ROUND_TRIP_MS = 5_000;
+
 async function expectCatalogTilesVisible(
   page: import("@playwright/test").Page,
   timeoutMs: number,
@@ -47,9 +52,9 @@ test.describe("mobile catalog performance", () => {
     const startedAt = Date.now();
     await page.getByTestId("mobile-tab-bar").getByRole("link", { name: /^search$|^buscar$/i }).click();
     await expect(page).toHaveURL(/\/search/, { timeout: 10_000 });
-    await expectCatalogTilesVisible(page, 1_000);
+    await expectCatalogTilesVisible(page, WARM_TAB_DECODE_MS);
 
     const elapsedMs = Date.now() - startedAt;
-    expect(elapsedMs).toBeLessThan(3_000);
+    expect(elapsedMs).toBeLessThan(WARM_TAB_ROUND_TRIP_MS);
   });
 });

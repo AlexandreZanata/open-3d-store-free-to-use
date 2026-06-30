@@ -15,7 +15,7 @@ fi
 mkdir -p "${MODELS_DIR}" "${SEED_SOURCE}"
 
 echo "==> Hero 3D logo (bundled GLB, no STL required)"
-"${ROOT}/infra/scripts/install-hero-logo-glb.sh" || true
+"${ROOT}/infra/scripts/install-hero-logo-glb.sh"
 
 if [[ -z "$(find "${SEED_SOURCE}" -maxdepth 1 -type f \( -name '*.stl' -o -name '*.3mf' \) 2>/dev/null | head -1)" ]]; then
   echo "vps-seed.sh: no STL/3MF in ${SEED_SOURCE} (product previews skipped)"

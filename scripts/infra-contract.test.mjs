@@ -162,6 +162,7 @@ describe("VPS rsync deploy — docs/infrastructure/deployment.md", () => {
     const script = readRepo("infra/scripts/vps-full-deploy.sh");
     assert.match(script, /RUN_VPS_SEED/);
     assert.match(script, /vps-seed\.sh/);
+    assert.match(script, /install-hero-logo-glb\.sh/);
     assert.doesNotMatch(script, /SKIP_VPS_SEED/);
   });
 });

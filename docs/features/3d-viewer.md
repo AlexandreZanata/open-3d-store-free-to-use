@@ -38,7 +38,7 @@ Replaces the previous `@google/model-viewer` CDN approach so `.3mf` print files 
 - OrbitControls: left-drag rotate, wheel zoom, right-drag pan
 - Fixed `aspect-square` container; responsive width 100%
 - While the GLB/3MF loads, a **black overlay** (`bg-foreground`) covers the canvas with bilingual status text (`product.viewerLoading`). Scale badge and dimensions appear only after `onReady`.
-- Hero logo (`HeroLogoViewer`): keeps rendering when off-screen (rotation pauses only); mounts after the tile has non-zero size; shows a **black circle placeholder** (`HeroLogoPlaceholder`, `#141414`, same fit ratio as `fitCameraToModel`) until the GLB is ready
+- Hero logo (`HeroLogoViewer`): keeps rendering when off-screen (rotation pauses only); mounts after the tile has non-zero size; shows the **2D corvo icon** (`/brand/corvo-logo.png`, same fit ratio as `fitCameraToModel`) until the GLB is ready
 
 ## Gallery carousel
 

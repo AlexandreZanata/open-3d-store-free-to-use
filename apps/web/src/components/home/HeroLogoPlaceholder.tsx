@@ -1,15 +1,13 @@
-import {
-  HERO_LOGO_COLOR_HEX,
-  heroLogoPlaceholderDiameterRatio,
-} from "@/components/home/heroLogoScene";
+import { heroLogoPlaceholderDiameterRatio } from "@/components/home/heroLogoScene";
+import { BRAND_MARK_ICON_SRC } from "@/lib/brandMark";
 
 type HeroLogoPlaceholderProps = {
   aspect: number;
 };
 
-/** Black circle — same footprint as the fitted hero GLB until WebGL is ready. */
+/** 2D corvo icon — same footprint as the fitted hero GLB until WebGL is ready. */
 export function HeroLogoPlaceholder({ aspect }: HeroLogoPlaceholderProps) {
-  const diameterPercent = heroLogoPlaceholderDiameterRatio(aspect) * 100;
+  const fitPercent = heroLogoPlaceholderDiameterRatio(aspect) * 100;
 
   return (
     <div
@@ -17,11 +15,13 @@ export function HeroLogoPlaceholder({ aspect }: HeroLogoPlaceholderProps) {
       aria-hidden
       data-testid="hero-logo-placeholder"
     >
-      <div
-        className="aspect-square shrink-0 rounded-full"
+      <img
+        src={BRAND_MARK_ICON_SRC}
+        alt=""
+        className="block shrink-0 object-contain object-center"
         style={{
-          backgroundColor: HERO_LOGO_COLOR_HEX,
-          width: `${diameterPercent}%`,
+          width: `${fitPercent}%`,
+          maxHeight: `${fitPercent}%`,
         }}
       />
     </div>

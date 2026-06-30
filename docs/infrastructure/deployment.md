@@ -68,7 +68,7 @@ Rsync deploy from your machine (see [../../production/README.md](../../productio
 | `./production/deploy-to-vps.sh --seed` | **Yes** — runs `infra/scripts/vps-seed.sh` (`pnpm db:seed`, hero GLB, thumbnails) |
 | `./production/deploy-to-vps.sh --env-only` | No — regenerates `production/env/*.env` locally |
 
-On the VPS, `vps-full-deploy.sh` runs seed only when `RUN_VPS_SEED=1` (set by `--seed` on the deploy script).
+On the VPS, `vps-full-deploy.sh` runs seed only when `RUN_VPS_SEED=1` (set by `--seed` on the deploy script). **Hero GLB** (`install-hero-logo-glb.sh`) runs on **every** deploy — copied from `apps/api/seed-assets/hero/corvo-logo-preview.glb` to `models/3d/`.
 
 ## First deploy (VPS checklist)
 

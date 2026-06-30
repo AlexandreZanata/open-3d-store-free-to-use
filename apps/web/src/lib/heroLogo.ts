@@ -11,9 +11,13 @@ export function preloadHeroLogo(): Promise<void> {
     import("@/components/home/heroLogoScene"),
     typeof window !== "undefined"
       ? Promise.all([
-          fetch(HERO_LOGO_MODEL_URL, { cache: "force-cache" }),
+          fetch(HERO_LOGO_MODEL_URL, { cache: "force-cache" }).then((response) => {
+            if (!response.ok) {
+              throw new Error(`hero GLB ${response.status}`);
+            }
+          }),
           loadHeroGltfCached(HERO_LOGO_MODEL_URL),
-        ])
+        ]).catch(() => undefined)
       : Promise.resolve(),
   ]).then(() => undefined);
   return preloadPromise;

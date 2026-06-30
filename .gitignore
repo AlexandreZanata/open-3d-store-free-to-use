@@ -46,6 +46,7 @@ infra/pm2.ecosystem.config.js
 infra/scripts/vps-*.sh
 !infra/scripts/vps-full-deploy.sh
 !infra/scripts/vps-seed.sh
+!infra/scripts/install-hero-logo-glb.sh
 infra/scripts/repair-api-port.sh
 infra/scripts/sync-to-vps.sh
 infra/scripts/bootstrap-vps.sh

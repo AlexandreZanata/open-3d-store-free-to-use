@@ -23,6 +23,9 @@ export CI=true
 export SKIP_GIT_PULL=1
 "${ROOT}/infra/scripts/deploy.sh"
 
+echo "==> Hero 3D logo GLB (bundled asset — required for home viewer)"
+"${ROOT}/infra/scripts/install-hero-logo-glb.sh"
+
 if [[ "${RUN_VPS_SEED:-0}" == "1" ]]; then
   echo "==> Seed catalog + static assets (idempotent)"
   "${ROOT}/infra/scripts/vps-seed.sh"

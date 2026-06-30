@@ -32,7 +32,9 @@ test.describe("mobile storefront UX", () => {
 
   test("mobile hero tile shows rotating corvo 3d logo", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByTestId("hero-logo-placeholder")).toBeVisible({ timeout: 5_000 });
+    const placeholder = page.getByTestId("hero-logo-placeholder");
+    await expect(placeholder).toBeVisible({ timeout: 5_000 });
+    await expect(placeholder.locator('img[src="/brand/corvo-logo.png"]')).toBeVisible();
     await expect(
       page.getByRole("img", { name: /corvo 3d logo|logo 3d corvo/i }),
     ).toBeVisible({ timeout: 25_000 });

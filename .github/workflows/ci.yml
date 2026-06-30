@@ -115,6 +115,24 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - name: Write apps/api/.env for tsx --env-file
+        run: |
+          mkdir -p "${MODEL_FILES_BASE_PATH}"
+          {
+            echo "DATABASE_URL=${DATABASE_URL}"
+            echo "TEST_DATABASE_URL=${TEST_DATABASE_URL}"
+            echo "REDIS_URL=${REDIS_URL}"
+            echo "WHATSAPP_PHONE_NUMBER=${WHATSAPP_PHONE_NUMBER}"
+            echo "CORS_ORIGIN=${CORS_ORIGIN}"
+            echo "MODEL_FILES_BASE_PATH=${MODEL_FILES_BASE_PATH}"
+            echo "MODEL_FILES_BASE_URL=${MODEL_FILES_BASE_URL}"
+            echo "ADMIN_ORIGIN=http://localhost:5174"
+            echo "ADMIN_BOOTSTRAP_EMAIL=admin@test.local"
+            echo "ADMIN_BOOTSTRAP_PASSWORD=test-password-12"
+            echo "PORT=3010"
+            echo "NODE_ENV=development"
+          } > apps/api/.env
+
       - run: pnpm --filter @print3d/api exec drizzle-kit migrate
 
       - run: pnpm --filter @print3d/api db:seed

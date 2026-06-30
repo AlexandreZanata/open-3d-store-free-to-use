@@ -17,7 +17,9 @@ Steps:
 3. Node 22
 4. `pnpm install --frozen-lockfile`
 5. `pnpm --filter @print3d/api exec drizzle-kit migrate`
-6. **`./scripts/quality-gate.sh ci`** — typecheck, ESLint (no `any`/`unknown`), size/complexity, infra contract, build, tests
+6. **`./scripts/quality-gate.sh ci`** — typecheck, ESLint (no `any`/`unknown`), size/complexity, infra contract, build, **migrations** (when `DATABASE_URL` is set), tests
+
+Vitest also runs Drizzle migrations in `apps/api/tests/globalSetup.ts` before integration tests so the schema matches the migration journal even if an earlier migrate step was skipped.
 
 > **Quality Gate:** typecheck, ESLint strict types, size/complexity, build, and tests are **paired gates** — all must pass. Harness rule: `agent-rules/00-core/size-and-complexity-limits.md`.
 
@@ -29,10 +31,11 @@ Runs after `test` job passes.
 
 Steps:
 1. `pnpm --filter @print3d/api exec drizzle-kit migrate`
-2. `pnpm --filter @print3d/api db:seed`
-3. Install Playwright browsers: `pnpm exec playwright install chromium --with-deps`
-4. **`pnpm e2e`**
-5. Upload Playwright report on failure
+2. Write `apps/api/.env` from workflow env (required by `tsx --env-file=.env` for `db:seed` and API `dev` in Playwright webServer)
+3. `pnpm --filter @print3d/api db:seed`
+4. Install Playwright browsers: `pnpm exec playwright install chromium --with-deps`
+5. **`pnpm e2e`**
+6. Upload Playwright report on failure
 
 Minimum suites: catalog browse, product detail, WhatsApp redirect, i18n locale switch — see [../testing/tdd-strategy.md](../testing/tdd-strategy.md).
 

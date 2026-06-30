@@ -258,6 +258,7 @@ describe("ci.yml contract — docs/operations/ci-cd.md", () => {
 
   test("runs e2e after tests and deploys on main push", () => {
     assert.match(workflow, /e2e:/);
+    assert.match(workflow, /apps\/api\/\.env/);
     assert.match(workflow, /pnpm e2e/);
     assert.match(workflow, /deploy:/);
     assert.match(workflow, /VPS_HOST/);

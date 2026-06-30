@@ -133,7 +133,8 @@ describe("Admin upload routes (contract)", () => {
 
     expect(response.statusCode).toBe(201);
     const body = response.json().data;
-    expect(body.url).toMatch(/^\/models\/3d\/.+\.stl$/);
+    expect(body.url).toMatch(/^\/models\/3d\/.+-preview\.glb$/);
+    expect(body.sourceUrl).toMatch(/^\/models\/3d\/.+\.stl$/);
     expect(body.kind).toBe("model");
     expect(body.mimeType).toBe("model/stl");
     expect(body.sizeBytes).toBe(stl.byteLength);

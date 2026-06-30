@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { describe, expect, it } from "vitest";
 
 import { HERO_LOGO_MODEL_URL, preloadHeroLogo } from "@/lib/heroLogo";

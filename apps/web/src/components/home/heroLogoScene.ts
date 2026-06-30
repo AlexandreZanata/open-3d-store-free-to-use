@@ -24,6 +24,7 @@ export type HeroLogoHandle = {
   dispose: () => void;
   pause: () => void;
   resume: () => void;
+  reparentTo: (container: HTMLElement) => void;
 };
 
 export type HeroLogoMountOptions = {
@@ -116,15 +117,21 @@ export function mountHeroLogoViewer(
     }
   })();
 
-  const resizeObserver = new ResizeObserver(() => {
-    const width = container.clientWidth;
-    const height = container.clientHeight;
+  let observedContainer = container;
+
+  const syncRendererSize = () => {
+    const width = observedContainer.clientWidth;
+    const height = observedContainer.clientHeight;
     if (width === 0 || height === 0) {
       return;
     }
     camera.aspect = width / height;
     refitCamera();
     renderer.setSize(width, height);
+  };
+
+  const resizeObserver = new ResizeObserver(() => {
+    syncRendererSize();
   });
   resizeObserver.observe(container);
 
@@ -138,7 +145,7 @@ export function mountHeroLogoViewer(
         modelRoot = null;
       }
       renderer.dispose();
-      container.removeChild(renderer.domElement);
+      renderer.domElement.remove();
     },
     pause() {
       paused = true;
@@ -146,6 +153,13 @@ export function mountHeroLogoViewer(
     resume() {
       paused = false;
       lastFrameMs = performance.now();
+    },
+    reparentTo(nextContainer: HTMLElement) {
+      observedContainer = nextContainer;
+      nextContainer.appendChild(renderer.domElement);
+      resizeObserver.disconnect();
+      resizeObserver.observe(nextContainer);
+      syncRendererSize();
     },
   };
 }

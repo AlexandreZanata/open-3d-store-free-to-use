@@ -4,6 +4,7 @@ import {
   transformPoint,
   type Mat4,
 } from "./threeMfTransform.js";
+import { readAttr, readAttrString } from "./read3mfXmlAttrs.js";
 
 export type MeshDef = {
   vertices: Float32Array;
@@ -185,17 +186,4 @@ function parseTriangleIndices(tag: string): [number, number, number] | null {
     return null;
   }
   return [v1, v2, v3];
-}
-
-function readAttr(tag: string, name: string): number | null {
-  const raw = readAttrString(tag, name);
-  if (!raw) {
-    return null;
-  }
-  const value = Number(raw);
-  return Number.isFinite(value) ? value : null;
-}
-function readAttrString(tag: string, name: string): string | null {
-  const match = tag.match(new RegExp(`\\b${name}="([^"]+)"`, "i"));
-  return match?.[1] ?? null;
 }

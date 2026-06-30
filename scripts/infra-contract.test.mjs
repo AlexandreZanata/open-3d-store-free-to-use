@@ -53,6 +53,12 @@ describe("deploy.sh contract — docs/infrastructure/deployment.md", () => {
     assert.match(script, /HUSKY=0/);
     assert.match(script, /NODE_ENV=development pnpm install/);
   });
+
+  test("builds Vite apps with NODE_ENV=production so SSR uses jsx not jsxDEV", () => {
+    assert.match(script, /NODE_ENV=production pnpm turbo build --force/);
+    assert.match(script, /@print3d\/web/);
+    assert.match(script, /@print3d\/admin/);
+  });
 });
 
 describe("migrate.sh contract — docs/infrastructure/deployment.md", () => {

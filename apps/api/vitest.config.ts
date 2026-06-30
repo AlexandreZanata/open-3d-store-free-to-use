@@ -1,4 +1,32 @@
+import { readFileSync, existsSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
 import { defineConfig } from "vitest/config";
+
+const apiRoot = path.dirname(fileURLToPath(import.meta.url));
+const envPath = path.join(apiRoot, ".env");
+
+function loadDotEnv(file: string): Record<string, string> {
+  if (!existsSync(file)) {
+    return {};
+  }
+  const values: Record<string, string> = {};
+  for (const line of readFileSync(file, "utf8").split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) {
+      continue;
+    }
+    const eq = trimmed.indexOf("=");
+    if (eq === -1) {
+      continue;
+    }
+    const key = trimmed.slice(0, eq).trim();
+    const raw = trimmed.slice(eq + 1).trim();
+    values[key] = raw.replace(/^['"]|['"]$/g, "");
+  }
+  return values;
+}
 
 export default defineConfig({
   test: {
@@ -7,5 +35,6 @@ export default defineConfig({
     include: ["tests/**/*.test.ts"],
     testTimeout: 30_000,
     fileParallelism: false,
+    env: loadDotEnv(envPath),
   },
 });

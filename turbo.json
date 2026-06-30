@@ -5,6 +5,18 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
+    "@print3d/admin#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"],
+      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.production", ".env.local", ".env.production.local"],
+      "env": ["VITE_*", "NODE_ENV"]
+    },
+    "@print3d/web#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"],
+      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.production", ".env.local", ".env.production.local"],
+      "env": ["VITE_*", "NODE_ENV"]
+    },
     "test": {
       "dependsOn": ["^build"],
       "cache": false

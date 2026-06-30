@@ -20,7 +20,7 @@ describe("GetProductBySlug", () => {
       }),
     });
     const cache = createMockCache();
-    const useCase = new GetProductBySlug(products, cache);
+    const useCase = new GetProductBySlug(products, cache, "/tmp/test-models");
 
     const en = await useCase.execute("custom-photo-frame", "en");
     const pt = await useCase.execute("custom-photo-frame", "pt-BR");
@@ -37,7 +37,7 @@ describe("GetProductBySlug", () => {
       findBySlug: vi.fn(async () => sampleProduct),
     });
     const cache = createMockCache();
-    const useCase = new GetProductBySlug(products, cache);
+    const useCase = new GetProductBySlug(products, cache, "/tmp/test-models");
 
     await useCase.execute("custom-photo-frame", "en");
     await useCase.execute("custom-photo-frame", "en");
@@ -54,7 +54,7 @@ describe("GetProductBySlug", () => {
     const products = createMockProductRepository({
       findBySlug: vi.fn(async () => null),
     });
-    const useCase = new GetProductBySlug(products, createMockCache());
+    const useCase = new GetProductBySlug(products, createMockCache(), "/tmp/test-models");
 
     expect(await useCase.execute("missing", "en")).toBeNull();
   });

@@ -70,7 +70,12 @@ echo "==> Building packages"
 NODE_ENV=development pnpm turbo build \
   --filter=@print3d/shared-types \
   --filter=@print3d/whatsapp \
-  --filter=@print3d/api \
+  --filter=@print3d/api
+
+# Vite bakes VITE_* at build time; install-env may have just changed .env.production.
+# NODE_ENV=production — required so SSR bundle uses jsx() not jsxDEV (avoids HTTP 500).
+echo "==> Building Vite apps (no turbo cache — env-driven bundles)"
+NODE_ENV=production pnpm turbo build --force \
   --filter=@print3d/web \
   --filter=@print3d/admin
 

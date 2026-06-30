@@ -15,5 +15,6 @@ describe("productCardUi — docs/features/responsive-layout.md", () => {
     const petgHf = materialBadgeClass("PETG_HF");
     expect(pla).not.toBe(petgHf);
     expect(pla).toContain("bg-sky-500/15");
+    expect(petgHf).toContain("bg-orange-500/15");
   });
 });

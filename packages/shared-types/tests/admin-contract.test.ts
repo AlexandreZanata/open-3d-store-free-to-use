@@ -127,6 +127,7 @@ describe("POST /admin/uploads — MIME allowlist (Task 9.7)", () => {
       "model/gltf-binary",
       "model/gltf+json",
       "model/3mf",
+      "model/stl",
     ]);
   });
 
@@ -141,7 +142,7 @@ describe("POST /admin/uploads — MIME allowlist (Task 9.7)", () => {
   it("enforces per-kind size limits from admin contract", () => {
     expect(ADMIN_UPLOAD_MAX_BYTES.thumbnail).toBe(512 * 1024);
     expect(ADMIN_UPLOAD_MAX_BYTES.gallery).toBe(2 * 1024 * 1024);
-    expect(ADMIN_UPLOAD_MAX_BYTES.model).toBe(5 * 1024 * 1024);
+    expect(ADMIN_UPLOAD_MAX_BYTES.model).toBe(256 * 1024 * 1024);
   });
 
   it("returns documented upload response shape", () => {

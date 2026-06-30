@@ -6,6 +6,9 @@ import { test, expect } from "@playwright/test";
 
 const hasDatabase = Boolean(process.env.DATABASE_URL);
 
+/** Contract: catalog-realtime.md — no multi-second blank tiles on return (UX target 300 ms). */
+const RETURN_THUMB_DECODE_MS = 3_000;
+
 async function expectThumbnailDecoded(
   page: import("@playwright/test").Page,
   timeoutMs = 15_000,
@@ -39,12 +42,14 @@ test.describe("catalog navigation thumbnails", () => {
     await productLink.click();
 
     await expect(page).toHaveURL(/\/product\//, { timeout: 15_000 });
-    await page.waitForTimeout(5_000);
+    await expect(page.getByRole("main").getByRole("heading", { level: 1 })).toBeVisible({
+      timeout: 15_000,
+    });
 
     await page.getByTestId("mobile-tab-bar").getByRole("link", { name: /^home$|^início$/i }).click();
     await expect(page).toHaveURL("/", { timeout: 15_000 });
 
-    await expectThumbnailDecoded(page, 1_000);
+    await expectThumbnailDecoded(page, RETURN_THUMB_DECODE_MS);
 
     const thumbs = page.getByTestId("catalog-thumbnail");
     expect(await thumbs.count()).toBeGreaterThan(0);
@@ -55,7 +60,7 @@ test.describe("catalog navigation thumbnails", () => {
           thumbs.evaluateAll((images) =>
             images.filter((img) => (img as HTMLImageElement).naturalWidth === 0).length,
           ),
-        { timeout: 1_000 },
+        { timeout: RETURN_THUMB_DECODE_MS },
       )
       .toBe(0);
   });

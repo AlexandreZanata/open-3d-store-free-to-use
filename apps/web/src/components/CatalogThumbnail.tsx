@@ -1,3 +1,5 @@
+import { useLayoutEffect, useRef } from "react";
+
 import { markCatalogThumbnailWarm } from "@/lib/catalogThumbnailCache";
 import { cn } from "@/lib/utils";
 
@@ -19,12 +21,25 @@ export function CatalogThumbnail({
   priority = false,
   className,
 }: CatalogThumbnailProps) {
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  useLayoutEffect(() => {
+    const img = imgRef.current;
+    if (!img || !src) {
+      return;
+    }
+    if (img.complete && img.naturalWidth > 0) {
+      markCatalogThumbnailWarm(src);
+    }
+  }, [src]);
+
   if (!src) {
     return null;
   }
 
   return (
     <img
+      ref={imgRef}
       data-testid="catalog-thumbnail"
       src={src}
       alt={alt}

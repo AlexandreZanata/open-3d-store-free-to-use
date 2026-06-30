@@ -19,14 +19,20 @@ import { categoryPillsTrack, mobileOnly } from "@/lib/layout";
 import { preloadHeroLogo } from "@/lib/heroLogo";
 import { getCurrentI18nLocale, default as i18n } from "@/i18n";
 
+const FEATURED_PARAMS = { featured: true as const, limit: 6, page: 1 };
+const CATALOG_PARAMS = { page: 1, limit: 12 };
+
 export const Route = createFileRoute("/")({
   loader: async ({ context }) => {
     const locale = getCurrentI18nLocale();
-    // Do not throw on SSR when the API is down — render shell and let hooks show errors.
     await Promise.allSettled([
       context.queryClient.prefetchQuery({
-        queryKey: productsQueryKey({ page: 1, limit: 12 }, locale),
-        queryFn: () => fetchProducts({ page: 1, limit: 12 }, locale),
+        queryKey: productsQueryKey(FEATURED_PARAMS, locale),
+        queryFn: () => fetchProducts(FEATURED_PARAMS, locale),
+      }),
+      context.queryClient.prefetchQuery({
+        queryKey: productsQueryKey(CATALOG_PARAMS, locale),
+        queryFn: () => fetchProducts(CATALOG_PARAMS, locale),
       }),
       context.queryClient.prefetchQuery({
         queryKey: categoriesQueryKey(locale),
@@ -46,15 +52,24 @@ function HomePage() {
   const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
   const locale = resolveQueryLocale(i18n.language);
-  const productsQuery = useProducts({ page: 1, limit: 12 });
+  const featuredQuery = useProducts(FEATURED_PARAMS);
+  const productsQuery = useProducts(CATALOG_PARAMS);
   const categoriesQuery = useCategories();
+  const featuredProducts = featuredQuery.data?.data ?? [];
   const products = productsQuery.data?.data ?? [];
   const categories = categoriesQuery.data ?? [];
   const showCatalogSkeleton = isCatalogQueryPending(productsQuery);
+  const showFeaturedSkeleton = isCatalogQueryPending(featuredQuery);
 
   useEffect(() => {
     warmHomeCatalogImages(queryClient, locale);
-  }, [queryClient, locale, productsQuery.dataUpdatedAt, categoriesQuery.dataUpdatedAt]);
+  }, [
+    queryClient,
+    locale,
+    productsQuery.dataUpdatedAt,
+    featuredQuery.dataUpdatedAt,
+    categoriesQuery.dataUpdatedAt,
+  ]);
 
   return (
     <AppShell>
@@ -87,19 +102,21 @@ function HomePage() {
           </section>
         )}
 
-        <Rail title={t("home.featuredProducts")} action={<RailAction label={t("home.railAll")} />}>
-          {showCatalogSkeleton
-            ? Array.from({ length: 4 }).map((_, index) => (
-                <div key={index} className="snap-start">
-                  <ProductCardSkeleton variant="wide" />
-                </div>
-              ))
-            : products.slice(0, 6).map((product) => (
-                <div key={product.id} className="snap-start">
-                  <ProductCard product={product} variant="wide" priority />
-                </div>
-              ))}
-        </Rail>
+        {(featuredProducts.length > 0 || showFeaturedSkeleton) && (
+          <Rail title={t("home.featuredProducts")} action={<RailAction label={t("home.railAll")} />}>
+            {showFeaturedSkeleton
+              ? Array.from({ length: 4 }).map((_, index) => (
+                  <div key={index} className="snap-start">
+                    <ProductCardSkeleton variant="wide" />
+                  </div>
+                ))
+              : featuredProducts.map((product) => (
+                  <div key={product.id} className="snap-start">
+                    <ProductCard product={product} variant="wide" priority />
+                  </div>
+                ))}
+          </Rail>
+        )}
 
         <Rail title={t("home.allProducts")} action={<RailAction label={t("home.railAll")} />}>
           {showCatalogSkeleton
@@ -119,8 +136,10 @@ function HomePage() {
       <div className="hidden lg:block">
         <HomeDesktopView
           products={products}
+          featuredProducts={featuredProducts}
           categories={categories}
           isLoading={showCatalogSkeleton}
+          isFeaturedLoading={showFeaturedSkeleton}
           t={t}
         />
       </div>

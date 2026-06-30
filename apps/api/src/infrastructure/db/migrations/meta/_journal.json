@@ -92,6 +92,13 @@
       "when": 1782769200000,
       "tag": "0013_shop_default_colors",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1782772800000,
+      "tag": "0014_product_is_featured",
+      "breakpoints": true
     }
   ]
 }

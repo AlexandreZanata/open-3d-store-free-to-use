@@ -81,6 +81,7 @@ export const products = pgTable(
     imageUrls: jsonb("image_urls").notNull().default([]),
     tags: jsonb("tags").notNull().default([]),
     translations: jsonb("translations").notNull().default({}),
+    isFeatured: boolean("is_featured").notNull().default(false),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -94,6 +95,7 @@ export const products = pgTable(
     index("products_status_idx").on(table.status),
     index("products_material_idx").on(table.material),
     index("products_base_price_idx").on(table.basePrice),
+    index("products_is_featured_idx").on(table.isFeatured),
   ],
 );
 

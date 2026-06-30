@@ -35,6 +35,7 @@ export const sampleProduct: Product = {
   thumbnailUrl: "/models/thumbnails/photo-frame.webp",
   imageUrls: ["/models/thumbnails/photo-frame.webp"],
   tags: ["gifts", "custom"],
+  isFeatured: false,
 };
 
 export const sampleProductPt: Product = {

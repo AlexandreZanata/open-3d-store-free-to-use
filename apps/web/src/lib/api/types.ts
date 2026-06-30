@@ -17,6 +17,7 @@ export type ProductQueryParams = {
   category?: string;
   material?: string;
   status?: "active" | "out_of_stock";
+  featured?: boolean;
   q?: string;
   minPrice?: number;
   maxPrice?: number;

@@ -10,6 +10,7 @@ import type {
 import type {
   AdminProductListItem,
   CreateProductPayload,
+  MaterialType,
   Product,
   UpdateProductPayload,
 } from "@print3d/shared-types";
@@ -30,6 +31,7 @@ import {
   updateProductPreprice,
 } from "./productPrepricePersistence.js";
 import {
+  findDistinctActiveMaterials,
   findManyProducts,
   findProductById,
   findProductBySlug,
@@ -66,6 +68,10 @@ export class DrizzleProductRepository implements IProductRepository {
 
   findByIds(ids: string[], locale: SupportedLocale): Promise<Product[]> {
     return findProductsByIds(this.db, ids, locale);
+  }
+
+  findDistinctActiveMaterials(): Promise<MaterialType[]> {
+    return findDistinctActiveMaterials(this.db);
   }
 
   create(input: CreateProductPayload): Promise<AdminProductListItem> {

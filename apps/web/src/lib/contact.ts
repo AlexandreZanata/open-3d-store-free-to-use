@@ -5,6 +5,17 @@ import { readEnvString } from "@/lib/env";
 export const CONTACT_GITHUB_URL = "https://github.com/AlexandreZanata";
 export const CONTACT_EMAIL = "alexandrezanatavasconcelos@gmail.com";
 
+export function readInstagramUrl(): string | null {
+  const raw = readEnvString("VITE_INSTAGRAM_URL");
+  if (!raw) return null;
+  try {
+    const url = new URL(raw);
+    return url.href;
+  } catch {
+    return null;
+  }
+}
+
 export function readWhatsAppPhoneDigits(): string | null {
   const raw = readEnvString("VITE_WHATSAPP_PHONE");
   if (!raw) return null;

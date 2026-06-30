@@ -28,6 +28,7 @@ export function mapAdminProductRow(row: ProductRow): AdminProductListItem {
     imageUrls: row.imageUrls as string[],
     tags: row.tags as string[],
     translations: row.translations as CreateProductPayload["translations"],
+    isFeatured: row.isFeatured,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
   };

@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { AppShell } from "@/components/AppShell";
@@ -11,6 +12,7 @@ import { useShopConfig } from "@/hooks/useShopConfig";
 import { useProducts } from "@/hooks/useProducts";
 import { ApiError } from "@/lib/api/client";
 import { fetchProductBySlug } from "@/lib/api/products";
+import { captureOrder } from "@/lib/api/orders";
 import { addToCart } from "@/lib/cart";
 import { mobileOnly, pagePadding, productGridCols, railScroll } from "@/lib/layout";
 import { getCurrentI18nLocale, default as i18n } from "@/i18n";
@@ -101,6 +103,8 @@ function ProductPage() {
   const shopConfigQuery = useShopConfig();
   const product = productQuery.data;
   const { t } = useTranslation();
+  const [orderingWhatsApp, setOrderingWhatsApp] = useState(false);
+  const [orderError, setOrderError] = useState<string | null>(null);
   const relatedQuery = useProducts({ limit: 20, page: 1 });
   const related =
     product && relatedQuery.data?.data
@@ -123,6 +127,23 @@ function ProductPage() {
     addToCart(detail);
   }
 
+  async function handleOrderWhatsApp() {
+    if (orderingWhatsApp) {
+      return;
+    }
+    setOrderingWhatsApp(true);
+    setOrderError(null);
+    try {
+      const result = await captureOrder({
+        items: [{ productId: detail.id, quantity: 1, selectedOptions: {} }],
+      });
+      window.location.href = result.whatsappLink;
+    } catch {
+      setOrderError(t("cart.orderError"));
+      setOrderingWhatsApp(false);
+    }
+  }
+
   return (
     <AppShell showBack showSearch={false} title={detail.name}>
       <div className={`${pagePadding} lg:pt-4`}>
@@ -140,7 +161,17 @@ function ProductPage() {
 
           <div className="mt-8 lg:mt-0 flex flex-col gap-6">
             <ProductDetailInfo product={detail} />
-            <ProductDetailActions product={detail} onAddToCart={handleAddToCart} />
+            {orderError ? (
+              <p className="text-sm text-destructive" role="alert">
+                {orderError}
+              </p>
+            ) : null}
+            <ProductDetailActions
+              product={detail}
+              onAddToCart={handleAddToCart}
+              onOrderWhatsApp={handleOrderWhatsApp}
+              orderingWhatsApp={orderingWhatsApp}
+            />
           </div>
         </div>
       </div>

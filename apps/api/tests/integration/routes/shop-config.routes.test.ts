@@ -39,6 +39,8 @@ describe("GET /shop/config (contract)", () => {
     expect(response.statusCode).toBe(200);
     const body = response.json();
     expect(body.data.enabledMaterials).toContain("PETG_HF");
+    expect(Array.isArray(body.data.catalogMaterials)).toBe(true);
+    expect(body.data.catalogMaterials.length).toBeGreaterThan(0);
     expect(body.data.paymentMethods.length).toBeGreaterThan(0);
   });
 });

@@ -3,7 +3,6 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import type { ProductListItem, MaterialType } from "@print3d/shared-types";
-import { MATERIAL_TYPES } from "@print3d/shared-types";
 
 import { AppShell } from "@/components/AppShell";
 import { SearchDesktopView } from "@/components/search/SearchDesktopView";
@@ -12,6 +11,7 @@ import { productsQueryKey } from "@/hooks/useProducts";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useCategories } from "@/hooks/useCategories";
 import { useProducts } from "@/hooks/useProducts";
+import { useShopConfig } from "@/hooks/useShopConfig";
 import { fetchProducts } from "@/lib/api/products";
 import { desktopOnly, mobileOnly } from "@/lib/layout";
 import { getCurrentI18nLocale, default as i18n } from "@/i18n";
@@ -43,8 +43,6 @@ export const Route = createFileRoute("/search")({
 
 type MaterialFilter = ProductQueryParams["material"] | undefined;
 
-const MATERIALS: readonly MaterialType[] = MATERIAL_TYPES;
-
 function SearchPage() {
   const { t } = useTranslation();
   const { q: initialQ, category: initialCategory } = Route.useSearch();
@@ -67,14 +65,16 @@ function SearchPage() {
 
   const productsQuery = useProducts(params);
   const categoriesQuery = useCategories();
+  const shopConfigQuery = useShopConfig();
   const results: ProductListItem[] = productsQuery.data?.data ?? [];
   const categories = categoriesQuery.data ?? [];
+  const materials: readonly MaterialType[] = shopConfigQuery.data?.catalogMaterials ?? [];
 
   const filterProps = {
     category,
     material,
     categories,
-    materials: MATERIALS,
+    materials,
     onCategoryChange: setCategory,
     onMaterialChange: setMaterial,
     t,

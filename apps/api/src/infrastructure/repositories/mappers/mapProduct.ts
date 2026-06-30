@@ -43,5 +43,6 @@ export function mapProductRow(
     thumbnailUrl: row.thumbnailUrl,
     imageUrls: row.imageUrls as string[],
     tags: row.tags as string[],
+    isFeatured: row.isFeatured,
   };
 }

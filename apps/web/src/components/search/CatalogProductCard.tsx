@@ -5,6 +5,11 @@ import type { ProductListItem } from "@print3d/shared-types";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { productCardImageAspect } from "@/lib/layout";
 import { resolveAssetUrl } from "@/lib/assets";
+import {
+  MaterialBadge,
+  Model3DBadge,
+  ProductCardDescription,
+} from "@/components/ProductCardUi";
 
 /** Desktop catalog card — roomier layout for search and category grids. */
 export function CatalogProductCard({ product }: { product: ProductListItem }) {
@@ -31,24 +36,20 @@ export function CatalogProductCard({ product }: { product: ProductListItem }) {
           ) : (
             <div className="absolute inset-0 bg-muted" />
           )}
-          {product.hasModel && (
-            <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider bg-background/90 backdrop-blur text-foreground">
-              3D
-            </span>
-          )}
+          {product.hasModel ? <Model3DBadge className="absolute top-3 left-3 px-2.5 py-1" /> : null}
         </Link>
         <FavoriteButton productId={product.id} className="absolute top-3 right-3 z-10" />
 
         <div className="flex flex-1 flex-col p-5">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            {product.material}
-          </span>
+          <MaterialBadge
+            material={product.material}
+            label={t(`material.${product.material}`)}
+            className="self-start"
+          />
           <h3 className="mt-2 text-base font-semibold tracking-tight leading-snug line-clamp-2 min-h-[2.75rem]">
             {product.name}
           </h3>
-          <p className="mt-2 text-sm text-muted-foreground line-clamp-2 flex-1">
-            {product.shortDescription}
-          </p>
+          <ProductCardDescription text={product.shortDescription} className="mt-2 text-sm flex-1" />
           <div className="mt-5 flex items-center justify-between gap-3 pt-4 border-t border-hairline">
             <span className="text-lg font-semibold tracking-tight">{product.basePriceDisplay}</span>
             <Link

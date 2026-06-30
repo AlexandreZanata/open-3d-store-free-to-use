@@ -11,13 +11,21 @@ import { categoryGridCols, desktopHeroSurface, productGridCols } from "@/lib/lay
 
 type Props = {
   products: ProductListItem[];
+  featuredProducts: ProductListItem[];
   categories: CategoryResponse[];
   isLoading: boolean;
+  isFeaturedLoading: boolean;
   t: TFunction;
 };
 
-export function HomeDesktopView({ products, categories, isLoading, t }: Props) {
-  const featured = products.slice(0, 6);
+export function HomeDesktopView({
+  products,
+  featuredProducts,
+  categories,
+  isLoading,
+  isFeaturedLoading,
+  t,
+}: Props) {
   const catalog = products;
 
   return (
@@ -88,13 +96,15 @@ export function HomeDesktopView({ products, categories, isLoading, t }: Props) {
         </section>
       )}
 
-      <ProductSection
-        title={t("home.featuredProducts")}
-        actionLabel={t("home.railAll")}
-        isLoading={isLoading}
-        products={featured}
-        priorityImages
-      />
+      {featuredProducts.length > 0 || isFeaturedLoading ? (
+        <ProductSection
+          title={t("home.featuredProducts")}
+          actionLabel={t("home.railAll")}
+          isLoading={isFeaturedLoading}
+          products={featuredProducts}
+          priorityImages
+        />
+      ) : null}
 
       <ProductSection
         title={t("home.allProducts")}

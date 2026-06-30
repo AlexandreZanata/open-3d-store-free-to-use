@@ -6,6 +6,11 @@ import { CatalogThumbnail } from "@/components/CatalogThumbnail";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { resolveAssetUrl } from "@/lib/assets";
 import { productCardImageAspect, productCardWideWidth } from "@/lib/layout";
+import {
+  MaterialBadge,
+  Model3DBadge,
+  ProductCardDescription,
+} from "@/components/ProductCardUi";
 
 export function ProductCard({
   product,
@@ -39,14 +44,12 @@ export function ProductCard({
           ) : (
             <div className="absolute inset-0 bg-muted" />
           )}
-          {product.hasModel && (
-            <span className="absolute top-3 left-3 px-2 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider bg-background/90 backdrop-blur text-foreground">
-              3D
-            </span>
-          )}
-          <span className="absolute bottom-3 left-3 px-2 py-1 rounded-md text-[10px] font-mono font-medium bg-background/90 backdrop-blur text-muted-foreground">
-            {product.material}
-          </span>
+          {product.hasModel ? <Model3DBadge className="absolute top-3 left-3" /> : null}
+          <MaterialBadge
+            material={product.material}
+            label={t(`material.${product.material}`)}
+            className="absolute bottom-3 left-3"
+          />
         </Link>
 
         <FavoriteButton productId={product.id} className="absolute top-2.5 right-2.5" />
@@ -56,9 +59,7 @@ export function ProductCard({
             <h3 className="text-sm font-semibold tracking-tight truncate">{product.name}</h3>
             <span className="text-sm font-semibold shrink-0">{product.basePriceDisplay}</span>
           </div>
-          <p className="text-[11px] text-muted-foreground line-clamp-2">
-            {product.shortDescription}
-          </p>
+          <ProductCardDescription text={product.shortDescription} />
 
           <div className="mt-3 flex items-center justify-end">
             <Link

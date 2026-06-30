@@ -30,6 +30,7 @@ Global footer on every page wrapped by `AppShell`:
 | **Pitch** | Bilingual CTA — compact `text-xs` on mobile, `text-base` on desktop |
 | **Contact links** | `size-11` icon buttons on mobile; icon + label on desktop (`lg+`) |
 | **WhatsApp** | `VITE_WHATSAPP_PHONE` (same digits as API `WHATSAPP_PHONE_NUMBER`) with brand icon |
+| **Instagram** | `VITE_INSTAGRAM_URL` — official project profile |
 | **GitHub** | [AlexandreZanata](https://github.com/AlexandreZanata) |
 | **Email** | `alexandrezanatavasconcelos@gmail.com` |
 
@@ -116,8 +117,8 @@ PLAYWRIGHT_SKIP_WEBSERVER=1 PLAYWRIGHT_BASE_URL=http://localhost:5173 pnpm e2e e
 3. **Resize** — crossing 1024px toggles layouts without breaking either experience.
 4. **Product cards** — home rails and search grid show **square** image tiles (same width, 1:1 aspect) on mobile and desktop.
 5. **Home return navigation (mobile)** — open home, tap a product, wait 5s, bottom-nav back to home: product thumbnails visible within 1s (no gray/white tiles for 3s).
-6. **Product detail** — `/product/phone-stand`: gallery tab shows carousel with multiple images; `/product/custom-photo-frame`: 3D tab shows virtual desk viewer (drag to rotate, scroll to zoom). On mobile (390px), favorite and share appear below material; cart actions stay in the sticky bar.
-7. **Footer** — dark inverted bar, pitch text, icon-only contact buttons on mobile, labeled links on desktop.
+6. **Product detail** — `/product/phone-stand`: gallery tab shows carousel with multiple images; `/product/custom-photo-frame`: 3D tab shows virtual desk viewer (drag to rotate, scroll to zoom). On mobile (390px), favorite and share appear below material; **Pedir pelo WhatsApp** opens WhatsApp directly (green button) without visiting cart first.
+7. **Footer** — dark inverted bar, pitch text, WhatsApp + Instagram + GitHub + email; icon-only on mobile, labeled on desktop.
 
 ## Related
 

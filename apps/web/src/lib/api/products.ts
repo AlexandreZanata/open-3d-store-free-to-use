@@ -10,6 +10,7 @@ function toSearchParams(params: ProductQueryParams): string {
   if (params.category) search.set("category", params.category);
   if (params.material) search.set("material", params.material);
   if (params.status) search.set("status", params.status);
+  if (params.featured === true) search.set("featured", "true");
   if (params.q) search.set("q", params.q);
   if (params.minPrice != null) search.set("minPrice", String(params.minPrice));
   if (params.maxPrice != null) search.set("maxPrice", String(params.maxPrice));

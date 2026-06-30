@@ -27,6 +27,7 @@ export type ProductFormState = {
   thumbnailUrl: string;
   imageUrls: string[];
   tags: string;
+  isFeatured: boolean;
   translations: CreateProductPayload["translations"];
 };
 
@@ -46,6 +47,7 @@ export function createEmptyProductForm(): ProductFormState {
     thumbnailUrl: "",
     imageUrls: [],
     tags: "",
+    isFeatured: false,
     translations: {
       en: { name: "", description: "", shortDescription: "" },
       "pt-BR": { name: "", description: "", shortDescription: "" },
@@ -69,6 +71,7 @@ export function productToFormState(product: AdminProductDetail): ProductFormStat
     thumbnailUrl: product.thumbnailUrl,
     imageUrls: product.imageUrls.length > 0 ? product.imageUrls : [],
     tags: product.tags.join(", "),
+    isFeatured: product.isFeatured,
     translations: product.translations,
   };
 }
@@ -123,6 +126,7 @@ export function productFormToPayload(state: ProductFormState): CreateProductPayl
       .split(",")
       .map((tag) => tag.trim())
       .filter(Boolean),
+    isFeatured: state.isFeatured,
     translations: state.translations,
   };
 }

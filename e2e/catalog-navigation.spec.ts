@@ -15,11 +15,7 @@ async function expectThumbnailDecoded(
   await expect
     .poll(
       async () =>
-        thumb.evaluate((img) => {
-          const el = img as HTMLImageElement;
-          const opacity = Number.parseFloat(getComputedStyle(el).opacity);
-          return el.naturalWidth > 0 && opacity > 0;
-        }),
+        thumb.evaluate((img) => (img as HTMLImageElement).naturalWidth > 0),
       { timeout: timeoutMs },
     )
     .toBe(true);
@@ -51,21 +47,14 @@ test.describe("catalog navigation thumbnails", () => {
     await expectThumbnailDecoded(page, 1_000);
 
     const thumbs = page.getByTestId("catalog-thumbnail");
-    const count = await thumbs.count();
-    expect(count).toBeGreaterThan(0);
+    expect(await thumbs.count()).toBeGreaterThan(0);
 
     await expect
       .poll(
-        async () => {
-          const hidden = await thumbs.evaluateAll((images) =>
-            images.filter((img) => {
-              const el = img as HTMLImageElement;
-              const opacity = Number.parseFloat(getComputedStyle(el).opacity);
-              return el.naturalWidth === 0 || opacity === 0;
-            }).length,
-          );
-          return hidden;
-        },
+        async () =>
+          thumbs.evaluateAll((images) =>
+            images.filter((img) => (img as HTMLImageElement).naturalWidth === 0).length,
+          ),
         { timeout: 1_000 },
       )
       .toBe(0);

@@ -1,4 +1,4 @@
-import type { ShopSettings, ShopConfig } from "@print3d/shared-types";
+import type { MaterialType, ShopConfig, ShopSettings } from "@print3d/shared-types";
 
 import type { ShopSettingsRecord } from "../../domain/repositories/IShopSettingsRepository.js";
 
@@ -20,9 +20,13 @@ export function toShopSettingsDto(record: ShopSettingsRecord): ShopSettings {
   };
 }
 
-export function toShopConfigDto(record: ShopSettingsRecord): ShopConfig {
+export function toShopConfigDto(
+  record: ShopSettingsRecord,
+  catalogMaterials: MaterialType[],
+): ShopConfig {
   return {
     enabledMaterials: record.enabledMaterials,
+    catalogMaterials,
     availableColors: record.availableColors,
     offersDelivery: record.offersDelivery,
     pickupOnly: record.pickupOnly,

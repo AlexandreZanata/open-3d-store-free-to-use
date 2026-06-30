@@ -108,6 +108,14 @@ export function ProductForm({
               <option key={status} value={status}>{status}</option>
             ))}
           </Select>
+          <label className="flex items-center gap-2 text-sm font-medium md:col-span-2">
+            <input
+              type="checkbox"
+              checked={state.isFeatured}
+              onChange={(event) => patch({ isFeatured: event.target.checked })}
+            />
+            Featured on storefront (Destaque na loja)
+          </label>
         </div>
       </Card>
 

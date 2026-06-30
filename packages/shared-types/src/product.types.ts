@@ -35,4 +35,5 @@ export type Product = {
   thumbnailUrl: string;
   imageUrls: string[];
   tags: string[];
+  isFeatured: boolean;
 };

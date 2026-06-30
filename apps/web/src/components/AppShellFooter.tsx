@@ -1,4 +1,4 @@
-import { Github, Mail } from "lucide-react";
+import { Github, Instagram, Mail } from "lucide-react";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -7,6 +7,7 @@ import {
   buildWhatsAppContactHref,
   CONTACT_EMAIL,
   CONTACT_GITHUB_URL,
+  readInstagramUrl,
   readWhatsAppPhoneDisplay,
 } from "@/lib/contact";
 import { footerBottomPad, pagePadding, shellMaxWidth } from "@/lib/layout";
@@ -41,6 +42,7 @@ export function AppShellFooter() {
   const { t } = useTranslation();
   const whatsappDisplay = readWhatsAppPhoneDisplay();
   const whatsappHref = buildWhatsAppContactHref(t("footer.whatsappPrefill"));
+  const instagramUrl = readInstagramUrl();
 
   const iconClass = "size-6 lg:size-6 shrink-0";
 
@@ -65,6 +67,16 @@ export function AppShellFooter() {
               label={whatsappDisplay}
               external
               icon={<WhatsAppIcon className={`${iconClass} text-[#25D366]`} />}
+            />
+          ) : null}
+
+          {instagramUrl ? (
+            <FooterContactLink
+              href={instagramUrl}
+              ariaLabel={t("footer.instagramAria")}
+              label={t("footer.instagram")}
+              external
+              icon={<Instagram className={iconClass} />}
             />
           ) : null}
 

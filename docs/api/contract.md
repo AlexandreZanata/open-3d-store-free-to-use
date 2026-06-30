@@ -103,6 +103,7 @@ Returns active categories sorted by `sortOrder`.
 | `category` | string | — | — | Category slug |
 | `material` | string | — | — | `PLA`, `PETG`, `PETG_HF`, `ABS`, `ASA`, `TPU`, `NYLON`, `RESIN` |
 | `status` | string | `active` | — | `active`, `out_of_stock`, `discontinued` |
+| `featured` | string | — | — | `true` — only products marked featured in admin (`is_featured`) |
 | `q` | string | — | — | Full-text search |
 | `minPrice` | integer | — | — | BRL cents |
 | `maxPrice` | integer | — | — | BRL cents |
@@ -137,6 +138,8 @@ Returns active categories sorted by `sortOrder`.
 ```
 
 **Cache:** `Cache-Control: public, max-age=120`
+
+**Featured rail:** Home storefront uses `GET /products?featured=true&limit=6` — only admin-featured active products appear in the “Featured products” section.
 
 ---
 
@@ -218,6 +221,7 @@ Public shop policy for storefront (materials offered, fulfillment, payments, dep
 {
   "data": {
     "enabledMaterials": ["PLA", "PETG", "PETG_HF"],
+    "catalogMaterials": ["PETG_HF"],
     "availableColors": [
       { "id": "pla-white", "name": "White", "hex": "#F5F5F5" }
     ],
@@ -232,6 +236,8 @@ Public shop policy for storefront (materials offered, fulfillment, payments, dep
 ```
 
 Admin write: [admin-contract.md](admin-contract.md) — `GET/PATCH /admin/settings`.
+
+`catalogMaterials` — distinct `material` values from **active** products (search page material filter).
 
 ---
 

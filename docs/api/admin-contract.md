@@ -280,6 +280,7 @@ Paginated list (includes all statuses).
   "thumbnailUrl": "/models/thumbnails/photo-frame.webp",
   "imageUrls": [],
   "tags": [],
+  "isFeatured": false,
   "translations": {
     "en": {
       "name": "Custom Photo Frame",

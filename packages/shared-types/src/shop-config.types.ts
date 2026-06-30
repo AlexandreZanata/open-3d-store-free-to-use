@@ -4,6 +4,7 @@ import type { ShopColor } from "./admin/model-studio.types.js";
 /** Public storefront shop policy (no auth). */
 export type ShopConfig = {
   enabledMaterials: MaterialType[];
+  catalogMaterials: MaterialType[];
   availableColors: ShopColor[];
   offersDelivery: boolean;
   pickupOnly: boolean;

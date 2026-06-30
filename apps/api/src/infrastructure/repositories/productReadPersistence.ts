@@ -1,11 +1,11 @@
-import { and, count, eq, gte, inArray, lte, sql } from "drizzle-orm";
+import { and, count, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
 
 import type {
   PaginatedResult,
   PaginationParams,
   ProductFilters,
 } from "../../domain/repositories/IProductRepository.js";
-import type { Product } from "@print3d/shared-types";
+import type { MaterialType, Product } from "@print3d/shared-types";
 import type { SupportedLocale } from "../../domain/value-objects/Locale.js";
 import type { Database } from "../db/client.js";
 import { categories, products } from "../db/schema.js";
@@ -52,6 +52,9 @@ export async function findManyProducts(
     .from(products)
     .innerJoin(categories, eq(products.categoryId, categories.id))
     .where(whereClause)
+    .orderBy(
+      filters.featured === true ? desc(products.updatedAt) : desc(products.createdAt),
+    )
     .limit(limit)
     .offset(offset);
   const total = await countFiltered(db, filters);
@@ -103,6 +106,15 @@ export async function findProductsByIds(
   return rows.map((row) => mapProductRow(row, locale));
 }
 
+export async function findDistinctActiveMaterials(db: Database): Promise<MaterialType[]> {
+  const rows = await db
+    .selectDistinct({ material: products.material })
+    .from(products)
+    .where(eq(products.status, "active"))
+    .orderBy(products.material);
+  return rows.map((row) => row.material);
+}
+
 function buildFilterConditions(filters: ProductFilters) {
   const conditions = [];
   if (filters.category !== undefined) {
@@ -121,6 +133,9 @@ function buildFilterConditions(filters: ProductFilters) {
   }
   if (filters.maxPrice !== undefined) {
     conditions.push(lte(products.basePrice, filters.maxPrice));
+  }
+  if (filters.featured === true) {
+    conditions.push(eq(products.isFeatured, true));
   }
   return and(...conditions);
 }

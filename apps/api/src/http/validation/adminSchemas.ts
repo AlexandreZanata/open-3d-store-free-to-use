@@ -82,6 +82,7 @@ const productWriteBodySchema = z.object({
   imageUrls: z.array(z.string()),
   tags: z.array(z.string()),
   translations: productTranslationsSchema,
+  isFeatured: z.boolean().default(false),
 });
 
 export const adminLoginBodySchema = z.object({

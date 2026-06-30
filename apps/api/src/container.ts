@@ -164,7 +164,7 @@ export async function createContainer(
       storeUserFavoriteRepo,
       productRepo,
     ),
-    getShopConfig: new GetShopConfig(shopSettingsRepo),
+    getShopConfig: new GetShopConfig(shopSettingsRepo, productRepo),
     admin,
     store,
   };

@@ -68,7 +68,7 @@ When `catalog.changed` fires, queries are **invalidated** (marked stale) and act
 | Warm definition | A URL is warm only after its pool `Image` fires `onload` with `naturalWidth > 0` |
 | Failed preload | `onerror` must **not** mark the URL warm (retry on next navigation) |
 | Remounted tiles | `CatalogThumbnail` must detect browser-cached decode (`img.complete`) **before paint** (`useLayoutEffect`) |
-| Visibility gate | Never render `opacity-100` on an `<img>` that has not decoded yet |
+| Visibility gate | Never use `opacity-0` on catalog thumbnails — muted tile background only while bytes load |
 | Return navigation | Home → product (or any page) → home within `gcTime`: thumbnails visible within **300 ms** — no multi-second blank or gray tiles |
 
 Changed thumbnail URLs after SSE still reload normally; unchanged URLs must reuse the session pool or HTTP cache without a blank flash.

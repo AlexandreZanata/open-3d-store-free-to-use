@@ -197,6 +197,8 @@
     "whatsappAria": "Contato pelo WhatsApp em {{phone}}",
     "github": "GitHub",
     "githubAria": "Perfil no GitHub",
+    "instagram": "Instagram",
+    "instagramAria": "Perfil oficial no Instagram",
     "emailAria": "E-mail {{email}}",
     "contactNav": "Links de contato"
   }

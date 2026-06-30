@@ -1,4 +1,3 @@
-import { Link } from "@tanstack/react-router";
 import { ShoppingBag } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -11,9 +10,16 @@ import type { ProductDetail } from "@print3d/shared-types";
 type ProductDetailActionsProps = {
   product: ProductDetail;
   onAddToCart: () => void;
+  onOrderWhatsApp: () => void;
+  orderingWhatsApp?: boolean;
 };
 
-export function ProductDetailActions({ product, onAddToCart }: ProductDetailActionsProps) {
+export function ProductDetailActions({
+  product,
+  onAddToCart,
+  onOrderWhatsApp,
+  orderingWhatsApp = false,
+}: ProductDetailActionsProps) {
   const { t } = useTranslation();
   const footerInView = useFooterInView();
 
@@ -48,12 +54,14 @@ export function ProductDetailActions({ product, onAddToCart }: ProductDetailActi
           <ShoppingBag className="size-4" />
           {t("product.addToCart")}
         </button>
-        <Link
-          to="/cart"
-          className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-foreground text-sm font-semibold text-background press hover:bg-foreground/90"
+        <button
+          type="button"
+          onClick={onOrderWhatsApp}
+          disabled={orderingWhatsApp}
+          className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-[#25D366] text-sm font-semibold text-black press hover:bg-[#20bd5a] disabled:opacity-60"
         >
           {t("product.orderWhatsApp")}
-        </Link>
+        </button>
       </div>
     </div>
   );

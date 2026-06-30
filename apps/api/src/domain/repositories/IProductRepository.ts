@@ -29,6 +29,7 @@ export type ProductFilters = {
   category?: string | undefined;
   material?: MaterialType | undefined;
   status?: PrintStatus | undefined;
+  featured?: boolean | undefined;
   minPrice?: number | undefined;
   maxPrice?: number | undefined;
 };
@@ -65,6 +66,7 @@ export interface IProductRepository {
     locale: SupportedLocale,
   ): Promise<PaginatedResult<Product>>;
   findByIds(ids: string[], locale: SupportedLocale): Promise<Product[]>;
+  findDistinctActiveMaterials(): Promise<MaterialType[]>;
   create(input: CreateProductPayload): Promise<AdminProductListItem>;
   update(id: string, input: UpdateProductPayload): Promise<AdminProductListItem>;
   delete(id: string): Promise<void>;

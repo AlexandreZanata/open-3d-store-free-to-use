@@ -29,6 +29,7 @@ export type AdminProductWriteBase = {
   imageUrls: string[];
   tags: string[];
   translations: AdminProductTranslations;
+  isFeatured: boolean;
 };
 
 export type CreateProductPayload = AdminProductWriteBase;

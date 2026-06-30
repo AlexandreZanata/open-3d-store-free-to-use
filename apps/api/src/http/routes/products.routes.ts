@@ -1,4 +1,5 @@
 import type { MaterialType, PrintStatus } from "@print3d/shared-types";
+import { MATERIAL_TYPES } from "@print3d/shared-types";
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
 
@@ -9,7 +10,7 @@ import {
   productsListRouteSchema,
 } from "../openapi/routeSchemas.js";
 
-const materials = ["PLA", "PETG", "ABS", "TPU", "RESIN"] as const;
+const materials = MATERIAL_TYPES;
 const statuses = ["active", "out_of_stock", "discontinued"] as const;
 
 const listQuerySchema = z.object({
@@ -18,6 +19,10 @@ const listQuerySchema = z.object({
   category: z.string().optional(),
   material: z.enum(materials).optional(),
   status: z.enum(statuses).default("active"),
+  featured: z
+    .enum(["true", "false"])
+    .optional()
+    .transform((value) => value === "true"),
   q: z.string().optional(),
   minPrice: z.coerce.number().int().optional(),
   maxPrice: z.coerce.number().int().optional(),
@@ -47,6 +52,7 @@ export async function registerProductRoutes(
         ? { material: query.material as MaterialType }
         : {}),
       status: query.status as PrintStatus,
+      ...(query.featured === true ? { featured: true as const } : {}),
       ...(query.minPrice !== undefined ? { minPrice: query.minPrice } : {}),
       ...(query.maxPrice !== undefined ? { maxPrice: query.maxPrice } : {}),
     };

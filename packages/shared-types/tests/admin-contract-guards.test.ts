@@ -42,6 +42,7 @@ describe("mass-assignment guard — Task 9.7", () => {
       thumbnailUrl: "/models/thumbnails/x.webp",
       imageUrls: [],
       tags: [],
+      isFeatured: false,
       translations: {
         en: { name: "N", description: "D", shortDescription: "S" },
         "pt-BR": { name: "N", description: "D", shortDescription: "S" },

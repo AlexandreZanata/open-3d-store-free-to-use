@@ -30,9 +30,15 @@ export function warmHomeCatalogImages(queryClient: QueryClient, locale: Supporte
   const products = queryClient.getQueryData<PaginatedProducts>(
     productsQueryKey({ page: 1, limit: 12 }, locale),
   );
+  const featured = queryClient.getQueryData<PaginatedProducts>(
+    productsQueryKey({ page: 1, limit: 6, featured: true }, locale),
+  );
   const categories = queryClient.getQueryData<CategoryResponse[]>(categoriesQueryKey(locale));
 
   const urls: string[] = [];
+  for (const product of featured?.data ?? []) {
+    urls.push(resolveAssetUrl(product.thumbnailUrl));
+  }
   for (const product of products?.data ?? []) {
     urls.push(resolveAssetUrl(product.thumbnailUrl));
   }

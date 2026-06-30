@@ -18,7 +18,14 @@ run_eslint() {
 
 run_size() {
   echo "==> Size & complexity"
-  ./agent-harness/verify-size-complexity.sh
+  if [[ -x ./scripts/verify-size-complexity.sh ]]; then
+    ./scripts/verify-size-complexity.sh
+  elif [[ -x ./agent-harness/verify-size-complexity.sh ]]; then
+    ./agent-harness/verify-size-complexity.sh
+  else
+    echo "FAIL: verify-size-complexity.sh not found" >&2
+    exit 1
+  fi
 }
 
 run_infra_contract() {

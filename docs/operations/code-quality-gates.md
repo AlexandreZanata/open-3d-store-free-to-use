@@ -70,14 +70,14 @@ Install hooks after clone: `pnpm install` (runs `prepare` → `husky`).
 | Typecheck | `pnpm typecheck` or `pnpm turbo lint` |
 | ESLint (strict types) | `pnpm lint:eslint` |
 | Full lint | `pnpm lint` (= typecheck + ESLint) |
-| File size (automated) | `./agent-harness/verify-size-complexity.sh` |
+| File size (automated) | `./scripts/verify-size-complexity.sh` (or `./agent-harness/verify-size-complexity.sh` when harness is installed) |
 | Unit + integration | `pnpm turbo test` |
 | **Full local gate** | `pnpm quality` or `./scripts/quality-gate.sh full` |
 | **CI gate** | `./scripts/quality-gate.sh ci` (adds build) |
 
 Function length and cyclomatic complexity: enforce via ESLint when configured; otherwise **manual count** on every changed function before sign-off.
 
-**Scope note:** `./agent-harness/verify-size-complexity.sh` defaults to `apps/api` and `packages`. Use `--all` for full monorepo (may include legacy UI boilerplate pending refactor).
+**Scope note:** `./scripts/verify-size-complexity.sh` defaults to `apps/api` and `packages`. Use `--all` for full monorepo (may include legacy UI boilerplate pending refactor).
 
 ---
 

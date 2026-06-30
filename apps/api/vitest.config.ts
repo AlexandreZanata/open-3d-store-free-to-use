@@ -28,6 +28,17 @@ function loadDotEnv(file: string): Record<string, string> {
   return values;
 }
 
+/** Local `.env` plus existing process env (CI sets DATABASE_URL, etc.). */
+function resolveTestEnv(file: string): Record<string, string> {
+  const merged = loadDotEnv(file);
+  for (const [key, value] of Object.entries(process.env)) {
+    if (typeof value === "string") {
+      merged[key] = value;
+    }
+  }
+  return merged;
+}
+
 export default defineConfig({
   test: {
     environment: "node",
@@ -35,6 +46,6 @@ export default defineConfig({
     include: ["tests/**/*.test.ts"],
     testTimeout: 30_000,
     fileParallelism: false,
-    env: loadDotEnv(envPath),
+    env: resolveTestEnv(envPath),
   },
 });

@@ -20,17 +20,15 @@ Multi-site VPS (other domain unchanged): [../docs/infrastructure/shared-vps-mult
 
 ---
 
-## Phase 1 — IP access (current)
-
-VPS: `72.60.147.2` · HTTP only · no certbot
+## Phase 1 — IP access
 
 | URL | Path |
 |-----|------|
-| Store | `http://72.60.147.2` |
-| Admin | `http://72.60.147.2/admin/` |
-| API | `http://72.60.147.2/api/v1` |
+| Store | `http://YOUR_VPS_IP` |
+| Admin | `http://YOUR_VPS_IP/admin/` |
+| API | `http://YOUR_VPS_IP/api/v1` |
 
-Config template: [vps.env.example](vps.env.example) (`DOMAIN=72.60.147.2`, `VPS_USE_HTTPS=0`).
+Config template: [vps.env.example](vps.env.example) (`DOMAIN=YOUR_VPS_IP`, `VPS_USE_HTTPS=0`).
 
 ```bash
 chmod +x production/deploy-to-vps.sh infra/scripts/*.sh
@@ -72,16 +70,18 @@ Create the **admin user** manually in production (bootstrap env vars are disable
 
 ## Phase 2 — corvo3d.com.br (after Cloudflare DNS)
 
-**Start here:** [DNS-CUTOVER.md](DNS-CUTOVER.md) (local) · [shared-vps-multi-domain.md](../docs/infrastructure/shared-vps-multi-domain.md) (in git)
+**Start here:** [domain-go-live-corvo3d.md](../docs/infrastructure/domain-go-live-corvo3d.md) (in git) · [DNS-CUTOVER.md](DNS-CUTOVER.md) (local)
 
 Quick summary:
 
 1. Cloudflare A records → your VPS IP (`@`, `www`, **`admin`**)
-2. `cp production/vps.env.domain.example production/vps.env` → `DOMAIN=corvo3d.com.br`, `VPS_USE_HTTPS=1`
+2. `cp production/vps.env.domain.example production/vps.env` → `DOMAIN=corvo3d.com.br`, `VPS_USE_HTTPS=1`, **`VPS_HOST=real IP`**
 3. `./production/deploy-to-vps.sh`
-4. SSH → `certbot --nginx -d corvo3d.com.br -d www.corvo3d.com.br -d admin.corvo3d.com.br`
+4. SSH → `cd /var/www/print3d` → `./infra/scripts/complete-print3d-domain-ssl.sh`
 5. Cloudflare → SSL **Full (strict)**
 6. Verify **corvo3d.com.br** and the **other site** still work
+
+See [Common errors](../docs/infrastructure/domain-go-live-corvo3d.md#common-errors) for NXDOMAIN, wrong site, Vite host block, etc.
 
 ---
 

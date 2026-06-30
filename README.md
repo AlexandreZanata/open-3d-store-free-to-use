@@ -29,9 +29,9 @@ cd /var/www/print3d
 ./infra/scripts/complete-print3d-domain-ssl.sh
 ```
 
-If **corvo3d.com.br** shows another site, see [shared-vps-multi-domain.md](docs/infrastructure/shared-vps-multi-domain.md#why-corvo3dcombr-shows-the-other-site).
+If **corvo3d.com.br** shows another site, see [domain-go-live-corvo3d.md](docs/infrastructure/domain-go-live-corvo3d.md#common-errors).
 
-Full checklist (multi-site VPS, Cloudflare, manual QA): [docs/infrastructure/shared-vps-multi-domain.md](docs/infrastructure/shared-vps-multi-domain.md)
+Full checklist (multi-site VPS, Cloudflare, manual QA): [docs/infrastructure/domain-go-live-corvo3d.md](docs/infrastructure/domain-go-live-corvo3d.md)
 
 ---
 

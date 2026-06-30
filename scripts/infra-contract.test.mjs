@@ -204,6 +204,22 @@ describe("VPS rsync deploy — docs/infrastructure/deployment.md", () => {
   });
 });
 
+describe("domain go-live docs — docs/infrastructure/domain-go-live-corvo3d.md", () => {
+  const guide = readRepo("docs/infrastructure/domain-go-live-corvo3d.md");
+
+  test("documents Cloudflare admin DNS and certbot NXDOMAIN", () => {
+    assert.match(guide, /admin\.corvo3d\.com\.br/);
+    assert.match(guide, /NXDOMAIN/);
+    assert.match(guide, /complete-print3d-domain-ssl\.sh/);
+  });
+
+  test("documents common multi-site and VPS_HOST mistakes", () => {
+    assert.match(guide, /YOUR_VPS_IP/);
+    assert.match(guide, /default_server/);
+    assert.match(guide, /allowedHosts/);
+  });
+});
+
 describe("ci.yml contract — docs/operations/ci-cd.md", () => {
   const workflow = readRepo(".github/workflows/ci.yml");
 

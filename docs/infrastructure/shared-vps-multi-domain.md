@@ -121,6 +121,7 @@ cp production/vps.env.example production/vps.env   # IP mode
 
 ## Related
 
+- [domain-go-live-corvo3d.md](domain-go-live-corvo3d.md) — **step-by-step go-live + troubleshooting**
 - [vps-provisioning.md](vps-provisioning.md)
 - [nginx.md](nginx.md)
 - [../../production/README.md](../../production/README.md) — local deploy folder (secrets not in git)

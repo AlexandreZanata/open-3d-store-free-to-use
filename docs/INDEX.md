@@ -16,7 +16,7 @@
 | **Admin API** | [api/admin-contract.md](api/admin-contract.md) → [api/axis-print3d-store-api.md](api/axis-print3d-store-api.md) |
 | **Admin panel** | [features/admin-panel.md](features/admin-panel.md) |
 | **Catalog realtime (SSE)** | [features/catalog-realtime.md](features/catalog-realtime.md) |
-| **DevOps** | [infrastructure/vps-provisioning.md](infrastructure/vps-provisioning.md) → [infrastructure/deployment.md](infrastructure/deployment.md) → [operations/ci-cd.md](operations/ci-cd.md) |
+| **DevOps** | [infrastructure/domain-go-live-corvo3d.md](infrastructure/domain-go-live-corvo3d.md) → [infrastructure/vps-provisioning.md](infrastructure/vps-provisioning.md) → [infrastructure/deployment.md](infrastructure/deployment.md) |
 
 ---
 
@@ -65,6 +65,7 @@
 | [infrastructure/deployment.md](infrastructure/deployment.md) | VPS layout, PM2, deploy script |
 | [infrastructure/vps-provisioning.md](infrastructure/vps-provisioning.md) | **End-to-end VPS + Cloudflare setup** |
 | [infrastructure/cloudflare-dns.md](infrastructure/cloudflare-dns.md) | Cloudflare + Registro.br DNS |
+| [infrastructure/domain-go-live-corvo3d.md](infrastructure/domain-go-live-corvo3d.md) | **corvo3d.com.br go-live** — Cloudflare, certbot, errors |
 | [infrastructure/shared-vps-multi-domain.md](infrastructure/shared-vps-multi-domain.md) | **corvo3d.com.br** on shared VPS |
 | [infrastructure/kubernetes.md](infrastructure/kubernetes.md) | Why K8s is not used on single VPS |
 | [infrastructure/nginx.md](infrastructure/nginx.md) | Reverse proxy, static files, SSL |

@@ -93,10 +93,14 @@ curl -sS https://corvo3d.com.br/api/v1/categories | head
 | Symptom | Fix |
 |---------|-----|
 | NXDOMAIN | Wait for Registro.br NS propagation; verify NS at Registro.br |
+| `NXDOMAIN … admin.<domain>` | Add Cloudflare **A** record `admin` → VPS IP before certbot |
 | 522 / connection timed out | UFW allows 80/443; Nginx running; correct A record |
 | SSL handshake error | Set Cloudflare to Full (strict); rerun certbot |
 | Redirect loop | Cloudflare SSL Flexible + Nginx HTTPS redirect — use Full (strict) |
 | Admin CORS errors | `ADMIN_ORIGIN` in `api.env` must match `https://admin.yourdomain.com.br` |
+| Wrong site on new domain | Finish origin HTTPS for print3d — [domain-go-live-corvo3d.md](domain-go-live-corvo3d.md#common-errors) |
+
+**Full operator guide:** [domain-go-live-corvo3d.md](domain-go-live-corvo3d.md)
 
 ## Related
 

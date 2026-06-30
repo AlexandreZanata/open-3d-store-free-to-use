@@ -1,6 +1,6 @@
 import type { MaterialType } from "@print3d/shared-types";
 
-import { materialBadgeClass } from "@/lib/productCardUi";
+import { materialBadgeClass, materialBadgeIsSolid } from "@/lib/productCardUi";
 import { cn } from "@/lib/utils";
 
 type MaterialBadgeProps = {
@@ -10,10 +10,12 @@ type MaterialBadgeProps = {
 };
 
 export function MaterialBadge({ material, label, className }: MaterialBadgeProps) {
+  const solid = materialBadgeIsSolid(material);
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-md px-2 py-1 text-[10px] font-semibold uppercase tracking-wider ring-1 backdrop-blur",
+        "inline-flex items-center rounded-md px-2 py-1 text-[10px] font-semibold uppercase tracking-wider ring-1",
+        solid ? null : "backdrop-blur",
         materialBadgeClass(material),
         className,
       )}

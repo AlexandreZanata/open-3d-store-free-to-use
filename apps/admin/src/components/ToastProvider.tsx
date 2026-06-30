@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState, type ReactNode } from "react";
 
+import { randomId } from "@/lib/randomId";
 import { cn } from "@/lib/utils";
 import { ToastContext } from "@/lib/toastContext";
 
@@ -20,7 +21,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
   const push = useCallback(
     (message: string, variant: ToastVariant) => {
-      const id = crypto.randomUUID();
+      const id = randomId();
       setToasts((current) => [...current, { id, message, variant }]);
       window.setTimeout(() => dismiss(id), 4000);
     },

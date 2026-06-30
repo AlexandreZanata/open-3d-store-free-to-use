@@ -38,6 +38,9 @@ export const railTrack = `${railScroll} ${railInner}`;
 export const productCardWideWidth =
   "w-[calc(100vw-2rem)] max-w-[300px] lg:w-full lg:max-w-none";
 
+/** Square product thumbnail — same width, 1:1 aspect on mobile and desktop. */
+export const productCardImageAspect = "aspect-square";
+
 export const categoryPillsTrack =
   "flex gap-2 overflow-x-auto px-4 pb-2 no-scrollbar lg:flex-wrap lg:overflow-visible lg:px-8";
 

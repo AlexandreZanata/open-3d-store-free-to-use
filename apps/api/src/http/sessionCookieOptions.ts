@@ -39,3 +39,27 @@ export function sessionCookieSameSite(
 ): "strict" | "lax" {
   return config.NODE_ENV === "production" ? "strict" : "lax";
 }
+
+type SessionCookieConfig = Pick<
+  AppConfig,
+  "NODE_ENV" | "CORS_ORIGIN" | "ADMIN_ORIGIN"
+>;
+
+/** Shared attrs for setCookie/clearCookie — Secure must match on HTTP VPS. */
+export function sessionCookieAttrs(
+  request: Pick<FastifyRequest, "protocol" | "headers">,
+  config: SessionCookieConfig,
+  path: string,
+): {
+  httpOnly: true;
+  path: string;
+  sameSite: "strict" | "lax";
+  secure: boolean;
+} {
+  return {
+    httpOnly: true,
+    path,
+    sameSite: sessionCookieSameSite(config),
+    secure: sessionCookieSecureForRequest(request, config),
+  };
+}

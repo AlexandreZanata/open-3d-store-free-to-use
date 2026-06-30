@@ -114,6 +114,8 @@ Rate limit: **5 requests / IP / minute**.
 
 Sets `Set-Cookie: print3d_admin_session=…; HttpOnly; Path=/api/v1/admin; SameSite=Strict`.
 
+On **HTTP-only VPS** (IP phase, no TLS), the API omits the `Secure` cookie flag — browsers reject `Secure` cookies on non-HTTPS pages. `clearCookie` uses the same attrs so logout works. Env origins MUST use `http://` until TLS is enabled (`CORS_ORIGIN`, `ADMIN_ORIGIN`). Nginx passes `X-Forwarded-Proto: http` to the API.
+
 **Response 401:** Invalid credentials (same body shape for unknown email vs wrong password).
 
 **Response 422:** Invalid email format or password too short.

@@ -29,6 +29,12 @@ Tokens: `apps/admin/src/styles/admin-theme.css`, `apps/admin/src/lib/admin-token
 
 Touch targets: header menu and nav links use min 40px height. Main content respects `safe-area-inset-bottom` on notched devices.
 
+**Confirm dialogs** (`ConfirmDialog`) use a **square** panel (`aspect-square`, `max-w-md`) on mobile and desktop.
+
+### HTTP-only VPS (no TLS)
+
+On IP-only deployments (`http://…/admin`), browsers disable `crypto.randomUUID()` in non-secure contexts. The admin SPA uses `apps/admin/src/lib/randomId.ts` (fallback ID generator) for toasts and product options so save/error flows do not throw. After deploy, **log out and log in** so the API sets `print3d_admin_session` without the `Secure` flag — see [../api/admin-contract.md](../api/admin-contract.md).
+
 List pages (e.g. products) use a bordered filter toolbar: labeled `Input` / `Select` fields in a responsive grid with the action button bottom-aligned on desktop (`xl:items-end`).
 
 ## Data tables
@@ -110,7 +116,8 @@ ADMIN_BOOTSTRAP_EMAIL=admin@test.local ADMIN_BOOTSTRAP_PASSWORD=test-password-12
 | Unit | `apps/admin/tests/unit/` |
 | E2E | `e2e/admin-auth.spec.ts`, `e2e/admin-orders.spec.ts`, `e2e/admin-product-crud.spec.ts`, `e2e/admin-mobile.spec.ts` |
 
-Unit: `apps/admin/tests/unit/admin-session-recovery.test.ts` (401 → refresh → retry / logout).
+Unit: `apps/admin/tests/unit/admin-session-recovery.test.ts` (401 → refresh → retry / logout).  
+Unit: `apps/admin/tests/unit/randomId.test.ts` (HTTP-safe ID fallback).
 
 ```bash
 pnpm --filter @print3d/admin test

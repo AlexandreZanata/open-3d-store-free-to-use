@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { adminTokens } from "@/lib/admin-tokens";
+import { randomId } from "@/lib/randomId";
 
 type ProductOptionsEditorProps = {
   value: ProductOption[];
@@ -19,7 +20,7 @@ function createOptionId(name: string): string {
     .trim()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
-  return slug.length > 0 ? `opt-${slug}` : `opt-${crypto.randomUUID().slice(0, 8)}`;
+  return slug.length > 0 ? `opt-${slug}` : `opt-${randomId().slice(0, 8)}`;
 }
 
 export function ProductOptionsEditor({ value, onChange, errors }: ProductOptionsEditorProps) {

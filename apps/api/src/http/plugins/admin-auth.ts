@@ -8,10 +8,7 @@ import {
   ADMIN_SESSION_COOKIE,
 } from "../admin/constants.js";
 import { sendAdminProblem } from "../errors/handleAdminError.js";
-import {
-  sessionCookieSameSite,
-  sessionCookieSecureForRequest,
-} from "../sessionCookieOptions.js";
+import { sessionCookieAttrs } from "../sessionCookieOptions.js";
 
 export async function registerAdminAuth(
   app: FastifyInstance,
@@ -39,17 +36,17 @@ export async function registerAdminAuth(
     "setAdminSessionCookie",
     (reply: FastifyReply, token: string) => {
       reply.setCookie(ADMIN_SESSION_COOKIE, token, {
-        httpOnly: true,
-        path: ADMIN_COOKIE_PATH,
-        sameSite: sessionCookieSameSite(config),
-        secure: sessionCookieSecureForRequest(reply.request, config),
+        ...sessionCookieAttrs(reply.request, config, ADMIN_COOKIE_PATH),
         maxAge: config.ADMIN_SESSION_TTL,
       });
     },
   );
 
   app.decorate("clearAdminSessionCookie", (reply: FastifyReply) => {
-    reply.clearCookie(ADMIN_SESSION_COOKIE, { path: ADMIN_COOKIE_PATH });
+    reply.clearCookie(
+      ADMIN_SESSION_COOKIE,
+      sessionCookieAttrs(reply.request, config, ADMIN_COOKIE_PATH),
+    );
   });
 }
 

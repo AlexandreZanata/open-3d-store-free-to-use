@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   sessionCookieSecure,
   sessionCookieSecureForRequest,
+  sessionCookieAttrs,
 } from "../../../src/http/sessionCookieOptions.js";
 
 describe("sessionCookieSecure", () => {
@@ -70,5 +71,22 @@ describe("sessionCookieSecureForRequest", () => {
         httpsConfig,
       ),
     ).toBe(true);
+  });
+});
+
+describe("sessionCookieAttrs", () => {
+  it("omits Secure on HTTP VPS requests", () => {
+    const attrs = sessionCookieAttrs(
+      { protocol: "http", headers: { "x-forwarded-proto": "http" } },
+      {
+        NODE_ENV: "production",
+        CORS_ORIGIN: "http://72.60.147.2",
+        ADMIN_ORIGIN: "http://72.60.147.2/admin",
+      },
+      "/api/v1/admin",
+    );
+    expect(attrs.secure).toBe(false);
+    expect(attrs.httpOnly).toBe(true);
+    expect(attrs.path).toBe("/api/v1/admin");
   });
 });

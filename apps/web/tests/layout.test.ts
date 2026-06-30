@@ -10,6 +10,7 @@ import {
   mobileTopPad,
   mobileOnly,
   productCardWideWidth,
+  productCardImageAspect,
   productGridCols,
   searchCatalogGridCols,
   railInner,
@@ -19,6 +20,10 @@ import {
 } from "../src/lib/layout";
 
 describe("responsive layout tokens", () => {
+  it("uses square product thumbnail aspect", () => {
+    expect(productCardImageAspect).toBe("aspect-square");
+  });
+
   it("keeps mobile shell width at max-w-2xl", () => {
     expect(shellMaxWidth).toContain("max-w-2xl");
     expect(mainBottomPad).toContain("pb-8");

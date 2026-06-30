@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import type { ProductListItem } from "@print3d/shared-types";
 
 import { FavoriteButton } from "@/components/FavoriteButton";
+import { productCardImageAspect } from "@/lib/layout";
 import { resolveAssetUrl } from "@/lib/assets";
 
 /** Desktop catalog card — roomier layout for search and category grids. */
@@ -16,7 +17,7 @@ export function CatalogProductCard({ product }: { product: ProductListItem }) {
         <Link
           to="/product/$slug"
           params={{ slug: product.slug }}
-          className="block relative aspect-[5/6] bg-muted overflow-hidden"
+          className={`block relative ${productCardImageAspect} bg-muted overflow-hidden`}
         >
           {imageUrl ? (
             <img
@@ -24,7 +25,7 @@ export function CatalogProductCard({ product }: { product: ProductListItem }) {
               alt={product.name}
               loading="lazy"
               width={800}
-              height={960}
+              height={800}
               className="absolute inset-0 size-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
             />
           ) : (

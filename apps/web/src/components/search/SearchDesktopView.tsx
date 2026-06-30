@@ -4,7 +4,7 @@ import type { ProductListItem } from "@print3d/shared-types";
 
 import { CatalogProductCard } from "@/components/search/CatalogProductCard";
 import { SearchFiltersPanel } from "@/components/SearchFiltersPanel";
-import { searchCatalogGridCols, stickyBelowHeader } from "@/lib/layout";
+import { productCardImageAspect, searchCatalogGridCols, stickyBelowHeader } from "@/lib/layout";
 import type { ProductQueryParams } from "@/lib/api/types";
 
 type CategoryOption = { slug: string; name: string };
@@ -136,7 +136,7 @@ function CatalogGridSkeleton() {
     <div className={searchCatalogGridCols}>
       {Array.from({ length: 6 }).map((_, index) => (
         <div key={index} className="rounded-2xl ring-1 ring-hairline overflow-hidden animate-pulse">
-          <div className="aspect-[5/6] bg-muted" />
+          <div className={`${productCardImageAspect} bg-muted`} />
           <div className="p-5 space-y-3">
             <div className="h-3 w-16 bg-muted rounded" />
             <div className="h-5 w-3/4 bg-muted rounded" />

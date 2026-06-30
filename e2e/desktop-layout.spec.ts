@@ -47,6 +47,17 @@ test.describe("desktop layout", () => {
     await expect(grid).toHaveClass(/xl:grid-cols-3/);
   });
 
+  test("search catalog cards use square image tiles", async ({ page }) => {
+    await page.goto("/search");
+    const tile = page.locator("article a.aspect-square").first();
+    await expect(tile).toBeVisible({ timeout: 20_000 });
+    const box = await tile.boundingBox();
+    expect(box).not.toBeNull();
+    if (box) {
+      expect(Math.abs(box.width - box.height)).toBeLessThan(2);
+    }
+  });
+
   test("shows site footer with contact links", async ({ page }) => {
     await page.goto("/");
 
@@ -100,6 +111,17 @@ test.describe("mobile layout preserved", () => {
     await expect(
       page.getByRole("img", { name: /corvo 3d logo|logo 3d corvo/i }),
     ).toBeVisible({ timeout: 25_000 });
+  });
+
+  test("home product cards use square image tiles", async ({ page }) => {
+    await page.goto("/");
+    const tile = page.locator("article a.aspect-square").first();
+    await expect(tile).toBeVisible({ timeout: 20_000 });
+    const box = await tile.boundingBox();
+    expect(box).not.toBeNull();
+    if (box) {
+      expect(Math.abs(box.width - box.height)).toBeLessThan(2);
+    }
   });
 
   test("shows site footer above bottom tab bar", async ({ page }) => {

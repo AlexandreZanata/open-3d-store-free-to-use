@@ -4,7 +4,7 @@ import type { ProductListItem } from "@print3d/shared-types";
 
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { resolveAssetUrl } from "@/lib/assets";
-import { productCardWideWidth } from "@/lib/layout";
+import { productCardImageAspect, productCardWideWidth } from "@/lib/layout";
 
 export function ProductCard({
   product,
@@ -23,7 +23,7 @@ export function ProductCard({
         <Link
           to="/product/$slug"
           params={{ slug: product.slug }}
-          className="block relative aspect-[4/5] bg-muted"
+          className={`block relative ${productCardImageAspect} bg-muted`}
         >
           {imageUrl ? (
             <img
@@ -31,7 +31,7 @@ export function ProductCard({
               alt={product.name}
               loading="lazy"
               width={800}
-              height={1000}
+              height={800}
               className="absolute inset-0 size-full object-cover"
             />
           ) : (

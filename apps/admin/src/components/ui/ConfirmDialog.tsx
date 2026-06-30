@@ -26,12 +26,19 @@ export function ConfirmDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 p-4">
-      <Card className="w-full max-w-md" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
-        <h2 id="confirm-title" className="text-lg font-semibold text-foreground">
-          {title}
-        </h2>
-        <p className="mt-2 text-sm text-muted-foreground">{message}</p>
-        <div className="mt-6 flex justify-end gap-2">
+      <Card
+        className="flex aspect-square w-full max-w-md flex-col justify-between p-6"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirm-title"
+      >
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <h2 id="confirm-title" className="text-lg font-semibold text-foreground">
+            {title}
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">{message}</p>
+        </div>
+        <div className="mt-6 flex shrink-0 justify-end gap-2">
           <Button variant="secondary" onClick={onCancel} disabled={isLoading}>
             Cancel
           </Button>

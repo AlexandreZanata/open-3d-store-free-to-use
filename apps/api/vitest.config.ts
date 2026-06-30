@@ -44,6 +44,7 @@ export default defineConfig({
     environment: "node",
     globals: false,
     include: ["tests/**/*.test.ts"],
+    globalSetup: ["./tests/globalSetup.ts"],
     testTimeout: 30_000,
     fileParallelism: false,
     env: resolveTestEnv(envPath),

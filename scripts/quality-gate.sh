@@ -43,6 +43,13 @@ run_build() {
   pnpm turbo build
 }
 
+run_db_migrate() {
+  if [[ -n "${DATABASE_URL:-}" ]]; then
+    echo "==> Database migrations"
+    pnpm --filter @print3d/api db:migrate
+  fi
+}
+
 case "$MODE" in
   quick)
     run_typecheck
@@ -60,6 +67,7 @@ case "$MODE" in
     run_size
     run_infra_contract
     run_build
+    run_db_migrate
     run_tests
     ;;
   *)

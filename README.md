@@ -1,4 +1,4 @@
-# Open 3D Store (AXIS)
+# Corvo 3D
 
 Product catalog and order-capture platform for a 3D printing shop — browse models, preview in 3D, order via WhatsApp.
 

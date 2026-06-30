@@ -6,6 +6,11 @@ import { probeModelAsset } from "@/lib/modelViewerLimits";
 
 /** Solid black — readable on the white hero card. */
 export const HERO_LOGO_COLOR = 0x141414;
+export const HERO_LOGO_COLOR_HEX = "#141414";
+/** Matches `PerspectiveCamera` in `mountHeroLogoViewer`. */
+export const HERO_LOGO_CAMERA_FOV = 34;
+/** Bounding-sphere radius after centering (reference corvo GLB). */
+export const HERO_LOGO_REFERENCE_SPHERE_RADIUS = 0.52;
 /** Extra margin so the mesh stays inside the rounded hero tile. */
 export const HERO_LOGO_FIT_PADDING = 1.28;
 /** Zoom factor on top of the fitted frame (1.30 = 30% larger than fit, still centered). */
@@ -23,6 +28,7 @@ export type HeroLogoMountOptions = {
   modelUrl: string;
   /** Skip HEAD probe — hero asset is a known small bundled GLB. */
   skipProbe?: boolean;
+  onReady?: () => void;
 };
 
 export function mountHeroLogoViewer(
@@ -42,7 +48,7 @@ export function mountHeroLogoViewer(
   container.appendChild(renderer.domElement);
 
   const camera = new THREE.PerspectiveCamera(
-    34,
+    HERO_LOGO_CAMERA_FOV,
     container.clientWidth / Math.max(container.clientHeight, 1),
     0.01,
     200,
@@ -102,6 +108,7 @@ export function mountHeroLogoViewer(
       modelRoot = object;
       scene.add(object);
       refitCamera();
+      resolved.onReady?.();
     } catch {
       // Leave canvas empty — no static logo fallback in this slot.
     }
@@ -193,4 +200,19 @@ export function fitCameraToModel(
   camera.near = Math.max(distance / 200, 0.001);
   camera.far = distance * 24;
   camera.updateProjectionMatrix();
+}
+
+/** Screen diameter fraction — same fit math as `fitCameraToModel`. */
+export function heroLogoPlaceholderDiameterRatio(
+  aspect: number,
+  sphereRadius = HERO_LOGO_REFERENCE_SPHERE_RADIUS,
+): number {
+  const fovRad = (HERO_LOGO_CAMERA_FOV * Math.PI) / 180;
+  const safeAspect = Math.max(aspect, 0.01);
+  const hFov = 2 * Math.atan(Math.tan(fovRad / 2) * safeAspect);
+  const distanceY = sphereRadius / Math.sin(fovRad / 2);
+  const distanceX = sphereRadius / Math.sin(hFov / 2);
+  const distance = (Math.max(distanceX, distanceY) * HERO_LOGO_FIT_PADDING) / HERO_LOGO_VIEW_SCALE;
+  const visibleHeight = 2 * distance * Math.tan(fovRad / 2);
+  return Math.min(1, (2 * sphereRadius) / visibleHeight);
 }

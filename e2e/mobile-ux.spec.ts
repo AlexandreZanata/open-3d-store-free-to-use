@@ -32,9 +32,11 @@ test.describe("mobile storefront UX", () => {
 
   test("mobile hero tile shows rotating corvo 3d logo", async ({ page }) => {
     await page.goto("/");
+    await expect(page.getByTestId("hero-logo-placeholder")).toBeVisible({ timeout: 5_000 });
     await expect(
       page.getByRole("img", { name: /corvo 3d logo|logo 3d corvo/i }),
     ).toBeVisible({ timeout: 25_000 });
+    await expect(page.getByTestId("hero-logo-placeholder")).toHaveCount(0, { timeout: 25_000 });
   });
 
   test("guest can favorite a product from the card heart", async ({ page }) => {

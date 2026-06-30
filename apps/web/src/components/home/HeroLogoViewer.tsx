@@ -1,6 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { HeroLogoPlaceholder } from "@/components/home/HeroLogoPlaceholder";
 import { HERO_LOGO_MODEL_URL, preloadHeroLogo } from "@/lib/heroLogo";
 
 import type { HeroLogoHandle } from "./heroLogoScene";
@@ -15,10 +16,16 @@ export function HeroLogoViewer({ compact = false }: HeroLogoViewerProps) {
   const shellRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<HeroLogoHandle | null>(null);
+  const [ready, setReady] = useState(false);
+  const [aspect, setAspect] = useState(1);
 
   useEffect(() => {
     void preloadHeroLogo();
   }, []);
+
+  useEffect(() => {
+    setReady(false);
+  }, [compact]);
 
   useEffect(() => {
     const shell = shellRef.current;
@@ -28,6 +35,11 @@ export function HeroLogoViewer({ compact = false }: HeroLogoViewerProps) {
     }
 
     let cancelled = false;
+
+    const syncAspect = () => {
+      const height = Math.max(shell.clientHeight, 1);
+      setAspect(shell.clientWidth / height);
+    };
 
     const disposeViewer = () => {
       viewerRef.current?.dispose();
@@ -50,6 +62,11 @@ export function HeroLogoViewer({ compact = false }: HeroLogoViewerProps) {
           viewerRef.current = mountHeroLogoViewer(container, {
             modelUrl: HERO_LOGO_MODEL_URL,
             skipProbe: true,
+            onReady: () => {
+              if (!cancelled) {
+                setReady(true);
+              }
+            },
           });
         })
         .catch(() => {
@@ -57,13 +74,16 @@ export function HeroLogoViewer({ compact = false }: HeroLogoViewerProps) {
         });
     };
 
+    syncAspect();
     mountViewer();
 
     const sizeObserver = new ResizeObserver(() => {
+      syncAspect();
       if (!cancelled && !viewerRef.current) {
         mountViewer();
       }
     });
+    sizeObserver.observe(shell);
     sizeObserver.observe(container);
 
     const observer = new IntersectionObserver(
@@ -97,11 +117,13 @@ export function HeroLogoViewer({ compact = false }: HeroLogoViewerProps) {
 
   return (
     <div ref={shellRef} className={shellClass}>
+      {!ready ? <HeroLogoPlaceholder aspect={aspect} /> : null}
       <div
         ref={containerRef}
-        className="absolute inset-0"
+        className="absolute inset-0 z-[2]"
         role="img"
         aria-label={t("home.heroLogoLabel")}
+        aria-busy={!ready}
       />
     </div>
   );

@@ -2,8 +2,12 @@ import { describe, expect, it } from "vitest";
 
 import {
   fitCameraToModel,
+  heroLogoPlaceholderDiameterRatio,
+  HERO_LOGO_CAMERA_FOV,
   HERO_LOGO_COLOR,
+  HERO_LOGO_COLOR_HEX,
   HERO_LOGO_FIT_PADDING,
+  HERO_LOGO_REFERENCE_SPHERE_RADIUS,
   HERO_LOGO_TURN_SPEED,
   HERO_LOGO_VIEW_SCALE,
 } from "@/components/home/heroLogoScene";
@@ -21,6 +25,11 @@ describe("heroLogoScene constants", () => {
 
   it("uses solid black for contrast on the white hero card", () => {
     expect(HERO_LOGO_COLOR).toBe(0x141414);
+    expect(HERO_LOGO_COLOR_HEX).toBe("#141414");
+  });
+
+  it("matches placeholder camera FOV to the Three.js viewer", () => {
+    expect(HERO_LOGO_CAMERA_FOV).toBe(34);
   });
 
   it("spins the logo slowly on the vertical axis", () => {
@@ -40,5 +49,22 @@ describe("fitCameraToModel", () => {
     fitCameraToModel(mesh, camera, 280, 280);
 
     expect(camera.position.z).toBeGreaterThan(1.1);
+  });
+});
+
+describe("heroLogoPlaceholderDiameterRatio", () => {
+  it("matches fitted mesh footprint for square hero tiles", () => {
+    const mesh = new THREE.Mesh(
+      new THREE.BoxGeometry(0.92, 0.8, 0.12),
+      new THREE.MeshBasicMaterial(),
+    );
+    const sphere = new THREE.Box3().setFromObject(mesh).getBoundingSphere(new THREE.Sphere());
+    const ratio = heroLogoPlaceholderDiameterRatio(1, sphere.radius);
+    expect(ratio).toBeGreaterThan(0.45);
+    expect(ratio).toBeLessThanOrEqual(1);
+    expect(ratio).toBeCloseTo(
+      heroLogoPlaceholderDiameterRatio(1, HERO_LOGO_REFERENCE_SPHERE_RADIUS),
+      1,
+    );
   });
 });

@@ -195,6 +195,7 @@ describe("VPS rsync deploy — docs/infrastructure/deployment.md", () => {
     const script = readRepo("infra/scripts/complete-print3d-domain-ssl.sh");
     assert.match(script, /certbot --nginx/);
     assert.match(script, /install-nginx-domain\.sh/);
+    assert.match(script, /admin_dns_ready/);
   });
 
   test("deploy-to-vps.sh sets VITE_INSTAGRAM_URL for storefront build", () => {

@@ -49,6 +49,8 @@ DNS → Records (Proxied / orange cloud):
 
 **Required:** `admin` — admin panel is `https://admin.corvo3d.com.br`, not a path on the apex.
 
+**Certbot will fail** with `NXDOMAIN` for `admin.corvo3d.com.br` until this record exists. Add it before `./infra/scripts/complete-print3d-domain-ssl.sh`, or certbot will issue a cert for `@` + `www` only (storefront first).
+
 Cache rule: **Bypass** cache for URI path starts with `/api/`.
 
 After Let's Encrypt on the VPS: SSL/TLS → **Full (strict)** + **Always Use HTTPS**.

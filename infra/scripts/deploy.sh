@@ -51,7 +51,7 @@ if [[ "${SKIP_GIT_PULL:-}" == "1" ]] || [[ ! -d "${ROOT}/.git" ]]; then
   echo "deploy.sh: skipping git pull (rsync deploy or SKIP_GIT_PULL=1)"
 else
   echo "==> Pulling latest code"
-  git pull --ff-only
+  git pull --ff-only origin main
 fi
 
 echo "==> Checking Node.js / pnpm / PM2"

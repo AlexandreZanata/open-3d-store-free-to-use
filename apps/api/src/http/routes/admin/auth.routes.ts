@@ -22,13 +22,16 @@ export async function registerAdminAuthRoutes(
     "/auth/login",
     {
       schema: adminLoginRouteSchema,
-      config: {
-        rateLimit: {
-          max: 5,
-          timeWindow: "1 minute",
-          keyGenerator: rateLimitLoginKey,
-        },
-      },
+      config:
+        container.config.NODE_ENV === "production"
+          ? {
+              rateLimit: {
+                max: 5,
+                timeWindow: "1 minute",
+                keyGenerator: rateLimitLoginKey,
+              },
+            }
+          : noSessionRateLimit,
     },
     async (request, reply) => {
       const parsed = adminLoginBodySchema.safeParse(request.body);

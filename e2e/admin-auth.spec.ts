@@ -59,7 +59,7 @@ test.describe("admin authentication", () => {
     await expect(page).toHaveURL(`${adminBase}/`);
 
     await page.goto(`${adminBase}/products`);
-    await page.getByRole("row").nth(1).getByRole("link", { name: "Edit" }).click();
+    await page.getByRole("main").getByRole("row").nth(1).getByRole("link", { name: "Edit" }).click();
     await expect(page.getByRole("heading", { name: "Edit product" })).toBeVisible();
 
     await context.clearCookies();

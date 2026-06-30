@@ -3,6 +3,8 @@
  */
 import { test, expect } from "@playwright/test";
 
+import { visible } from "./locators";
+
 const hasDatabase = Boolean(process.env.DATABASE_URL);
 
 test.describe("desktop layout", () => {
@@ -36,20 +38,22 @@ test.describe("desktop layout", () => {
   test("search page exposes desktop filter sidebar", async ({ page }) => {
     await page.goto("/search");
 
-    await expect(page.getByLabel(/filters|filtros/i)).toBeVisible({ timeout: 15_000 });
-    await expect(page.getByRole("heading", { name: /search|buscar/i, level: 1 })).toBeVisible();
+    await expect(visible(page.getByLabel(/filters|filtros/i))).toBeVisible({ timeout: 15_000 });
+    await expect(
+      visible(page.getByRole("heading", { name: /search|buscar/i, level: 1 })),
+    ).toBeVisible();
   });
 
   test("search grid uses catalog layout on desktop", async ({ page }) => {
     await page.goto("/search");
-    const grid = page.locator(".grid").filter({ has: page.locator("article") }).first();
+    const grid = visible(page.locator(".xl\\:grid-cols-3").filter({ has: page.locator("article") })).first();
     await expect(grid).toBeVisible({ timeout: 20_000 });
     await expect(grid).toHaveClass(/xl:grid-cols-3/);
   });
 
   test("search catalog cards use square image tiles", async ({ page }) => {
     await page.goto("/search");
-    const tile = page.locator("article a.aspect-square").first();
+    const tile = visible(page.locator("article a.aspect-square")).first();
     await expect(tile).toBeVisible({ timeout: 20_000 });
     const box = await tile.boundingBox();
     expect(box).not.toBeNull();
@@ -80,8 +84,9 @@ test.describe("mobile layout preserved", () => {
   test("keeps bottom tab bar and compact mobile header", async ({ page }) => {
     await page.goto("/");
 
-    await expect(page.getByTestId("mobile-tab-bar")).toBeVisible({ timeout: 20_000 });
-    await expect(page.getByRole("link", { name: /home|início/i })).toBeVisible();
+    const bottomNav = page.getByTestId("mobile-tab-bar");
+    await expect(bottomNav).toBeVisible({ timeout: 20_000 });
+    await expect(bottomNav.getByRole("link", { name: /home|início/i })).toBeVisible();
     await expect(page.getByRole("navigation", { name: /main navigation|navegação principal/i })).toHaveCount(0);
   });
 
@@ -130,7 +135,7 @@ test.describe("mobile layout preserved", () => {
     const footer = page.getByRole("contentinfo");
     await expect(footer).toBeVisible({ timeout: 20_000 });
     await expect(footer.getByText(/gostou deste site|like this site/i)).toBeVisible();
-    await expect(footer.getByText("alexandrezanatavasconcelos@gmail.com")).toHaveCount(0);
+    await expect(visible(footer.getByText("alexandrezanatavasconcelos@gmail.com"))).toHaveCount(0);
     await expect(footer.getByRole("link", { name: /e-mail alexandrezanata|email alexandrezanata/i })).toHaveAttribute(
       "href",
       "mailto:alexandrezanatavasconcelos@gmail.com",

@@ -41,7 +41,7 @@ test.describe("catalog navigation thumbnails", () => {
     await expect(page).toHaveURL(/\/product\//, { timeout: 15_000 });
     await page.waitForTimeout(5_000);
 
-    await page.getByRole("link", { name: /^home$|^início$/i }).click();
+    await page.getByTestId("mobile-tab-bar").getByRole("link", { name: /^home$|^início$/i }).click();
     await expect(page).toHaveURL("/", { timeout: 15_000 });
 
     await expectThumbnailDecoded(page, 1_000);

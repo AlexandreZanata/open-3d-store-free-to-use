@@ -71,10 +71,15 @@ test.describe("mobile storefront UX", () => {
     await expect(stickyBar.getByRole("button", { name: /add to cart|adicionar ao carrinho/i })).toBeVisible();
 
     const footer = page.getByRole("contentinfo");
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    for (let step = 0; step < 8; step += 1) {
+      await page.mouse.wheel(0, 900);
+      const opacity = await stickyBar.evaluate((el) => getComputedStyle(el).opacity);
+      if (opacity === "0") {
+        break;
+      }
+    }
     await expect(footer.getByRole("link", { name: /github profile|perfil no github/i })).toBeVisible();
-
-    await expect(stickyBar).toHaveCSS("opacity", "0");
+    await expect(stickyBar).toHaveCSS("opacity", "0", { timeout: 5_000 });
   });
 
   test("mobile tab bar stays flush when viewport bottom inset is applied", async ({ page }) => {

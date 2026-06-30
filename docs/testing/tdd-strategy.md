@@ -100,6 +100,8 @@ source apps/api/.env && PLAYWRIGHT_API_PORT=3010 pnpm e2e
 
 Admin E2E uses project `admin-chromium` (port **5174**). Playwright starts API + admin dev servers when `DATABASE_URL` is set. Use `CI=true` locally so stale dev servers on 5174/3005 are not reused against a rate-limited API.
 
+Responsive storefront/admin layouts keep **hidden breakpoint twins** in the DOM (`lg:hidden` + `hidden lg:block`). E2E specs that assert labels or nav links MUST scope with `visible()` from `e2e/locators.ts` or a container (`getByRole("main")`, `getByTestId("mobile-tab-bar")`) so Playwright strict mode does not match duplicate nodes.
+
 ```bash
 source apps/api/.env
 CI=true PLAYWRIGHT_API_PORT=3010 pnpm exec playwright test e2e/admin-auth.spec.ts --project=admin-chromium

@@ -3,6 +3,8 @@
  */
 import { test, expect } from "@playwright/test";
 
+import { visible } from "./locators";
+
 const hasDatabase = Boolean(process.env.DATABASE_URL);
 const apiBase = process.env.VITE_API_BASE_URL ?? "http://localhost:3010/api/v1";
 
@@ -15,12 +17,12 @@ test.describe("locale switch", () => {
     await page.goto("/");
 
     await page.getByRole("button", { name: "PT", exact: true }).click();
-    await expect(page.getByRole("link", { name: "Buscar", exact: true })).toBeVisible({
+    await expect(visible(page.getByRole("link", { name: "Buscar", exact: true }))).toBeVisible({
       timeout: 10_000,
     });
 
     await page.getByRole("button", { name: "EN", exact: true }).click();
-    await expect(page.getByRole("link", { name: "Search", exact: true })).toBeVisible({
+    await expect(visible(page.getByRole("link", { name: "Search", exact: true }))).toBeVisible({
       timeout: 10_000,
     });
   });

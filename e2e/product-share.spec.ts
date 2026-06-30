@@ -3,6 +3,8 @@
  */
 import { test, expect } from "@playwright/test";
 
+import { openShareMenu } from "./locators";
+
 const hasDatabase = Boolean(process.env.DATABASE_URL);
 
 test.describe("product share", () => {
@@ -25,10 +27,8 @@ test.describe("product share", () => {
       }),
     ).toBeVisible({ timeout: 15_000 });
 
-    await page.getByRole("button", { name: /share|compartilhar/i }).click();
-    await expect(page.getByText(/share product|compartilhar produto/i)).toBeVisible();
-
-    await page.getByRole("button", { name: /copy link|copiar link/i }).click();
+    const menu = await openShareMenu(page);
+    await menu.getByRole("button", { name: /copy link|copiar link/i }).click();
     await expect(page.getByText(/link copied|link copiado/i)).toBeVisible();
 
     const clipboard = await page.evaluate(async () => navigator.clipboard.readText());
@@ -38,9 +38,8 @@ test.describe("product share", () => {
 
   test("WhatsApp share link includes product URL", async ({ page }) => {
     await page.goto("/product/custom-photo-frame");
-    await page.getByRole("button", { name: /share|compartilhar/i }).click();
-
-    const whatsapp = page.getByRole("link", { name: "WhatsApp", exact: true });
+    const menu = await openShareMenu(page);
+    const whatsapp = menu.getByRole("link", { name: "WhatsApp", exact: true });
     await expect(whatsapp).toHaveAttribute("href", /wa\.me\/\?text=/);
     await expect(whatsapp).toHaveAttribute("href", /custom-photo-frame/);
   });

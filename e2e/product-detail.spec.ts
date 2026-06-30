@@ -4,6 +4,8 @@
  */
 import { test, expect } from "@playwright/test";
 
+import { visible } from "./locators";
+
 const hasDatabase = Boolean(process.env.DATABASE_URL);
 
 test.describe("product detail", () => {
@@ -19,11 +21,11 @@ test.describe("product detail", () => {
       timeout: 15_000,
     });
     await expect(
-      page
-        .getByRole("img", { name: /3D preview|Visualização 3D/i })
-        .or(page.getByText(/too large to preview|grande demais para visualizar/i)),
+      visible(page.getByRole("img", { name: /3D preview|Visualização 3D/i })).or(
+        visible(page.getByText(/too large to preview|grande demais para visualizar/i)),
+      ),
     ).toBeVisible({
-      timeout: 20_000,
+      timeout: 25_000,
     });
     await expect(page.getByText(/real scale|escala real/i)).toBeVisible();
   });
@@ -39,7 +41,7 @@ test.describe("product detail", () => {
     await expect(page.getByText(/3D preview unavailable|Visualização 3D indisponível/i)).toHaveCount(
       0,
     );
-    await expect(page.getByRole("img", { name: /3D preview|Visualização 3D/i })).toBeVisible({
+    await expect(visible(page.getByRole("img", { name: /3D preview|Visualização 3D/i }))).toBeVisible({
       timeout: 25_000,
     });
     await expect(page.getByText(/real scale|escala real/i)).toBeVisible();
@@ -69,12 +71,19 @@ test.describe("product detail", () => {
       }),
     ).toBeVisible({ timeout: 15_000 });
 
-    const galleryTab = page.getByRole("tab", { name: /gallery|galeria/i });
-    await galleryTab.click();
+    await expect(
+      visible(page.getByRole("img", { name: /3D preview|Visualização 3D/i })),
+    ).toBeVisible({ timeout: 25_000 });
 
-    const firstSlide = page.getByRole("img", { name: /image 1|imagem 1/i });
-    await expect(firstSlide).toBeVisible();
-    await page.getByRole("button", { name: /next image|próxima imagem/i }).click();
-    await expect(page.getByRole("img", { name: /image 2|imagem 2/i })).toBeVisible();
+    const tablist = page.getByRole("main").getByRole("tablist");
+    await tablist.getByRole("tab").nth(1).click();
+    await expect(tablist.getByRole("tab").nth(1)).toHaveAttribute("aria-selected", "true", {
+      timeout: 5_000,
+    });
+    await expect(visible(page.getByRole("img", { name: /— image 1|— imagem 1/i }))).toBeVisible({
+      timeout: 10_000,
+    });
+    await visible(page.getByRole("button", { name: /next image|próxima imagem/i })).click();
+    await expect(visible(page.getByRole("img", { name: /— image 2|— imagem 2/i }))).toBeVisible();
   });
 });

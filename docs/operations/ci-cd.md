@@ -34,7 +34,7 @@ Steps:
 2. Write `apps/api/.env` from workflow env (required by `tsx --env-file=.env` for `db:seed` and API `dev` in Playwright webServer)
 3. `pnpm turbo build --filter=@print3d/shared-types --filter=@print3d/whatsapp` (E2E job is a fresh checkout — seed scripts import compiled workspace packages)
 4. `NODE_ENV=production pnpm turbo build --force --filter=@print3d/web --filter=@print3d/admin` (CI uses **vite preview** on 4173/4174 — TanStack `vite dev` cold start exceeds the webServer timeout)
-5. `pnpm --filter @print3d/api db:seed`
+5. `pnpm --filter @print3d/api db:seed` (flushes Redis catalog cache after upsert so product `modelFileUrl` is not stale; bundled GLB fallback for `custom-photo-frame` / `dragon-figurine` when `SEED_MODELS_SOURCE_DIR` is absent)
 6. Install Playwright browsers: `pnpm exec playwright install chromium --with-deps`
 7. **`pnpm e2e`** with `PLAYWRIGHT_BASE_URL=http://localhost:4173`, `CORS_ORIGIN` matching preview port
 8. Upload Playwright report on failure

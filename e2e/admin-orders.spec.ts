@@ -15,8 +15,9 @@ test.describe("admin orders list", () => {
     await expect(page.getByRole("heading", { name: "Orders" })).toBeVisible();
     await expect(page.getByText("Loading", { exact: true })).toBeHidden({ timeout: 10_000 });
 
-    const emptyState = page.getByText("No orders yet");
-    const ordersTable = page.getByRole("table", { name: "Captured orders" });
+    const main = page.getByRole("main");
+    const emptyState = main.getByText("No orders yet");
+    const ordersTable = main.getByRole("table", { name: "Captured orders" });
     await expect(emptyState.or(ordersTable)).toBeVisible();
   });
 });

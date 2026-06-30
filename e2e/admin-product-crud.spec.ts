@@ -32,9 +32,11 @@ test.describe("admin product CRUD", () => {
 
   test("products list shows shared DataTable with pagination footer", async ({ page }) => {
     await page.goto(`${adminBase}/products`);
-    await expect(page.getByRole("table")).toBeVisible();
-    await expect(page.getByLabel("Table pagination")).toBeVisible();
-    await expect(page.getByLabel("Table pagination")).toContainText(/Page \d+ of \d+/);
+    const main = page.getByRole("main");
+    await expect(main.getByRole("table")).toBeVisible();
+    const pagination = main.getByLabel("Table pagination");
+    await expect(pagination).toBeVisible();
+    await expect(pagination).toContainText(/Page \d+ of \d+/);
   });
 
   test("creates product and shows it in the list", async ({ page }) => {
@@ -54,14 +56,15 @@ test.describe("admin product CRUD", () => {
     await expect(page).toHaveURL(new RegExp(`${adminBase}/products/.+`));
 
     await page.goto(`${adminBase}/products`);
-    const productRow = page.getByRole("row", { name: new RegExp(productSlug) });
+    const main = page.getByRole("main");
+    const productRow = main.getByRole("row", { name: new RegExp(productSlug) });
     await expect(productRow).toBeVisible();
     await expect(productRow).toContainText(productNamePt);
   });
 
   test("edits product and shows saved toast", async ({ page }) => {
     await page.goto(`${adminBase}/products`);
-    await page.getByRole("row", { name: new RegExp(productSlug) }).getByRole("link", { name: "Edit" }).click();
+    await page.getByRole("main").getByRole("row", { name: new RegExp(productSlug) }).getByRole("link", { name: "Edit" }).click();
     await page.getByLabel("Price (BRL)").fill("15.00");
     await page.getByRole("button", { name: "Save changes" }).click();
     await expect(page.getByRole("status")).toContainText("Saved");
@@ -69,7 +72,7 @@ test.describe("admin product CRUD", () => {
 
   test("edit product has back button and uploads PNG thumbnail from disk", async ({ page }) => {
     await page.goto(`${adminBase}/products`);
-    await page.getByRole("row", { name: new RegExp(productSlug) }).getByRole("link", { name: "Edit" }).click();
+    await page.getByRole("main").getByRole("row", { name: new RegExp(productSlug) }).getByRole("link", { name: "Edit" }).click();
 
     await expect(page.getByRole("link", { name: "Back to products" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Edit product" })).toBeVisible();

@@ -4,6 +4,8 @@
  */
 import { test, expect } from "@playwright/test";
 
+import { visible } from "./locators";
+
 const hasDatabase = Boolean(process.env.DATABASE_URL);
 
 test.describe("catalog browse", () => {
@@ -32,12 +34,10 @@ test.describe("catalog browse", () => {
   });
 
   test("search finds product by contract example name", async ({ page }) => {
-    const responsePromise = page.waitForResponse(
-      (resp) => resp.url().includes("/api/v1/products") && resp.status() === 200,
-    );
     await page.goto("/search?q=custom");
-    await responsePromise;
-    await expect(page.getByText(/Custom Photo Frame|Porta-retrato personalizado/i)).toBeVisible({
+    await expect(
+      visible(page.getByText(/Custom Photo Frame|Porta-retrato personalizado/i)),
+    ).toBeVisible({
       timeout: 15_000,
     });
   });

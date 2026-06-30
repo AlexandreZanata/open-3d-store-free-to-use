@@ -9,7 +9,30 @@ import { loadConfig } from "../src/config.js";
 import { analyzeModelParts } from "../src/domain/services/modelPartAnalyzer.js";
 import { optimizeModelPreview } from "../src/infrastructure/model/optimizeModelPreview.js";
 import { resolveModelUploadMime } from "../src/infrastructure/storage/resolveModelUploadMime.js";
+import { BUNDLED_HERO_GLB } from "./seedHeroLogo.js";
 import { DEFAULT_SEED_MODELS_SOURCE_DIR, seedModelSpecs } from "./seedModelSpecs.js";
+
+/** E2E-critical slugs get committed GLB when STL/3MF sources are absent (CI, fresh VPS). */
+const BUNDLED_CATALOG_PREVIEW_SLUGS = new Set(["custom-photo-frame", "dragon-figurine"]);
+
+async function installBundledCatalogPreview(
+  slug: string,
+  modelsBasePath: string,
+): Promise<string | null> {
+  if (!BUNDLED_CATALOG_PREVIEW_SLUGS.has(slug)) {
+    return null;
+  }
+  try {
+    await access(BUNDLED_HERO_GLB);
+  } catch {
+    return null;
+  }
+  const destDir = path.join(modelsBasePath, "3d");
+  await mkdir(destDir, { recursive: true });
+  const fileName = `seed-${slug}-preview.glb`;
+  await copyFile(BUNDLED_HERO_GLB, path.join(destDir, fileName));
+  return `/models/3d/${fileName}`;
+}
 
 export type SeedModelOverride = {
   modelFileUrl: string;
@@ -36,7 +59,19 @@ export async function seedModels(
     try {
       await access(sourcePath);
     } catch {
-      console.warn(`[seedModels] Skipping ${spec.productSlug}: missing ${sourcePath}`);
+      console.warn(`[seedModels] Missing source ${sourcePath}`);
+      const bundledUrl = await installBundledCatalogPreview(
+        spec.productSlug,
+        config.MODEL_FILES_BASE_PATH,
+      );
+      if (bundledUrl) {
+        overrides.set(spec.productSlug, {
+          modelFileUrl: bundledUrl,
+          modelParts: [],
+          weightGrams: null,
+        });
+        console.log(`[seedModels] ${spec.productSlug} → ${bundledUrl} (bundled preview)`);
+      }
       continue;
     }
 

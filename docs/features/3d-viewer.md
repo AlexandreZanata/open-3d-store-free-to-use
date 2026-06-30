@@ -120,7 +120,7 @@ Any catalog upload (`STL`, `GLB`, `GLTF`, `3MF`) is converted automatically to a
 | `custom-keychain` | `polar_bear_keychain_-_profile.3mf` |
 | `planter-pot` | `Capy.3mf` |
 
-If a source file is missing, that product keeps its catalog metadata without a model URL.
+If a source file is missing, that product keeps its catalog metadata without a model URL — **except** `custom-photo-frame` and `dragon-figurine`, which fall back to the committed `seed-assets/hero/corvo-logo-preview.glb` copy so CI E2E (`product-detail.spec.ts`) can load a Draco GLB without Bambu downloads.
 
 **Desktop hero logo:** `pnpm --filter @print3d/api db:seed-hero-logo` prefers STL from `SEED_MODELS_SOURCE_DIR` (`16cc56c8094335eec1baddcd7a39f5b5(1).stl`). If missing, copies **`apps/api/seed-assets/hero/corvo-logo-preview.glb`** (committed) to `models/3d/` so VPS seed works without Bambu downloads.
 

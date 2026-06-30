@@ -80,7 +80,7 @@ Separate desktop-only home — mobile home is wrapped in `lg:hidden`:
 | `apps/web/src/components/home/HomeDesktopView.tsx` | Desktop-only home |
 | `apps/web/src/components/home/HomeMobileHero.tsx` | Mobile featured hero card with 3D logo |
 | `apps/web/src/components/home/HeroLogoViewer.tsx` | Shared Corvo GLB turntable (desktop + mobile); pauses off-screen instead of disposing; preloads GLB; black circle placeholder until ready |
-| `apps/web/src/components/home/HeroLogoPlaceholder.tsx` | Loading corvo PNG — same fit ratio as the hero GLB |
+| `apps/web/src/components/home/HeroLogoPlaceholder.tsx` | Solid black corvo PNG fallback (`brightness-0`) — same fit ratio as hero GLB |
 | `apps/web/src/lib/heroLogo.ts` | Hero GLB URL + `preloadHeroLogo()` |
 | `apps/web/src/lib/favoriteCache.ts` | Visitor favorite-id cache for instant empty state |
 | `apps/web/src/hooks/useFooterInView.ts` | Hides mobile sticky product actions when footer intersects |

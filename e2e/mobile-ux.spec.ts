@@ -34,7 +34,7 @@ test.describe("mobile storefront UX", () => {
     await page.goto("/");
     const placeholder = page.getByTestId("hero-logo-placeholder");
     await expect(placeholder).toBeVisible({ timeout: 5_000 });
-    await expect(placeholder.locator('img[src="/brand/corvo-logo.png"]')).toBeVisible();
+    await expect(placeholder.locator('img[src="/brand/corvo-logo.png"].brightness-0')).toBeVisible();
     await expect(
       page.getByRole("img", { name: /corvo 3d logo|logo 3d corvo/i }),
     ).toBeVisible({ timeout: 25_000 });

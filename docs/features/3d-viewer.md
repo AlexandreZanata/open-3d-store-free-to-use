@@ -38,7 +38,19 @@ Replaces the previous `@google/model-viewer` CDN approach so `.3mf` print files 
 - OrbitControls: left-drag rotate, wheel zoom, right-drag pan
 - Fixed `aspect-square` container; responsive width 100%
 - While the GLB/3MF loads, a **black overlay** (`bg-foreground`) covers the canvas with bilingual status text (`product.viewerLoading`). Scale badge and dimensions appear only after `onReady`.
-- Hero logo (`HeroLogoViewer`): keeps rendering when off-screen (rotation pauses only); mounts after the tile has non-zero size; shows the **2D corvo icon** (`/brand/corvo-logo.png`, same fit ratio as `fitCameraToModel`) until the GLB is ready
+- Hero logo (`HeroLogoViewer`): keeps rendering when off-screen (rotation pauses only); mounts after the tile has non-zero size; shows a **solid black corvo PNG** (`/brand/corvo-logo.png` + `brightness-0`, same fit ratio as `fitCameraToModel`) until the GLB is ready — stays visible if the GLB fails to load (404)
+
+## Upright orientation (Z-up → Y-up)
+
+This project uses **Three.js**, not `@google/model-viewer`. Do not add `<model-viewer>` or HTML `orientation` attributes.
+
+| Layer | Responsibility |
+|-------|----------------|
+| **Upload / worker** | `orientMeshForPrintPreview.ts` — Bambu Z-up → Three.js Y-up; base on build plate; Draco GLB preview |
+| **Storefront** | `threeScene.ts` — `placeOnDesk()` sets `y = 0` on virtual desk + grid; OrbitControls orbit upright |
+| **Hero logo** | `orientHeroLogoMesh()` in preview pipeline; mesh color `#141414` in `heroLogoScene.ts` |
+
+Storefront serves **`-preview.glb`** siblings (≤ 20 MB). Raw `.3mf` / `.stl` are never loaded in the browser.
 
 ## Gallery carousel
 

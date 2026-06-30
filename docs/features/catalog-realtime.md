@@ -61,7 +61,7 @@ When `catalog.changed` fires, queries are **invalidated** (marked stale) and act
 
 ### Thumbnail warm cache
 
-`catalogThumbnailCache` preloads home/category thumbnail URLs into an in-memory `Image` pool (`warmHomeCatalogImages` on home loader + data updates).
+`catalogThumbnailCache` preloads home/category thumbnail URLs into an in-memory `Image` pool (`warmHomeCatalogImages` on home data updates; mobile tab prefetch warms JSON cache keys — see [catalog-performance.md](catalog-performance.md)).
 
 | Rule | Requirement |
 |------|-------------|

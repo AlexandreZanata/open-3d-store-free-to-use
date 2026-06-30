@@ -1,5 +1,8 @@
 /** Shared responsive layout tokens — mobile classes unchanged below `lg` (1024px). */
 
+/** Matches Tailwind `lg` breakpoint — used by viewport hooks and catalog prefetch. */
+export const MOBILE_VIEWPORT_MQ = "(max-width: 1023px)";
+
 export const shellMaxWidth = "mx-auto w-full max-w-2xl lg:max-w-7xl";
 
 export const pagePadding = "px-4 lg:px-8";

@@ -14,13 +14,17 @@ import { categoriesQueryKey, useCategories } from "@/hooks/useCategories";
 import { productsQueryKey, useProducts, resolveQueryLocale } from "@/hooks/useProducts";
 import { fetchCategories } from "@/lib/api/categories";
 import { fetchProducts } from "@/lib/api/products";
+import {
+  HOME_CATALOG_PARAMS,
+  HOME_FEATURED_PARAMS,
+} from "@/lib/catalogPrefetch";
 import { isCatalogQueryPending, warmHomeCatalogImages } from "@/lib/catalogQuery";
 import { categoryPillsTrack, mobileOnly } from "@/lib/layout";
 import { preloadHeroLogo } from "@/lib/heroLogo";
 import { getCurrentI18nLocale, default as i18n } from "@/i18n";
 
-const FEATURED_PARAMS = { featured: true as const, limit: 6, page: 1 };
-const CATALOG_PARAMS = { page: 1, limit: 12 };
+const FEATURED_PARAMS = HOME_FEATURED_PARAMS;
+const CATALOG_PARAMS = HOME_CATALOG_PARAMS;
 
 export const Route = createFileRoute("/")({
   loader: async ({ context }) => {
@@ -40,7 +44,6 @@ export const Route = createFileRoute("/")({
       }),
       preloadHeroLogo(),
     ]);
-    warmHomeCatalogImages(context.queryClient, locale);
   },
   head: () => ({
     meta: [{ title: i18n.t("app.metaTitle") }],

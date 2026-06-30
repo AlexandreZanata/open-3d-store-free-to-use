@@ -5,6 +5,7 @@ import { AppShellDesktopHeader } from "@/components/AppShellDesktopHeader";
 import { AppShellFooter } from "@/components/AppShellFooter";
 import { AppShellMobileHeader } from "@/components/AppShellMobileHeader";
 import { AppShellMobileNav } from "@/components/AppShellMobileNav";
+import { useMobileCatalogPrefetch } from "@/hooks/useMobileCatalogPrefetch";
 import { useVisualViewportBottomInset } from "@/hooks/useVisualViewportBottomInset";
 import { desktopMainSurface, mainBottomPad, mobileTopPad, shellMaxWidth } from "@/lib/layout";
 
@@ -25,6 +26,7 @@ export function AppShell({
 }: Props) {
   const headerProps = { showSearch, showBack, title };
   useVisualViewportBottomInset();
+  useMobileCatalogPrefetch();
 
   return (
     <div className="flex min-h-dvh flex-col bg-background text-foreground lg:bg-surface-muted/40">

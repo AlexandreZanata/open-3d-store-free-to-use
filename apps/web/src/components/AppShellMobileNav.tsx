@@ -1,7 +1,11 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { Heart, Home, LayoutGrid, Search, User, type LucideIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
+import { useStoreAuth } from "@/auth/useStoreAuth";
+import { resolveQueryLocale } from "@/hooks/useProducts";
+import { prefetchMobileTabRoute } from "@/lib/catalogPrefetch";
 import { mobileOnly, mobileTabBarHeightClass, shellMaxWidth } from "@/lib/layout";
 import { cn } from "@/lib/utils";
 
@@ -24,8 +28,15 @@ const TABS: Array<{ to: string; labelKey: string; icon: LucideIcon; match: (path
 ];
 
 export function AppShellMobileNav() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const queryClient = useQueryClient();
+  const { isAuthenticated } = useStoreAuth();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const locale = resolveQueryLocale(i18n.language);
+
+  const prefetchTab = (to: string) => {
+    prefetchMobileTabRoute(queryClient, locale, to, isAuthenticated);
+  };
 
   return (
     <nav
@@ -41,6 +52,7 @@ export function AppShellMobileNav() {
               active={match(pathname)}
               icon={Icon}
               label={t(labelKey)}
+              onPrefetch={() => prefetchTab(to)}
             />
           ))}
         </div>
@@ -54,15 +66,18 @@ function TabItem({
   active,
   icon: Icon,
   label,
+  onPrefetch,
 }: {
   to: string;
   active: boolean;
   icon: LucideIcon;
   label: string;
+  onPrefetch: () => void;
 }) {
   return (
     <Link
       to={to}
+      onPointerDown={onPrefetch}
       className={cn(
         "flex flex-col items-center justify-center gap-1 press",
         active ? "text-foreground" : "text-muted-foreground",

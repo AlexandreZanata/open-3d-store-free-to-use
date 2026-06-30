@@ -8,7 +8,6 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { I18nextProvider } from "react-i18next";
 
@@ -18,7 +17,7 @@ import { StoreAuthProvider } from "@/auth/StoreAuthProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { useCartServerSync } from "@/hooks/useCartServerSync";
 import { brandFaviconHeadLinks, brandThemeColorMeta } from "@/lib/brandFavicons";
-import { HERO_LOGO_MODEL_URL, preloadHeroLogo } from "@/lib/heroLogo";
+import { HERO_LOGO_MODEL_URL } from "@/lib/heroLogo";
 
 function NotFoundComponent() {
   const { t } = useTranslation();
@@ -136,8 +135,5 @@ function RootComponent() {
 
 function CartSyncBoundary() {
   useCartServerSync();
-  useEffect(() => {
-    void preloadHeroLogo();
-  }, []);
   return <Outlet />;
 }

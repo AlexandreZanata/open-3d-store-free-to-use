@@ -7,12 +7,11 @@ import type { ProductListItem, MaterialType } from "@print3d/shared-types";
 import { AppShell } from "@/components/AppShell";
 import { SearchDesktopView } from "@/components/search/SearchDesktopView";
 import { SearchMobileView } from "@/components/search/SearchMobileView";
-import { productsQueryKey } from "@/hooks/useProducts";
+import { useProducts } from "@/hooks/useProducts";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useCategories } from "@/hooks/useCategories";
-import { useProducts } from "@/hooks/useProducts";
 import { useShopConfig } from "@/hooks/useShopConfig";
-import { fetchProducts } from "@/lib/api/products";
+import { ensureSearchTabCatalog } from "@/lib/catalogPrefetch";
 import { desktopOnly, mobileOnly } from "@/lib/layout";
 import { getCurrentI18nLocale, default as i18n } from "@/i18n";
 import { brandPageTitle } from "@/lib/brand";
@@ -27,13 +26,8 @@ export const Route = createFileRoute("/search")({
   validateSearch: searchSchema,
   loader: async ({ context, location }) => {
     const locale = getCurrentI18nLocale();
-    const search = searchSchema.parse(location.search);
-    const q = search.q?.trim();
-    const params = { page: 1, limit: 24, q: q || undefined };
-    await context.queryClient.ensureQueryData({
-      queryKey: productsQueryKey(params, locale),
-      queryFn: () => fetchProducts(params, locale),
-    });
+    searchSchema.parse(location.search);
+    await ensureSearchTabCatalog(context.queryClient, locale);
   },
   head: () => ({
     meta: [{ title: brandPageTitle(i18n.t("search.title")) }],

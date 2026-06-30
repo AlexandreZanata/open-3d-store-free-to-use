@@ -50,6 +50,8 @@ On Android Chrome, scrolling **up** can resize the browser toolbar so the **visu
 
 When `--vv-bottom-inset > 0`, the shell’s **outer** bottom edge MUST equal `window.innerHeight` (±2px) with fully opaque `bg-background`; tab icons sit above the padding.
 
+**Inset stabilization:** while scrolling, transient `visualViewport` readings MUST NOT drop `--vv-bottom-inset` below the current value; after **120ms** idle, commit the live measured inset. `window` scroll syncs via `requestAnimationFrame` (not synchronous) to avoid stale reads.
+
 Sync runs only below `lg` (`max-width: 1023px`) via `useVisualViewportBottomInset` mounted in `AppShell`.
 
 ## Desktop design (lg+)
@@ -88,7 +90,8 @@ Separate desktop-only home — mobile home is wrapped in `lg:hidden`:
 
 | File | Role |
 |------|------|
-| `apps/web/src/lib/layout.ts` | Shared Tailwind tokens |
+| `apps/web/src/lib/layout.ts` | Shared Tailwind tokens + `MOBILE_VIEWPORT_MQ` |
+| `apps/web/src/lib/catalogPrefetch.ts` | Mobile catalog prefetch (see [catalog-performance.md](catalog-performance.md)) |
 | `apps/web/src/components/AppShell.tsx` | Shell orchestration |
 | `apps/web/src/components/AppShellMobileHeader.tsx` | **Frozen** mobile header |
 | `apps/web/src/components/AppShellDesktopHeader.tsx` | Desktop inverted header |
@@ -96,11 +99,12 @@ Separate desktop-only home — mobile home is wrapped in `lg:hidden`:
 | `apps/web/src/components/AppShellFooter.tsx` | Site footer (contact CTA) |
 | `apps/web/src/components/home/HomeDesktopView.tsx` | Desktop-only home |
 | `apps/web/src/components/home/HomeMobileHero.tsx` | Mobile featured hero card with 3D logo |
-| `apps/web/src/components/home/HeroLogoViewer.tsx` | Shared Corvo GLB turntable (desktop + mobile); pauses off-screen instead of disposing; preloads GLB; black circle placeholder until ready |
+| `apps/web/src/components/home/HeroLogoViewer.tsx` | Shared Corvo GLB turntable (desktop + mobile); pauses off-screen instead of disposing; warms GLB only when hero slot is visible |
 | `apps/web/src/components/home/HeroLogoPlaceholder.tsx` | Solid black corvo PNG fallback (`brightness-0`) — same fit ratio as hero GLB |
 | `apps/web/src/lib/heroLogo.ts` | Hero GLB URL + `preloadHeroLogo()` |
 | `apps/web/src/lib/favoriteCache.ts` | Visitor favorite-id cache for instant empty state |
 | `apps/web/src/lib/visualViewportInset.ts` | Pure inset calculator for `--vv-bottom-inset` |
+| `apps/web/src/lib/visualViewportBottomInsetSync.ts` | Inset stabilization + listener wiring |
 | `apps/web/src/hooks/useVisualViewportBottomInset.ts` | Syncs visual viewport gap to CSS variable (mobile only) |
 | `apps/web/src/hooks/useFooterInView.ts` | Hides mobile sticky product actions when footer intersects sticky zone |
 | `apps/web/src/components/SearchFiltersPanel.tsx` | Search filters (mobile chips / desktop list) |
@@ -124,6 +128,7 @@ Separate desktop-only home — mobile home is wrapped in `lg:hidden`:
 | E2E mobile | `e2e/desktop-layout.spec.ts` — 390×844 preserved UI |
 | E2E mobile UX | `e2e/mobile-ux.spec.ts` — guest favorites, sticky bar vs footer, tab bar viewport pinning |
 | E2E catalog nav | `e2e/catalog-navigation.spec.ts` — home → product → home thumbnail persistence (mobile) |
+| E2E catalog perf | `e2e/catalog-performance.spec.ts` — mobile tab prefetch + cold load |
 
 ```bash
 PLAYWRIGHT_SKIP_WEBSERVER=1 PLAYWRIGHT_BASE_URL=http://localhost:5173 pnpm e2e e2e/desktop-layout.spec.ts
@@ -144,4 +149,5 @@ PLAYWRIGHT_SKIP_WEBSERVER=1 PLAYWRIGHT_BASE_URL=http://localhost:5173 pnpm e2e e
 
 - [i18n.md](i18n.md)
 - [3d-viewer.md](3d-viewer.md)
+- [catalog-performance.md](catalog-performance.md)
 - [../testing/tdd-strategy.md](../testing/tdd-strategy.md)

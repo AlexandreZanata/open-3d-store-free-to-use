@@ -3,12 +3,12 @@ import { useTranslation } from "react-i18next";
 
 import { AppShell } from "@/components/AppShell";
 import { CategoryCard } from "@/components/CategoryCard";
-import { categoriesQueryKey } from "@/hooks/useCategories";
-import { productsQueryKey } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
 import { useProducts } from "@/hooks/useProducts";
-import { fetchCategories } from "@/lib/api/categories";
-import { fetchProducts } from "@/lib/api/products";
+import {
+  CATEGORIES_TAB_PARAMS,
+  ensureCategoriesTabCatalog,
+} from "@/lib/catalogPrefetch";
 import { isCatalogQueryPending } from "@/lib/catalogQuery";
 import { categoryGridCols, desktopOnly, pagePadding } from "@/lib/layout";
 import { getCurrentI18nLocale, default as i18n } from "@/i18n";
@@ -17,16 +17,7 @@ import { brandPageTitle } from "@/lib/brand";
 export const Route = createFileRoute("/categories")({
   loader: async ({ context }) => {
     const locale = getCurrentI18nLocale();
-    await Promise.all([
-      context.queryClient.ensureQueryData({
-        queryKey: categoriesQueryKey(locale),
-        queryFn: () => fetchCategories(locale),
-      }),
-      context.queryClient.ensureQueryData({
-        queryKey: productsQueryKey({ page: 1, limit: 50 }, locale),
-        queryFn: () => fetchProducts({ page: 1, limit: 50 }, locale),
-      }),
-    ]);
+    await ensureCategoriesTabCatalog(context.queryClient, locale);
   },
   head: () => ({
     meta: [{ title: brandPageTitle(i18n.t("categories.title")) }],
@@ -37,7 +28,7 @@ export const Route = createFileRoute("/categories")({
 function CategoriesPage() {
   const { t } = useTranslation();
   const categoriesQuery = useCategories();
-  const productsQuery = useProducts({ page: 1, limit: 50 });
+  const productsQuery = useProducts(CATEGORIES_TAB_PARAMS);
   const categories = categoriesQuery.data ?? [];
   const products = productsQuery.data?.data ?? [];
 

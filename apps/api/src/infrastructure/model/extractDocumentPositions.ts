@@ -1,5 +1,27 @@
 import type { Accessor, Document, Primitive } from "@gltf-transform/core";
 
+import type { RawPartMesh } from "./read3mfPartMeshes.js";
+
+/** Flatten each glTF mesh primitive into a separate triangle soup (meters). */
+export function extractDocumentPartMeshes(document: Document): RawPartMesh[] {
+  const parts: RawPartMesh[] = [];
+
+  for (const mesh of document.getRoot().listMeshes()) {
+    const positions: number[] = [];
+    for (const primitive of mesh.listPrimitives()) {
+      appendPrimitivePositions(primitive, positions);
+    }
+    if (positions.length >= 9) {
+      parts.push({
+        name: mesh.getName() || `Part ${parts.length + 1}`,
+        positions: new Float32Array(positions),
+      });
+    }
+  }
+
+  return parts;
+}
+
 /** Flatten indexed glTF mesh primitives into triangle soup (meters). */
 export function extractDocumentPositions(document: Document): Float32Array | null {
   const positions: number[] = [];

@@ -55,6 +55,7 @@ export const modelPartSchema = {
     name: { type: "string" },
     volumeCm3: { type: "number", nullable: true },
     weightGrams: { type: "number", nullable: true },
+    defaultColorHex: { type: "string", pattern: "^#[0-9A-Fa-f]{6}$" },
   },
 } as const;
 

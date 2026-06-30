@@ -16,7 +16,9 @@ export type ComponentDef = {
   transform: Mat4;
 };
 
-export type ObjectDef = { kind: "mesh"; mesh: MeshDef } | { kind: "components"; components: ComponentDef[] };
+export type ObjectDef =
+  | { kind: "mesh"; mesh: MeshDef; name?: string }
+  | { kind: "components"; components: ComponentDef[]; name?: string };
 
 export type BuildItem = {
   objectId: number;
@@ -54,15 +56,19 @@ export function parseObjects(xml: string): Map<number, ObjectDef> {
       match = tag.exec(xml);
       continue;
     }
+    const name = readAttrString(block, "name") ?? undefined;
     const mesh = parseMeshBlock(block);
     if (mesh) {
-      objects.set(id, { kind: "mesh", mesh });
+      objects.set(id, name ? { kind: "mesh", mesh, name } : { kind: "mesh", mesh });
       match = tag.exec(xml);
       continue;
     }
     const components = parseComponents(block);
     if (components.length > 0) {
-      objects.set(id, { kind: "components", components });
+      objects.set(
+        id,
+        name ? { kind: "components", components, name } : { kind: "components", components },
+      );
     }
     match = tag.exec(xml);
   }

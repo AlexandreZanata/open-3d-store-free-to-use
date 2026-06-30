@@ -6,6 +6,8 @@ export type ModelPart = {
   volumeCm3: number | null;
   /** Estimated filament weight in grams for the shop default material density. */
   weightGrams: number | null;
+  /** Bambu / 3MF slicer colour for storefront preview defaults (#RRGGBB). */
+  defaultColorHex?: string;
 };
 
 /** Shop palette entry — admin configures; storefront studio applies per part. */

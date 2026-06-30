@@ -9,9 +9,11 @@ import { MeshoptSimplifier } from "meshoptimizer";
 
 import { createGltfIo } from "./createGltfIo.js";
 import { documentFromMesh } from "./documentFromMesh.js";
-import { extractDocumentPositions } from "./extractDocumentPositions.js";
+import { documentFromPartMeshes } from "./documentFromPartMeshes.js";
+import { extractDocumentPartMeshes, extractDocumentPositions } from "./extractDocumentPositions.js";
+import { preparePreviewAssembly } from "./preparePreviewAssembly.js";
 import { preparePreviewMesh } from "./preparePreviewMesh.js";
-import { read3mfMesh } from "./read3mfMesh.js";
+import { read3mfPartMeshes } from "./read3mfPartMeshes.js";
 import { readStlPositions } from "./readStlPositions.js";
 
 /** Uniform stride while parsing huge STL files (keeps preview worker fast). */
@@ -50,7 +52,7 @@ export async function optimizeModelPreview(
       return null;
     }
 
-    await runOptimizationPipeline(document);
+    await runOptimizationPipeline(document, { preserveDetail: shouldPreserveDetail(document) });
 
     const previewPath = buildPreviewPath(input.sourcePath);
     await io.write(previewPath, document);
@@ -86,16 +88,25 @@ async function loadDocument(
 
   if (input.mimeType === "model/3mf") {
     const data = input.sourceData ?? (await readFile(input.sourcePath));
-    const positions = read3mfMesh(data);
-    if (!positions) {
+    const rawParts = read3mfPartMeshes(data);
+    if (!rawParts || rawParts.length === 0) {
       return null;
     }
-    const prepared = await preparePreviewMesh(positions, { source: "3mf" });
-    return documentFromMesh(prepared);
+    if (rawParts.length === 1 && !rawParts[0]!.defaultColorHex) {
+      const prepared = await preparePreviewMesh(rawParts[0]!.positions, { source: "3mf" });
+      return documentFromMesh(prepared);
+    }
+    const prepared = preparePreviewAssembly(rawParts);
+    return documentFromPartMeshes(prepared);
   }
 
   if (input.mimeType === "model/gltf-binary" || input.mimeType === "model/gltf+json") {
     const source = await io.read(input.sourcePath);
+    const rawParts = extractDocumentPartMeshes(source);
+    if (rawParts.length > 1) {
+      const prepared = preparePreviewAssembly(rawParts);
+      return documentFromPartMeshes(prepared);
+    }
     const positions = extractDocumentPositions(source);
     if (!positions) {
       return null;
@@ -107,15 +118,24 @@ async function loadDocument(
   return null;
 }
 
-async function runOptimizationPipeline(document: Document): Promise<void> {
+async function runOptimizationPipeline(
+  document: Document,
+  options: { preserveDetail?: boolean } = {},
+): Promise<void> {
   await MeshoptSimplifier.ready;
+  const ratio = options.preserveDetail ? 0.95 : 0.25;
+  const error = options.preserveDetail ? 0.0005 : 0.01;
   await document.transform(
     weld(),
     dedup(),
-    simplify({ simplifier: MeshoptSimplifier, ratio: 0.25, error: 0.01 }),
+    simplify({ simplifier: MeshoptSimplifier, ratio, error }),
     normals(),
     draco({ method: "edgebreaker" }),
   );
+}
+
+function shouldPreserveDetail(document: Document): boolean {
+  return document.getRoot().listMeshes().length > 1;
 }
 
 function buildPreviewPath(sourcePath: string): string {

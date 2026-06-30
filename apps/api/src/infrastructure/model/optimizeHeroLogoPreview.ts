@@ -9,18 +9,18 @@ import { createGltfIo } from "./createGltfIo.js";
 import { centerOnBuildPlate } from "./meshOrientationMath.js";
 import { documentFromMesh } from "./documentFromMesh.js";
 import { positionsToMeters } from "./documentFromMesh.js";
-import { alignTallestAxisToY } from "./orientMeshForPrintPreview.js";
+import { orientHeroLogoMesh } from "./orientMeshForPrintPreview.js";
 import { readStlPositions } from "./readStlPositions.js";
 import {
   PREVIEW_MAX_BYTES,
   type OptimizeModelPreviewResult,
 } from "./optimizeModelPreview.js";
 
-/** Read enough triangles for a solid hero logo (stride decimation alone looks like a point cloud). */
-export const HERO_LOGO_READ_MAX_TRIANGLES = 600_000;
+/** Read every STL triangle — stride decimation leaves holes and looks like a point cloud. */
+export const HERO_LOGO_READ_MAX_TRIANGLES = Number.POSITIVE_INFINITY;
 
-/** Target welded mesh density after meshopt simplify. */
-export const HERO_LOGO_SIMPLIFY_RATIO = 0.12;
+/** Target welded mesh density after meshopt simplify (~330k tris from a 1.5M STL). */
+export const HERO_LOGO_SIMPLIFY_RATIO = 0.22;
 
 export type OptimizeHeroLogoInput = {
   sourcePath: string;
@@ -43,7 +43,7 @@ export async function optimizeHeroLogoPreview(
     }
 
     const meters = positionsToMeters(positions);
-    const upright = alignTallestAxisToY(meters);
+    const upright = orientHeroLogoMesh(meters);
     const centered = centerOnBuildPlate(upright);
     const document = documentFromMesh(centered, "CorvoLogo");
     if (!document) {

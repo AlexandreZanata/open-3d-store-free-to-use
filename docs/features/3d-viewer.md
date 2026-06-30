@@ -30,6 +30,8 @@ Replaces the previous `@google/model-viewer` CDN approach so `.3mf` print files 
 | `modelParts` | `ModelPart[]` | Optional mesh parts from API (for per-part colors) |
 | `partColors` | `Record<string, string>` | Part id → hex color applied in Three.js |
 
+Each `ModelPart` may include optional `defaultColorHex` (`#RRGGBB`) from Bambu filament metadata at upload time. The storefront color picker initializes from `defaultColorHex` when present, otherwise the first shop palette colour.
+
 ### Behavior
 
 - Dynamic `import("./threeScene")` on mount — Three.js not in main bundle
@@ -91,11 +93,12 @@ Any catalog upload (`STL`, `GLB`, `GLTF`, `3MF`) is converted automatically to a
 1. Worker ingests the source mesh (STL triangle soup, 3MF XML zip, or glTF)
 2. **Unit detection** — millimeter vs meter coordinates (heuristic on bounding box)
 3. **Print orientation** — explicit Z-up → Y-up rotation (-90° about X, same as glTF convention); thin plates use PCA fallback; yaw snap for compact footprint; build-plate centering baked into the GLB
-4. **glTF encoding** — indexed `TRIANGLES` primitive + PBR material; `weld` → `dedup` → `meshopt simplify` → `normals` → **Draco**
-5. Upload worker passes the on-disk buffer once (`sourceData`) and runs part analysis + preview optimization **in parallel**
-6. **Draco** compression for web streaming
-7. Admin upload response `url` is the preview when ready; `sourceUrl` keeps the original for print
-8. Public product API resolves `modelFileUrl` to the preview sibling on disk when present (no manual re-link)
+4. **Multi-part 3MF (Bambu Studio)** — each printable volume stays a separate glTF mesh with its own PBR material; Bambu `filament_colour` + per-part `extruder` metadata populate `modelParts[].defaultColorHex` and the preview GLB base colours; only the **first printable plate** is used when a project ships multiple plates
+5. **glTF encoding** — indexed `TRIANGLES` primitive + PBR material per part; `weld` → `dedup` → `meshopt simplify` (ratio **0.95** when multi-part, **0.25** for single-body) → `normals` → **Draco**
+6. Upload worker passes the on-disk buffer once (`sourceData`) and runs part analysis + preview optimization **in parallel**
+7. **Draco** compression for web streaming
+8. Admin upload response `url` is the preview when ready; `sourceUrl` keeps the original for print
+9. Public product API resolves `modelFileUrl` to the preview sibling on disk when present (no manual re-link)
 
 **Automatic orientation:** every admin `kind=model` upload runs `ProcessModelUpload` → `optimizeModelPreview` → `orientSlicerExportForPreview` (STL, 3MF, GLB, GLTF). The admin UI sets `modelFileUrl` to `previewUrl` when the job completes. Re-deploy runs `pnpm --filter @print3d/api reoptimize-all-previews` (see `infra/scripts/deploy.sh`) to refresh existing `-preview.glb` files without re-uploading.
 
@@ -174,7 +177,7 @@ Serve `/models/` directly — see [../infrastructure/nginx.md](../infrastructure
 | Layer | File |
 |-------|------|
 | Web unit | `apps/web/tests/unit/modelFormat.test.ts`, `apps/web/tests/unit/modelViewerLimits.test.ts`, `apps/web/tests/unit/modelViewerLoading.test.ts` |
-| API unit | `apps/api/tests/unit/infrastructure/orientMeshForPrintPreview.test.ts`, `documentFromMesh.test.ts`, `read3mfMesh.test.ts` |
+| API unit | `apps/api/tests/unit/infrastructure/orientMeshForPrintPreview.test.ts`, `documentFromMesh.test.ts`, `documentFromPartMeshes.test.ts`, `read3mfMesh.test.ts`, `read3mfPartMeshes.test.ts` |
 | E2E | `e2e/product-detail.spec.ts` |
 
 ## Related documents

@@ -37,7 +37,8 @@ export function ProductMediaPanel({
   const basePartColors = useMemo(() => {
     const map: Record<string, string> = {};
     for (const part of modelParts) {
-      map[part.id] = defaultColorHex;
+      const slicerColor = part.defaultColorHex;
+      map[part.id] = slicerColor ?? defaultColorHex;
     }
     return map;
     // partIdsKey tracks part identity; modelParts is read when ids change

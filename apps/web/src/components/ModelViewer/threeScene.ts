@@ -165,9 +165,9 @@ function applyPartColors(
     if (!(child instanceof THREE.Mesh)) {
       return;
     }
+    const mesh = child as THREE.Mesh<THREE.BufferGeometry, THREE.Material | THREE.Material[]>;
     const part =
-      modelParts[meshIndex] ??
-      modelParts.find((candidate) => candidate.name === child.name);
+      modelParts.find((candidate) => candidate.name === mesh.name) ?? modelParts[meshIndex];
     meshIndex += 1;
     if (!part) {
       return;
@@ -176,7 +176,7 @@ function applyPartColors(
     if (!hex) {
       return;
     }
-    const materials = Array.isArray(child.material) ? child.material : [child.material];
+    const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
     for (const material of materials) {
       if (material instanceof THREE.MeshStandardMaterial) {
         material.color.set(hex);

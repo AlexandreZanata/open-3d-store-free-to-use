@@ -30,6 +30,10 @@ const modelPartSchema = z.object({
   name: z.string().min(1),
   volumeCm3: z.number().nullable(),
   weightGrams: z.number().int().nullable(),
+  defaultColorHex: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
 });
 
 const productTranslationSchema = z.object({

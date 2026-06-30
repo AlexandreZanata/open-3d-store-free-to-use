@@ -2,6 +2,7 @@ import type { AdminUploadMimeType, ModelPart } from "@print3d/shared-types";
 import { uuidv7 } from "uuidv7";
 
 import { formatModelPartName } from "./formatModelPartName.js";
+import { read3mfPartMeshes } from "../../infrastructure/model/read3mfPartMeshes.js";
 
 type Bbox = { minX: number; minY: number; minZ: number; maxX: number; maxY: number; maxZ: number };
 
@@ -32,9 +33,20 @@ export function analyzeModelParts(input: AnalyzeModelInput): ModelPart[] {
     ];
   }
   if (input.mimeType === "model/3mf") {
-    return [
-      buildPart(formatModelPartName(stem), null, "mm", input.infillFactor, input.densityGCm3),
-    ];
+    const slices = read3mfPartMeshes(input.data);
+    if (!slices || slices.length === 0) {
+      return [buildPart(formatModelPartName(stem), null, "mm", input.infillFactor, input.densityGCm3)];
+    }
+    return slices.map((slice, index) =>
+      buildPart(
+        formatModelPartName(slice.name, index),
+        bboxFromPositions(slice.positions),
+        "mm",
+        input.infillFactor,
+        input.densityGCm3,
+        slice.defaultColorHex,
+      ),
+    );
   }
 
   return [buildPart(formatModelPartName(stem), null, "mm", input.infillFactor, input.densityGCm3)];
@@ -155,18 +167,36 @@ function inferStlVolumeUnit(bbox: Bbox | null): "mm" | "m" {
   return max > 20 ? "mm" : "m";
 }
 
+function bboxFromPositions(positions: Float32Array): Bbox | null {
+  if (positions.length < 9) {
+    return null;
+  }
+  const bbox = emptyBbox();
+  for (let i = 0; i < positions.length; i += 3) {
+    expandBbox(bbox, positions[i]!, positions[i + 1]!, positions[i + 2]!);
+  }
+  return bbox.initialized ? bbox : null;
+}
+
 function buildPart(
   name: string,
   bbox: Bbox | null,
   unit: "mm" | "m",
   infillFactor: number,
   densityGCm3: number,
+  defaultColorHex?: string,
 ): ModelPart {
   const volumeCm3 = bbox === null ? null : bboxVolumeCm3(bbox, unit);
   const weightGrams =
     volumeCm3 === null ? null : Math.round(volumeCm3 * infillFactor * densityGCm3);
 
-  return { id: uuidv7(), name, volumeCm3, weightGrams };
+  return {
+    id: uuidv7(),
+    name,
+    volumeCm3,
+    weightGrams,
+    ...(defaultColorHex ? { defaultColorHex: defaultColorHex.toUpperCase() } : {}),
+  };
 }
 
 function bboxVolumeCm3(bbox: Bbox, unit: "mm" | "m"): number {

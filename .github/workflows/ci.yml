@@ -73,6 +73,9 @@ jobs:
     name: E2E
     needs: test
     runs-on: ubuntu-latest
+    env:
+      CORS_ORIGIN: http://localhost:4173
+      MODEL_FILES_BASE_URL: http://localhost:4173/models
 
     services:
       postgres:
@@ -126,7 +129,7 @@ jobs:
             echo "CORS_ORIGIN=${CORS_ORIGIN}"
             echo "MODEL_FILES_BASE_PATH=${MODEL_FILES_BASE_PATH}"
             echo "MODEL_FILES_BASE_URL=${MODEL_FILES_BASE_URL}"
-            echo "ADMIN_ORIGIN=http://localhost:5174"
+            echo "ADMIN_ORIGIN=http://localhost:4174"
             echo "ADMIN_BOOTSTRAP_EMAIL=admin@test.local"
             echo "ADMIN_BOOTSTRAP_PASSWORD=test-password-12"
             echo "PORT=3010"
@@ -138,6 +141,13 @@ jobs:
       - name: Build workspace packages for db:seed and API dev
         run: pnpm turbo build --filter=@print3d/shared-types --filter=@print3d/whatsapp
 
+      - name: Build storefront and admin for E2E preview servers
+        env:
+          VITE_API_BASE_URL: http://localhost:3010/api/v1
+          VITE_ASSETS_BASE_URL: http://localhost:4173
+          VITE_WHATSAPP_PHONE: ${{ env.WHATSAPP_PHONE_NUMBER }}
+        run: NODE_ENV=production pnpm turbo build --force --filter=@print3d/web --filter=@print3d/admin
+
       - run: pnpm --filter @print3d/api db:seed
         env:
           ADMIN_BOOTSTRAP_EMAIL: admin@test.local
@@ -148,8 +158,10 @@ jobs:
       - run: pnpm e2e
         env:
           CI: true
+          PLAYWRIGHT_BASE_URL: http://localhost:4173
+          ADMIN_BASE_URL: http://localhost:4174
+          ADMIN_ORIGIN: http://localhost:4174
           VITE_API_BASE_URL: http://localhost:3010/api/v1
-          ADMIN_ORIGIN: http://localhost:5174
           ADMIN_BOOTSTRAP_EMAIL: admin@test.local
           ADMIN_BOOTSTRAP_PASSWORD: test-password-12
 

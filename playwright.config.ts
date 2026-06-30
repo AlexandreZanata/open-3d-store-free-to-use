@@ -1,8 +1,11 @@
 import path from "node:path";
 import { defineConfig, devices } from "@playwright/test";
 
-const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:5173";
-const adminBaseURL = process.env.ADMIN_BASE_URL ?? "http://localhost:5174";
+const isCi = Boolean(process.env.CI);
+const baseURL =
+  process.env.PLAYWRIGHT_BASE_URL ?? (isCi ? "http://localhost:4173" : "http://localhost:5173");
+const adminBaseURL =
+  process.env.ADMIN_BASE_URL ?? (isCi ? "http://localhost:4174" : "http://localhost:5174");
 const adminAuthFile = path.join("e2e", ".auth", "admin-session.json");
 const apiPort = process.env.PLAYWRIGHT_API_PORT ?? "3010";
 const apiHost = process.env.PLAYWRIGHT_API_HOST ?? "localhost";
@@ -20,6 +23,16 @@ const sharedServerEnv = {
   ADMIN_BOOTSTRAP_PASSWORD: process.env.ADMIN_BOOTSTRAP_PASSWORD ?? "test-password-12",
   CORS_ORIGIN: process.env.CORS_ORIGIN ?? baseURL,
 };
+
+const webServerLogs = isCi ? ("pipe" as const) : ("ignore" as const);
+
+const webServerCommand = isCi
+  ? "pnpm --filter @print3d/web start"
+  : `VITE_API_BASE_URL=${apiBase}/api/v1 VITE_WHATSAPP_PHONE=${process.env.WHATSAPP_PHONE_NUMBER ?? "5565999999999"} pnpm --filter @print3d/web dev -- --host 127.0.0.1 --port 5173`;
+
+const adminServerCommand = isCi
+  ? "pnpm --filter @print3d/admin preview"
+  : `VITE_API_BASE_URL=${apiBase}/api/v1 VITE_WHATSAPP_PHONE=${process.env.WHATSAPP_PHONE_NUMBER ?? "5565999999999"} pnpm --filter @print3d/admin dev -- --host 127.0.0.1 --port 5174`;
 
 export default defineConfig({
   testDir: "./e2e",
@@ -93,23 +106,29 @@ export default defineConfig({
             command: `PORT=${apiPort} pnpm --filter @print3d/api dev`,
             url: apiURL,
             reuseExistingServer: !process.env.CI,
-            timeout: 180_000,
+            timeout: isCi ? 120_000 : 180_000,
             cwd: ".",
             env: sharedServerEnv,
+            stdout: webServerLogs,
+            stderr: webServerLogs,
           },
           {
-            command: `VITE_API_BASE_URL=${apiBase}/api/v1 VITE_WHATSAPP_PHONE=${process.env.WHATSAPP_PHONE_NUMBER ?? "5565999999999"} pnpm --filter @print3d/web dev -- --host 127.0.0.1 --port 5173`,
+            command: webServerCommand,
             url: baseURL,
             reuseExistingServer: !process.env.CI,
-            timeout: 180_000,
+            timeout: isCi ? 120_000 : 180_000,
             env: sharedServerEnv,
+            stdout: webServerLogs,
+            stderr: webServerLogs,
           },
           {
-            command: `VITE_API_BASE_URL=${apiBase}/api/v1 VITE_WHATSAPP_PHONE=${process.env.WHATSAPP_PHONE_NUMBER ?? "5565999999999"} pnpm --filter @print3d/admin dev -- --host 127.0.0.1 --port 5174`,
+            command: adminServerCommand,
             url: adminBaseURL,
             reuseExistingServer: !process.env.CI,
-            timeout: 180_000,
+            timeout: isCi ? 120_000 : 180_000,
             env: sharedServerEnv,
+            stdout: webServerLogs,
+            stderr: webServerLogs,
           },
         ]
       : undefined,

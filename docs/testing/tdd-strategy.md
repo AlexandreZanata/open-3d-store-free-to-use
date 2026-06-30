@@ -57,7 +57,8 @@ Full policy: [contract-first-testing.md](contract-first-testing.md)
 | Directory | `e2e/` |
 | Config | `playwright.config.ts` (repo root) |
 | Browsers | Chromium (CI); Firefox/WebKit optional locally |
-| Base URL | `http://localhost:5173` — Playwright passes `--port 5173` because `apps/web/vite.config.ts` defaults to **6201** |
+| Base URL | `http://localhost:5173` locally (`vite dev`); **CI** uses preview on `http://localhost:4173` after `pnpm turbo build` |
+| Admin base | `http://localhost:5174` locally; **CI** preview on `http://localhost:4174` |
 | API | `PLAYWRIGHT_API_PORT=3010` by default in config; requires `DATABASE_URL` + seeded catalog |
 
 ### Local run

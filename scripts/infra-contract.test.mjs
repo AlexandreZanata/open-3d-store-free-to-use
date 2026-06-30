@@ -158,6 +158,11 @@ describe("VPS rsync deploy — docs/infrastructure/deployment.md", () => {
     assert.doesNotMatch(script, /SKIP_VPS_SEED/);
   });
 
+  test("deploy-to-vps.sh rsync excludes server-side models tree", () => {
+    const script = readRepo("production/deploy-to-vps.sh");
+    assert.match(script, /--exclude models/);
+  });
+
   test("vps-full-deploy.sh runs vps-seed.sh only when RUN_VPS_SEED=1", () => {
     const script = readRepo("infra/scripts/vps-full-deploy.sh");
     assert.match(script, /RUN_VPS_SEED/);

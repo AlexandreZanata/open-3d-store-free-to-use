@@ -67,6 +67,9 @@ Rsync deploy from your machine (see [../../production/README.md](../../productio
 | Command | Seed |
 |---------|------|
 | `./production/deploy-to-vps.sh` | **No** — migrate + build + PM2 + nginx only |
+
+Rsync uses `--delete` but **never syncs `models/` or `seed-models/`** — uploaded GLBs and thumbnails stay on the VPS.
+
 | `./production/deploy-to-vps.sh --seed` | **Yes** — runs `infra/scripts/vps-seed.sh` (`pnpm db:seed`, hero GLB, thumbnails) |
 | `./production/deploy-to-vps.sh --env-only` | No — regenerates `production/env/*.env` locally |
 

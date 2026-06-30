@@ -169,6 +169,8 @@ sync_and_deploy() {
     --exclude test-results \
     --exclude playwright-report \
     --exclude apps/api/storage \
+    --exclude models \
+    --exclude seed-models \
     --exclude production/ssh/id_* \
     --exclude .git \
     "${ROOT}/" "${VPS_REMOTE}:${VPS_APP_DIR}/"
